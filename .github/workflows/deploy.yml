@@ -20,8 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: withastro/action@v3
-        with:
-          path: ./strony
+      
 
   deploy:
     needs: build
