@@ -1,0 +1,257 @@
+---
+import Site from '../../layouts/Site.astro';
+import { mechanik as biz } from '../../data/firmy.js';
+
+const fonts =
+  'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap';
+
+const links = [
+  { href: '#cennik', label: 'Cennik' },
+  { href: '#jak', label: 'Jak to działa' },
+  { href: '#kontakt', label: 'Kontakt' },
+];
+
+// Ceny robocizny — realny format, jaki klient rozumie: ile kosztuje i ile trwa.
+const cennik = [
+  { usluga: 'Wymiana oleju i filtrów', cena: 'od 120 zł', czas: '40 min' },
+  { usluga: 'Klocki hamulcowe, oś przednia', cena: 'od 180 zł', czas: '1 godz.' },
+  { usluga: 'Diagnostyka komputerowa', cena: '100 zł', czas: '30 min' },
+  { usluga: 'Wymiana rozrządu', cena: 'od 900 zł', czas: '1 dzień' },
+  { usluga: 'Geometria 3D', cena: '150 zł', czas: '45 min' },
+  { usluga: 'Nabicie klimatyzacji', cena: 'od 200 zł', czas: '40 min' },
+];
+
+const kroki = [
+  { n: '01', t: 'Dzwonisz', d: 'Podajesz markę, rocznik i objaw. Mówimy, czy zrobimy dziś, czy trzeba zamówić część.' },
+  { n: '02', t: 'Wyceniamy', d: 'Po oględzinach dzwonimy z kwotą. Nic nie robimy, dopóki nie potwierdzisz.' },
+  { n: '03', t: 'Odbierasz', d: 'Dostajesz spis wymienionych części i paragon. Na robociznę 12 miesięcy gwarancji.' },
+];
+---
+
+<Site
+  title="Serwis Kołodziej — mechanika i diagnostyka samochodowa, Wołomin"
+  description="Warsztat samochodowy w Wołominie. Diagnostyka komputerowa, hamulce, rozrząd, klimatyzacja. Wycena przez telefon, gwarancja 12 miesięcy na robociznę."
+  fonts={fonts}
+  biz={biz}
+  links={links}
+>
+  <!-- HERO: bez wyśrodkowania, bez dwóch przycisków obok siebie.
+       Nośnikiem jest konkretna obietnica operacyjna, nie slogan. -->
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div>
+        <p class="eyebrow">Wołomin · ul. Lipińska 14 · od 2011</p>
+        <h1>Auto na podnośniku<br />tego samego dnia.</h1>
+        <p class="lead">
+          Zadzwoń przed 9:00, a w większości przypadków odbierzesz samochód po południu.
+          Naprawiamy osobowe do 3,5 t — specjalizacja: VAG, Ford, Opel.
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--solid" href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>
+            {biz.phone}
+          </a>
+          <a class="btn btn--ghost" href="#cennik">Zobacz cennik</a>
+        </div>
+      </div>
+
+      <!-- Sygnatura strony: tabliczka warsztatowa zamiast zdjęcia stockowego -->
+      <aside class="plate">
+        <div class="plate__row"><span>Dziś</span><strong>otwarte 8:00–18:00</strong></div>
+        <div class="plate__row"><span>Wolne stanowiska</span><strong>2 z 4</strong></div>
+        <div class="plate__row"><span>Wycena telefoniczna</span><strong>bezpłatna</strong></div>
+        <div class="plate__row"><span>Gwarancja robocizny</span><strong>12 miesięcy</strong></div>
+        <p class="plate__note">
+          Dane orientacyjne — stan stanowisk aktualizujemy rano.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- CENNIK: sygnatura numer dwa. Warsztaty prawie nigdy nie podają cen,
+       więc sama tabela jest przewagą sprzedażową klienta. -->
+  <section id="cennik" class="band">
+    <div class="wrap">
+      <p class="eyebrow">Cennik robocizny</p>
+      <h2 class="h2">Wiesz, ile zapłacisz, zanim przyjedziesz.</h2>
+
+      <table class="price">
+        <tbody>
+          {cennik.map((r) => (
+            <tr>
+              <th scope="row">{r.usluga}</th>
+              <td class="price__time">{r.czas}</td>
+              <td class="price__val">{r.cena}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p class="fine">
+        Podane kwoty dotyczą wyłącznie robocizny, bez kosztu części. Ostateczną cenę
+        podajemy telefonicznie po podaniu marki, modelu i rocznika.
+      </p>
+    </div>
+  </section>
+
+  <section id="jak" class="band band--alt">
+    <div class="wrap">
+      <p class="eyebrow">Przebieg naprawy</p>
+      <h2 class="h2">Trzy kroki, zero niespodzianek na fakturze.</h2>
+      <ol class="steps">
+        {kroki.map((k) => (
+          <li>
+            <span class="steps__n">{k.n}</span>
+            <h3>{k.t}</h3>
+            <p>{k.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <p class="eyebrow">Opinie z wizytówki Google</p>
+      <div class="quotes">
+        <blockquote>
+          <p>Przyjechałem bez zapowiedzi z hałasem w zawieszeniu. Zdiagnozowali przy mnie, wymienili łącznik, wyjechałem po godzinie.</p>
+          <cite>Paweł M.</cite>
+        </blockquote>
+        <blockquote>
+          <p>Jedyny warsztat, w którym dostałem wycenę telefonicznie i cena się potem zgadzała co do złotówki.</p>
+          <cite>Anna K.</cite>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section id="kontakt" class="band band--alt">
+    <div class="wrap kontakt">
+      <div>
+        <p class="eyebrow">Kontakt</p>
+        <h2 class="h2">Zadzwoń — nie mamy formularza.</h2>
+        <p class="lead">
+          Przez telefon ustalimy termin szybciej niż mailem. Jeśli nie odbieramy,
+          jesteśmy pod autem — oddzwaniamy tego samego dnia.
+        </p>
+        <p class="tel"><a href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>{biz.phone}</a></p>
+        <p class="fine">{biz.street}, {biz.zip} {biz.city} · wjazd od podwórza</p>
+      </div>
+      <div class="ph ph--map">
+        Miejsce na mapę Google (iframe) lub zdjęcie wjazdu do warsztatu
+      </div>
+    </div>
+  </section>
+</Site>
+
+<style is:global>
+  /* --- TOKENY: warsztat. Chłodny beton, ciężka kondensowana typografia,
+         jeden ostrzegawczy akcent użyty tylko tam, gdzie ma być klik. --- */
+  :root {
+    --bg: #e9eae7;
+    --bg-alt: #dedfdb;
+    --ink: #16181a;
+    --muted: #5a6064;
+    --line: #c3c5c0;
+    --accent: #ffb400;
+    --accent-dark: #e6a200;
+    --on-accent: #16181a;
+    --radius: 2px;
+    --maxw: 1140px;
+    --font-display: 'Barlow Condensed', system-ui, sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  h1, h2, h3 { text-transform: uppercase; letter-spacing: 0.005em; }
+
+  .hero { padding-block: clamp(2.5rem, 7vw, 5rem) clamp(3rem, 8vw, 6rem); }
+
+  .hero__grid { display: grid; gap: 2.5rem; align-items: start; }
+  @media (min-width: 900px) {
+    .hero__grid { grid-template-columns: 1.55fr 1fr; gap: 4rem; }
+  }
+
+  .hero h1 { font-size: clamp(2.9rem, 8vw, 5.25rem); font-weight: 700; }
+
+  .lead { font-size: 1.125rem; color: var(--muted); max-width: 46ch; }
+
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+
+  .plate {
+    border: 2px solid var(--ink);
+    background: #fff;
+    padding: 1.35rem 1.5rem 1.1rem;
+  }
+  .plate__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px dashed var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .plate__row span { color: var(--muted); }
+  .plate__row strong { text-align: right; }
+  .plate__note { font-size: 0.75rem; color: var(--muted); margin: 0.9rem 0 0; }
+
+  .band--alt { background: var(--bg-alt); }
+
+  .h2 { font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 700; margin-bottom: 2rem; }
+
+  .price { width: 100%; border-collapse: collapse; }
+  .price tr { border-bottom: 1px solid var(--line); }
+  .price th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 1.05rem;
+    padding: 1.05rem 0;
+  }
+  .price td { padding: 1.05rem 0; font-family: var(--font-mono); font-size: 0.9rem; }
+  .price__time { color: var(--muted); text-align: right; padding-right: 2rem !important; }
+  .price__val { text-align: right; font-weight: 600; white-space: nowrap; }
+
+  .fine { font-size: 0.85rem; color: var(--muted); margin-top: 1.5rem; max-width: 60ch; }
+
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2rem; }
+  @media (min-width: 800px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+  .steps__n {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
+  .steps h3 { font-size: 1.4rem; margin: 0.5rem 0 0.6rem; }
+  .steps p { margin: 0; color: var(--muted); font-size: 0.98rem; }
+
+  .quotes { display: grid; gap: 2rem; }
+  @media (min-width: 800px) { .quotes { grid-template-columns: 1fr 1fr; gap: 3rem; } }
+  blockquote { margin: 0; border-left: 3px solid var(--accent); padding-left: 1.35rem; }
+  blockquote p { font-size: 1.15rem; margin: 0 0 0.75rem; }
+  cite { font-style: normal; font-size: 0.85rem; color: var(--muted); }
+
+  .kontakt { display: grid; gap: 2.5rem; align-items: center; }
+  @media (min-width: 900px) { .kontakt { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+
+  .tel { margin: 1.75rem 0 0.5rem; }
+  .tel a {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 4px solid var(--accent);
+  }
+
+  .ph {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 1.5rem;
+    aspect-ratio: 4 / 3;
+    background: repeating-linear-gradient(45deg, #d5d7d2 0 12px, #cfd1cc 12px 24px);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+</style>
