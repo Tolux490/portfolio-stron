@@ -100,3 +100,30 @@ a w `site` wpisz tę domenę.
 
 Uwaga: na darmowym planie GitHub Pages działa tylko z repozytorium publicznym.
 Dla portfolio to bez znaczenia, dla kodu klienta — już tak.
+
+## Dodawanie zdjęć
+
+1. Wrzuć plik do `public/img/`, np. `warsztat-hala.webp`.
+   Nazwa bez polskich znaków i spacji. WebP, szerokość maks. 1600 px, do ~200 KB.
+2. W pliku strony podaj nazwę pliku:
+
+```astro
+<Foto src="warsztat-hala.webp" alt="Hala warsztatu w Wołominie" ratio="4/3" />
+```
+
+Puste `src` = widoczna zaślepka z opisem, co ma tam być.
+Na stronie nieruchomości zdjęcia ofert podajesz w polu `foto` w tablicy `oferty`.
+
+`alt` opisuje, co widać na zdjęciu — potrzebny czytnikom ekranu i Google.
+`ratio` to proporcje kadru: `4/3`, `3/2`, `16/9`, `4/5` (pionowe).
+
+Kompresja: squoosh.app — wrzuć plik, wybierz WebP, jakość 75, pobierz.
+
+## Testowanie na telefonie
+
+```bash
+npm run dev -- --host
+```
+
+Terminal pokaże adres w stylu `http://192.168.0.14:4321`. Wpisz go w przeglądarce
+na telefonie podłączonym do tego samego wi-fi. Zmiany widać na żywo.

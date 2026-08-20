@@ -1,0 +1,35 @@
+---
+/**
+ * Zdjęcie z placeholderem.
+ *
+ * Użycie:
+ *   <Foto src="warsztat-hala.webp" alt="Hala warsztatu" ratio="4/3" label="Zdjęcie hali" />
+ *
+ * Dopóki `src` jest puste, wyświetla zaślepkę z opisem, co ma tu być.
+ * Pliki wrzucasz do katalogu public/img/ — ścieżka do bazy liczy się sama,
+ * więc działa i na własnej domenie, i na GitHub Pages w podkatalogu.
+ */
+const { src = '', alt = '', ratio = '4/3', label = 'Zdjęcie' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+{src ? (
+  <img
+    class="foto"
+    src={`${base}/img/${src}`}
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    style={`aspect-ratio:${ratio}`}
+  />
+) : (
+  <div class="ph" style={`aspect-ratio:${ratio}`}>{label}</div>
+)}
+
+<style>
+  .foto {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
+</style>

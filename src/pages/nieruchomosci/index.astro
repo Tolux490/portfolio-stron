@@ -1,6 +1,7 @@
 ---
 import Site from '../../layouts/Site.astro';
 import { nieruchomosci as biz } from '../../data/firmy.js';
+import Foto from '../../components/Foto.astro';
 
 const fonts =
   'https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&family=Syne:wght@600;800&display=swap';
@@ -13,13 +14,14 @@ const links = [
 
 // Na demo oferty wpisane na sztywno. Prawdziwy portal z wyszukiwarką
 // to już aplikacja z bazą danych — inny zakres i inna wycena.
+// foto: nazwa pliku z public/img/ — puste = zaślepka
 const oferty = [
-  { typ: 'Mieszkanie', gdzie: 'Wołomin, ul. Kobyłkowska', cena: '465 000', m: '48', pok: '2', pietro: '3/4', rok: '2018' },
-  { typ: 'Dom wolnostojący', gdzie: 'Duczki', cena: '1 190 000', m: '142', pok: '5', pietro: '—', rok: '2009' },
-  { typ: 'Mieszkanie', gdzie: 'Wołomin, centrum', cena: '549 000', m: '62', pok: '3', pietro: '1/3', rok: '1998' },
-  { typ: 'Działka budowlana', gdzie: 'Zagościniec', cena: '289 000', m: '1100', pok: '—', pietro: '—', rok: 'MPZP' },
-  { typ: 'Kawalerka', gdzie: 'Kobyłka', cena: '339 000', m: '31', pok: '1', pietro: '2/5', rok: '2021' },
-  { typ: 'Bliźniak', gdzie: 'Marki', cena: '985 000', m: '118', pok: '4', pietro: '—', rok: '2016' },
+  { typ: 'Mieszkanie', gdzie: 'Wołomin, ul. Kobyłkowska', cena: '465 000', m: '48', pok: '2', pietro: '3/4', rok: '2018', foto: '' },
+  { typ: 'Dom wolnostojący', gdzie: 'Duczki', cena: '1 190 000', m: '142', pok: '5', pietro: '—', rok: '2009', foto: '' },
+  { typ: 'Mieszkanie', gdzie: 'Wołomin, centrum', cena: '549 000', m: '62', pok: '3', pietro: '1/3', rok: '1998', foto: '' },
+  { typ: 'Działka budowlana', gdzie: 'Zagościniec', cena: '289 000', m: '1100', pok: '—', pietro: '—', rok: 'MPZP', foto: '' },
+  { typ: 'Kawalerka', gdzie: 'Kobyłka', cena: '339 000', m: '31', pok: '1', pietro: '2/5', rok: '2021', foto: '' },
+  { typ: 'Bliźniak', gdzie: 'Marki', cena: '985 000', m: '118', pok: '4', pietro: '—', rok: '2016', foto: '' },
 ];
 
 const zespol = [
@@ -61,7 +63,7 @@ const zespol = [
       <div class="oferty">
         {oferty.map((o) => (
           <article class="oferta">
-            <div class="ph">Zdjęcie nieruchomości</div>
+            <Foto src={o.foto} alt={`${o.typ} — ${o.gdzie}`} ratio="3/2" label="Zdjęcie nieruchomości" />
             <div class="oferta__body">
               <p class="oferta__typ">{o.typ}</p>
               <h3>{o.gdzie}</h3>
@@ -94,7 +96,7 @@ const zespol = [
           <li><strong>Sprawdzenie stanu prawnego</strong> księgi wieczystej przed publikacją.</li>
         </ul>
       </div>
-      <div class="ph ph--wide">Zdjęcie biura lub zespołu przy pracy</div>
+      <Foto src="" alt="Biuro Kontur Nieruchomości" ratio="4/3" label="Zdjęcie biura lub zespołu przy pracy" />
     </div>
   </section>
 
@@ -156,7 +158,8 @@ const zespol = [
     font-size: clamp(4rem, 12vw, 6.5rem);
     font-weight: 800;
     line-height: 0.85;
-    letter-spacing: -0.05em;
+    letter-spacing: -0.06em;
+    font-variant-numeric: tabular-nums;
   }
   .stat__label {
     display: block;
@@ -202,10 +205,12 @@ const zespol = [
 
   .oferta__cena {
     margin: 0;
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-family: var(--font-body);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   .fine { font-size: 0.85rem; color: var(--muted); margin-top: 1.75rem; max-width: 62ch; }

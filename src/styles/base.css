@@ -28,6 +28,7 @@ h1, h2, h3 {
   line-height: 1.05;
   margin: 0;
   text-wrap: balance;
+  overflow-wrap: break-word;   /* "nieruchomości" nie rozpycha ekranu 320 px */
 }
 
 p { text-wrap: pretty; }

@@ -1,6 +1,7 @@
 ---
 import Site from '../../layouts/Site.astro';
 import { mechanik as biz } from '../../data/firmy.js';
+import Foto from '../../components/Foto.astro';
 
 const fonts =
   'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap';
@@ -137,9 +138,7 @@ const kroki = [
         <p class="tel"><a href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>{biz.phone}</a></p>
         <p class="fine">{biz.street}, {biz.zip} {biz.city} · wjazd od podwórza</p>
       </div>
-      <div class="ph ph--map">
-        Miejsce na mapę Google (iframe) lub zdjęcie wjazdu do warsztatu
-      </div>
+      <Foto src="" alt="Wjazd do warsztatu" ratio="4/3" label="Zdjęcie wjazdu do warsztatu lub mapa Google" />
     </div>
   </section>
 </Site>
@@ -208,11 +207,18 @@ const kroki = [
     font-size: 1.05rem;
     padding: 1.05rem 0;
   }
-  .price td { padding: 1.05rem 0; font-family: var(--font-mono); font-size: 0.9rem; }
+  .price td { padding: 1.05rem 0; font-family: var(--font-mono); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
   .price__time { color: var(--muted); text-align: right; padding-right: 2rem !important; }
   .price__val { text-align: right; font-weight: 600; white-space: nowrap; }
 
   .fine { font-size: 0.85rem; color: var(--muted); margin-top: 1.5rem; max-width: 60ch; }
+
+  @media (max-width: 560px) {
+    .price tr { display: grid; grid-template-columns: 1fr auto; padding: 0.9rem 0; }
+    .price th { grid-column: 1 / -1; padding: 0 0 0.35rem; font-size: 1rem; }
+    .price td { padding: 0; }
+    .price__time { text-align: left; padding-right: 0 !important; }
+  }
 
   .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2rem; }
   @media (min-width: 800px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }

@@ -1,6 +1,7 @@
 ---
 import Site from '../../layouts/Site.astro';
 import { restauracja as biz } from '../../data/firmy.js';
+import Foto from '../../components/Foto.astro';
 
 const fonts =
   'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Karla:wght@400;500;600&display=swap';
@@ -98,7 +99,7 @@ const karta = [
         </p>
         <p class="fine">Sala na 34 miejsca. Latem osiem stolików w ogrodzie od podwórza.</p>
       </div>
-      <div class="ph">Zdjęcie sali lub otwartej kuchni, wieczorowe światło</div>
+      <Foto src="" alt="Sala restauracji" ratio="4/5" label="Zdjęcie sali lub otwartej kuchni, wieczorowe światło" />
     </div>
   </section>
 
@@ -178,6 +179,15 @@ const karta = [
     min-width: 1.5rem;
   }
   .menu__cena { font-variant-numeric: tabular-nums; color: var(--muted); }
+
+  /* Na wąskim ekranie kropkowane wypełnienie przeszkadza: nazwa dania
+     i tak się łamie, więc cenę odsuwamy po prostu w prawo. */
+  @media (max-width: 560px) {
+    .menu li { align-items: flex-start; gap: 1rem; }
+    .menu__kropki { display: none; }
+    .menu__cena { margin-left: auto; }
+    .menu__nazwa { flex: 1; }
+  }
 
   .fine { font-size: 0.85rem; color: var(--muted); max-width: 58ch; }
 
