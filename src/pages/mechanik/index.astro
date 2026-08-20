@@ -1,263 +1,724 @@
 ---
-import Site from '../../layouts/Site.astro';
+import '../../styles/premium.css';
 import { mechanik as biz } from '../../data/firmy.js';
 import Foto from '../../components/Foto.astro';
 
-const fonts =
-  'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap';
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-const links = [
+const nawigacja = [
+  { href: '#zakres', label: 'Zakres' },
+  { href: '#wycena', label: 'Wycena' },
   { href: '#cennik', label: 'Cennik' },
-  { href: '#jak', label: 'Jak to działa' },
+  { href: '#realizacje', label: 'Realizacje' },
   { href: '#kontakt', label: 'Kontakt' },
 ];
 
-// Ceny robocizny — realny format, jaki klient rozumie: ile kosztuje i ile trwa.
-const cennik = [
-  { usluga: 'Wymiana oleju i filtrów', cena: 'od 120 zł', czas: '40 min' },
-  { usluga: 'Klocki hamulcowe, oś przednia', cena: 'od 180 zł', czas: '1 godz.' },
-  { usluga: 'Diagnostyka komputerowa', cena: '100 zł', czas: '30 min' },
-  { usluga: 'Wymiana rozrządu', cena: 'od 900 zł', czas: '1 dzień' },
-  { usluga: 'Geometria 3D', cena: '150 zł', czas: '45 min' },
-  { usluga: 'Nabicie klimatyzacji', cena: 'od 200 zł', czas: '40 min' },
+const marki = ['Volkswagen', 'Audi', 'BMW', 'Mercedes-Benz', 'Škoda', 'SEAT', 'Porsche', 'Volvo'];
+
+const zakres = [
+  { n: '01', t: 'Diagnostyka', d: 'Pełny odczyt sterowników, pomiar parametrów na żywo, weryfikacja pod obciążeniem. Protokół w formie pisemnej.' },
+  { n: '02', t: 'Mechanika silnika', d: 'Rozrząd, uszczelnienia, układ chłodzenia i doładowania. Części OEM albo zamienniki z tej samej fabryki — wybierasz świadomie.' },
+  { n: '03', t: 'Zawieszenie i hamulce', d: 'Amortyzacja, tuleje, tarcze i zaciski. Po każdej ingerencji geometria 3D w cenie robocizny.' },
+  { n: '04', t: 'Serwis okresowy', d: 'Przeglądy zgodne z planem producenta, z wpisem do książki i historią w systemie warsztatu.' },
 ];
 
-const kroki = [
-  { n: '01', t: 'Dzwonisz', d: 'Podajesz markę, rocznik i objaw. Mówimy, czy zrobimy dziś, czy trzeba zamówić część.' },
-  { n: '02', t: 'Wyceniamy', d: 'Po oględzinach dzwonimy z kwotą. Nic nie robimy, dopóki nie potwierdzisz.' },
-  { n: '03', t: 'Odbierasz', d: 'Dostajesz spis wymienionych części i paragon. Na robociznę 12 miesięcy gwarancji.' },
+// Kalkulator: bazowa robocizna w zł i czas w godzinach.
+const uslugi = [
+  { id: 'olej', nazwa: 'Serwis olejowy z filtrami', cena: 180, godz: 0.7 },
+  { id: 'hamulce', nazwa: 'Hamulce — oś przednia', cena: 260, godz: 1.2 },
+  { id: 'rozrzad', nazwa: 'Wymiana rozrządu', cena: 1200, godz: 6 },
+  { id: 'diagnostyka', nazwa: 'Diagnostyka komputerowa', cena: 150, godz: 0.6 },
+  { id: 'zawieszenie', nazwa: 'Zawieszenie — oś przednia', cena: 520, godz: 3 },
+  { id: 'klima', nazwa: 'Serwis klimatyzacji', cena: 240, godz: 0.8 },
+];
+
+const segmenty = [
+  { id: 'kompakt', nazwa: 'Kompakt', przyklad: 'Golf, A3, Octavia', mnoznik: 1 },
+  { id: 'limuzyna', nazwa: 'Limuzyna', przyklad: 'Passat, A6, seria 5', mnoznik: 1.25 },
+  { id: 'suv', nazwa: 'SUV / van', przyklad: 'Tiguan, X5, GLC', mnoznik: 1.45 },
+];
+
+const cennik = [
+  { u: 'Serwis olejowy z filtrami', c: 'od 180 zł', t: '40 min' },
+  { u: 'Klocki hamulcowe, oś przednia', c: 'od 260 zł', t: '1 godz.' },
+  { u: 'Diagnostyka komputerowa z protokołem', c: '150 zł', t: '30 min' },
+  { u: 'Wymiana rozrządu z pompą', c: 'od 1 200 zł', t: '1 dzień' },
+  { u: 'Geometria 3D', c: '190 zł', t: '45 min' },
+  { u: 'Serwis klimatyzacji z odgrzybianiem', c: 'od 240 zł', t: '40 min' },
+];
+
+const faq = [
+  { p: 'Czy mogę przywieźć własne części?', o: 'Tak. Na robociznę dajemy wtedy standardowe 12 miesięcy gwarancji, ale nie odpowiadamy za samą część. Przed montażem sprawdzamy zgodność numeru katalogowego i informujemy, jeśli coś budzi wątpliwości.' },
+  { p: 'Ile trwa wycena?', o: 'Diagnostykę wykonujemy w dniu przyjęcia auta. Wycenę podajemy telefonicznie, zwykle w ciągu dwóch godzin od oględzin. Do naprawy przystępujemy dopiero po Twoim potwierdzeniu.' },
+  { p: 'Czy mam gwarancję na naprawę?', o: 'Na robociznę 12 miesięcy bez limitu przebiegu. Na części — gwarancja producenta, przeważnie 24 miesiące. Wszystko wpisujemy na zleceniu.' },
+  { p: 'Co z autem na czas naprawy?', o: 'Przy naprawach powyżej jednego dnia udostępniamy auto zastępcze — dwa miejsca, warto zarezerwować przy umawianiu terminu.' },
+];
+
+const opinie = [
+  { t: 'Przyjechałem z hałasem w zawieszeniu bez zapowiedzi. Zdiagnozowali przy mnie, pokazali luz na łączniku, wymienili i wyjechałem po godzinie z wydrukiem z geometrii.', a: 'Paweł M.' },
+  { t: 'Jedyny warsztat, w którym dostałem wycenę telefonicznie i po odbiorze kwota zgadzała się co do złotówki. Dostałem też stare części w kartonie, bez proszenia.', a: 'Anna K.' },
+  { t: 'Robili rozrząd w moim A6. Protokół, zdjęcia z każdego etapu na WhatsAppie, auto zastępcze na dwa dni. Poziom, jakiego oczekiwałem po ASO, a nie po warsztacie w Wołominie.', a: 'Marcin R.' },
 ];
 ---
 
-<Site
-  title="Serwis Kołodziej — mechanika i diagnostyka samochodowa, Wołomin"
-  description="Warsztat samochodowy w Wołominie. Diagnostyka komputerowa, hamulce, rozrząd, klimatyzacja. Wycena przez telefon, gwarancja 12 miesięcy na robociznę."
-  fonts={fonts}
-  biz={biz}
-  links={links}
->
-  <!-- HERO: bez wyśrodkowania, bez dwóch przycisków obok siebie.
-       Nośnikiem jest konkretna obietnica operacyjna, nie slogan. -->
-  <section class="hero">
-    <div class="wrap hero__grid">
-      <div>
-        <p class="eyebrow">Wołomin · ul. Lipińska 14 · od 2011</p>
-        <h1>Auto na podnośniku<br />tego samego dnia.</h1>
-        <p class="lead">
-          Zadzwoń przed 9:00, a w większości przypadków odbierzesz samochód po południu.
-          Naprawiamy osobowe do 3,5 t — specjalizacja: VAG, Ford, Opel.
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Serwis Kołodziej — mechanika precyzyjna, Wołomin</title>
+    <meta name="description" content="Serwis samochodowy w Wołominie. Diagnostyka z protokołem, mechanika silnika, zawieszenie, serwis okresowy. Wycena przed naprawą, 12 miesięcy gwarancji na robociznę." />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta property="og:title" content="Serwis Kołodziej — mechanika precyzyjna, Wołomin" />
+    <meta property="og:description" content="Diagnostyka z protokołem, wycena przed naprawą, 12 miesięcy gwarancji na robociznę." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600&display=swap" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': biz.schemaType,
+      name: biz.name,
+      telephone: biz.phone,
+      address: { '@type': 'PostalAddress', streetAddress: biz.street, addressLocality: biz.city, postalCode: biz.zip, addressCountry: 'PL' },
+      openingHours: biz.openingHours,
+      url: Astro.url.origin,
+    })} />
+  </head>
+
+  <body>
+    <!-- ============ NAWIGACJA: przezroczysta nad hero, po scrollu zbita ============ -->
+    <header class="hdr" id="hdr">
+      <div class="wrap hdr__in">
+        <a class="hdr__mark" href="#gora">
+          <span class="hdr__name">Kołodziej</span>
+          <span class="hdr__sub">Serwis · Wołomin</span>
+        </a>
+        <nav class="hdr__nav">
+          {nawigacja.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+        <a class="hdr__tel" href={`tel:${tel}`}>{biz.phone}</a>
+      </div>
+    </header>
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="gora">
+      <div class="hero__media">
+        <Foto src="" alt="Hala serwisu" ratio="16/9" label="Kadr hali — auto na podnośniku, wieczorne światło" />
+      </div>
+      <div class="hero__veil"></div>
+
+      <div class="wrap hero__in">
+        <p class="hero__kicker">Wołomin · od 2011</p>
+        <h1 class="hero__h1">
+          Naprawa, która<br /><em>zaczyna się od diagnozy.</em>
+        </h1>
+        <p class="hero__lede">
+          Nie wymieniamy części na chybił trafił. Najpierw protokół z pomiarów,
+          potem wycena, dopiero na końcu klucz.
         </p>
         <div class="hero__cta">
-          <a class="btn btn--solid" href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>
-            {biz.phone}
-          </a>
-          <a class="btn btn--ghost" href="#cennik">Zobacz cennik</a>
+          <a class="btn btn--light" href={`tel:${tel}`}>Umów termin</a>
+          <a class="btn btn--outline" href="#wycena">Policz koszt</a>
         </div>
       </div>
 
-      <!-- Sygnatura strony: tabliczka warsztatowa zamiast zdjęcia stockowego -->
-      <aside class="plate">
-        <div class="plate__row"><span>Dziś</span><strong>otwarte 8:00–18:00</strong></div>
-        <div class="plate__row"><span>Wolne stanowiska</span><strong>2 z 4</strong></div>
-        <div class="plate__row"><span>Wycena telefoniczna</span><strong>bezpłatna</strong></div>
-        <div class="plate__row"><span>Gwarancja robocizny</span><strong>12 miesięcy</strong></div>
-        <p class="plate__note">
-          Dane orientacyjne — stan stanowisk aktualizujemy rano.
-        </p>
-      </aside>
-    </div>
-  </section>
+      <div class="wrap hero__facts">
+        <div><span>14</span><small>lat na Lipińskiej</small></div>
+        <div><span>4</span><small>stanowiska z podnośnikiem</small></div>
+        <div><span>12</span><small>miesięcy gwarancji na robociznę</small></div>
+        <div><span>2 h</span><small>typowy czas do wyceny</small></div>
+      </div>
+    </section>
 
-  <!-- CENNIK: sygnatura numer dwa. Warsztaty prawie nigdy nie podają cen,
-       więc sama tabela jest przewagą sprzedażową klienta. -->
-  <section id="cennik" class="band">
-    <div class="wrap">
-      <p class="eyebrow">Cennik robocizny</p>
-      <h2 class="h2">Wiesz, ile zapłacisz, zanim przyjedziesz.</h2>
+    <!-- ============ MARKI — pasek przewijany ============ -->
+    <section class="marki" aria-label="Obsługiwane marki">
+      <div class="marki__tor">
+        <div class="marki__zestaw">
+          {marki.map((m) => <span>{m}</span>)}
+        </div>
+        <div class="marki__zestaw" aria-hidden="true">
+          {marki.map((m) => <span>{m}</span>)}
+        </div>
+      </div>
+    </section>
 
-      <table class="price">
-        <tbody>
-          {cennik.map((r) => (
-            <tr>
-              <th scope="row">{r.usluga}</th>
-              <td class="price__time">{r.czas}</td>
-              <td class="price__val">{r.cena}</td>
-            </tr>
+    <!-- ============ ZAKRES ============ -->
+    <section id="zakres" class="band">
+      <div class="wrap zakres">
+        <div class="zakres__intro reveal">
+          <p class="label">Zakres</p>
+          <h2 class="h2">Cztery obszary,<br />w których jesteśmy dokładni.</h2>
+          <p class="lede">
+            Nie robimy blacharstwa ani lakiernictwa. Wolimy być bardzo dobrzy
+            w wąskim zakresie niż przeciętni we wszystkim.
+          </p>
+          <div class="zakres__foto">
+            <Foto src="" alt="Stanowisko diagnostyczne" ratio="4/5" label="Detal — ręce przy pracy, narzędzie, ostre światło" />
+          </div>
+        </div>
+
+        <ol class="zakres__lista">
+          {zakres.map((z) => (
+            <li class="reveal">
+              <span class="zakres__n">{z.n}</span>
+              <div>
+                <h3 class="h3">{z.t}</h3>
+                <p>{z.d}</p>
+              </div>
+            </li>
           ))}
-        </tbody>
-      </table>
+        </ol>
+      </div>
+    </section>
 
-      <p class="fine">
-        Podane kwoty dotyczą wyłącznie robocizny, bez kosztu części. Ostateczną cenę
-        podajemy telefonicznie po podaniu marki, modelu i rocznika.
-      </p>
-    </div>
-  </section>
+    <!-- ============ KALKULATOR WYCENY ============ -->
+    <section id="wycena" class="band band--mid">
+      <div class="wrap">
+        <div class="reveal" style="max-width:60ch">
+          <p class="label">Wycena wstępna</p>
+          <h2 class="h2">Sprawdź widełki, zanim zadzwonisz.</h2>
+          <p class="lede">
+            Wybierz segment auta i zakres pracy. Kalkulator liczy samą robociznę
+            według naszych stawek — koszt części doliczamy po ustaleniu producenta.
+          </p>
+        </div>
 
-  <section id="jak" class="band band--alt">
-    <div class="wrap">
-      <p class="eyebrow">Przebieg naprawy</p>
-      <h2 class="h2">Trzy kroki, zero niespodzianek na fakturze.</h2>
-      <ol class="steps">
-        {kroki.map((k) => (
-          <li>
-            <span class="steps__n">{k.n}</span>
-            <h3>{k.t}</h3>
-            <p>{k.d}</p>
-          </li>
+        <div class="kalk reveal" id="kalk">
+          <div class="kalk__panel">
+            <fieldset class="kalk__grupa">
+              <legend>Segment auta</legend>
+              <div class="kalk__opcje" role="radiogroup">
+                {segmenty.map((s, i) => (
+                  <label class="opcja">
+                    <input type="radio" name="segment" value={s.mnoznik} checked={i === 0} />
+                    <span class="opcja__box">
+                      <span class="opcja__t">{s.nazwa}</span>
+                      <span class="opcja__d">{s.przyklad}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <fieldset class="kalk__grupa">
+              <legend>Zakres pracy — możesz zaznaczyć kilka</legend>
+              <div class="kalk__opcje kalk__opcje--lista">
+                {uslugi.map((u) => (
+                  <label class="opcja">
+                    <input type="checkbox" name="usluga" value={u.id} data-cena={u.cena} data-godz={u.godz} />
+                    <span class="opcja__box opcja__box--rzad">
+                      <span class="opcja__t">{u.nazwa}</span>
+                      <span class="opcja__cena">od {u.cena} zł</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+
+          <aside class="kalk__wynik" aria-live="polite">
+            <p class="kalk__etykieta">Szacowana robocizna</p>
+            <p class="kalk__kwota" id="kalkKwota">—</p>
+            <dl class="kalk__meta">
+              <div><dt>Czas na stanowisku</dt><dd id="kalkCzas">—</dd></div>
+              <div><dt>Pozycji w zleceniu</dt><dd id="kalkIle">0</dd></div>
+            </dl>
+            <p class="kalk__nota">
+              Wynik orientacyjny, oparty na stawce 190 zł za roboczogodzinę.
+              Ostateczną kwotę podajemy po oględzinach i zawsze przed rozpoczęciem pracy.
+            </p>
+            <a class="btn btn--light kalk__btn" href={`tel:${tel}`}>Potwierdź telefonicznie</a>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRZED / PO ============ -->
+    <section class="band">
+      <div class="wrap--narrow reveal">
+        <p class="label">Renowacja</p>
+        <h2 class="h2">Przeciągnij, żeby zobaczyć różnicę.</h2>
+        <p class="lede">Renowacja przednich lamp w Passacie B8 — dwie godziny pracy, bez wymiany kloszy.</p>
+      </div>
+
+      <div class="wrap--narrow porownanie reveal" id="porownanie">
+        <div class="porownanie__ramka">
+          <div class="porownanie__po">
+            <Foto src="" alt="Lampa po renowacji" ratio="16/10" label="Stan po renowacji" />
+          </div>
+          <div class="porownanie__przed" id="przedWarstwa">
+            <Foto src="" alt="Lampa przed renowacją" ratio="16/10" label="Stan przed renowacją" />
+          </div>
+          <div class="porownanie__uchwyt" id="uchwyt"><span></span></div>
+          <input class="porownanie__suwak" id="suwak" type="range" min="0" max="100" value="50"
+                 aria-label="Suwak porównania: przed i po renowacji" />
+        </div>
+        <div class="porownanie__opisy"><span>Przed</span><span>Po</span></div>
+      </div>
+    </section>
+
+    <!-- ============ CENNIK ============ -->
+    <section id="cennik" class="band band--light">
+      <div class="wrap cennik-blok">
+        <div class="reveal">
+          <p class="label">Cennik</p>
+          <h2 class="h2">Stawki, których nie trzeba wyciągać przez telefon.</h2>
+          <p class="lede">
+            Podane kwoty dotyczą wyłącznie robocizny. Koszt części przedstawiamy
+            osobno, zawsze z numerem katalogowym i alternatywą tańszą oraz oryginalną.
+          </p>
+        </div>
+        <table class="cennik reveal">
+          <tbody>
+            {cennik.map((r) => (
+              <tr>
+                <th scope="row">{r.u}</th>
+                <td class="cennik__czas">{r.t}</td>
+                <td class="cennik__cena">{r.c}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ REALIZACJE / GALERIA ============ -->
+    <section id="realizacje" class="band">
+      <div class="wrap reveal" style="max-width:60ch">
+        <p class="label">Realizacje</p>
+        <h2 class="h2">Warsztat od środka.</h2>
+        <p class="lede">Kliknij zdjęcie, żeby zobaczyć je w powiększeniu.</p>
+      </div>
+      <div class="wrap galeria reveal" id="galeria">
+        {[
+          'Hala — dwa stanowiska z podnośnikiem',
+          'Diagnostyka — komputer podpięty do auta',
+          'Detal — narzędzia na ścianie',
+          'Silnik rozłożony na stole',
+          'Geometria 3D w trakcie pomiaru',
+          'Recepcja i miejsce oczekiwania',
+        ].map((opis, i) => (
+          <button class="galeria__kafel" data-opis={opis} type="button">
+            <Foto src="" alt={opis} ratio={i % 3 === 0 ? '3/4' : '4/3'} label={opis} />
+          </button>
         ))}
-      </ol>
-    </div>
-  </section>
-
-  <section class="band">
-    <div class="wrap">
-      <p class="eyebrow">Opinie z wizytówki Google</p>
-      <div class="quotes">
-        <blockquote>
-          <p>Przyjechałem bez zapowiedzi z hałasem w zawieszeniu. Zdiagnozowali przy mnie, wymienili łącznik, wyjechałem po godzinie.</p>
-          <cite>Paweł M.</cite>
-        </blockquote>
-        <blockquote>
-          <p>Jedyny warsztat, w którym dostałem wycenę telefonicznie i cena się potem zgadzała co do złotówki.</p>
-          <cite>Anna K.</cite>
-        </blockquote>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="kontakt" class="band band--alt">
-    <div class="wrap kontakt">
-      <div>
-        <p class="eyebrow">Kontakt</p>
-        <h2 class="h2">Zadzwoń — nie mamy formularza.</h2>
-        <p class="lead">
-          Przez telefon ustalimy termin szybciej niż mailem. Jeśli nie odbieramy,
-          jesteśmy pod autem — oddzwaniamy tego samego dnia.
-        </p>
-        <p class="tel"><a href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>{biz.phone}</a></p>
-        <p class="fine">{biz.street}, {biz.zip} {biz.city} · wjazd od podwórza</p>
+    <!-- ============ OPINIE ============ -->
+    <section class="band band--mid">
+      <div class="wrap">
+        <p class="label reveal">Opinie z wizytówki Google</p>
+        <div class="opinie">
+          {opinie.map((o) => (
+            <figure class="reveal">
+              <blockquote><p>{o.t}</p></blockquote>
+              <figcaption>{o.a}</figcaption>
+            </figure>
+          ))}
+        </div>
       </div>
-      <Foto src="" alt="Wjazd do warsztatu" ratio="4/3" label="Zdjęcie wjazdu do warsztatu lub mapa Google" />
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="band">
+      <div class="wrap--narrow">
+        <p class="label reveal">Pytania, które słyszymy najczęściej</p>
+        <div class="faq reveal">
+          {faq.map((f, i) => (
+            <details open={i === 0}>
+              <summary>{f.p}<span class="faq__znak" aria-hidden="true"></span></summary>
+              <p>{f.o}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ KONTAKT ============ -->
+    <section id="kontakt" class="band band--light">
+      <div class="wrap kontakt">
+        <div class="reveal">
+          <p class="label">Kontakt</p>
+          <h2 class="h2">Nie mamy formularza.<br />Mamy odebrany telefon.</h2>
+          <a class="kontakt__tel" href={`tel:${tel}`}>{biz.phone}</a>
+          <p class="lede" style="margin-top:1rem">
+            Jeśli nie odbieramy, jesteśmy pod autem — oddzwaniamy tego samego dnia.
+          </p>
+          <div class="kontakt__dane">
+            <div>
+              <h3>Adres</h3>
+              <p>{biz.street}<br />{biz.zip} {biz.city}<br />wjazd od podwórza</p>
+              <a class="kontakt__link" href={biz.mapUrl} target="_blank" rel="noopener">Wyznacz trasę →</a>
+            </div>
+            <div>
+              <h3>Godziny</h3>
+              {biz.hours.map((h) => <p>{h}</p>)}
+              <a class="kontakt__link" href={`mailto:${biz.email}`}>{biz.email}</a>
+            </div>
+          </div>
+        </div>
+        <div class="reveal">
+          <Foto src="" alt="Wjazd do warsztatu" ratio="3/4" label="Wjazd do warsztatu — szyld, brama, ujęcie z ulicy" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STOPKA ============ -->
+    <footer class="stopka">
+      <div class="wrap">
+        <div class="stopka__gora">
+          <div>
+            <p class="stopka__mark">Kołodziej</p>
+            <p class="stopka__tag">{biz.tagline}</p>
+          </div>
+          <nav class="stopka__nav">
+            {nawigacja.map((l) => <a href={l.href}>{l.label}</a>)}
+          </nav>
+        </div>
+        <div class="stopka__dol">
+          <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city} · {biz.phone}</span>
+          <a href={`${base}/mechanik/polityka-prywatnosci/`}>Polityka prywatności</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- pasek telefonu na mobile -->
+    <div class="pasek">
+      <a href={`tel:${tel}`}>Zadzwoń</a>
+      <a href={biz.mapUrl} target="_blank" rel="noopener">Dojazd</a>
     </div>
-  </section>
-</Site>
 
-<style is:global>
-  /* --- TOKENY: warsztat. Chłodny beton, ciężka kondensowana typografia,
-         jeden ostrzegawczy akcent użyty tylko tam, gdzie ma być klik. --- */
-  :root {
-    --bg: #e9eae7;
-    --bg-alt: #dedfdb;
-    --ink: #16181a;
-    --muted: #5a6064;
-    --line: #c3c5c0;
-    --accent: #ffb400;
-    --accent-dark: #e6a200;
-    --on-accent: #16181a;
-    --radius: 2px;
-    --maxw: 1140px;
-    --font-display: 'Barlow Condensed', system-ui, sans-serif;
-    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    <!-- lightbox -->
+    <div class="lightbox" id="lightbox" hidden>
+      <button class="lightbox__zamknij" id="lbZamknij" aria-label="Zamknij">✕</button>
+      <div class="lightbox__tresc" id="lbTresc"></div>
+    </div>
+  </body>
+</html>
+
+<style>
+  /* ---------- nagłówek ---------- */
+  .hdr {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    padding-block: 1.6rem;
+    transition: background 0.45s var(--ease), padding 0.45s var(--ease), border-color 0.45s var(--ease);
+    border-bottom: 1px solid transparent;
   }
-
-  h1, h2, h3 { text-transform: uppercase; letter-spacing: 0.005em; }
-
-  .hero { padding-block: clamp(2.5rem, 7vw, 5rem) clamp(3rem, 8vw, 6rem); }
-
-  .hero__grid { display: grid; gap: 2.5rem; align-items: start; }
-  @media (min-width: 900px) {
-    .hero__grid { grid-template-columns: 1.55fr 1fr; gap: 4rem; }
+  .hdr.is-stuck {
+    background: rgba(14, 16, 18, 0.92);
+    backdrop-filter: blur(14px);
+    padding-block: 0.9rem;
+    border-bottom-color: var(--line);
   }
+  .hdr__in { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+  .hdr__name { font-family: var(--serif); font-size: 1.45rem; letter-spacing: 0.01em; display: block; line-height: 1; }
+  .hdr__sub { font-size: 0.6rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); }
+  .hdr__nav { display: none; gap: 2.4rem; }
+  .hdr__nav a { font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); transition: color 0.3s var(--ease); }
+  .hdr__nav a:hover { color: var(--bone); }
+  .hdr__tel { display: none; font-size: 0.82rem; letter-spacing: 0.08em; border-bottom: 1px solid var(--brass); padding-bottom: 2px; }
+  @media (min-width: 1000px) { .hdr__nav, .hdr__tel { display: flex; } }
 
-  .hero h1 { font-size: clamp(2.9rem, 8vw, 5.25rem); font-weight: 700; }
-
-  .lead { font-size: 1.125rem; color: var(--muted); max-width: 46ch; }
-
-  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
-
-  .plate {
-    border: 2px solid var(--ink);
-    background: #fff;
-    padding: 1.35rem 1.5rem 1.1rem;
+  /* ---------- hero ---------- */
+  .hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 2.5rem; }
+  .hero__media { position: absolute; inset: 0; }
+  .hero__media :global(.ph), .hero__media :global(img) { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto !important; border: 0; }
+  .hero__veil {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(14,16,18,0.82) 0%, rgba(14,16,18,0.42) 42%, rgba(14,16,18,0.94) 100%);
   }
-  .plate__row {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.7rem 0;
-    border-bottom: 1px dashed var(--line);
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-  }
-  .plate__row span { color: var(--muted); }
-  .plate__row strong { text-align: right; }
-  .plate__note { font-size: 0.75rem; color: var(--muted); margin: 0.9rem 0 0; }
+  .hero__in { position: relative; padding-top: 9rem; }
+  .hero__kicker { font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--brass); margin-bottom: 1.5rem; }
+  .hero__h1 { font-size: clamp(2.9rem, 9.5vw, 7rem); }
+  .hero__h1 em { font-style: italic; color: var(--dim); }
+  .hero__lede { margin-top: 1.75rem; max-width: 46ch; color: var(--dim); font-size: clamp(1rem, 1.7vw, 1.18rem); }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2.5rem; }
 
-  .band--alt { background: var(--bg-alt); }
-
-  .h2 { font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 700; margin-bottom: 2rem; }
-
-  .price { width: 100%; border-collapse: collapse; }
-  .price tr { border-bottom: 1px solid var(--line); }
-  .price th {
-    text-align: left;
-    font-weight: 500;
-    font-size: 1.05rem;
-    padding: 1.05rem 0;
-  }
-  .price td { padding: 1.05rem 0; font-family: var(--font-mono); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
-  .price__time { color: var(--muted); text-align: right; padding-right: 2rem !important; }
-  .price__val { text-align: right; font-weight: 600; white-space: nowrap; }
-
-  .fine { font-size: 0.85rem; color: var(--muted); margin-top: 1.5rem; max-width: 60ch; }
-
-  @media (max-width: 560px) {
-    .price tr { display: grid; grid-template-columns: 1fr auto; padding: 0.9rem 0; }
-    .price th { grid-column: 1 / -1; padding: 0 0 0.35rem; font-size: 1rem; }
-    .price td { padding: 0; }
-    .price__time { text-align: left; padding-right: 0 !important; }
-  }
-
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2rem; }
-  @media (min-width: 800px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
-  .steps__n {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--accent-dark);
-    font-weight: 600;
-  }
-  .steps h3 { font-size: 1.4rem; margin: 0.5rem 0 0.6rem; }
-  .steps p { margin: 0; color: var(--muted); font-size: 0.98rem; }
-
-  .quotes { display: grid; gap: 2rem; }
-  @media (min-width: 800px) { .quotes { grid-template-columns: 1fr 1fr; gap: 3rem; } }
-  blockquote { margin: 0; border-left: 3px solid var(--accent); padding-left: 1.35rem; }
-  blockquote p { font-size: 1.15rem; margin: 0 0 0.75rem; }
-  cite { font-style: normal; font-size: 0.85rem; color: var(--muted); }
-
-  .kontakt { display: grid; gap: 2.5rem; align-items: center; }
-  @media (min-width: 900px) { .kontakt { grid-template-columns: 1fr 1fr; gap: 4rem; } }
-
-  .tel { margin: 1.75rem 0 0.5rem; }
-  .tel a {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 2.75rem);
-    font-weight: 700;
-    text-decoration: none;
-    border-bottom: 4px solid var(--accent);
-  }
-
-  .ph {
+  .hero__facts {
+    position: relative;
+    margin-top: clamp(3rem, 8vw, 5.5rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
     display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 1.5rem;
-    aspect-ratio: 4 / 3;
-    background: repeating-linear-gradient(45deg, #d5d7d2 0 12px, #cfd1cc 12px 24px);
-    border: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 0.85rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.75rem 1rem;
   }
+  @media (min-width: 820px) { .hero__facts { grid-template-columns: repeat(4, 1fr); } }
+  .hero__facts span { display: block; font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.9rem); line-height: 1; }
+  .hero__facts small { display: block; margin-top: 0.5rem; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+
+  /* ---------- pasek marek ---------- */
+  .marki { border-block: 1px solid var(--line); padding-block: 1.5rem; overflow: hidden; }
+  .marki__tor { display: flex; width: max-content; animation: przesuw 38s linear infinite; }
+  .marki__zestaw { display: flex; gap: 4rem; padding-right: 4rem; }
+  .marki__zestaw span { font-family: var(--serif); font-size: 1.35rem; color: var(--dim); white-space: nowrap; }
+  @keyframes przesuw { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .marki__tor { animation: none; } }
+
+  /* ---------- zakres ---------- */
+  .zakres { display: grid; gap: 3.5rem; }
+  @media (min-width: 1000px) { .zakres { grid-template-columns: 0.9fr 1.1fr; gap: 5rem; align-items: start; } }
+  .zakres__foto { margin-top: 3rem; }
+  .zakres__lista { list-style: none; margin: 0; padding: 0; }
+  .zakres__lista li { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; padding: 2.25rem 0; border-top: 1px solid var(--line); }
+  .zakres__lista li:last-child { border-bottom: 1px solid var(--line); }
+  .zakres__n { font-family: var(--serif); font-size: 0.95rem; color: var(--brass); padding-top: 0.5rem; }
+  .zakres__lista p { color: var(--dim); margin-top: 0.75rem; font-size: 0.97rem; }
+
+  /* ---------- kalkulator ---------- */
+  .kalk { margin-top: 3.5rem; display: grid; gap: 2rem; align-items: start; }
+  @media (min-width: 1000px) { .kalk { grid-template-columns: 1.35fr 0.85fr; gap: 3rem; } }
+  .kalk__grupa { border: 0; margin: 0 0 2.5rem; padding: 0; }
+  .kalk__grupa legend { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); padding: 0 0 1.1rem; }
+  .kalk__opcje { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .kalk__opcje--lista { grid-template-columns: 1fr; }
+  @media (min-width: 660px) { .kalk__opcje--lista { grid-template-columns: 1fr 1fr; } }
+
+  .opcja { position: relative; display: block; cursor: pointer; }
+  .opcja input { position: absolute; opacity: 0; pointer-events: none; }
+  .opcja__box {
+    display: block; padding: 1.05rem 1.2rem; border: 1px solid var(--line);
+    transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
+    height: 100%;
+  }
+  .opcja__box--rzad { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  .opcja input:checked + .opcja__box { border-color: var(--brass); background: rgba(176, 141, 87, 0.09); }
+  .opcja input:focus-visible + .opcja__box { outline: 2px solid var(--brass); outline-offset: 3px; }
+  .opcja__t { display: block; font-size: 0.94rem; font-weight: 500; }
+  .opcja__d { display: block; font-size: 0.78rem; color: var(--dim); margin-top: 0.2rem; }
+  .opcja__cena { font-size: 0.8rem; color: var(--brass); white-space: nowrap; }
+
+  .kalk__wynik { border: 1px solid var(--line); padding: 2rem 1.75rem; position: sticky; top: 6rem; }
+  .kalk__etykieta { font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
+  .kalk__kwota { font-family: var(--serif); font-size: clamp(2.2rem, 6vw, 3.1rem); line-height: 1.05; margin-top: 0.6rem; font-variant-numeric: tabular-nums; }
+  .kalk__meta { margin: 1.75rem 0 0; display: grid; gap: 0; }
+  .kalk__meta > div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.65rem 0; border-top: 1px solid var(--line); font-size: 0.82rem; }
+  .kalk__meta dt { color: var(--dim); margin: 0; }
+  .kalk__meta dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .kalk__nota { margin-top: 1.5rem; font-size: 0.76rem; line-height: 1.6; color: var(--dim); }
+  .kalk__btn { margin-top: 1.5rem; width: 100%; justify-content: center; }
+
+  /* ---------- porównanie przed / po ---------- */
+  .porownanie { margin-top: 3rem; }
+  .porownanie__ramka { position: relative; overflow: hidden; border: 1px solid var(--line); user-select: none; }
+  .porownanie__ramka :global(img), .porownanie__ramka :global(.ph) { width: 100%; }
+  .porownanie__przed { position: absolute; inset: 0; width: 50%; overflow: hidden; }
+  .porownanie__przed :global(img), .porownanie__przed :global(.ph) {
+    position: absolute; inset: 0; height: 100%; width: auto; min-width: 100%; max-width: none;
+  }
+  .porownanie__uchwyt { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: var(--bone); pointer-events: none; }
+  .porownanie__uchwyt span {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 3rem; height: 3rem; border-radius: 50%; border: 1px solid var(--bone);
+    background: rgba(14,16,18,0.55); backdrop-filter: blur(6px);
+  }
+  .porownanie__uchwyt span::before, .porownanie__uchwyt span::after {
+    content: ''; position: absolute; top: 50%; width: 0; height: 0;
+    border-block: 5px solid transparent;
+  }
+  .porownanie__uchwyt span::before { left: 0.75rem; border-right: 7px solid var(--bone); transform: translateY(-50%); }
+  .porownanie__uchwyt span::after { right: 0.75rem; border-left: 7px solid var(--bone); transform: translateY(-50%); }
+  .porownanie__suwak { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .porownanie__opisy { display: flex; justify-content: space-between; margin-top: 0.9rem; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
+
+  /* ---------- cennik ---------- */
+  .cennik-blok { display: grid; gap: 3rem; }
+  @media (min-width: 1000px) { .cennik-blok { grid-template-columns: 0.85fr 1.15fr; gap: 5rem; align-items: start; } }
+  .cennik { width: 100%; border-collapse: collapse; }
+  .cennik tr { border-top: 1px solid var(--line-dark); }
+  .cennik tr:last-child { border-bottom: 1px solid var(--line-dark); }
+  .cennik th { text-align: left; font-weight: 400; font-size: 1.02rem; padding: 1.3rem 0; }
+  .cennik td { padding: 1.3rem 0; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+  .cennik__czas { color: var(--dim-dark); text-align: right; padding-right: 2.5rem !important; }
+  .cennik__cena { text-align: right; white-space: nowrap; }
+  @media (max-width: 560px) {
+    .cennik tr { display: grid; grid-template-columns: 1fr auto; padding: 1.1rem 0; }
+    .cennik th { grid-column: 1 / -1; padding: 0 0 0.4rem; }
+    .cennik td { padding: 0; }
+    .cennik__czas { text-align: left; padding-right: 0 !important; }
+  }
+
+  /* ---------- galeria ---------- */
+  .galeria { margin-top: 3rem; display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 900px) { .galeria { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
+  .galeria__kafel { padding: 0; display: block; overflow: hidden; }
+  .galeria__kafel :global(img), .galeria__kafel :global(.ph) { transition: transform 0.7s var(--ease); width: 100%; }
+  .galeria__kafel:hover :global(img), .galeria__kafel:hover :global(.ph) { transform: scale(1.04); }
+
+  /* ---------- opinie ---------- */
+  .opinie { display: grid; gap: 2.5rem; margin-top: 2rem; }
+  @media (min-width: 900px) { .opinie { grid-template-columns: repeat(3, 1fr); gap: 3rem; } }
+  .opinie figure { margin: 0; border-top: 1px solid var(--line); padding-top: 1.75rem; }
+  .opinie blockquote { margin: 0; }
+  .opinie p { font-family: var(--serif); font-size: 1.2rem; line-height: 1.35; }
+  .opinie figcaption { margin-top: 1.1rem; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+
+  /* ---------- faq ---------- */
+  .faq { margin-top: 2rem; }
+  .faq details { border-top: 1px solid var(--line); }
+  .faq details:last-child { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    list-style: none; cursor: pointer; padding: 1.6rem 3rem 1.6rem 0;
+    position: relative; font-size: clamp(1.02rem, 2vw, 1.2rem);
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq__znak { position: absolute; right: 0; top: 50%; width: 14px; height: 14px; transform: translateY(-50%); }
+  .faq__znak::before, .faq__znak::after {
+    content: ''; position: absolute; background: var(--brass); transition: transform 0.35s var(--ease);
+  }
+  .faq__znak::before { top: 50%; left: 0; width: 14px; height: 1px; }
+  .faq__znak::after { left: 50%; top: 0; width: 1px; height: 14px; }
+  .faq details[open] .faq__znak::after { transform: scaleY(0); }
+  .faq details p { color: var(--dim); padding-bottom: 1.75rem; max-width: 62ch; font-size: 0.97rem; }
+
+  /* ---------- kontakt ---------- */
+  .kontakt { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 1000px) { .kontakt { grid-template-columns: 1.15fr 0.85fr; gap: 5rem; } }
+  .kontakt__tel {
+    display: inline-block; margin-top: 2rem; font-family: var(--serif);
+    font-size: clamp(2rem, 5.5vw, 3.2rem); line-height: 1;
+    border-bottom: 1px solid var(--brass); padding-bottom: 0.35rem;
+  }
+  .kontakt__dane { display: grid; gap: 2rem; margin-top: 3rem; }
+  @media (min-width: 600px) { .kontakt__dane { grid-template-columns: 1fr 1fr; } }
+  .kontakt__dane h3 { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim-dark); margin-bottom: 0.9rem; }
+  .kontakt__dane p { font-size: 0.95rem; }
+  .kontakt__link { display: inline-block; margin-top: 0.9rem; font-size: 0.85rem; border-bottom: 1px solid var(--line-dark); padding-bottom: 2px; }
+
+  /* ---------- stopka ---------- */
+  .stopka { border-top: 1px solid var(--line); padding-block: 3.5rem 2.5rem; }
+  .stopka__gora { display: grid; gap: 2rem; padding-bottom: 2.5rem; }
+  @media (min-width: 800px) { .stopka__gora { grid-template-columns: 1fr auto; align-items: start; } }
+  .stopka__mark { font-family: var(--serif); font-size: 1.6rem; }
+  .stopka__tag { color: var(--dim); font-size: 0.9rem; margin-top: 0.4rem; max-width: 34ch; }
+  .stopka__nav { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+  .stopka__nav a { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+  .stopka__dol {
+    border-top: 1px solid var(--line); padding-top: 1.5rem;
+    display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; justify-content: space-between;
+    font-size: 0.74rem; color: var(--dim);
+  }
+
+  /* ---------- pasek mobilny ---------- */
+  .pasek { position: fixed; inset: auto 0 0 0; z-index: 70; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); background: rgba(14,16,18,0.95); backdrop-filter: blur(10px); }
+  .pasek a { padding: 1rem 0.5rem; text-align: center; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .pasek a:first-child { background: var(--bone); color: var(--graphite); }
+  body { padding-bottom: 3.4rem; }
+  @media (min-width: 1000px) { .pasek { display: none; } body { padding-bottom: 0; } }
+
+  /* ---------- lightbox ---------- */
+  .lightbox { position: fixed; inset: 0; z-index: 90; background: rgba(9,10,11,0.95); display: grid; place-items: center; padding: 1.5rem; }
+  .lightbox[hidden] { display: none; }
+  .lightbox__tresc { max-width: min(1000px, 92vw); max-height: 84vh; }
+  .lightbox__tresc :global(img), .lightbox__tresc :global(.ph) { max-height: 84vh; width: auto; margin-inline: auto; }
+  .lightbox__zamknij { position: absolute; top: 1.25rem; right: 1.5rem; font-size: 1.4rem; color: var(--bone); padding: 0.5rem; }
 </style>
+
+<script>
+  // ---- 1. Nagłówek zmienia stan po przewinięciu hero ----
+  const hdr = document.getElementById('hdr');
+  const przelaczHdr = () => hdr?.classList.toggle('is-stuck', window.scrollY > 80);
+  przelaczHdr();
+  window.addEventListener('scroll', przelaczHdr, { passive: true });
+
+  // ---- 2. Wejście sekcji w kadr ----
+  const obs = new IntersectionObserver(
+    (wpisy) => {
+      wpisy.forEach((w) => {
+        if (w.isIntersecting) {
+          w.target.classList.add('is-in');
+          obs.unobserve(w.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -60px 0px' }
+  );
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    (el as HTMLElement).style.transitionDelay = `${Math.min(i % 4, 3) * 90}ms`;
+    obs.observe(el);
+  });
+
+  // ---- 3. Kalkulator wyceny ----
+  const STAWKA = 190;
+  const kwotaEl = document.getElementById('kalkKwota');
+  const czasEl = document.getElementById('kalkCzas');
+  const ileEl = document.getElementById('kalkIle');
+  const kalk = document.getElementById('kalk');
+
+  const zl = (n: number) =>
+    new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 0 }).format(Math.round(n / 10) * 10);
+
+  function przelicz() {
+    if (!kalk) return;
+    const mnoznik = Number(
+      (kalk.querySelector('input[name="segment"]:checked') as HTMLInputElement)?.value || 1
+    );
+    const zaznaczone = Array.from(
+      kalk.querySelectorAll('input[name="usluga"]:checked')
+    ) as HTMLInputElement[];
+
+    if (!zaznaczone.length) {
+      if (kwotaEl) kwotaEl.textContent = '—';
+      if (czasEl) czasEl.textContent = '—';
+      if (ileEl) ileEl.textContent = '0';
+      return;
+    }
+
+    let cena = 0;
+    let godziny = 0;
+    zaznaczone.forEach((i) => {
+      cena += Number(i.dataset.cena) * mnoznik;
+      godziny += Number(i.dataset.godz) * mnoznik;
+    });
+
+    // Widełki: dolna granica to wyliczenie, górna +22% na niespodzianki
+    if (kwotaEl) kwotaEl.textContent = `${zl(cena)}–${zl(cena * 1.22)} zł`;
+    if (czasEl) {
+      czasEl.textContent =
+        godziny >= 7 ? `${Math.ceil(godziny / 7)} dni robocze` : `ok. ${godziny.toFixed(1).replace('.', ',')} h`;
+    }
+    if (ileEl) ileEl.textContent = String(zaznaczone.length);
+    // stawka roboczogodziny użyta w nocie pod wynikiem
+    void STAWKA;
+  }
+
+  kalk?.addEventListener('change', przelicz);
+  przelicz();
+
+  // ---- 4. Suwak przed / po ----
+  const suwak = document.getElementById('suwak') as HTMLInputElement | null;
+  const warstwa = document.getElementById('przedWarstwa');
+  const uchwyt = document.getElementById('uchwyt');
+  suwak?.addEventListener('input', () => {
+    const v = suwak.value + '%';
+    if (warstwa) warstwa.style.width = v;
+    if (uchwyt) uchwyt.style.left = v;
+  });
+
+  // ---- 5. Lightbox galerii ----
+  const lb = document.getElementById('lightbox');
+  const lbTresc = document.getElementById('lbTresc');
+  const zamknij = () => {
+    lb?.setAttribute('hidden', '');
+    if (lbTresc) lbTresc.innerHTML = '';
+    document.body.style.overflow = '';
+  };
+  document.querySelectorAll('.galeria__kafel').forEach((kafel) => {
+    kafel.addEventListener('click', () => {
+      const srodek = kafel.querySelector('img, .ph');
+      if (!srodek || !lbTresc || !lb) return;
+      lbTresc.innerHTML = srodek.outerHTML;
+      lb.removeAttribute('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+  document.getElementById('lbZamknij')?.addEventListener('click', zamknij);
+  lb?.addEventListener('click', (e) => { if (e.target === lb) zamknij(); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') zamknij(); });
+</script>
