@@ -1,0 +1,73 @@
+---
+// Szablon polityki prywatności dla strony BEZ formularza kontaktowego.
+// Podstawa: serwer i tak zapisuje adresy IP w logach, a to dane osobowe.
+// To wzór roboczy, nie opinia prawna — przy większym kliencie warto,
+// żeby przejrzał to prawnik.
+const { biz } = Astro.props;
+const root = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${biz.slug}/`;
+---
+<section class="band">
+  <div class="wrap prose">
+    <p class="eyebrow">Dokument</p>
+    <h1 style="font-size:clamp(2rem,5vw,3rem);margin-bottom:1.5rem">Polityka prywatności</h1>
+
+    <p>
+      Dokument opisuje, jakie dane są przetwarzane w związku z korzystaniem ze strony
+      internetowej {biz.name} i na jakich zasadach.
+    </p>
+
+    <h2>1. Administrator danych</h2>
+    <p>
+      Administratorem danych jest {biz.legalName}, {biz.street}, {biz.zip} {biz.city},
+      NIP {biz.nip}. Kontakt: {biz.email}, {biz.phone}.
+    </p>
+
+    <h2>2. Jakie dane są zbierane</h2>
+    <p>
+      Strona nie zawiera formularza kontaktowego ani systemu kont użytkowników.
+      Nie zbieramy danych podawanych bezpośrednio przez odwiedzających. Przetwarzane są:
+    </p>
+    <ul>
+      <li>dane zapisywane automatycznie w logach serwera: adres IP, data i godzina zapytania, typ przeglądarki, adres strony odsyłającej;</li>
+      <li>zbiorcze statystyki odwiedzin, prowadzone w sposób uniemożliwiający identyfikację pojedynczej osoby.</li>
+    </ul>
+
+    <h2>3. Cel i podstawa prawna</h2>
+    <p>
+      Dane z logów przetwarzamy w celu zapewnienia bezpieczeństwa i poprawnego działania
+      strony oraz prowadzenia statystyk oglądalności. Podstawą jest prawnie uzasadniony
+      interes administratora — art. 6 ust. 1 lit. f RODO.
+    </p>
+
+    <h2>4. Okres przechowywania</h2>
+    <p>
+      Logi serwera przechowujemy nie dłużej niż 12 miesięcy. Dane statystyczne mają
+      charakter zbiorczy i nie są przypisane do konkretnej osoby.
+    </p>
+
+    <h2>5. Odbiorcy danych</h2>
+    <p>
+      Dane mogą być powierzone dostawcy hostingu oraz dostawcy narzędzia analitycznego,
+      działającym na podstawie umowy powierzenia przetwarzania danych.
+    </p>
+
+    <h2>6. Pliki cookies</h2>
+    <p>
+      Strona nie wykorzystuje plików cookies do celów marketingowych ani do śledzenia
+      odwiedzających między witrynami. Jeżeli w przyszłości zostaną dodane narzędzia
+      wymagające zgody, przed ich uruchomieniem pojawi się odpowiedni komunikat.
+    </p>
+
+    <h2>7. Uprawnienia</h2>
+    <p>
+      Przysługuje Ci prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia
+      przetwarzania oraz wniesienia sprzeciwu, a także prawo wniesienia skargi do
+      Prezesa Urzędu Ochrony Danych Osobowych, ul. Stawki 2, 00-193 Warszawa.
+    </p>
+
+    <h2>8. Zmiany dokumentu</h2>
+    <p>Ostatnia aktualizacja: sierpień 2026.</p>
+
+    <p style="margin-top:2.5rem"><a href={root}>← Powrót na stronę główną</a></p>
+  </div>
+</section>
