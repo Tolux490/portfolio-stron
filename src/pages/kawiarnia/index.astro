@@ -107,7 +107,7 @@ const opinie = [
         <p class="hero__status" id="statusOtwarcia" aria-live="polite"></p>
       </div>
       <div class="hero__foto">
-        <Foto src="" alt="Wnętrze kawiarni Prolog" ratio="4/5" label="Kadr wnętrza — bar, światło dzienne, para z ekspresu" />
+        <Foto src="kawiarnia-hero.webp" alt="Cynamonka i latte Café Prolog" ratio="4/5" label="Hero — drożdżówka z latte (kawiarnia-hero.webp)" />
       </div>
     </section>
 
@@ -146,6 +146,11 @@ const opinie = [
       </div>
     </section>
 
+    <!-- ============ PAS ZE ZDJĘCIEM ============ -->
+    <section class="pas" aria-hidden="false">
+      <Foto src="kawiarnia-barista.webp" alt="Barista przy pracy" ratio="21/9" label="Szeroki pas — barista nalewa mleko (kawiarnia-barista.webp)" />
+    </section>
+
     <!-- ============ KARTA STAŁEGO GOŚCIA (demo bez backendu) ============ -->
     <section id="karta" class="band band--ciemny">
       <div class="wrap karta">
@@ -173,6 +178,22 @@ const opinie = [
             <button class="btn btn--pelny-jasny" id="kartaDodaj" type="button">Przybij pieczątkę</button>
             <button class="karta__reset" id="kartaReset" type="button">Wyczyść kartę</button>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GALERIA ============ -->
+    <section class="band">
+      <div class="wrap--srodek reveal" style="margin-bottom:2.5rem">
+        <p class="label">Z naszego baru</p>
+        <h2 class="h2">Codziennie świeżo.</h2>
+      </div>
+      <div class="wrap galeria">
+        <div class="galeria__kadr reveal">
+          <Foto src="kawiarnia-matcha.webp" alt="Iced matcha latte Café Prolog" ratio="4/5" label="Matcha w szkle (kawiarnia-matcha.webp)" />
+        </div>
+        <div class="galeria__kadr reveal">
+          <Foto src="kawiarnia-wnetrze.webp" alt="Wnętrze kawiarni Prolog" ratio="4/5" label="Wnętrze / bar (kawiarnia-wnetrze.webp)" />
         </div>
       </div>
     </section>
@@ -443,6 +464,18 @@ const opinie = [
   .pasek a:first-child { background: var(--espresso); color: var(--papier); }
   body { padding-bottom: 3.4rem; }
   @media (min-width: 1000px) { .pasek { display: none; } body { padding-bottom: 0; } }
+
+  /* ---------- pas ze zdjęciem ---------- */
+  .pas { position: relative; }
+  .pas .ph, .pas img { width: 100%; }
+  @media (min-width: 700px) { .pas .ph, .pas img { max-height: 62vh; object-fit: cover; } }
+
+  /* ---------- galeria ---------- */
+  .galeria { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  @media (min-width: 700px) { .galeria { grid-template-columns: 1fr 1fr; gap: 1.25rem; } }
+  .galeria__kadr { overflow: hidden; }
+  .galeria__kadr :global(img), .galeria__kadr :global(.ph) { transition: transform 0.7s var(--ease); width: 100%; }
+  .galeria__kadr:hover :global(img), .galeria__kadr:hover :global(.ph) { transform: scale(1.03); }
 </style>
 
 <script>
