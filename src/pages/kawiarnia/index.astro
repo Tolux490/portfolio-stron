@@ -1,0 +1,549 @@
+---
+import { kawiarnia as biz } from '../../data/firmy.js';
+import Foto from '../../components/Foto.astro';
+
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const mapEmbed = 'https://maps.google.com/maps?q=Wo%C5%82omin%20Ko%C5%9Bcielna%207&z=16&output=embed';
+
+const nawigacja = [
+  { href: '#menu', label: 'Menu' },
+  { href: '#karta', label: 'Karta stałego gościa' },
+  { href: '#miejsce', label: 'Miejsce' },
+  { href: '#kontakt', label: 'Kontakt' },
+];
+
+// Menu: kategoria -> pozycje. Filtry przełączane w JS.
+const menu = [
+  { id: 'kawa', nazwa: 'Kawa', pozycje: [
+    { n: 'Espresso', o: 'ziarno sezonowe, Brazylia lub Etiopia', c: '12' },
+    { n: 'Flat white', o: 'podwójne espresso, mleko 3,8%', c: '18' },
+    { n: 'Przelew V60', o: 'single origin, parzony na miejscu', c: '22' },
+    { n: 'Cold brew', o: 'macerowany 16 godzin, lato', c: '20' },
+  ]},
+  { id: 'matcha', nazwa: 'Matcha', pozycje: [
+    { n: 'Matcha latte', o: 'ceremonialna, Uji, mleko owsiane w cenie', c: '24' },
+    { n: 'Iced matcha', o: 'na zimno, z tonikiem yuzu', c: '26' },
+    { n: 'Matcha espresso fusion', o: 'warstwowo: matcha, mleko, espresso', c: '27' },
+  ]},
+  { id: 'sniadania', nazwa: 'Śniadania', pozycje: [
+    { n: 'Owsianka na mleku owsianym', o: 'sezonowe owoce, masło orzechowe', c: '26' },
+    { n: 'Tost z awokado', o: 'zakwas własny, jajko poszetowe, chilli', c: '32' },
+    { n: 'Jajecznica na maśle', o: 'trzy jajka zero, zakwas, szczypior', c: '29' },
+  ]},
+  { id: 'wypieki', nazwa: 'Wypieki', pozycje: [
+    { n: 'Drożdżówka pistacjowa', o: 'pieczona rano na miejscu', c: '16' },
+    { n: 'Cynamonka', o: 'na zakwasie, lukier kardamonowy', c: '14' },
+    { n: 'Banana bread', o: 'bez cukru rafinowanego', c: '12' },
+  ]},
+];
+
+const opinie = [
+  { t: 'Jedyne miejsce w Wołominie, gdzie przelew nie jest z ekspresu przelewowego, tylko naprawdę parzony ręcznie. Drożdżówki znikają przed dziesiątą.', a: 'Karolina W.' },
+  { t: 'Matcha na poziomie warszawskich miejscówek, ale bez dojeżdżania pół godziny. Wnętrze ciche, da się popracować na laptopie rano.', a: 'Michał S.' },
+];
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prolog — kawa speciality i wypieki, Wołomin</title>
+    <meta name="description" content="Kawiarnia speciality w Wołominie, ul. Kościelna 7. Przelewy single origin, matcha ceremonialna, wypieki z własnego pieca. Karta stałego gościa: ósma kawa gratis." />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta property="og:title" content="Prolog — kawa speciality i wypieki, Wołomin" />
+    <meta property="og:description" content="Przelewy single origin, matcha ceremonialna, wypieki z własnego pieca." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,420;1,9..144,340&family=Albert+Sans:wght@400;500;600&display=swap" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': biz.schemaType,
+      name: biz.name,
+      telephone: biz.phone,
+      servesCuisine: 'Coffee, breakfast',
+      address: { '@type': 'PostalAddress', streetAddress: biz.street, addressLocality: biz.city, postalCode: biz.zip, addressCountry: 'PL' },
+      openingHours: biz.openingHours,
+      sameAs: [biz.facebook, biz.instagram],
+      url: Astro.url.origin,
+    })} />
+  </head>
+
+  <body>
+    <header class="hdr" id="hdr">
+      <div class="wrap hdr__in">
+        <a class="hdr__mark" href="#gora">Prolog<span>.</span></a>
+        <nav class="hdr__nav">
+          {nawigacja.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+        <div class="hdr__social">
+          <a href={biz.instagram} target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href={biz.facebook} target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M13.5 21v-7h2.6l.4-3h-3V9.1c0-.9.3-1.5 1.6-1.5h1.5V4.9c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8V11H8v3h2.7v7h2.8z"/></svg>
+          </a>
+          <a class="hdr__pin" href={biz.mapUrl} target="_blank" rel="noopener">{biz.street}</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ HERO: dzielony, jasny ============ -->
+    <section class="hero" id="gora">
+      <div class="hero__tekst">
+        <p class="hero__kicker">Kawiarnia speciality · {biz.city}</p>
+        <h1>Dzień dobry<br /><em>zaczyna się tutaj.</em></h1>
+        <p class="hero__lede">
+          Przelewy z ziaren palonych dwa tygodnie przed zaparzeniem, matcha
+          ceremonialna z Uji i wypieki, które wyjmujemy z pieca o siódmej rano.
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--pelny" href="#menu">Zobacz menu</a>
+          <a class="btn btn--ramka" href="#miejsce">Jak trafić</a>
+        </div>
+        <p class="hero__status" id="statusOtwarcia" aria-live="polite"></p>
+      </div>
+      <div class="hero__foto">
+        <Foto src="" alt="Wnętrze kawiarni Prolog" ratio="4/5" label="Kadr wnętrza — bar, światło dzienne, para z ekspresu" />
+      </div>
+    </section>
+
+    <!-- ============ MENU z filtrami ============ -->
+    <section id="menu" class="band">
+      <div class="wrap--srodek">
+        <p class="label reveal">Menu</p>
+        <h2 class="h2 reveal">Krótka karta, wszystko na miejscu.</h2>
+
+        <div class="menu__filtry reveal" role="tablist" aria-label="Kategorie menu">
+          <button class="menu__filtr is-active" data-kat="wszystko" role="tab" aria-selected="true">Wszystko</button>
+          {menu.map((k) => (
+            <button class="menu__filtr" data-kat={k.id} role="tab" aria-selected="false">{k.nazwa}</button>
+          ))}
+        </div>
+
+        <div class="menu__lista reveal">
+          {menu.map((k) => (
+            <div class="menu__grupa" data-kat={k.id}>
+              <h3>{k.nazwa}</h3>
+              <ul>
+                {k.pozycje.map((p) => (
+                  <li>
+                    <div>
+                      <span class="menu__n">{p.n}</span>
+                      <span class="menu__o">{p.o}</span>
+                    </div>
+                    <span class="menu__c">{p.c}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p class="drobne">Ceny w złotych. Mleko roślinne do każdej kawy bez dopłaty. Skład i alergeny — pytaj przy barze.</p>
+      </div>
+    </section>
+
+    <!-- ============ KARTA STAŁEGO GOŚCIA (demo bez backendu) ============ -->
+    <section id="karta" class="band band--ciemny">
+      <div class="wrap karta">
+        <div class="reveal">
+          <p class="label">Karta stałego gościa</p>
+          <h2 class="h2">Ósma kawa jest od nas.</h2>
+          <p class="lede">
+            Bez aplikacji i bez konta. Karta zapisuje się w Twoim telefonie —
+            przy kasie pokazujesz ekran, my przybijamy pieczątkę.
+          </p>
+          <p class="karta__nota">
+            Wersja pokazowa: pieczątkę „przybijasz" sam przyciskiem, żeby zobaczyć,
+            jak to działa. U klienta pieczątka wpada po zeskanowaniu kodu przy kasie.
+          </p>
+        </div>
+
+        <div class="karta__panel reveal">
+          <div class="karta__naglowek">
+            <span class="karta__logo">Prolog<span>.</span></span>
+            <span class="karta__licznik" id="kartaLicznik">0 / 8</span>
+          </div>
+          <div class="karta__pola" id="kartaPola" aria-live="polite"></div>
+          <p class="karta__stan" id="kartaStan">Zbierz osiem pieczątek — ósma kawa dowolna, na nasz koszt.</p>
+          <div class="karta__akcje">
+            <button class="btn btn--pelny-jasny" id="kartaDodaj" type="button">Przybij pieczątkę</button>
+            <button class="karta__reset" id="kartaReset" type="button">Wyczyść kartę</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ OPINIE ============ -->
+    <section class="band">
+      <div class="wrap--srodek">
+        <p class="label reveal">Z wizytówki Google</p>
+        <div class="opinie">
+          {opinie.map((o) => (
+            <figure class="reveal">
+              <blockquote><p>{o.t}</p></blockquote>
+              <figcaption>{o.a}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MIEJSCE: adres + mapa (ładowana po kliknięciu) ============ -->
+    <section id="miejsce" class="band band--papier">
+      <div class="wrap miejsce">
+        <div class="reveal">
+          <p class="label">Miejsce</p>
+          <h2 class="h2">Sto metrów od rynku.</h2>
+          <address class="miejsce__adres">
+            {biz.street}<br />{biz.zip} {biz.city}
+          </address>
+          <div class="miejsce__godziny">
+            {biz.hours.map((h) => <p>{h}</p>)}
+          </div>
+          <div class="miejsce__linki">
+            <a href={biz.mapUrl} target="_blank" rel="noopener">Google Maps →</a>
+            <a href={biz.instagram} target="_blank" rel="noopener">Instagram →</a>
+            <a href={biz.facebook} target="_blank" rel="noopener">Facebook →</a>
+          </div>
+        </div>
+
+        <div class="mapa reveal" id="mapa" data-src={mapEmbed}>
+          <div class="mapa__zaslepka" id="mapaZaslepka">
+            <p>Mapa Google ładuje się po kliknięciu —<br />dzięki temu strona nie zapisuje cookies bez Twojej decyzji.</p>
+            <button class="btn btn--pelny" id="mapaPokaz" type="button">Pokaż mapę</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ KONTAKT / STOPKA ============ -->
+    <footer id="kontakt" class="stopka">
+      <div class="wrap">
+        <div class="stopka__gora">
+          <div>
+            <p class="stopka__mark">Prolog<span>.</span></p>
+            <p class="stopka__tag">{biz.tagline}</p>
+          </div>
+          <div class="stopka__kol">
+            <h3>Kontakt</h3>
+            <a href={`tel:${tel}`}>{biz.phone}</a>
+            <a href={`mailto:${biz.email}`}>{biz.email}</a>
+          </div>
+          <div class="stopka__kol">
+            <h3>Znajdź nas</h3>
+            <a href={biz.instagram} target="_blank" rel="noopener">Instagram</a>
+            <a href={biz.facebook} target="_blank" rel="noopener">Facebook</a>
+            <a href={biz.mapUrl} target="_blank" rel="noopener">Google Maps</a>
+          </div>
+        </div>
+        <div class="stopka__dol">
+          <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
+          <a href={`${base}/kawiarnia/polityka-prywatnosci/`}>Polityka prywatności</a>
+        </div>
+      </div>
+    </footer>
+
+    <div class="pasek">
+      <a href="#menu">Menu</a>
+      <a href={biz.mapUrl} target="_blank" rel="noopener">Dojazd</a>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  /* =========================================================
+     PROLOG — ciepły papier, atrament espresso, zieleń matchy.
+     Fraunces w optycznym rozmiarze display + Albert Sans.
+     ========================================================= */
+  :root {
+    --papier: #f8f5ee;
+    --papier-2: #efeadf;
+    --espresso: #221a13;
+    --espresso-2: #2c2318;
+    --zielen: #46543a;
+    --dym: rgba(34, 26, 19, 0.62);
+    --dym-jasny: rgba(248, 245, 238, 0.62);
+    --linia: rgba(34, 26, 19, 0.14);
+    --linia-jasna: rgba(248, 245, 238, 0.16);
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Albert Sans', system-ui, sans-serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--papier); color: var(--espresso);
+    font-family: var(--sans); font-size: 1rem; line-height: 1.65;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--zielen); outline-offset: 4px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 340; line-height: 1.02; letter-spacing: -0.01em; margin: 0; text-wrap: balance; overflow-wrap: break-word; }
+  p { margin: 0; text-wrap: pretty; }
+
+  .wrap { width: min(100% - 3rem, 1220px); margin-inline: auto; }
+  .wrap--srodek { width: min(100% - 3rem, 860px); margin-inline: auto; }
+  .band { padding-block: clamp(4rem, 10vw, 8rem); }
+  .band--ciemny { background: var(--espresso); color: var(--papier); }
+  .band--papier { background: var(--papier-2); }
+
+  .label {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--zielen); margin-bottom: 1.6rem; display: flex; align-items: center; gap: 0.85rem;
+  }
+  .label::before { content: ''; width: 2rem; height: 1px; background: var(--zielen); flex: none; }
+  .band--ciemny .label { color: var(--papier); opacity: 0.85; }
+  .band--ciemny .label::before { background: var(--papier); }
+
+  .h2 { font-size: clamp(2rem, 5vw, 3.4rem); }
+  .lede { font-size: clamp(1rem, 1.6vw, 1.14rem); color: var(--dym); max-width: 50ch; margin-top: 1.5rem; }
+  .band--ciemny .lede { color: var(--dym-jasny); }
+  .drobne { font-size: 0.82rem; color: var(--dym); margin-top: 2rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.7rem; padding: 1rem 1.9rem;
+    font-size: 0.76rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    border-radius: 999px; border: 1px solid transparent;
+    transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease);
+  }
+  .btn--pelny { background: var(--espresso); color: var(--papier); }
+  .btn--pelny:hover { background: var(--zielen); }
+  .btn--ramka { border-color: var(--linia); }
+  .btn--ramka:hover { border-color: var(--espresso); }
+  .btn--pelny-jasny { background: var(--papier); color: var(--espresso); }
+  .btn--pelny-jasny:hover { background: var(--zielen); color: var(--papier); }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+  .reveal.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+
+  .ph {
+    display: grid; place-items: center; text-align: center; padding: 1.5rem;
+    background: linear-gradient(140deg, rgba(70,84,58,0.08), transparent 55%), var(--papier-2);
+    border: 1px solid var(--linia); color: var(--dym);
+    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .band--ciemny .ph { background: var(--espresso-2); border-color: var(--linia-jasna); color: var(--dym-jasny); }
+
+  /* ---------- nagłówek ---------- */
+  .hdr { position: fixed; inset: 0 0 auto 0; z-index: 60; padding-block: 1.4rem; transition: all 0.4s var(--ease); border-bottom: 1px solid transparent; }
+  .hdr.is-stuck { background: rgba(248, 245, 238, 0.92); backdrop-filter: blur(12px); padding-block: 0.85rem; border-bottom-color: var(--linia); }
+  .hdr__in { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+  .hdr__mark { font-family: var(--serif); font-size: 1.5rem; line-height: 1; }
+  .hdr__mark span, .karta__logo span, .stopka__mark span { color: var(--zielen); }
+  .hdr__nav { display: none; gap: 2.2rem; }
+  .hdr__nav a { font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dym); transition: color 0.3s var(--ease); }
+  .hdr__nav a:hover { color: var(--espresso); }
+  .hdr__social { display: flex; align-items: center; gap: 1rem; }
+  .hdr__social a { display: grid; place-items: center; }
+  .hdr__pin { display: none; font-size: 0.8rem; border-bottom: 1px solid var(--zielen); padding-bottom: 2px; }
+  @media (min-width: 1000px) { .hdr__nav { display: flex; } .hdr__pin { display: inline; } }
+
+  /* ---------- hero ---------- */
+  .hero { min-height: 100svh; display: grid; align-items: stretch; }
+  @media (min-width: 940px) { .hero { grid-template-columns: 1.05fr 0.95fr; } }
+  .hero__tekst { display: flex; flex-direction: column; justify-content: center; padding: clamp(7rem, 14vh, 10rem) clamp(1.5rem, 5vw, 5rem) clamp(3rem, 6vh, 5rem); }
+  .hero__kicker { font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--zielen); margin-bottom: 1.5rem; font-weight: 600; }
+  .hero h1 { font-size: clamp(2.9rem, 7.5vw, 5.6rem); }
+  .hero h1 em { font-style: italic; color: var(--zielen); }
+  .hero__lede { margin-top: 1.6rem; max-width: 44ch; color: var(--dym); font-size: clamp(1rem, 1.7vw, 1.15rem); }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2.4rem; }
+  .hero__status { margin-top: 2.2rem; font-size: 0.8rem; color: var(--dym); }
+  .hero__status strong { color: var(--zielen); font-weight: 600; }
+  .hero__foto { display: none; }
+  @media (min-width: 940px) {
+    .hero__foto { display: block; }
+    .hero__foto .ph, .hero__foto img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto !important; border: 0; border-left: 1px solid var(--linia); }
+  }
+
+  /* ---------- menu ---------- */
+  .menu__filtry { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 2.4rem 0 2.8rem; }
+  .menu__filtr { padding: 0.6rem 1.2rem; border-radius: 999px; border: 1px solid var(--linia); font-size: 0.8rem; font-weight: 500; transition: all 0.3s var(--ease); }
+  .menu__filtr:hover { border-color: var(--espresso); }
+  .menu__filtr.is-active { background: var(--espresso); color: var(--papier); border-color: var(--espresso); }
+
+  .menu__grupa { margin-bottom: 2.8rem; }
+  .menu__grupa.is-hidden { display: none; }
+  .menu__grupa h3 { font-size: 1.35rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--linia); margin-bottom: 0.4rem; font-style: italic; }
+  .menu__grupa ul { list-style: none; margin: 0; padding: 0; }
+  .menu__grupa li { display: flex; justify-content: space-between; align-items: baseline; gap: 1.5rem; padding: 0.95rem 0; border-bottom: 1px solid var(--linia); }
+  .menu__n { display: block; font-weight: 500; }
+  .menu__o { display: block; font-size: 0.84rem; color: var(--dym); margin-top: 0.15rem; }
+  .menu__c { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 500; }
+
+  /* ---------- karta lojalnościowa ---------- */
+  .karta { display: grid; gap: 3rem; align-items: center; }
+  @media (min-width: 1000px) { .karta { grid-template-columns: 1fr 1fr; gap: 5rem; } }
+  .karta__nota { margin-top: 1.75rem; font-size: 0.8rem; color: var(--dym-jasny); max-width: 46ch; padding-left: 1rem; border-left: 1px solid var(--linia-jasna); }
+
+  .karta__panel { background: var(--espresso-2); border: 1px solid var(--linia-jasna); border-radius: 20px; padding: 2rem 1.9rem; max-width: 460px; }
+  .karta__naglowek { display: flex; justify-content: space-between; align-items: baseline; }
+  .karta__logo { font-family: var(--serif); font-size: 1.4rem; }
+  .karta__licznik { font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--dym-jasny); }
+  .karta__pola { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-top: 1.6rem; }
+  .karta__pole {
+    aspect-ratio: 1; border-radius: 50%; border: 1px dashed var(--linia-jasna);
+    display: grid; place-items: center; transition: all 0.4s var(--ease);
+  }
+  .karta__pole.is-full { border-style: solid; border-color: var(--papier); background: rgba(248,245,238,0.08); }
+  .karta__pole svg { opacity: 0; transform: scale(0.5) rotate(-12deg); transition: all 0.45s var(--ease); }
+  .karta__pole.is-full svg { opacity: 1; transform: none; }
+  .karta__pole--nagroda { border-color: var(--zielen); border-style: solid; }
+  .karta__stan { margin-top: 1.5rem; font-size: 0.85rem; color: var(--dym-jasny); min-height: 2.6em; }
+  .karta__akcje { display: flex; align-items: center; gap: 1.25rem; margin-top: 1rem; flex-wrap: wrap; }
+  .karta__reset { font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dym-jasny); border-bottom: 1px solid var(--linia-jasna); padding: 0 0 2px; }
+  .karta__panel.is-gotowe { border-color: var(--zielen); box-shadow: 0 0 0 4px rgba(70,84,58,0.35); }
+
+  /* ---------- opinie ---------- */
+  .opinie { display: grid; gap: 2.5rem; margin-top: 2rem; }
+  @media (min-width: 820px) { .opinie { grid-template-columns: 1fr 1fr; gap: 3.5rem; } }
+  .opinie figure { margin: 0; border-top: 1px solid var(--linia); padding-top: 1.6rem; }
+  .opinie blockquote { margin: 0; }
+  .opinie blockquote p { font-family: var(--serif); font-size: 1.25rem; line-height: 1.4; font-style: italic; }
+  .opinie figcaption { margin-top: 1rem; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dym); }
+
+  /* ---------- miejsce + mapa ---------- */
+  .miejsce { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 1000px) { .miejsce { grid-template-columns: 0.8fr 1.2fr; gap: 5rem; } }
+  .miejsce__adres { font-style: normal; font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.15; margin-top: 2rem; }
+  .miejsce__godziny { margin-top: 1.75rem; color: var(--dym); }
+  .miejsce__linki { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 2rem; }
+  .miejsce__linki a { font-size: 0.9rem; font-weight: 500; width: fit-content; border-bottom: 1px solid var(--linia); padding-bottom: 2px; transition: border-color 0.3s var(--ease); }
+  .miejsce__linki a:hover { border-color: var(--espresso); }
+
+  .mapa { position: relative; aspect-ratio: 4/3; border: 1px solid var(--linia); background: var(--papier); overflow: hidden; }
+  .mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .mapa__zaslepka { position: absolute; inset: 0; display: grid; place-content: center; gap: 1.5rem; text-align: center; padding: 2rem; }
+  .mapa__zaslepka p { font-size: 0.85rem; color: var(--dym); }
+  .mapa__zaslepka .btn { margin-inline: auto; }
+
+  /* ---------- stopka ---------- */
+  .stopka { background: var(--espresso); color: var(--papier); padding-block: 3.5rem 2.5rem; }
+  .stopka__gora { display: grid; gap: 2.5rem; padding-bottom: 2.5rem; }
+  @media (min-width: 820px) { .stopka__gora { grid-template-columns: 1.4fr 1fr 1fr; } }
+  .stopka__mark { font-family: var(--serif); font-size: 1.7rem; }
+  .stopka__tag { color: var(--dym-jasny); font-size: 0.9rem; margin-top: 0.5rem; max-width: 32ch; }
+  .stopka__kol h3 { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dym-jasny); margin-bottom: 1rem; }
+  .stopka__kol a { display: block; padding: 0.25rem 0; font-size: 0.92rem; }
+  .stopka__kol a:hover { text-decoration: underline; }
+  .stopka__dol { border-top: 1px solid var(--linia-jasna); padding-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; justify-content: space-between; font-size: 0.74rem; color: var(--dym-jasny); }
+
+  .pasek { position: fixed; inset: auto 0 0 0; z-index: 70; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--linia); background: rgba(248,245,238,0.95); backdrop-filter: blur(10px); }
+  .pasek a { padding: 1rem 0.5rem; text-align: center; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .pasek a:first-child { background: var(--espresso); color: var(--papier); }
+  body { padding-bottom: 3.4rem; }
+  @media (min-width: 1000px) { .pasek { display: none; } body { padding-bottom: 0; } }
+</style>
+
+<script>
+  // ---- nagłówek po scrollu ----
+  const hdr = document.getElementById('hdr');
+  const przelaczHdr = () => hdr?.classList.toggle('is-stuck', window.scrollY > 60);
+  przelaczHdr();
+  window.addEventListener('scroll', przelaczHdr, { passive: true });
+
+  // ---- wejścia sekcji ----
+  const obs = new IntersectionObserver((wpisy) => {
+    wpisy.forEach((w) => { if (w.isIntersecting) { w.target.classList.add('is-in'); obs.unobserve(w.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    (el as HTMLElement).style.transitionDelay = `${Math.min(i % 3, 2) * 100}ms`;
+    obs.observe(el);
+  });
+
+  // ---- "otwarte teraz" liczone z godzin ----
+  // [dzień tygodnia: 0=nd] -> [otwarcie, zamknięcie] w minutach
+  const grafik: Record<number, [number, number]> = {
+    1: [450, 1080], 2: [450, 1080], 3: [450, 1080], 4: [450, 1080], 5: [450, 1080],
+    6: [540, 1020], 0: [540, 1020],
+  };
+  const status = document.getElementById('statusOtwarcia');
+  if (status) {
+    const teraz = new Date();
+    const [od, doZ] = grafik[teraz.getDay()];
+    const min = teraz.getHours() * 60 + teraz.getMinutes();
+    const fmt = (m: number) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
+    status.innerHTML =
+      min >= od && min < doZ
+        ? `<strong>Otwarte teraz</strong> · zamykamy o ${fmt(doZ)}`
+        : `Zamknięte · otwieramy ${min < od ? 'dziś' : 'jutro'} o ${fmt(min < od ? od : grafik[(teraz.getDay() + 1) % 7][0])}`;
+  }
+
+  // ---- filtry menu ----
+  const filtry = document.querySelectorAll('.menu__filtr');
+  const grupy = document.querySelectorAll('.menu__grupa');
+  filtry.forEach((f) => f.addEventListener('click', () => {
+    filtry.forEach((x) => { x.classList.remove('is-active'); x.setAttribute('aria-selected', 'false'); });
+    f.classList.add('is-active');
+    f.setAttribute('aria-selected', 'true');
+    const kat = (f as HTMLElement).dataset.kat;
+    grupy.forEach((g) => (g as HTMLElement).classList.toggle('is-hidden', kat !== 'wszystko' && (g as HTMLElement).dataset.kat !== kat));
+  }));
+
+  // ---- karta stałego gościa: zapis w localStorage, bez kont i backendu ----
+  const LIMIT = 8;
+  const KLUCZ = 'prolog-karta';
+  const pola = document.getElementById('kartaPola');
+  const licznik = document.getElementById('kartaLicznik');
+  const stan = document.getElementById('kartaStan');
+  const panel = document.querySelector('.karta__panel');
+
+  const ikonaKubka = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8h11v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8z"/><path d="M16 9h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 4.5c0 .8.8.8.8 1.6M11.5 4.5c0 .8.8.8.8 1.6"/></svg>`;
+
+  const odczytaj = () => {
+    try { return Math.min(LIMIT, Math.max(0, Number(localStorage.getItem(KLUCZ)) || 0)); }
+    catch { return 0; }
+  };
+  const zapisz = (n: number) => { try { localStorage.setItem(KLUCZ, String(n)); } catch {} };
+
+  function rysuj() {
+    if (!pola || !licznik || !stan) return;
+    const n = odczytaj();
+    pola.innerHTML = '';
+    for (let i = 0; i < LIMIT; i++) {
+      const p = document.createElement('div');
+      p.className = 'karta__pole' + (i < n ? ' is-full' : '') + (i === LIMIT - 1 ? ' karta__pole--nagroda' : '');
+      p.innerHTML = ikonaKubka;
+      pola.appendChild(p);
+    }
+    licznik.textContent = `${n} / ${LIMIT}`;
+    panel?.classList.toggle('is-gotowe', n >= LIMIT);
+    stan.textContent =
+      n >= LIMIT
+        ? 'Karta pełna — pokaż ten ekran przy barze, ósma kawa jest od nas. ☕'
+        : n === 0
+          ? 'Zbierz osiem pieczątek — ósma kawa dowolna, na nasz koszt.'
+          : `Jeszcze ${LIMIT - n} ${LIMIT - n === 1 ? 'pieczątka' : LIMIT - n < 5 ? 'pieczątki' : 'pieczątek'} do darmowej kawy.`;
+  }
+
+  document.getElementById('kartaDodaj')?.addEventListener('click', () => {
+    const n = odczytaj();
+    if (n < LIMIT) zapisz(n + 1);
+    rysuj();
+  });
+  document.getElementById('kartaReset')?.addEventListener('click', () => { zapisz(0); rysuj(); });
+  rysuj();
+
+  // ---- mapa ładowana po kliknięciu (bez cookies do czasu zgody) ----
+  const mapa = document.getElementById('mapa');
+  document.getElementById('mapaPokaz')?.addEventListener('click', () => {
+    if (!mapa) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = mapa.dataset.src || '';
+    iframe.loading = 'lazy';
+    iframe.title = 'Mapa dojazdu do kawiarni Prolog';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    mapa.appendChild(iframe);
+    document.getElementById('mapaZaslepka')?.remove();
+  });
+</script>

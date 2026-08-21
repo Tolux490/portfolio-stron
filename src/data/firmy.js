@@ -51,3 +51,24 @@ export const nieruchomosci = {
   openingHours: ['Mo-Fr 09:00-17:00'],
   hours: ['pon.–pt. 9:00–17:00', 'sob. po umówieniu', 'niedz. nieczynne'],
 };
+
+export const kawiarnia = {
+  name: 'Prolog',
+  legalName: 'Prolog Kawiarnia Sp. z o.o.',
+  tagline: 'Kawa speciality, matcha i wypieki własne. Wołomin.',
+  phone: '+48 517 902 344',
+  email: 'czesc@prolog.cafe',
+  street: 'ul. Kościelna 7',
+  zip: '05-200',
+  city: 'Wołomin',
+  nip: '1250000003',
+  mapUrl: 'https://maps.google.com/?q=Wołomin+Kościelna+7',
+  // Podmień na prawdziwe profile klienta:
+  facebook: 'https://www.facebook.com/',
+  instagram: 'https://www.instagram.com/',
+  slug: 'kawiarnia',
+  schemaType: 'CafeOrCoffeeShop',
+  openingHours: ['Mo-Fr 07:30-18:00', 'Sa-Su 09:00-17:00'],
+  hours: ['pon.–pt. 7:30–18:00', 'sob.–niedz. 9:00–17:00'],
+};
+

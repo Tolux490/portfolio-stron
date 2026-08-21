@@ -1,0 +1,32 @@
+---
+import Site from '../../../layouts/Site.astro';
+import Polityka from '../../../components/Polityka.astro';
+import { kawiarnia as biz } from '../../../data/firmy.js';
+const fonts = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,420&family=Albert+Sans:wght@400;500;600&display=swap';
+---
+<Site title={`Polityka prywatności — ${biz.name}`} description="Zasady przetwarzania danych osobowych." fonts={fonts} biz={biz}>
+  <Polityka biz={biz} />
+  <section class="band" style="padding-top:0">
+    <div class="wrap prose">
+      <h2>9. Mapa Google i karta stałego gościa</h2>
+      <p>
+        Mapa dojazdu ładowana jest z serwisu Google Maps dopiero po kliknięciu przycisku
+        „Pokaż mapę" — do tego momentu strona nie łączy się z serwerami Google. Po kliknięciu
+        Google może zapisać własne pliki cookies zgodnie ze swoją polityką prywatności.
+      </p>
+      <p>
+        Karta stałego gościa zapisuje liczbę pieczątek wyłącznie w pamięci Twojej przeglądarki
+        (localStorage). Dane nie opuszczają Twojego urządzenia i nie są nigdzie przesyłane.
+      </p>
+    </div>
+  </section>
+</Site>
+<style is:global>
+  :root {
+    --bg:#f8f5ee; --bg-alt:#efeadf; --ink:#221a13; --muted:rgba(34,26,19,.62); --line:rgba(34,26,19,.14);
+    --accent:#46543a; --accent-dark:#38452e; --on-accent:#f8f5ee; --radius:999px; --maxw:1040px;
+    --font-display:'Fraunces',Georgia,serif;
+    --font-body:'Albert Sans',system-ui,sans-serif;
+    --font-mono:'Albert Sans',system-ui,sans-serif;
+  }
+</style>
