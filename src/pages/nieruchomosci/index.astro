@@ -14,12 +14,60 @@ const nawigacja = [
 ];
 
 const oferty = [
-  { id: 'kob-48', typ: 'Mieszkanie', gdzie: 'Wołomin, ul. Kobyłkowska', cena: 465000, m: 48, pok: 2, pietro: '3/4', rok: '2018', foto: '' },
-  { id: 'duc-142', typ: 'Dom', gdzie: 'Duczki', cena: 1190000, m: 142, pok: 5, pietro: '—', rok: '2009', foto: '' },
-  { id: 'cen-62', typ: 'Mieszkanie', gdzie: 'Wołomin, centrum', cena: 549000, m: 62, pok: 3, pietro: '1/3', rok: '1998', foto: '' },
-  { id: 'zag-1100', typ: 'Działka', gdzie: 'Zagościniec', cena: 289000, m: 1100, pok: 0, pietro: '—', rok: 'MPZP', foto: '' },
-  { id: 'kob-31', typ: 'Mieszkanie', gdzie: 'Kobyłka', cena: 339000, m: 31, pok: 1, pietro: '2/5', rok: '2021', foto: '' },
-  { id: 'mar-118', typ: 'Dom', gdzie: 'Marki', cena: 985000, m: 118, pok: 4, pietro: '—', rok: '2016', foto: '' },
+  {
+    id: 'kob-48', typ: 'Mieszkanie', gdzie: 'Wołomin, ul. Kobyłkowska', cena: 465000,
+    m: 48, pok: 2, pietro: '3/4', rok: '2018', foto: '', zdjec: 6, rynek: 'wtórny',
+    stan: 'do wprowadzenia', ogrzewanie: 'miejskie', dostepne: 'od zaraz',
+    opis: 'Dwa pokoje w czteropiętrowym budynku z 2018 roku, na trzecim piętrze z windą. Rozkład bez przechodnich pomieszczeń, kuchnia otwarta na salon, sypialnia od strony podwórza. Mieszkanie po jednym właścicielu, bez konieczności remontu.',
+    atuty: ['Balkon 6 m²', 'Miejsce postojowe w hali', 'Winda', 'Komórka lokatorska'],
+    okolica: [['Szkoła podstawowa', '400 m'], ['PKP Wołomin', '1,2 km'], ['Sklep spożywczy', '150 m'], ['Park', '600 m']],
+    agent: 'Marta Sienkiewicz', agentTel: '+48 604 337 902',
+  },
+  {
+    id: 'duc-142', typ: 'Dom', gdzie: 'Duczki', cena: 1190000,
+    m: 142, pok: 5, pietro: '—', rok: '2009', foto: '', zdjec: 8, rynek: 'wtórny',
+    stan: 'dobry', ogrzewanie: 'gazowe', dostepne: 'od stycznia',
+    opis: 'Dom wolnostojący na działce 780 m², parter z salonem i kuchnią, na piętrze cztery sypialnie. Garaż w bryle budynku, taras od południa. Dach kryty blachodachówką, wymieniony w 2019 roku.',
+    atuty: ['Działka 780 m²', 'Garaż dwustanowiskowy', 'Taras 24 m²', 'Kominek', 'Ogród urządzony'],
+    okolica: [['Przedszkole', '900 m'], ['Trasa S8', '3 km'], ['Las', '350 m'], ['Przystanek autobusowy', '250 m']],
+    agent: 'Tomasz Rybak', agentTel: '+48 604 337 903',
+  },
+  {
+    id: 'cen-62', typ: 'Mieszkanie', gdzie: 'Wołomin, centrum', cena: 549000,
+    m: 62, pok: 3, pietro: '1/3', rok: '1998', foto: '', zdjec: 5, rynek: 'wtórny',
+    stan: 'do odświeżenia', ogrzewanie: 'miejskie', dostepne: 'od zaraz',
+    opis: 'Trzy pokoje w kamienicy z 1998 roku, pierwsze piętro. Wysokie sufity, duże okna od strony ulicy. Mieszkanie wymaga odświeżenia — instalacje sprawne, do wymiany podłogi i kuchnia.',
+    atuty: ['Wysokość 2,9 m', 'Piwnica 8 m²', 'Balkon', 'Niski czynsz'],
+    okolica: [['Rynek', '200 m'], ['PKP Wołomin', '700 m'], ['Przychodnia', '450 m'], ['Liceum', '800 m']],
+    agent: 'Marta Sienkiewicz', agentTel: '+48 604 337 902',
+  },
+  {
+    id: 'zag-1100', typ: 'Działka', gdzie: 'Zagościniec', cena: 289000,
+    m: 1100, pok: 0, pietro: '—', rok: 'MPZP', foto: '', zdjec: 4, rynek: 'wtórny',
+    stan: 'niezabudowana', ogrzewanie: '—', dostepne: 'od zaraz',
+    opis: 'Działka budowlana 1100 m² objęta miejscowym planem zagospodarowania: zabudowa mieszkaniowa jednorodzinna. Kształt prostokątny, wymiary 22 × 50 m, dostęp z drogi asfaltowej.',
+    atuty: ['MPZP: zabudowa jednorodzinna', 'Prąd i woda w drodze', 'Gaz w drodze', 'Wymiary 22 × 50 m'],
+    okolica: [['Trasa S8', '4 km'], ['Szkoła', '1,8 km'], ['Sklep', '600 m'], ['Las', '200 m']],
+    agent: 'Tomasz Rybak', agentTel: '+48 604 337 903',
+  },
+  {
+    id: 'kob-31', typ: 'Mieszkanie', gdzie: 'Kobyłka', cena: 339000,
+    m: 31, pok: 1, pietro: '2/5', rok: '2021', foto: '', zdjec: 5, rynek: 'wtórny',
+    stan: 'do wprowadzenia', ogrzewanie: 'miejskie', dostepne: 'od zaraz',
+    opis: 'Kawalerka 31 m² w budynku z 2021 roku, drugie piętro z windą. Aneks kuchenny, duży balkon, okna na wschód. Idealna pod wynajem — czynsz najmu w okolicy to 1900–2200 zł.',
+    atuty: ['Balkon 5 m²', 'Winda', 'Rowerownia w budynku', 'Pod wynajem'],
+    okolica: [['PKP Kobyłka', '800 m'], ['Sklep', '100 m'], ['Park', '450 m'], ['Szkoła', '700 m']],
+    agent: 'Marta Sienkiewicz', agentTel: '+48 604 337 902',
+  },
+  {
+    id: 'mar-118', typ: 'Dom', gdzie: 'Marki', cena: 985000,
+    m: 118, pok: 4, pietro: '—', rok: '2016', foto: '', zdjec: 7, rynek: 'wtórny',
+    stan: 'bardzo dobry', ogrzewanie: 'pompa ciepła', dostepne: 'od marca',
+    opis: 'Dom w zabudowie bliźniaczej z 2016 roku, działka 320 m². Pompa ciepła i fotowoltaika 6 kWp — rachunki za ogrzewanie poniżej 200 zł miesięcznie. Salon z wyjściem na taras, cztery sypialnie na piętrze.',
+    atuty: ['Fotowoltaika 6 kWp', 'Pompa ciepła', 'Działka 320 m²', 'Dwa miejsca postojowe', 'Rekuperacja'],
+    okolica: [['Trasa S8', '1,5 km'], ['Szkoła', '600 m'], ['Galeria handlowa', '2 km'], ['Przystanek', '300 m']],
+    agent: 'Tomasz Rybak', agentTel: '+48 604 337 903',
+  },
 ];
 
 const zasady = [
@@ -91,9 +139,10 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
       </div>
       <div class="hero__pasek">
         <div class="wrap hero__liczby">
-          {zasady.map((z) => (
-            <div><span>{z.t}</span></div>
-          ))}
+          <div><span class="hero__l-wart" id="liczbaOfert">6</span><span class="hero__l-opis">ofert w sprzedaży</span></div>
+          <div><span class="hero__l-wart">2%</span><span class="hero__l-opis">prowizji + VAT, płatne po akcie</span></div>
+          <div><span class="hero__l-wart">41</span><span class="hero__l-opis">dni — mediana do aktu w 2025</span></div>
+          <div><span class="hero__l-wart">5</span><span class="hero__l-opis">gmin, w których pracujemy</span></div>
         </div>
       </div>
     </section>
@@ -110,47 +159,74 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
         </div>
 
         <div class="narzedzia reveal">
-          <div class="filtry" role="group" aria-label="Filtruj po typie">
+          <div class="filtry" role="group" aria-label="Filtruj oferty">
             <button class="chip is-active" data-typ="wszystko">Wszystkie</button>
             <button class="chip" data-typ="Mieszkanie">Mieszkania</button>
             <button class="chip" data-typ="Dom">Domy</button>
             <button class="chip" data-typ="Działka">Działki</button>
+            <button class="chip chip--zapisane" id="chipZapisane" data-typ="zapisane" aria-pressed="false">
+              Zapisane <span id="licznikZapisanych">0</span>
+            </button>
           </div>
-          <label class="sortowanie">
-            <span>Sortuj</span>
-            <select id="sortowanie">
-              <option value="cena-asc">Cena rosnąco</option>
-              <option value="cena-desc">Cena malejąco</option>
-              <option value="m-desc">Powierzchnia malejąco</option>
-              <option value="mkw-asc">Cena za m² rosnąco</option>
-            </select>
-          </label>
+
+          <div class="narzedzia__prawa">
+            <label class="suwak">
+              <span>Do <strong id="etykietaCeny">1 200 000 zł</strong></span>
+              <input type="range" id="suwakCeny" min="250000" max="1200000" step="10000" value="1200000" aria-label="Maksymalna cena" />
+            </label>
+            <label class="sortowanie">
+              <span>Sortuj</span>
+              <select id="sortowanie">
+                <option value="cena-asc">Cena rosnąco</option>
+                <option value="cena-desc">Cena malejąco</option>
+                <option value="m-desc">Powierzchnia malejąco</option>
+                <option value="mkw-asc">Cena za m² rosnąco</option>
+              </select>
+            </label>
+            <div class="widok" role="group" aria-label="Widok listy">
+              <button class="widok__btn is-active" data-widok="siatka" aria-label="Widok siatki">▦</button>
+              <button class="widok__btn" data-widok="lista" aria-label="Widok listy">☰</button>
+            </div>
+          </div>
         </div>
 
         <div class="oferty" id="listaOfert">
           {oferty.map((o) => (
             <article class="oferta reveal" data-typ={o.typ} data-cena={o.cena} data-m={o.m} data-id={o.id}>
-              <Foto src={o.foto} alt={`${o.typ} — ${o.gdzie}`} ratio="3/2" label={`${o.typ} · ${o.gdzie}`} />
+              <div class="oferta__media">
+                <button class="oferta__otworz" type="button" data-otworz={o.id} aria-label={`Zobacz szczegóły: ${o.typ}, ${o.gdzie}`}>
+                  <Foto src={o.foto} alt={`${o.typ} — ${o.gdzie}`} ratio="3/2" label={`${o.typ} · ${o.gdzie}`} />
+                </button>
+                <button class="serce" type="button" data-serce={o.id} aria-label="Zapisz ofertę" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M12 20.3 4.6 13a4.6 4.6 0 1 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/>
+                  </svg>
+                </button>
+                <span class="oferta__zdjec">{o.zdjec} zdjęć</span>
+              </div>
+
               <div class="oferta__ciało">
-                <p class="oferta__typ">{o.typ}</p>
-                <h3>{o.gdzie}</h3>
+                <p class="oferta__typ">{o.typ} · {o.stan}</p>
+                <h3><button type="button" data-otworz={o.id}>{o.gdzie}</button></h3>
                 <dl class="metryka">
                   <div><dt>Powierzchnia</dt><dd>{o.m} m²</dd></div>
                   {o.pok > 0 && <div><dt>Pokoje</dt><dd>{o.pok}</dd></div>}
                   <div><dt>Piętro</dt><dd>{o.pietro}</dd></div>
-                  <div><dt>Rok / status</dt><dd>{o.rok}</dd></div>
                   <div><dt>Cena za m²</dt><dd>{Math.round(o.cena / o.m).toLocaleString('pl-PL')} zł</dd></div>
                 </dl>
                 <div class="oferta__stopa">
                   <p class="oferta__cena">{o.cena.toLocaleString('pl-PL')} zł</p>
-                  <button class="oferta__btn" type="button" data-oglad={o.id} data-opis={`${o.typ} — ${o.gdzie}`}>
-                    Umów oglądanie
-                  </button>
+                  <button class="oferta__btn" type="button" data-otworz={o.id}>Szczegóły →</button>
                 </div>
+                <label class="porownaj">
+                  <input type="checkbox" data-porownaj={o.id} />
+                  <span>Do porównania</span>
+                </label>
               </div>
             </article>
           ))}
         </div>
+        <p class="pusto" id="pusto" hidden>Żadna oferta nie spełnia tych kryteriów. Zmień filtr albo zadzwoń — mamy też oferty przed publikacją.</p>
         <p class="drobne">Ceny ofertowe. Zdjęcia i opisy publikujemy wyłącznie za pisemną zgodą właściciela.</p>
       </div>
     </section>
@@ -327,6 +403,26 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
       </div>
     </footer>
 
+    <!-- pasek porównania -->
+    <div class="porBar" id="porBar" hidden>
+      <div class="wrap porBar__in">
+        <span id="porBarTekst">Wybrano 0</span>
+        <div class="porBar__akcje">
+          <button class="porBar__czysc" id="porCzysc" type="button">Wyczyść</button>
+          <button class="btn btn--pelny porBar__go" id="porPokaz" type="button">Porównaj</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- panel szczegółów oferty -->
+    <div class="panel" id="panel" hidden role="dialog" aria-modal="true" aria-label="Szczegóły oferty">
+      <div class="panel__tlo" id="panelTlo"></div>
+      <div class="panel__karta" id="panelKarta" tabindex="-1">
+        <button class="panel__zamknij" id="panelZamknij" aria-label="Zamknij">✕</button>
+        <div class="panel__tresc" id="panelTresc"></div>
+      </div>
+    </div>
+
     <div class="pasek">
       <a href="#oglad">Umów oglądanie</a>
       <a href={`tel:${tel}`}>Zadzwoń</a>
@@ -423,9 +519,13 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
   .hero__pasek { border-top: 1px solid var(--linia); border-bottom: 1px solid var(--linia); }
   .hero__liczby { display: grid; grid-template-columns: repeat(2, 1fr); }
   @media (min-width: 720px) { .hero__liczby { grid-template-columns: repeat(4, 1fr); } }
-  .hero__liczby div { padding: 1.4rem 0; border-right: 1px solid var(--linia); }
-  .hero__liczby div:last-child { border-right: 0; }
-  .hero__liczby span { font-family: var(--mono); font-size: 0.95rem; }
+  .hero__liczby > div { padding: 1.5rem 1.5rem 1.5rem 0; border-right: 1px solid var(--linia); display: flex; flex-direction: column; gap: 0.4rem; }
+  .hero__liczby > div:nth-child(2n) { padding-right: 0; }
+  @media (min-width: 720px) { .hero__liczby > div { padding-right: 1.5rem; } .hero__liczby > div:nth-child(2n) { padding-right: 1.5rem; } .hero__liczby > div:last-child { border-right: 0; padding-right: 0; } }
+  .hero__liczby > div:nth-child(2n) { border-right: 0; }
+  @media (min-width: 720px) { .hero__liczby > div:nth-child(2n) { border-right: 1px solid var(--linia); } .hero__liczby > div:last-child { border-right: 0; } }
+  .hero__l-wart { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .hero__l-opis { font-family: var(--mono); font-size: 0.66rem; line-height: 1.45; letter-spacing: 0.04em; color: var(--szary); max-width: 20ch; }
 
   /* ---------- narzędzia listy ---------- */
   .sekcja__glowa { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; }
@@ -526,6 +626,120 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
   .mapa__zaslepka p { font-size: 0.82rem; color: var(--szary); }
   .mapa__zaslepka .btn { margin-inline: auto; }
 
+  /* ---------- narzędzia: suwak, widok ---------- */
+  .narzedzia__prawa { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; }
+  .suwak { display: flex; flex-direction: column; gap: 0.4rem; min-width: 12rem; }
+  .suwak span { font-size: 0.76rem; color: var(--szary); }
+  .suwak strong { font-family: var(--mono); font-weight: 400; color: var(--atrament); font-variant-numeric: tabular-nums; }
+  .suwak input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 1px; background: var(--linia); }
+  .suwak input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: var(--atrament); cursor: pointer; }
+  .suwak input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border: 0; background: var(--atrament); cursor: pointer; }
+  .widok { display: flex; }
+  .widok__btn { width: 2.1rem; height: 2.1rem; border: 1px solid var(--linia); font-size: 0.8rem; display: grid; place-items: center; }
+  .widok__btn + .widok__btn { border-left: 0; }
+  .widok__btn.is-active { background: var(--atrament); color: var(--papier); border-color: var(--atrament); }
+  .chip--zapisane span { font-family: var(--mono); font-size: 0.72rem; opacity: 0.7; }
+  .pusto { color: var(--szary); padding: 3rem 0; max-width: 46ch; }
+
+  /* ---------- karta: media, serce, porównanie ---------- */
+  .oferta__media { position: relative; }
+  .oferta__otworz { display: block; width: 100%; padding: 0; overflow: hidden; }
+  .oferta__otworz .ph, .oferta__otworz img { transition: transform 0.7s var(--ease); width: 100%; }
+  .oferta:hover .oferta__otworz .ph, .oferta:hover .oferta__otworz img { transform: scale(1.03); }
+  .oferta h3 button { font: inherit; letter-spacing: inherit; text-align: left; padding: 0; }
+  .oferta h3 button:hover { text-decoration: underline; }
+  .serce {
+    position: absolute; top: 0.7rem; right: 0.7rem; width: 2.1rem; height: 2.1rem;
+    display: grid; place-items: center; background: rgba(251,251,250,0.9); color: var(--szary);
+    transition: color 0.25s var(--ease), background 0.25s var(--ease);
+  }
+  .serce:hover { color: var(--atrament); }
+  .serce[aria-pressed="true"] { color: var(--atrament); }
+  .serce[aria-pressed="true"] svg { fill: var(--atrament); }
+  .oferta__zdjec {
+    position: absolute; bottom: 0.7rem; left: 0.7rem; background: rgba(16,17,18,0.82); color: var(--papier);
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.06em; padding: 0.25rem 0.5rem;
+  }
+  .porownaj { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; cursor: pointer; font-size: 0.76rem; color: var(--szary); }
+  .porownaj input { width: 0.9rem; height: 0.9rem; accent-color: var(--atrament); }
+
+  /* widok listy */
+  .oferty.jest-lista { grid-template-columns: 1fr; gap: 0; }
+  @media (min-width: 780px) {
+    .oferty.jest-lista .oferta { display: grid; grid-template-columns: 15rem 1fr; gap: 2rem; align-items: center; padding: 1.75rem 0; border-top: 1px solid var(--linia); }
+    .oferty.jest-lista .oferta:last-child { border-bottom: 1px solid var(--linia); }
+    .oferty.jest-lista .oferta__ciało { padding-top: 0; }
+    .oferty.jest-lista .metryka { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 1.5rem; }
+    .oferty.jest-lista .metryka > div { border-bottom: 0; }
+    .oferty.jest-lista .porownaj { display: none; }
+  }
+
+  /* ---------- pasek porównania ---------- */
+  .porBar { position: fixed; inset: auto 0 3.4rem 0; z-index: 65; background: var(--atrament); color: var(--papier); }
+  @media (min-width: 980px) { .porBar { bottom: 0; } }
+  .porBar__in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 0.85rem; }
+  .porBar__in > span { font-family: var(--mono); font-size: 0.78rem; }
+  .porBar__akcje { display: flex; align-items: center; gap: 1.25rem; }
+  .porBar__czysc { font-size: 0.78rem; color: var(--szary-jasny); }
+  .porBar__go { padding: 0.6rem 1.3rem; background: var(--papier); color: var(--atrament); border-color: var(--papier); }
+
+  /* ---------- panel szczegółów ---------- */
+  .panel { position: fixed; inset: 0; z-index: 90; }
+  .panel[hidden] { display: none; }
+  .panel__tlo { position: absolute; inset: 0; background: rgba(16,17,18,0.55); backdrop-filter: blur(3px); animation: wejscie 0.3s var(--ease); }
+  .panel__karta {
+    position: absolute; inset: 0 0 0 auto; width: min(100%, 720px); background: var(--papier);
+    overflow-y: auto; padding: clamp(1.5rem, 4vw, 3rem); animation: wsun 0.4s var(--ease);
+  }
+  @keyframes wejscie { from { opacity: 0; } }
+  @keyframes wsun { from { transform: translateX(40px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .panel__karta, .panel__tlo { animation: none; } }
+  .panel__zamknij { position: sticky; top: 0; float: right; font-size: 1.1rem; padding: 0.4rem 0.6rem; z-index: 2; background: var(--papier); }
+
+  .pnl__typ { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--szary); }
+  .pnl__h { font-size: clamp(1.5rem, 3.5vw, 2.1rem); font-weight: 500; letter-spacing: -0.03em; margin: 0.4rem 0 0.75rem; }
+  .pnl__cena { font-size: 1.5rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .pnl__mkw { font-family: var(--mono); font-size: 0.76rem; color: var(--szary); margin-top: 0.2rem; }
+  .pnl__galeria { display: flex; gap: 0.6rem; overflow-x: auto; margin: 1.75rem 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .pnl__galeria::-webkit-scrollbar { display: none; }
+  .pnl__galeria > div { flex: 0 0 78%; scroll-snap-align: start; }
+  .pnl__opis { color: var(--szary); margin: 1.5rem 0; }
+  .pnl__sekcja { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--linia); }
+  .pnl__sekcja h4 { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--szary); font-weight: 400; margin: 0 0 0.9rem; }
+  .pnl__dane { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; }
+  .pnl__dane > div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.45rem 0; border-bottom: 1px solid var(--linia); font-family: var(--mono); font-size: 0.74rem; }
+  .pnl__dane dt { color: var(--szary); margin: 0; }
+  .pnl__dane dd { margin: 0; text-align: right; }
+  .pnl__atuty { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .pnl__atuty li { border: 1px solid var(--linia); padding: 0.35rem 0.8rem; font-size: 0.78rem; }
+  .pnl__okolica > div { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--linia); font-size: 0.82rem; }
+  .pnl__okolica span:last-child { font-family: var(--mono); color: var(--szary); }
+  .pnl__agent { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1rem; }
+  .pnl__agent strong { font-weight: 500; }
+  .pnl__agent a { font-family: var(--mono); font-size: 0.88rem; border-bottom: 1px solid var(--linia); }
+  .pnl__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+  .pnl__cta .btn { flex: 1 1 12rem; }
+
+  /* kalkulator raty */
+  .rata { margin-top: 1rem; }
+  .rata__pola { display: grid; gap: 1.1rem; }
+  .rata__pole span { display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--szary); margin-bottom: 0.4rem; }
+  .rata__pole strong { font-family: var(--mono); font-weight: 400; color: var(--atrament); font-variant-numeric: tabular-nums; }
+  .rata__pole input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 1px; background: var(--linia); }
+  .rata__pole input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: var(--atrament); cursor: pointer; }
+  .rata__pole input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; border: 0; background: var(--atrament); cursor: pointer; }
+  .rata__wynik { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--linia); }
+  .rata__kwota { font-size: 1.6rem; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .rata__nota { font-size: 0.72rem; color: var(--szary); margin-top: 0.9rem; line-height: 1.55; }
+
+  /* tabela porównania */
+  .por__tab { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.82rem; }
+  .por__tab th { text-align: left; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--szary); font-weight: 400; padding: 0 0.75rem 0.7rem 0; vertical-align: bottom; }
+  .por__tab td { padding: 0.7rem 0.75rem 0.7rem 0; border-top: 1px solid var(--linia); font-variant-numeric: tabular-nums; }
+  .por__tab td:first-child { color: var(--szary); font-family: var(--mono); font-size: 0.72rem; }
+  .por__tab .jest-najlepsza { font-weight: 500; }
+  .por__tab .jest-najlepsza::after { content: ' ●'; font-size: 0.55em; vertical-align: middle; }
+
   /* ---------- stopka ---------- */
   .stopka { border-top: 1px solid var(--linia); padding-block: 2rem; }
   .stopka__dol { display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; justify-content: space-between; font-family: var(--mono); font-size: 0.7rem; color: var(--szary); }
@@ -536,7 +750,7 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
   @media (min-width: 980px) { .pasek { display: none; } body { padding-bottom: 0; } }
 </style>
 
-<script define:vars={{ formKey: biz.formKey, mailKontakt: biz.email }}>
+<script define:vars={{ formKey: biz.formKey, mailKontakt: biz.email, dane: oferty }}>
   // ---- nagłówek ----
   const hdr = document.getElementById('hdr');
   const przelaczHdr = () => hdr?.classList.toggle('is-stuck', window.scrollY > 60);
@@ -552,42 +766,300 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
     obs.observe(el);
   });
 
-  // ---- filtry i sortowanie ofert ----
+  // ---- filtry, sortowanie, widok, ulubione ----
   const lista = document.getElementById('listaOfert');
   const karty = Array.from(document.querySelectorAll('.oferta'));
   const licznik = document.getElementById('licznikOfert');
+  const pusto = document.getElementById('pusto');
+  const zl = (n) => n.toLocaleString('pl-PL');
+
   let aktywnyTyp = 'wszystko';
+  let maxCena = 1200000;
+  let tylkoZapisane = false;
+
+  const KLUCZ = 'kontur-zapisane';
+  const czytajZapisane = () => {
+    try { return new Set(JSON.parse(localStorage.getItem(KLUCZ) || '[]')); } catch { return new Set(); }
+  };
+  const zapiszZapisane = (zbior) => {
+    try { localStorage.setItem(KLUCZ, JSON.stringify([...zbior])); } catch {}
+  };
+  let zapisane = czytajZapisane();
 
   function odswiez() {
     let widoczne = 0;
     karty.forEach((k) => {
-      const pasuje = aktywnyTyp === 'wszystko' || k.dataset.typ === aktywnyTyp;
-      k.classList.toggle('is-hidden', !pasuje);
-      if (pasuje) widoczne++;
+      const id = k.dataset.id;
+      const pasujeTyp = aktywnyTyp === 'wszystko' || k.dataset.typ === aktywnyTyp;
+      const pasujeCena = +k.dataset.cena <= maxCena;
+      const pasujeZapis = !tylkoZapisane || zapisane.has(id);
+      const ok = pasujeTyp && pasujeCena && pasujeZapis;
+      k.classList.toggle('is-hidden', !ok);
+      if (ok) widoczne++;
     });
-    if (licznik) licznik.textContent = `${widoczne} ${widoczne === 1 ? 'oferta' : widoczne < 5 ? 'oferty' : 'ofert'}`;
+    if (licznik) licznik.textContent = `${widoczne} ${widoczne === 1 ? 'oferta' : widoczne > 1 && widoczne < 5 ? 'oferty' : 'ofert'}`;
+    if (pusto) pusto.hidden = widoczne !== 0;
+    const lz = document.getElementById('licznikZapisanych');
+    if (lz) lz.textContent = String(zapisane.size);
   }
 
   document.querySelectorAll('.chip').forEach((c) => c.addEventListener('click', () => {
-    document.querySelectorAll('.chip').forEach((x) => x.classList.remove('is-active'));
-    c.classList.add('is-active');
-    aktywnyTyp = c.dataset.typ;
+    if (c.dataset.typ === 'zapisane') {
+      tylkoZapisane = !tylkoZapisane;
+      c.classList.toggle('is-active', tylkoZapisane);
+      c.setAttribute('aria-pressed', String(tylkoZapisane));
+    } else {
+      document.querySelectorAll('.chip:not(.chip--zapisane)').forEach((x) => x.classList.remove('is-active'));
+      c.classList.add('is-active');
+      aktywnyTyp = c.dataset.typ;
+    }
     odswiez();
   }));
 
+  const suwakCeny = document.getElementById('suwakCeny');
+  suwakCeny?.addEventListener('input', () => {
+    maxCena = +suwakCeny.value;
+    const et = document.getElementById('etykietaCeny');
+    if (et) et.textContent = `${zl(maxCena)} zł`;
+    odswiez();
+  });
+
   document.getElementById('sortowanie')?.addEventListener('change', (e) => {
     const tryb = e.target.value;
-    const posortowane = [...karty].sort((a, b) => {
-      const ca = +a.dataset.cena, cb = +b.dataset.cena;
-      const ma = +a.dataset.m, mb = +b.dataset.m;
+    [...karty].sort((a, b) => {
+      const ca = +a.dataset.cena, cb = +b.dataset.cena, ma = +a.dataset.m, mb = +b.dataset.m;
       if (tryb === 'cena-asc') return ca - cb;
       if (tryb === 'cena-desc') return cb - ca;
       if (tryb === 'm-desc') return mb - ma;
       return ca / ma - cb / mb;
-    });
-    posortowane.forEach((k) => lista?.appendChild(k));
+    }).forEach((k) => lista?.appendChild(k));
   });
+
+  document.querySelectorAll('.widok__btn').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('.widok__btn').forEach((x) => x.classList.remove('is-active'));
+    b.classList.add('is-active');
+    lista?.classList.toggle('jest-lista', b.dataset.widok === 'lista');
+  }));
+
+  document.querySelectorAll('[data-serce]').forEach((b) => {
+    const id = b.dataset.serce;
+    b.setAttribute('aria-pressed', String(zapisane.has(id)));
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      zapisane.has(id) ? zapisane.delete(id) : zapisane.add(id);
+      zapiszZapisane(zapisane);
+      b.setAttribute('aria-pressed', String(zapisane.has(id)));
+      odswiez();
+    });
+  });
+
   odswiez();
+
+  // ---- panel szczegółów ----
+  const panel = document.getElementById('panel');
+  const panelTresc = document.getElementById('panelTresc');
+  const panelKarta = document.getElementById('panelKarta');
+  let wracamDo = null;
+
+  const rata = (kwota, lata, proc) => {
+    const r = proc / 100 / 12, n = lata * 12;
+    return r === 0 ? kwota / n : (kwota * r) / (1 - Math.pow(1 + r, -n));
+  };
+
+  function widokOferty(o) {
+    const mkw = Math.round(o.cena / o.m);
+    const wklad = Math.round(o.cena * 0.2);
+    const kredyt = o.cena - wklad;
+    return `
+      <p class="pnl__typ">${o.typ} · ${o.gdzie}</p>
+      <h2 class="pnl__h">${o.opis.split('.')[0]}.</h2>
+      <p class="pnl__cena">${zl(o.cena)} zł</p>
+      <p class="pnl__mkw">${zl(mkw)} zł/m² · rynek ${o.rynek} · dostępne ${o.dostepne}</p>
+
+      <div class="pnl__galeria">
+        ${Array.from({ length: Math.min(o.zdjec, 4) }, (_, i) =>
+          `<div class="ph" style="aspect-ratio:3/2">Zdjęcie ${i + 1} z ${o.zdjec}</div>`).join('')}
+      </div>
+
+      <p class="pnl__opis">${o.opis}</p>
+
+      <div class="pnl__sekcja">
+        <h4>Dane nieruchomości</h4>
+        <dl class="pnl__dane">
+          <div><dt>Powierzchnia</dt><dd>${o.m} m²</dd></div>
+          ${o.pok > 0 ? `<div><dt>Pokoje</dt><dd>${o.pok}</dd></div>` : ''}
+          <div><dt>Piętro</dt><dd>${o.pietro}</dd></div>
+          <div><dt>Rok / status</dt><dd>${o.rok}</dd></div>
+          <div><dt>Stan</dt><dd>${o.stan}</dd></div>
+          <div><dt>Ogrzewanie</dt><dd>${o.ogrzewanie}</dd></div>
+        </dl>
+      </div>
+
+      <div class="pnl__sekcja">
+        <h4>Atuty</h4>
+        <ul class="pnl__atuty">${o.atuty.map((a) => `<li>${a}</li>`).join('')}</ul>
+      </div>
+
+      <div class="pnl__sekcja pnl__okolica">
+        <h4>Okolica</h4>
+        ${o.okolica.map(([co, ile]) => `<div><span>${co}</span><span>${ile}</span></div>`).join('')}
+      </div>
+
+      <div class="pnl__sekcja rata">
+        <h4>Szacunkowa rata kredytu</h4>
+        <div class="rata__pola">
+          <label class="rata__pole">
+            <span>Wkład własny <strong id="rWkladTxt">${zl(wklad)} zł · 20%</strong></span>
+            <input type="range" id="rWklad" min="10" max="60" step="1" value="20" />
+          </label>
+          <label class="rata__pole">
+            <span>Okres <strong id="rLataTxt">25 lat</strong></span>
+            <input type="range" id="rLata" min="5" max="35" step="1" value="25" />
+          </label>
+          <label class="rata__pole">
+            <span>Oprocentowanie <strong id="rProcTxt">7,0%</strong></span>
+            <input type="range" id="rProc" min="3" max="12" step="0.1" value="7" />
+          </label>
+        </div>
+        <div class="rata__wynik">
+          <span style="font-size:.78rem;color:var(--szary)">Rata miesięczna</span>
+          <span class="rata__kwota" id="rWynik">${zl(Math.round(rata(kredyt, 25, 7)))} zł</span>
+        </div>
+        <p class="rata__nota">
+          Wyliczenie orientacyjne, rata równa, bez ubezpieczeń, prowizji i kosztów okołokredytowych.
+          Nie stanowi oferty w rozumieniu Kodeksu cywilnego ani doradztwa finansowego — zdolność
+          kredytową ocenia bank.
+        </p>
+      </div>
+
+      <div class="pnl__sekcja pnl__agent">
+        <div><h4 style="margin-bottom:.35rem">Opiekun oferty</h4><strong>${o.agent}</strong></div>
+        <a href="tel:${o.agentTel.replace(/[^+\d]/g, '')}">${o.agentTel}</a>
+      </div>
+
+      <div class="pnl__cta">
+        <button class="btn btn--pelny" type="button" data-umow="${o.id}">Umów oglądanie</button>
+        <a class="btn" href="tel:${o.agentTel.replace(/[^+\d]/g, '')}">Zadzwoń</a>
+      </div>
+    `;
+  }
+
+  function otworzPanel(html, hash) {
+    if (!panel || !panelTresc) return;
+    wracamDo = document.activeElement;
+    panelTresc.innerHTML = html;
+    panel.hidden = false;
+    document.body.style.overflow = 'hidden';
+    panelKarta?.focus();
+    if (hash) history.replaceState(null, '', '#' + hash);
+  }
+
+  function zamknijPanel() {
+    if (!panel) return;
+    panel.hidden = true;
+    document.body.style.overflow = '';
+    if (location.hash.startsWith('#oferta-') || location.hash === '#porownanie') {
+      history.replaceState(null, '', location.pathname);
+    }
+    wracamDo?.focus?.();
+  }
+
+  function podepnijPanel(o) {
+    const kredytBazowy = () => o.cena * (1 - (+document.getElementById('rWklad').value) / 100);
+    const przelicz = () => {
+      const proc = +document.getElementById('rWklad').value;
+      const lata = +document.getElementById('rLata').value;
+      const opro = +document.getElementById('rProc').value;
+      document.getElementById('rWkladTxt').textContent = `${zl(Math.round(o.cena * proc / 100))} zł · ${proc}%`;
+      document.getElementById('rLataTxt').textContent = `${lata} lat`;
+      document.getElementById('rProcTxt').textContent = `${opro.toFixed(1).replace('.', ',')}%`;
+      document.getElementById('rWynik').textContent = `${zl(Math.round(rata(kredytBazowy(), lata, opro)))} zł`;
+    };
+    ['rWklad', 'rLata', 'rProc'].forEach((id) => document.getElementById(id)?.addEventListener('input', przelicz));
+    panelTresc?.querySelector('[data-umow]')?.addEventListener('click', () => {
+      const sel = document.getElementById('polaNieruchomosc');
+      if (sel) sel.value = o.id;
+      zamknijPanel();
+      document.getElementById('oglad')?.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => document.getElementById('polaDzien')?.focus(), 600);
+    });
+  }
+
+  function pokazOferte(id) {
+    const o = dane.find((x) => x.id === id);
+    if (!o) return;
+    otworzPanel(widokOferty(o), 'oferta-' + id);
+    podepnijPanel(o);
+  }
+
+  document.querySelectorAll('[data-otworz]').forEach((b) =>
+    b.addEventListener('click', () => pokazOferte(b.dataset.otworz)));
+
+  document.getElementById('panelZamknij')?.addEventListener('click', zamknijPanel);
+  document.getElementById('panelTlo')?.addEventListener('click', zamknijPanel);
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && panel && !panel.hidden) zamknijPanel(); });
+
+  // otwarcie z adresu, np. #oferta-mar-118
+  if (location.hash.startsWith('#oferta-')) pokazOferte(location.hash.replace('#oferta-', ''));
+
+  // ---- porównanie ----
+  const porBar = document.getElementById('porBar');
+  const porTekst = document.getElementById('porBarTekst');
+  let doPorownania = [];
+
+  function odswiezPor() {
+    if (!porBar || !porTekst) return;
+    porBar.hidden = doPorownania.length === 0;
+    porTekst.textContent = `Wybrano ${doPorownania.length} ${doPorownania.length === 1 ? 'ofertę' : 'oferty'}`;
+  }
+
+  document.querySelectorAll('[data-porownaj]').forEach((c) => c.addEventListener('change', () => {
+    const id = c.dataset.porownaj;
+    if (c.checked) {
+      if (doPorownania.length >= 3) { c.checked = false; return; }
+      doPorownania.push(id);
+    } else {
+      doPorownania = doPorownania.filter((x) => x !== id);
+    }
+    odswiezPor();
+  }));
+
+  document.getElementById('porCzysc')?.addEventListener('click', () => {
+    doPorownania = [];
+    document.querySelectorAll('[data-porownaj]').forEach((c) => (c.checked = false));
+    odswiezPor();
+  });
+
+  document.getElementById('porPokaz')?.addEventListener('click', () => {
+    const wybrane = doPorownania.map((id) => dane.find((o) => o.id === id)).filter(Boolean);
+    if (!wybrane.length) return;
+    const mkw = wybrane.map((o) => Math.round(o.cena / o.m));
+    const najCena = Math.min(...wybrane.map((o) => o.cena));
+    const najMkw = Math.min(...mkw);
+    const najM = Math.max(...wybrane.map((o) => o.m));
+    const wiersz = (etykieta, wartosci, wyroznij) =>
+      `<tr><td>${etykieta}</td>${wartosci.map((w, i) =>
+        `<td class="${wyroznij && wyroznij(i) ? 'jest-najlepsza' : ''}">${w}</td>`).join('')}</tr>`;
+
+    otworzPanel(`
+      <p class="pnl__typ">Porównanie</p>
+      <h2 class="pnl__h">${wybrane.length} ${wybrane.length === 1 ? 'oferta' : 'oferty'} obok siebie</h2>
+      <table class="por__tab">
+        <thead><tr><th></th>${wybrane.map((o) => `<th>${o.gdzie}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${wiersz('Cena', wybrane.map((o) => zl(o.cena) + ' zł'), (i) => wybrane[i].cena === najCena)}
+          ${wiersz('Powierzchnia', wybrane.map((o) => o.m + ' m²'), (i) => wybrane[i].m === najM)}
+          ${wiersz('Cena za m²', mkw.map((v) => zl(v) + ' zł'), (i) => mkw[i] === najMkw)}
+          ${wiersz('Pokoje', wybrane.map((o) => o.pok || '—'))}
+          ${wiersz('Rok / status', wybrane.map((o) => o.rok))}
+          ${wiersz('Stan', wybrane.map((o) => o.stan))}
+          ${wiersz('Ogrzewanie', wybrane.map((o) => o.ogrzewanie))}
+          ${wiersz('Dostępne', wybrane.map((o) => o.dostepne))}
+        </tbody>
+      </table>
+      <p class="rata__nota">Kropką oznaczyliśmy najkorzystniejszą wartość w wierszu tam, gdzie da się ją policzyć.</p>
+    `, 'porownanie');
+  });
 
   // ---- "Umów oglądanie" z karty: wypełnia formularz i przewija ----
   document.querySelectorAll('[data-oglad]').forEach((b) => b.addEventListener('click', () => {
