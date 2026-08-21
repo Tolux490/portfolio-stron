@@ -1,222 +1,535 @@
 ---
-import Site from '../../layouts/Site.astro';
 import { restauracja as biz } from '../../data/firmy.js';
 import Foto from '../../components/Foto.astro';
 
-const fonts =
-  'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Karla:wght@400;500;600&display=swap';
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const mapEmbed = 'https://maps.google.com/maps?q=Wo%C5%82omin%20Ogrodowa%203&z=16&output=embed';
 
-const links = [
+const nawigacja = [
   { href: '#karta', label: 'Karta' },
   { href: '#kuchnia', label: 'Kuchnia' },
+  { href: '#wieczory', label: 'Wieczory' },
   { href: '#rezerwacja', label: 'Rezerwacja' },
 ];
 
 const karta = [
-  {
-    grupa: 'Na początek',
-    dania: [
-      { n: 'Śledź w oleju rzepakowym, kiszone jabłko, koperek', c: '26' },
-      { n: 'Krem z pieczonej dyni, olej z pestek, grzanka żytnia', c: '24' },
-      { n: 'Tatar z polędwicy, żółtko, ogórek małosolny', c: '38' },
-    ],
-  },
-  {
-    grupa: 'Dalej',
-    dania: [
-      { n: 'Policzki wołowe duszone w czerwonym winie, purée z selera', c: '64' },
-      { n: 'Pstrąg z pieca, koper włoski, masło cytrynowe', c: '58' },
-      { n: 'Pierogi z kaszą gryczaną i twarogiem, podsmażany boczek', c: '42' },
-    ],
-  },
-  {
-    grupa: 'Na koniec',
-    dania: [
-      { n: 'Sernik pieczony, karmel solony', c: '22' },
-      { n: 'Gruszka w korzeniach, lody śmietankowe', c: '20' },
-    ],
-  },
+  { grupa: 'Na początek', dania: [
+    { n: 'Śledź w oleju rzepakowym', o: 'kiszone jabłko, koperek, cebula z octu', c: '26' },
+    { n: 'Krem z pieczonej dyni', o: 'olej z pestek, grzanka żytnia', c: '24' },
+    { n: 'Tatar z polędwicy', o: 'żółtko, ogórek małosolny, musztarda własna', c: '38' },
+  ]},
+  { grupa: 'Dalej', dania: [
+    { n: 'Policzki wołowe', o: 'duszone w czerwonym winie, purée z selera', c: '64' },
+    { n: 'Pstrąg z pieca', o: 'koper włoski, masło cytrynowe', c: '58' },
+    { n: 'Pierogi z kaszą gryczaną', o: 'twaróg, podsmażany boczek', c: '42' },
+  ]},
+  { grupa: 'Na koniec', dania: [
+    { n: 'Sernik pieczony', o: 'karmel solony', c: '22' },
+    { n: 'Gruszka w korzeniach', o: 'lody śmietankowe', c: '20' },
+  ]},
+];
+
+const wieczory = [
+  { t: 'Kolacja degustacyjna', d: 'Raz w miesiącu, ostatnia sobota. Pięć dań w parach z winami, dwadzieścia miejsc, jedno wspólne wejście o 19:00.', m: '260 zł / os.' },
+  { t: 'Środy z nową kartą', d: 'Pierwszy wieczór nowej karty. Szef kuchni wychodzi na salę i opowiada, co się zmieniło i dlaczego.', m: 'bez dopłat' },
+  { t: 'Wina naturalne', d: 'Karta dwunastu win z małych winnic — Polska, Morawy, Burgenland. Kieliszek od 19 zł, doradzamy bez zadęcia.', m: 'od 19 zł' },
+];
+
+const opinie = [
+  { t: 'Karta na osiem pozycji brzmi ryzykownie, dopóki nie zjesz policzków. Wszystko smakuje, jakby ktoś gotował dla dziesięciu osób, nie dla stu.', a: 'Magda P.' },
+  { t: 'Byliśmy w środę na wejściu nowej karty — szef kuchni opowiadał o każdym daniu. W Warszawie płaciłbym za to dwa razy tyle.', a: 'Tomasz W.' },
 ];
 ---
 
-<Site
-  title="Ogrodowa 3 — kuchnia sezonowa w Wołominie"
-  description="Restauracja przy ulicy Ogrodowej 3 w Wołominie. Karta na cztery dania, zmieniana co środę. Rezerwacja telefoniczna."
-  fonts={fonts}
-  biz={biz}
-  links={links}
->
-  <section class="hero">
-    <div class="wrap">
-      <p class="eyebrow">Wołomin · ul. Ogrodowa 3 · czynne od środy</p>
-      <h1>Krótka karta,<br /><em>zmieniana co środę.</em></h1>
-      <p class="lead">
-        Gotujemy z tego, co akurat jest. Osiem pozycji, żadnej z nich nie robimy „na zapas".
-        Stolik rezerwujesz telefonicznie — odbieramy od 15:00.
-      </p>
-      <a class="btn btn--solid" href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>
-        Rezerwuj: {biz.phone}
-      </a>
-    </div>
-  </section>
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ogrodowa 3 — kuchnia sezonowa, Wołomin</title>
+    <meta name="description" content="Restauracja w Wołominie. Karta na osiem pozycji zmieniana co środę, produkty z promienia 40 km, wina naturalne. Rezerwacje telefoniczne." />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta property="og:title" content="Ogrodowa 3 — kuchnia sezonowa, Wołomin" />
+    <meta property="og:description" content="Karta na osiem pozycji zmieniana co środę. Rezerwacje telefoniczne." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400&family=Karla:wght@400;500;600&display=swap" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': biz.schemaType,
+      name: biz.name,
+      telephone: biz.phone,
+      servesCuisine: 'Polish, seasonal',
+      address: { '@type': 'PostalAddress', streetAddress: biz.street, addressLocality: biz.city, postalCode: biz.zip, addressCountry: 'PL' },
+      openingHours: biz.openingHours,
+      acceptsReservations: 'True',
+      url: Astro.url.origin,
+    })} />
+  </head>
 
-  <!-- Sygnatura: karta zapisana jak drukowane menu, z kropkowanym
-       wypełnieniem do ceny. Bez zdjęć dań — zdjęcia jedzenia to
-       najczęstszy powód, dla którego strona restauracji wygląda tanio. -->
-  <section id="karta" class="band">
-    <div class="wrap menu">
-      <p class="eyebrow">Karta 34. tygodnia · obowiązuje do wtorku</p>
-      {karta.map((g) => (
-        <div class="menu__grupa">
-          <h2>{g.grupa}</h2>
-          <ul>
-            {g.dania.map((d) => (
-              <li>
-                <span class="menu__nazwa">{d.n}</span>
-                <span class="menu__kropki" aria-hidden="true"></span>
-                <span class="menu__cena">{d.c}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-      <p class="fine">
-        Ceny w złotych. Informację o alergenach podaje obsługa. Kartę wegetariańską
-        przygotowujemy na zgłoszenie przy rezerwacji.
-      </p>
-    </div>
-  </section>
-
-  <section id="kuchnia" class="band band--alt">
-    <div class="wrap dwie">
-      <div>
-        <p class="eyebrow">Kuchnia</p>
-        <h2 class="h2">Dostawcy z promienia 40 kilometrów.</h2>
-        <p class="lead">
-          Warzywa bierzemy z gospodarstwa w Kobyłce, pieczywo z piekarni na Legionów,
-          ryby dwa razy w tygodniu z Warszawy. Kiedy czegoś nie ma, po prostu tego
-          dnia nie ma tego w karcie.
-        </p>
-        <p class="fine">Sala na 34 miejsca. Latem osiem stolików w ogrodzie od podwórza.</p>
+  <body>
+    <header class="hdr" id="hdr">
+      <div class="wrap hdr__in">
+        <a class="hdr__mark" href="#gora">Ogrodowa <em>3</em></a>
+        <nav class="hdr__nav">
+          {nawigacja.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+        <a class="hdr__tel" href={`tel:${tel}`}>{biz.phone}</a>
       </div>
-      <Foto src="" alt="Sala restauracji" ratio="4/5" label="Zdjęcie sali lub otwartej kuchni, wieczorowe światło" />
-    </div>
-  </section>
+    </header>
 
-  <section id="rezerwacja" class="band">
-    <div class="wrap rez">
-      <p class="eyebrow">Rezerwacja</p>
-      <h2 class="h2">Dzwoń, nie pisz.</h2>
-      <p class="lead">
-        Nie prowadzimy rezerwacji mailowych ani formularza — przy ośmiu stolikach
-        telefon jest szybszy i pewniejszy.
-      </p>
-      <p class="tel"><a href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>{biz.phone}</a></p>
-      <ul class="godziny">
-        {biz.hours.map((h) => <li>{h}</li>)}
-      </ul>
-      <p class="fine">
-        Ostatnie zamówienie przyjmujemy 45 minut przed zamknięciem kuchni.
-      </p>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="gora">
+      <div class="hero__media">
+        <Foto src="" alt="Sala restauracji wieczorem" ratio="16/9" label="Kadr sali — świece, nakryte stoły, wieczorne światło" />
+      </div>
+      <div class="hero__veil"></div>
+      <div class="wrap hero__in">
+        <p class="hero__kicker">Kuchnia sezonowa · {biz.city}</p>
+        <h1>Osiem pozycji.<br /><em>Żadna nie czeka w lodówce.</em></h1>
+        <p class="hero__lede">
+          Kartę piszemy co środę na podstawie tego, co przywiozą dostawcy.
+          Gotujemy z produktów z promienia czterdziestu kilometrów.
+        </p>
+        <div class="hero__cta">
+          <a class="btn btn--pelny" href={`tel:${tel}`}>Rezerwuj stolik</a>
+          <a class="btn btn--ramka" href="#karta">Karta tygodnia</a>
+        </div>
+        <p class="hero__status" id="statusKuchni" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ============ KARTA TYGODNIA ============ -->
+    <section id="karta" class="band">
+      <div class="wrap--srodek">
+        <div class="karta__glowa reveal">
+          <div>
+            <p class="label">Karta 34. tygodnia</p>
+            <h2 class="h2">Do wtorku włącznie.</h2>
+          </div>
+          <p class="karta__odliczanie" id="odliczanie" aria-live="polite"></p>
+        </div>
+
+        {karta.map((g) => (
+          <div class="menu__grupa reveal">
+            <h3>{g.grupa}</h3>
+            <ul>
+              {g.dania.map((d) => (
+                <li>
+                  <div>
+                    <span class="menu__n">{d.n}</span>
+                    <span class="menu__o">{d.o}</span>
+                  </div>
+                  <span class="menu__kropki" aria-hidden="true"></span>
+                  <span class="menu__c">{d.c}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <p class="drobne reveal">
+          Ceny w złotych. Alergeny omawia obsługa. Wersję wegetariańską każdego dania
+          przygotujemy, jeśli wspomnisz o tym przy rezerwacji.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ KUCHNIA ============ -->
+    <section id="kuchnia" class="band band--jasny">
+      <div class="wrap kuchnia">
+        <div class="reveal">
+          <p class="label">Kuchnia</p>
+          <h2 class="h2">Dostawcy z promienia czterdziestu kilometrów.</h2>
+          <p class="lede">
+            Warzywa z gospodarstwa w Kobyłce, pieczywo z piekarni na Legionów,
+            ryby dwa razy w tygodniu. Kiedy czegoś nie ma u dostawcy,
+            tego dnia nie ma tego w karcie — i tyle.
+          </p>
+          <dl class="kuchnia__fakty">
+            <div><dt>34</dt><dd>miejsca na sali</dd></div>
+            <div><dt>8</dt><dd>stolików w ogrodzie latem</dd></div>
+            <div><dt>52</dt><dd>karty w roku — co środę nowa</dd></div>
+          </dl>
+        </div>
+        <div class="kuchnia__foto reveal">
+          <Foto src="" alt="Kuchnia w trakcie serwisu" ratio="4/5" label="Kadr z kuchni — ogień, ręce, para" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WIECZORY ============ -->
+    <section id="wieczory" class="band">
+      <div class="wrap">
+        <p class="label reveal">Wieczory</p>
+        <h2 class="h2 reveal">Trzy powody, żeby zostać dłużej.</h2>
+        <div class="wieczory">
+          {wieczory.map((w) => (
+            <article class="reveal">
+              <h3>{w.t}</h3>
+              <p>{w.d}</p>
+              <span>{w.m}</span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GALERIA POZIOMA ============ -->
+    <section class="band band--waska">
+      <div class="wrap galeria__glowa reveal">
+        <p class="label">Sala i talerze</p>
+        <div class="galeria__strzalki">
+          <button id="gLewo" aria-label="Poprzednie zdjęcia" type="button">←</button>
+          <button id="gPrawo" aria-label="Następne zdjęcia" type="button">→</button>
+        </div>
+      </div>
+      <div class="galeria" id="galeria" tabindex="0">
+        {[
+          ['Sala wieczorem, świece', '3/4'],
+          ['Policzki wołowe na talerzu', '4/3'],
+          ['Bar i półka z winami', '3/4'],
+          ['Ręce szefa kuchni przy wydawce', '4/3'],
+          ['Ogród od podwórza latem', '3/4'],
+          ['Deser z bliska', '4/3'],
+        ].map(([opis, ratio]) => (
+          <div class="galeria__kadr">
+            <Foto src="" alt={opis} ratio={ratio} label={opis} />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ============ OPINIE ============ -->
+    <section class="band band--jasny">
+      <div class="wrap--srodek">
+        <p class="label reveal">Z wizytówki Google</p>
+        <div class="opinie">
+          {opinie.map((o) => (
+            <figure class="reveal">
+              <blockquote><p>{o.t}</p></blockquote>
+              <figcaption>{o.a}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REZERWACJA ============ -->
+    <section id="rezerwacja" class="band">
+      <div class="wrap rez">
+        <div class="reveal">
+          <p class="label">Rezerwacja</p>
+          <h2 class="h2">Dzwoń — przy ośmiu stolikach<br />telefon jest szybszy niż cokolwiek.</h2>
+          <a class="rez__tel" href={`tel:${tel}`}>{biz.phone}</a>
+          <p class="lede">Odbieramy od 15:00. Grupy powyżej ośmiu osób i wieczory zamknięte — mailowo: {biz.email}.</p>
+        </div>
+        <div class="rez__info reveal">
+          <div><h3>Godziny</h3>{biz.hours.map((h) => <p>{h}</p>)}</div>
+          <div><h3>Zasady</h3>
+            <p>Ostatnie zamówienie 45 minut przed zamknięciem kuchni.</p>
+            <p>Stolik trzymamy kwadrans po godzinie rezerwacji.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MIEJSCE ============ -->
+    <section class="band band--jasny">
+      <div class="wrap miejsce">
+        <div class="reveal">
+          <p class="label">Miejsce</p>
+          <address class="miejsce__adres">{biz.street}<br />{biz.zip} {biz.city}</address>
+          <div class="miejsce__linki">
+            <a href={biz.mapUrl} target="_blank" rel="noopener">Google Maps →</a>
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram →</a>
+            <a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook →</a>
+          </div>
+        </div>
+        <div class="mapa reveal" id="mapa" data-src={mapEmbed}>
+          <div class="mapa__zaslepka" id="mapaZaslepka">
+            <p>Mapa Google ładuje się po kliknięciu —<br />strona nie zapisuje cookies bez Twojej decyzji.</p>
+            <button class="btn btn--pelny" id="mapaPokaz" type="button">Pokaż mapę</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STOPKA ============ -->
+    <footer class="stopka">
+      <div class="wrap">
+        <div class="stopka__dol">
+          <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city} · {biz.phone}</span>
+          <a href={`${base}/restauracja/polityka-prywatnosci/`}>Polityka prywatności</a>
+        </div>
+      </div>
+    </footer>
+
+    <div class="pasek">
+      <a href={`tel:${tel}`}>Rezerwuj</a>
+      <a href={biz.mapUrl} target="_blank" rel="noopener">Dojazd</a>
     </div>
-  </section>
-</Site>
+  </body>
+</html>
 
 <style is:global>
-  /* --- TOKENY: wieczór. Ciemna, spokojna baza, jeden winny akcent,
-         typografia prowadzi całą stronę zamiast zdjęć jedzenia. --- */
+  /* =========================================================
+     OGRODOWA 3 — ciepła noc, świece, wino.
+     Cormorant (wysoki kontrast, kursywa) + Karla.
+     ========================================================= */
   :root {
-    --bg: #16211d;
-    --bg-alt: #1c2a25;
-    --ink: #ece5da;
-    --muted: #9aa9a0;
-    --line: #33453d;
-    --accent: #8c3b4e;
-    --accent-dark: #75303f;
-    --on-accent: #fdf8f2;
-    --radius: 1px;
-    --maxw: 1040px;
-    --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
-    --font-body: 'Karla', system-ui, sans-serif;
-    --font-mono: 'Karla', system-ui, sans-serif;
+    --noc: #14100e;
+    --noc-2: #1c1714;
+    --krem: #ece4d8;
+    --wino: #8a4249;
+    --wino-jasne: #b6767c;
+    --dym: rgba(236, 228, 216, 0.6);
+    --dym-ciemny: rgba(20, 16, 14, 0.62);
+    --linia: rgba(236, 228, 216, 0.14);
+    --linia-ciemna: rgba(20, 16, 14, 0.14);
+    --serif: 'Cormorant', Georgia, serif;
+    --sans: 'Karla', system-ui, sans-serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  .hero { padding-block: clamp(3.5rem, 11vw, 8rem) clamp(3rem, 8vw, 6rem); }
-  .hero h1 { font-size: clamp(2.6rem, 8vw, 5rem); font-weight: 700; letter-spacing: -0.03em; }
-  .hero h1 em { font-style: normal; color: var(--muted); }
-
-  .lead { font-size: 1.14rem; color: var(--muted); max-width: 48ch; margin-block: 1.75rem 2rem; }
-
-  .band--alt { background: var(--bg-alt); }
-
-  .h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.025em; margin-bottom: 1.25rem; }
-
-  .menu { max-width: 720px; }
-  .menu__grupa { margin-bottom: 3rem; }
-  .menu__grupa h2 {
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-family: var(--font-body);
-    font-weight: 600;
-    color: var(--accent);
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 1.25rem;
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--noc); color: var(--krem);
+    font-family: var(--sans); font-size: 1rem; line-height: 1.65;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
-  .menu ul { list-style: none; margin: 0; padding: 0; }
-  .menu li {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    padding: 0.6rem 0;
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--wino-jasne); outline-offset: 4px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.02; letter-spacing: 0; margin: 0; text-wrap: balance; overflow-wrap: break-word; }
+  p { margin: 0; text-wrap: pretty; }
+
+  .wrap { width: min(100% - 3rem, 1200px); margin-inline: auto; }
+  .wrap--srodek { width: min(100% - 3rem, 780px); margin-inline: auto; }
+  .band { padding-block: clamp(4rem, 10vw, 8rem); }
+  .band--waska { padding-block: clamp(3rem, 7vw, 5rem); }
+  .band--jasny { background: var(--krem); color: var(--noc); }
+
+  .label {
+    font-size: 0.66rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--wino-jasne); margin-bottom: 1.6rem; display: flex; align-items: center; gap: 0.85rem;
   }
-  .menu__nazwa { font-size: 1.05rem; }
-  .menu__kropki {
-    flex: 1;
-    border-bottom: 1px dotted var(--line);
-    transform: translateY(-0.25rem);
-    min-width: 1.5rem;
+  .label::before { content: ''; width: 2rem; height: 1px; background: var(--wino-jasne); flex: none; }
+  .band--jasny .label { color: var(--wino); }
+  .band--jasny .label::before { background: var(--wino); }
+
+  .h2 { font-size: clamp(2.1rem, 5.2vw, 3.6rem); }
+  .lede { font-size: clamp(1rem, 1.6vw, 1.13rem); color: var(--dym); max-width: 50ch; margin-top: 1.5rem; }
+  .band--jasny .lede { color: var(--dym-ciemny); }
+  .drobne { font-size: 0.82rem; color: var(--dym); margin-top: 2.25rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.7rem; padding: 1rem 2rem;
+    font-size: 0.74rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+    border: 1px solid transparent;
+    transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease);
   }
-  .menu__cena { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .btn--pelny { background: var(--krem); color: var(--noc); }
+  .btn--pelny:hover { background: var(--wino); color: var(--krem); }
+  .btn--ramka { border-color: var(--linia); color: var(--krem); }
+  .btn--ramka:hover { border-color: var(--krem); }
+  .band--jasny .btn--pelny { background: var(--noc); color: var(--krem); }
+  .band--jasny .btn--pelny:hover { background: var(--wino); }
 
-  /* Na wąskim ekranie kropkowane wypełnienie przeszkadza: nazwa dania
-     i tak się łamie, więc cenę odsuwamy po prostu w prawo. */
-  @media (max-width: 560px) {
-    .menu li { align-items: flex-start; gap: 1rem; }
-    .menu__kropki { display: none; }
-    .menu__cena { margin-left: auto; }
-    .menu__nazwa { flex: 1; }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+  .reveal.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    .reveal { opacity: 1; transform: none; }
   }
-
-  .fine { font-size: 0.85rem; color: var(--muted); max-width: 58ch; }
-
-  .dwie { display: grid; gap: 2.5rem; align-items: center; }
-  @media (min-width: 900px) { .dwie { grid-template-columns: 1.1fr 0.9fr; gap: 4rem; } }
-
-  .rez { max-width: 640px; }
-  .tel { margin: 2rem 0 1.25rem; }
-  .tel a {
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 5vw, 2.6rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    text-decoration: none;
-    border-bottom: 3px solid var(--accent);
-  }
-
-  .godziny { list-style: none; margin: 0 0 1.5rem; padding: 0; color: var(--muted); }
-  .godziny li { padding: 0.3rem 0; border-bottom: 1px solid var(--line); max-width: 22rem; }
 
   .ph {
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 1.5rem;
-    aspect-ratio: 4 / 5;
-    background: #223029;
-    border: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 0.85rem;
+    display: grid; place-items: center; text-align: center; padding: 1.5rem;
+    background: linear-gradient(150deg, rgba(138,66,73,0.1), transparent 55%), var(--noc-2);
+    border: 1px solid var(--linia); color: var(--dym);
+    font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
   }
+  .band--jasny .ph { background: linear-gradient(150deg, rgba(138,66,73,0.08), transparent 55%), #e0d7c8; border-color: var(--linia-ciemna); color: var(--dym-ciemny); }
+
+  /* ---------- nagłówek ---------- */
+  .hdr { position: fixed; inset: 0 0 auto 0; z-index: 60; padding-block: 1.5rem; transition: all 0.4s var(--ease); border-bottom: 1px solid transparent; }
+  .hdr.is-stuck { background: rgba(20, 16, 14, 0.92); backdrop-filter: blur(12px); padding-block: 0.85rem; border-bottom-color: var(--linia); }
+  .hdr__in { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+  .hdr__mark { font-family: var(--serif); font-size: 1.55rem; line-height: 1; }
+  .hdr__mark em { color: var(--wino-jasne); }
+  .hdr__nav { display: none; gap: 2.3rem; }
+  .hdr__nav a { font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dym); transition: color 0.3s var(--ease); }
+  .hdr__nav a:hover { color: var(--krem); }
+  .hdr__tel { display: none; font-size: 0.84rem; border-bottom: 1px solid var(--wino-jasne); padding-bottom: 2px; }
+  @media (min-width: 1000px) { .hdr__nav { display: flex; } .hdr__tel { display: inline; } }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; padding-bottom: clamp(3rem, 8vh, 5.5rem); }
+  .hero__media { position: absolute; inset: 0; }
+  .hero__media .ph, .hero__media img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto !important; border: 0; }
+  .hero__veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,16,14,0.8) 0%, rgba(20,16,14,0.38) 45%, rgba(20,16,14,0.95) 100%); }
+  .hero__in { position: relative; }
+  .hero__kicker { font-size: 0.66rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--wino-jasne); margin-bottom: 1.5rem; font-weight: 600; }
+  .hero h1 { font-size: clamp(2.9rem, 9vw, 6.4rem); }
+  .hero h1 em { font-style: italic; font-weight: 400; color: var(--dym); }
+  .hero__lede { margin-top: 1.6rem; max-width: 44ch; color: var(--dym); font-size: clamp(1rem, 1.7vw, 1.16rem); }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2.4rem; }
+  .hero__status { margin-top: 2rem; font-size: 0.82rem; color: var(--dym); }
+  .hero__status strong { color: var(--wino-jasne); font-weight: 600; }
+
+  /* ---------- karta ---------- */
+  .karta__glowa { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: 3rem; }
+  .karta__odliczanie { font-size: 0.8rem; color: var(--dym); border: 1px solid var(--linia); padding: 0.7rem 1.1rem; }
+  .karta__odliczanie strong { color: var(--wino-jasne); font-weight: 600; }
+
+  .menu__grupa { margin-bottom: 2.9rem; }
+  .menu__grupa h3 { font-size: 1.05rem; font-family: var(--sans); font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--wino-jasne); padding-bottom: 0.85rem; border-bottom: 1px solid var(--linia); margin-bottom: 0.5rem; font-size: 0.72rem; }
+  .menu__grupa ul { list-style: none; margin: 0; padding: 0; }
+  .menu__grupa li { display: flex; align-items: baseline; gap: 0.75rem; padding: 0.9rem 0; }
+  .menu__n { display: block; font-family: var(--serif); font-size: 1.35rem; line-height: 1.15; }
+  .menu__o { display: block; font-size: 0.84rem; color: var(--dym); margin-top: 0.25rem; }
+  .menu__kropki { flex: 1; border-bottom: 1px dotted var(--linia); transform: translateY(-0.4rem); min-width: 1.5rem; }
+  .menu__c { font-variant-numeric: tabular-nums; color: var(--dym); }
+  @media (max-width: 560px) {
+    .menu__kropki { display: none; }
+    .menu__grupa li > div { flex: 1; }
+    .menu__c { margin-left: auto; }
+  }
+
+  /* ---------- kuchnia ---------- */
+  .kuchnia { display: grid; gap: 3rem; align-items: center; }
+  @media (min-width: 1000px) { .kuchnia { grid-template-columns: 1.1fr 0.9fr; gap: 5rem; } }
+  .kuchnia__fakty { margin: 2.75rem 0 0; display: grid; grid-template-columns: repeat(3, auto); gap: 2.5rem; justify-content: start; }
+  .kuchnia__fakty dt { font-family: var(--serif); font-size: clamp(2.2rem, 4.5vw, 3.2rem); line-height: 1; }
+  .kuchnia__fakty dd { margin: 0.4rem 0 0; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dym-ciemny); max-width: 11ch; }
+
+  /* ---------- wieczory ---------- */
+  .wieczory { display: grid; gap: 1.25rem; margin-top: 2.75rem; }
+  @media (min-width: 900px) { .wieczory { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; } }
+  .wieczory article { border: 1px solid var(--linia); padding: 2rem 1.8rem 1.7rem; display: flex; flex-direction: column; gap: 1rem; transition: border-color 0.4s var(--ease); }
+  .wieczory article:hover { border-color: var(--wino-jasne); }
+  .wieczory h3 { font-size: 1.7rem; }
+  .wieczory p { color: var(--dym); font-size: 0.94rem; flex: 1; }
+  .wieczory span { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--wino-jasne); }
+
+  /* ---------- galeria pozioma ---------- */
+  .galeria__glowa { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .galeria__glowa .label { margin-bottom: 0; }
+  .galeria__strzalki { display: flex; gap: 0.5rem; }
+  .galeria__strzalki button { width: 2.9rem; height: 2.9rem; border: 1px solid var(--linia); display: grid; place-items: center; transition: border-color 0.3s var(--ease); }
+  .galeria__strzalki button:hover { border-color: var(--krem); }
+  .galeria {
+    display: flex; gap: 1.25rem; overflow-x: auto; padding: 0 max(1.5rem, calc((100vw - 1200px) / 2)) 1rem;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+  }
+  .galeria::-webkit-scrollbar { display: none; }
+  .galeria__kadr { flex: 0 0 min(74vw, 420px); scroll-snap-align: start; }
+
+  /* ---------- opinie ---------- */
+  .opinie { display: grid; gap: 2.5rem; margin-top: 2rem; }
+  @media (min-width: 820px) { .opinie { grid-template-columns: 1fr 1fr; gap: 3.5rem; } }
+  .opinie figure { margin: 0; border-top: 1px solid var(--linia-ciemna); padding-top: 1.6rem; }
+  .opinie blockquote { margin: 0; }
+  .opinie blockquote p { font-family: var(--serif); font-size: 1.45rem; line-height: 1.3; font-style: italic; }
+  .opinie figcaption { margin-top: 1rem; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dym-ciemny); }
+
+  /* ---------- rezerwacja ---------- */
+  .rez { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 1000px) { .rez { grid-template-columns: 1.25fr 0.75fr; gap: 5rem; } }
+  .rez__tel { display: inline-block; margin: 2rem 0 1.25rem; font-family: var(--serif); font-size: clamp(2.1rem, 5.5vw, 3.4rem); line-height: 1; border-bottom: 1px solid var(--wino-jasne); padding-bottom: 0.3rem; }
+  .rez__info { display: grid; gap: 2rem; padding-top: 0.5rem; }
+  .rez__info h3 { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dym); margin-bottom: 0.9rem; }
+  .rez__info p { font-size: 0.94rem; padding: 0.2rem 0; }
+
+  /* ---------- miejsce ---------- */
+  .miejsce { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 1000px) { .miejsce { grid-template-columns: 0.8fr 1.2fr; gap: 5rem; } }
+  .miejsce__adres { font-style: normal; font-family: var(--serif); font-size: clamp(1.6rem, 3.2vw, 2.3rem); line-height: 1.12; margin-top: 0.5rem; }
+  .miejsce__linki { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 2rem; }
+  .miejsce__linki a { font-size: 0.9rem; font-weight: 500; width: fit-content; border-bottom: 1px solid var(--linia-ciemna); padding-bottom: 2px; }
+  .miejsce__linki a:hover { border-color: var(--noc); }
+  .mapa { position: relative; aspect-ratio: 4/3; border: 1px solid var(--linia-ciemna); overflow: hidden; }
+  .mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .mapa__zaslepka { position: absolute; inset: 0; display: grid; place-content: center; gap: 1.5rem; text-align: center; padding: 2rem; }
+  .mapa__zaslepka p { font-size: 0.85rem; color: var(--dym-ciemny); }
+  .mapa__zaslepka .btn { margin-inline: auto; }
+
+  /* ---------- stopka / pasek ---------- */
+  .stopka { border-top: 1px solid var(--linia); padding-block: 2rem; }
+  .stopka__dol { display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; justify-content: space-between; font-size: 0.74rem; color: var(--dym); }
+  .pasek { position: fixed; inset: auto 0 0 0; z-index: 70; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--linia); background: rgba(20,16,14,0.95); backdrop-filter: blur(10px); }
+  .pasek a { padding: 1rem 0.5rem; text-align: center; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .pasek a:first-child { background: var(--krem); color: var(--noc); }
+  body { padding-bottom: 3.4rem; }
+  @media (min-width: 1000px) { .pasek { display: none; } body { padding-bottom: 0; } }
 </style>
+
+<script>
+  // ---- nagłówek ----
+  const hdr = document.getElementById('hdr');
+  const przelaczHdr = () => hdr?.classList.toggle('is-stuck', window.scrollY > 60);
+  przelaczHdr();
+  window.addEventListener('scroll', przelaczHdr, { passive: true });
+
+  // ---- wejścia ----
+  const obs = new IntersectionObserver((wpisy) => {
+    wpisy.forEach((w) => { if (w.isIntersecting) { w.target.classList.add('is-in'); obs.unobserve(w.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    (el as HTMLElement).style.transitionDelay = `${Math.min(i % 3, 2) * 100}ms`;
+    obs.observe(el);
+  });
+
+  // ---- status kuchni: śr–sob 16–22, nd 12–18; ostatnie zamówienie 45 min przed ----
+  const grafik: Record<number, [number, number] | null> = {
+    0: [720, 1080], 1: null, 2: null, 3: [960, 1320], 4: [960, 1320], 5: [960, 1320], 6: [960, 1320],
+  };
+  const status = document.getElementById('statusKuchni');
+  if (status) {
+    const t = new Date();
+    const dzis = grafik[t.getDay()];
+    const min = t.getHours() * 60 + t.getMinutes();
+    const fmt = (m: number) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
+    if (dzis && min >= dzis[0] && min < dzis[1] - 45) {
+      status.innerHTML = `<strong>Kuchnia otwarta</strong> · ostatnie zamówienie o ${fmt(dzis[1] - 45)}`;
+    } else if (dzis && min >= dzis[1] - 45 && min < dzis[1]) {
+      status.innerHTML = `<strong>Ostatnie zamówienia</strong> · kuchnia kończy o ${fmt(dzis[1])}`;
+    } else {
+      status.textContent = 'Kuchnia zamknięta · gotujemy od środy do niedzieli';
+    }
+  }
+
+  // ---- odliczanie do nowej karty (środa) ----
+  const odl = document.getElementById('odliczanie');
+  if (odl) {
+    const t = new Date();
+    let dni = (3 - t.getDay() + 7) % 7; // 3 = środa
+    if (dni === 0) {
+      odl.innerHTML = '<strong>Nowa karta od dziś</strong> — szef kuchni na sali od 18:00';
+    } else {
+      odl.innerHTML = `Nowa karta za <strong>${dni} ${dni === 1 ? 'dzień' : 'dni'}</strong> — w środę`;
+    }
+  }
+
+  // ---- galeria: strzałki przewijają o szerokość kadru ----
+  const gal = document.getElementById('galeria');
+  const krok = () => (gal?.querySelector('.galeria__kadr') as HTMLElement | null)?.offsetWidth || 400;
+  document.getElementById('gLewo')?.addEventListener('click', () => gal?.scrollBy({ left: -krok() - 20, behavior: 'smooth' }));
+  document.getElementById('gPrawo')?.addEventListener('click', () => gal?.scrollBy({ left: krok() + 20, behavior: 'smooth' }));
+
+  // ---- mapa po kliknięciu ----
+  const mapa = document.getElementById('mapa');
+  document.getElementById('mapaPokaz')?.addEventListener('click', () => {
+    if (!mapa) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = mapa.dataset.src || '';
+    iframe.loading = 'lazy';
+    iframe.title = 'Mapa dojazdu do restauracji Ogrodowa 3';
+    mapa.appendChild(iframe);
+    document.getElementById('mapaZaslepka')?.remove();
+  });
+</script>

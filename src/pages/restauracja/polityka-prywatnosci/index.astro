@@ -2,16 +2,16 @@
 import Site from '../../../layouts/Site.astro';
 import Polityka from '../../../components/Polityka.astro';
 import { restauracja as biz } from '../../../data/firmy.js';
-const fonts = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Karla:wght@400;500;600&display=swap';
+const fonts = 'https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600&family=Karla:wght@400;500;600&display=swap';
 ---
 <Site title={`Polityka prywatności — ${biz.name}`} description="Zasady przetwarzania danych osobowych." fonts={fonts} biz={biz}>
   <Polityka biz={biz} />
 </Site>
 <style is:global>
   :root {
-    --bg:#16211d; --bg-alt:#1c2a25; --ink:#ece5da; --muted:#9aa9a0; --line:#33453d;
-    --accent:#8c3b4e; --accent-dark:#75303f; --on-accent:#fdf8f2; --radius:1px; --maxw:1040px;
-    --font-display:'Bricolage Grotesque',system-ui,sans-serif;
+    --bg:#14100e; --bg-alt:#1c1714; --ink:#ece4d8; --muted:rgba(236,228,216,.6); --line:rgba(236,228,216,.14);
+    --accent:#8a4249; --accent-dark:#733239; --on-accent:#ece4d8; --radius:1px; --maxw:1040px;
+    --font-display:'Cormorant',Georgia,serif;
     --font-body:'Karla',system-ui,sans-serif;
     --font-mono:'Karla',system-ui,sans-serif;
   }
