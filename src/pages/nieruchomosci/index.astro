@@ -1,249 +1,710 @@
 ---
-import Site from '../../layouts/Site.astro';
 import { nieruchomosci as biz } from '../../data/firmy.js';
 import Foto from '../../components/Foto.astro';
 
-const fonts =
-  'https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&family=Syne:wght@600;800&display=swap';
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const mapEmbed = 'https://maps.google.com/maps?q=Wo%C5%82omin%20Legion%C3%B3w%208&z=16&output=embed';
 
-const links = [
+const nawigacja = [
   { href: '#oferty', label: 'Oferty' },
-  { href: '#zasady', label: 'Jak pracujemy' },
+  { href: '#zasady', label: 'Zasady' },
   { href: '#zespol', label: 'Zespół' },
+  { href: '#oglad', label: 'Umów oglądanie' },
 ];
 
-// Na demo oferty wpisane na sztywno. Prawdziwy portal z wyszukiwarką
-// to już aplikacja z bazą danych — inny zakres i inna wycena.
-// foto: nazwa pliku z public/img/ — puste = zaślepka
 const oferty = [
-  { typ: 'Mieszkanie', gdzie: 'Wołomin, ul. Kobyłkowska', cena: '465 000', m: '48', pok: '2', pietro: '3/4', rok: '2018', foto: '' },
-  { typ: 'Dom wolnostojący', gdzie: 'Duczki', cena: '1 190 000', m: '142', pok: '5', pietro: '—', rok: '2009', foto: '' },
-  { typ: 'Mieszkanie', gdzie: 'Wołomin, centrum', cena: '549 000', m: '62', pok: '3', pietro: '1/3', rok: '1998', foto: '' },
-  { typ: 'Działka budowlana', gdzie: 'Zagościniec', cena: '289 000', m: '1100', pok: '—', pietro: '—', rok: 'MPZP', foto: '' },
-  { typ: 'Kawalerka', gdzie: 'Kobyłka', cena: '339 000', m: '31', pok: '1', pietro: '2/5', rok: '2021', foto: '' },
-  { typ: 'Bliźniak', gdzie: 'Marki', cena: '985 000', m: '118', pok: '4', pietro: '—', rok: '2016', foto: '' },
+  { id: 'kob-48', typ: 'Mieszkanie', gdzie: 'Wołomin, ul. Kobyłkowska', cena: 465000, m: 48, pok: 2, pietro: '3/4', rok: '2018', foto: '' },
+  { id: 'duc-142', typ: 'Dom', gdzie: 'Duczki', cena: 1190000, m: 142, pok: 5, pietro: '—', rok: '2009', foto: '' },
+  { id: 'cen-62', typ: 'Mieszkanie', gdzie: 'Wołomin, centrum', cena: 549000, m: 62, pok: 3, pietro: '1/3', rok: '1998', foto: '' },
+  { id: 'zag-1100', typ: 'Działka', gdzie: 'Zagościniec', cena: 289000, m: 1100, pok: 0, pietro: '—', rok: 'MPZP', foto: '' },
+  { id: 'kob-31', typ: 'Mieszkanie', gdzie: 'Kobyłka', cena: 339000, m: 31, pok: 1, pietro: '2/5', rok: '2021', foto: '' },
+  { id: 'mar-118', typ: 'Dom', gdzie: 'Marki', cena: 985000, m: 118, pok: 4, pietro: '—', rok: '2016', foto: '' },
+];
+
+const zasady = [
+  { t: '2% + VAT', d: 'Jedna stawka od ceny transakcyjnej, płatna po akcie notarialnym. Bez opłat wstępnych i bez opłat za odstąpienie.' },
+  { t: '3 miesiące', d: 'Umowa na czas określony, bez klauzuli automatycznego przedłużenia. Po tym terminie decydujesz od nowa.' },
+  { t: '7 dni', d: 'Tyle zajmuje przygotowanie oferty: sprawdzenie księgi wieczystej, zdjęcia, opis, publikacja na portalach.' },
+  { t: '41 dni', d: 'Mediana czasu od podpisania umowy pośrednictwa do aktu notarialnego w 2025 roku.' },
 ];
 
 const zespol = [
-  { imie: 'Marta Sienkiewicz', rola: 'Mieszkania, Wołomin i Kobyłka', tel: '+48 604 337 902' },
-  { imie: 'Tomasz Rybak', rola: 'Domy i działki, powiat wołomiński', tel: '+48 604 337 903' },
+  { imie: 'Marta Sienkiewicz', rola: 'Mieszkania — Wołomin, Kobyłka', tel: '+48 604 337 902' },
+  { imie: 'Tomasz Rybak', rola: 'Domy i działki — powiat wołomiński', tel: '+48 604 337 903' },
 ];
+
+const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
 ---
 
-<Site
-  title="Kontur Nieruchomości — mieszkania i domy, powiat wołomiński"
-  description="Biuro nieruchomości w Wołominie. Sprzedaż mieszkań, domów i działek w powiecie wołomińskim. Prowizja 2% + VAT, umowa na czas określony."
-  fonts={fonts}
-  biz={biz}
-  links={links}
->
-  <section class="hero">
-    <div class="wrap hero__grid">
-      <div>
-        <p class="eyebrow">Wołomin · Kobyłka · Marki · Zielonka · Radzymin</p>
-        <h1>Sprzedajemy nieruchomości w powiecie wołomińskim.</h1>
-        <p class="lead">
-          Pracujemy na wyłączność i na jasnych warunkach: jedna stawka, umowa na
-          trzy miesiące, bez automatycznego przedłużania.
-        </p>
-      </div>
-      <!-- Sygnatura: jedna liczba, która mówi więcej niż akapit o „pasji" -->
-      <div class="stat">
-        <span class="stat__num">41</span>
-        <span class="stat__label">dni — mediana od umowy pośrednictwa do aktu notarialnego, 2025</span>
-      </div>
-    </div>
-  </section>
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kontur — nieruchomości w powiecie wołomińskim</title>
+    <meta name="description" content="Biuro nieruchomości w Wołominie. Mieszkania, domy i działki. Prowizja 2% + VAT, umowa na trzy miesiące. Umów oglądanie online." />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta property="og:title" content="Kontur — nieruchomości w powiecie wołomińskim" />
+    <meta property="og:description" content="Mieszkania, domy i działki. Prowizja 2% + VAT, umowa na trzy miesiące." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600&display=swap" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': biz.schemaType,
+      name: biz.name,
+      telephone: biz.phone,
+      email: biz.email,
+      address: { '@type': 'PostalAddress', streetAddress: biz.street, addressLocality: biz.city, postalCode: biz.zip, addressCountry: 'PL' },
+      openingHours: biz.openingHours,
+      sameAs: [biz.facebook, biz.instagram],
+      url: Astro.url.origin,
+    })} />
+  </head>
 
-  <section id="oferty" class="band">
-    <div class="wrap">
-      <p class="eyebrow">Wybrane oferty · stan na 20 sierpnia</p>
-      <h2 class="h2">Sześć nieruchomości w sprzedaży.</h2>
-
-      <div class="oferty">
-        {oferty.map((o) => (
-          <article class="oferta">
-            <Foto src={o.foto} alt={`${o.typ} — ${o.gdzie}`} ratio="3/2" label="Zdjęcie nieruchomości" />
-            <div class="oferta__body">
-              <p class="oferta__typ">{o.typ}</p>
-              <h3>{o.gdzie}</h3>
-              <dl class="metryka">
-                <div><dt>Powierzchnia</dt><dd>{o.m} m²</dd></div>
-                <div><dt>Pokoje</dt><dd>{o.pok}</dd></div>
-                <div><dt>Piętro</dt><dd>{o.pietro}</dd></div>
-                <div><dt>Rok / status</dt><dd>{o.rok}</dd></div>
-              </dl>
-              <p class="oferta__cena">{o.cena} zł</p>
-            </div>
-          </article>
-        ))}
+  <body>
+    <header class="hdr" id="hdr">
+      <div class="wrap hdr__in">
+        <a class="hdr__mark" href="#gora">Kontur</a>
+        <nav class="hdr__nav">
+          {nawigacja.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+        <a class="hdr__tel" href={`tel:${tel}`}>{biz.phone}</a>
       </div>
-      <p class="fine">
-        Ceny ofertowe. Zdjęcia i opisy nieruchomości publikujemy wyłącznie za zgodą właściciela.
-      </p>
-    </div>
-  </section>
+    </header>
 
-  <section id="zasady" class="band band--alt">
-    <div class="wrap dwie">
-      <div>
-        <p class="eyebrow">Jak pracujemy</p>
-        <h2 class="h2">Jedna stawka, bez gwiazdek.</h2>
-        <ul class="lista">
-          <li><strong>2% + VAT</strong> od ceny transakcyjnej, płatne po akcie notarialnym.</li>
-          <li><strong>Umowa na 3 miesiące</strong>, bez klauzuli automatycznego przedłużenia.</li>
-          <li><strong>Zdjęcia i opis</strong> w cenie — fotograf przyjeżdża w ciągu tygodnia.</li>
-          <li><strong>Sprawdzenie stanu prawnego</strong> księgi wieczystej przed publikacją.</li>
-        </ul>
+    <!-- ============ HERO — bez zdjęcia, sama typografia i siatka ============ -->
+    <section class="hero" id="gora">
+      <div class="wrap">
+        <p class="hero__kicker">Biuro nieruchomości · Wołomin</p>
+        <h1>Sprzedajemy nieruchomości<br />w powiecie wołomińskim.</h1>
+        <div class="hero__stopa">
+          <p class="hero__lede">
+            Jedna stawka, umowa na trzy miesiące, bez automatycznego przedłużania.
+            Sześć nieruchomości w aktualnej sprzedaży.
+          </p>
+          <a class="btn btn--pelny" href="#oferty">Zobacz oferty</a>
+        </div>
       </div>
-      <Foto src="" alt="Biuro Kontur Nieruchomości" ratio="4/3" label="Zdjęcie biura lub zespołu przy pracy" />
-    </div>
-  </section>
+      <div class="hero__pasek">
+        <div class="wrap hero__liczby">
+          {zasady.map((z) => (
+            <div><span>{z.t}</span></div>
+          ))}
+        </div>
+      </div>
+    </section>
 
-  <section id="zespol" class="band">
-    <div class="wrap">
-      <p class="eyebrow">Kontakt bezpośredni</p>
-      <h2 class="h2">Dzwoń do osoby, która prowadzi dany typ nieruchomości.</h2>
-      <div class="osoby">
-        {zespol.map((o) => (
-          <div class="osoba">
-            <h3>{o.imie}</h3>
-            <p class="osoba__rola">{o.rola}</p>
-            <a class="osoba__tel" href={`tel:${o.tel.replace(/[^+\d]/g, '')}`}>{o.tel}</a>
+    <!-- ============ OFERTY z filtrami i sortowaniem ============ -->
+    <section id="oferty" class="band">
+      <div class="wrap">
+        <div class="sekcja__glowa reveal">
+          <div>
+            <p class="label">Oferty</p>
+            <h2 class="h2">W sprzedaży</h2>
           </div>
-        ))}
+          <p class="sekcja__licznik" id="licznikOfert"></p>
+        </div>
+
+        <div class="narzedzia reveal">
+          <div class="filtry" role="group" aria-label="Filtruj po typie">
+            <button class="chip is-active" data-typ="wszystko">Wszystkie</button>
+            <button class="chip" data-typ="Mieszkanie">Mieszkania</button>
+            <button class="chip" data-typ="Dom">Domy</button>
+            <button class="chip" data-typ="Działka">Działki</button>
+          </div>
+          <label class="sortowanie">
+            <span>Sortuj</span>
+            <select id="sortowanie">
+              <option value="cena-asc">Cena rosnąco</option>
+              <option value="cena-desc">Cena malejąco</option>
+              <option value="m-desc">Powierzchnia malejąco</option>
+              <option value="mkw-asc">Cena za m² rosnąco</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="oferty" id="listaOfert">
+          {oferty.map((o) => (
+            <article class="oferta reveal" data-typ={o.typ} data-cena={o.cena} data-m={o.m} data-id={o.id}>
+              <Foto src={o.foto} alt={`${o.typ} — ${o.gdzie}`} ratio="3/2" label={`${o.typ} · ${o.gdzie}`} />
+              <div class="oferta__ciało">
+                <p class="oferta__typ">{o.typ}</p>
+                <h3>{o.gdzie}</h3>
+                <dl class="metryka">
+                  <div><dt>Powierzchnia</dt><dd>{o.m} m²</dd></div>
+                  {o.pok > 0 && <div><dt>Pokoje</dt><dd>{o.pok}</dd></div>}
+                  <div><dt>Piętro</dt><dd>{o.pietro}</dd></div>
+                  <div><dt>Rok / status</dt><dd>{o.rok}</dd></div>
+                  <div><dt>Cena za m²</dt><dd>{Math.round(o.cena / o.m).toLocaleString('pl-PL')} zł</dd></div>
+                </dl>
+                <div class="oferta__stopa">
+                  <p class="oferta__cena">{o.cena.toLocaleString('pl-PL')} zł</p>
+                  <button class="oferta__btn" type="button" data-oglad={o.id} data-opis={`${o.typ} — ${o.gdzie}`}>
+                    Umów oglądanie
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+        <p class="drobne">Ceny ofertowe. Zdjęcia i opisy publikujemy wyłącznie za pisemną zgodą właściciela.</p>
       </div>
-      <p class="fine">
-        Biuro: {biz.street}, {biz.zip} {biz.city}. Spotkania w soboty po wcześniejszym umówieniu.
-      </p>
+    </section>
+
+    <!-- ============ ZASADY ============ -->
+    <section id="zasady" class="band band--kreska">
+      <div class="wrap">
+        <p class="label reveal">Zasady</p>
+        <h2 class="h2 reveal">Cztery liczby zamiast czterech akapitów.</h2>
+        <dl class="zasady">
+          {zasady.map((z) => (
+            <div class="reveal">
+              <dt>{z.t}</dt>
+              <dd>{z.d}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <!-- ============ ZESPÓŁ ============ -->
+    <section id="zespol" class="band">
+      <div class="wrap zespol">
+        <div class="reveal">
+          <p class="label">Zespół</p>
+          <h2 class="h2">Dzwonisz do osoby,<br />która prowadzi daną nieruchomość.</h2>
+          <p class="lede">Bez centrali i bez przekierowań. Każda oferta ma jednego opiekuna od pierwszego telefonu do aktu.</p>
+        </div>
+        <div class="zespol__osoby">
+          {zespol.map((o) => (
+            <div class="osoba reveal">
+              <h3>{o.imie}</h3>
+              <p>{o.rola}</p>
+              <a href={`tel:${o.tel.replace(/[^+\d]/g, '')}`}>{o.tel}</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ UMAWIANIE OGLĄDANIA ============ -->
+    <section id="oglad" class="band band--ciemny">
+      <div class="wrap oglad">
+        <div class="reveal">
+          <p class="label">Oglądanie</p>
+          <h2 class="h2">Wybierz termin,<br />potwierdzimy telefonicznie.</h2>
+          <p class="lede">
+            Oglądania prowadzimy od poniedziałku do piątku oraz w soboty po ustaleniu.
+            Odpowiadamy tego samego dnia roboczego.
+          </p>
+          <p class="oglad__alt">
+            Wolisz od razu porozmawiać? <a href={`tel:${tel}`}>{biz.phone}</a>
+          </p>
+        </div>
+
+        <form class="form reveal" id="formOglad" novalidate>
+          <div class="form__rzad">
+            <label class="pole">
+              <span>Nieruchomość</span>
+              <select name="nieruchomosc" id="polaNieruchomosc" required>
+                <option value="">Wybierz z listy</option>
+                {oferty.map((o) => (
+                  <option value={o.id}>{o.typ} — {o.gdzie}</option>
+                ))}
+                <option value="inne">Inna / jeszcze nie wiem</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="form__rzad form__rzad--dwa">
+            <label class="pole">
+              <span>Preferowany dzień</span>
+              <input type="date" name="dzien" id="polaDzien" required />
+            </label>
+            <label class="pole">
+              <span>Godzina</span>
+              <select name="godzina" required>
+                <option value="">Wybierz</option>
+                {godziny.map((g) => <option value={g}>{g}</option>)}
+              </select>
+            </label>
+          </div>
+
+          <div class="form__rzad form__rzad--dwa">
+            <label class="pole">
+              <span>Imię i nazwisko</span>
+              <input type="text" name="imie" autocomplete="name" required />
+            </label>
+            <label class="pole">
+              <span>Telefon</span>
+              <input type="tel" name="telefon" autocomplete="tel" inputmode="tel" required />
+            </label>
+          </div>
+
+          <div class="form__rzad">
+            <label class="pole">
+              <span>E-mail <em>(opcjonalnie)</em></span>
+              <input type="email" name="email" autocomplete="email" />
+            </label>
+          </div>
+
+          <div class="form__rzad">
+            <label class="pole">
+              <span>Uwagi <em>(opcjonalnie)</em></span>
+              <textarea name="uwagi" rows="3" placeholder="Np. interesuje mnie też garaż, mogę tylko po 16:00"></textarea>
+            </label>
+          </div>
+
+          <!-- Klauzula informacyjna musi być podana W MOMENCIE zbierania danych (art. 13 RODO) -->
+          <div class="klauzula">
+            <p>
+              Administratorem Twoich danych jest {biz.legalName}, {biz.street}, {biz.zip} {biz.city},
+              NIP {biz.nip}. Dane z tego formularza przetwarzamy wyłącznie po to, żeby umówić
+              i potwierdzić oglądanie — podstawą są działania podejmowane na Twoje żądanie przed
+              zawarciem umowy (art. 6 ust. 1 lit. b RODO) oraz nasz prawnie uzasadniony interes
+              w prowadzeniu korespondencji (art. 6 ust. 1 lit. f RODO).
+            </p>
+            <details>
+              <summary>Rozwiń pełną informację</summary>
+              <p>
+                Podanie danych jest dobrowolne, ale bez imienia i telefonu nie umówimy terminu.
+                Dane przechowujemy 12 miesięcy od ostatniego kontaktu, a jeśli dojdzie do transakcji —
+                przez okres wymagany przepisami podatkowymi. Odbiorcami mogą być dostawca hostingu
+                i dostawca usługi obsługi formularza, działający na podstawie umowy powierzenia.
+                Masz prawo dostępu do danych, sprostowania, usunięcia, ograniczenia przetwarzania,
+                przenoszenia, sprzeciwu oraz skargi do Prezesa UODO. Nie profilujemy i nie podejmujemy
+                decyzji automatycznie. Szczegóły:
+                <a href={`${base}/nieruchomosci/polityka-prywatnosci/`}>polityka prywatności</a>.
+              </p>
+            </details>
+
+            <label class="zgoda">
+              <input type="checkbox" name="zgoda_marketing" value="tak" />
+              <span>
+                Chcę dostawać powiadomienia o nowych ofertach dopasowanych do moich kryteriów.
+                Zgoda dobrowolna, możesz ją wycofać w każdej chwili — nie wpływa na umówienie oglądania.
+              </span>
+            </label>
+          </div>
+
+          <button class="btn btn--jasny form__wyslij" type="submit" id="formWyslij">Umów oglądanie</button>
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ MIEJSCE ============ -->
+    <section class="band">
+      <div class="wrap miejsce">
+        <div class="reveal">
+          <p class="label">Biuro</p>
+          <address class="miejsce__adres">{biz.street}<br />{biz.zip} {biz.city}</address>
+          <div class="miejsce__godziny">{biz.hours.map((h) => <p>{h}</p>)}</div>
+          <div class="miejsce__linki">
+            <a href={biz.mapUrl} target="_blank" rel="noopener">Google Maps →</a>
+            <a href={biz.instagram} target="_blank" rel="noopener">Instagram →</a>
+            <a href={biz.facebook} target="_blank" rel="noopener">Facebook →</a>
+            <a href={`mailto:${biz.email}`}>{biz.email} →</a>
+          </div>
+        </div>
+        <div class="mapa reveal" id="mapa" data-src={mapEmbed}>
+          <div class="mapa__zaslepka" id="mapaZaslepka">
+            <p>Mapa Google ładuje się po kliknięciu —<br />strona nie zapisuje cookies bez Twojej decyzji.</p>
+            <button class="btn btn--pelny" id="mapaPokaz" type="button">Pokaż mapę</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="stopka">
+      <div class="wrap stopka__dol">
+        <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city} · {biz.phone}</span>
+        <a href={`${base}/nieruchomosci/polityka-prywatnosci/`}>Polityka prywatności</a>
+      </div>
+    </footer>
+
+    <div class="pasek">
+      <a href="#oglad">Umów oglądanie</a>
+      <a href={`tel:${tel}`}>Zadzwoń</a>
     </div>
-  </section>
-</Site>
+  </body>
+</html>
 
 <style is:global>
-  /* --- TOKENY: katalog. Jasno, dużo powietrza, granat zamiast czerni,
-         liczby złożone monospace jak w karcie katalogowej. --- */
+  /* =========================================================
+     KONTUR — minimalizm. Jeden krój, dwie wagi, zero koloru.
+     Rytm buduje siatka, światło i włoskowe linie.
+     ========================================================= */
   :root {
-    --bg: #f7f7f4;
-    --bg-alt: #ecece7;
-    --ink: #14213a;
-    --muted: #5f6a80;
-    --line: #d5d6ce;
-    --accent: #14213a;
-    --accent-dark: #0c1729;
-    --on-accent: #f7f7f4;
-    --radius: 3px;
-    --maxw: 1180px;
-    --font-display: 'Syne', system-ui, sans-serif;
-    --font-body: 'Public Sans', system-ui, sans-serif;
-    --font-mono: 'Roboto Mono', ui-monospace, monospace;
+    --papier: #fbfbfa;
+    --papier-2: #f2f2f0;
+    --atrament: #101112;
+    --atrament-2: #16181a;
+    --szary: #6e7276;
+    --szary-jasny: rgba(251, 251, 250, 0.58);
+    --linia: #e2e2df;
+    --linia-jasna: rgba(251, 251, 250, 0.16);
+    --font: 'Schibsted Grotesk', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  .hero { padding-block: clamp(3rem, 9vw, 6.5rem) clamp(2.5rem, 7vw, 5rem); }
-  .hero__grid { display: grid; gap: 2.5rem; align-items: end; }
-  @media (min-width: 940px) { .hero__grid { grid-template-columns: 1.6fr 1fr; gap: 4rem; } }
-  .hero h1 {
-    font-size: clamp(2.3rem, 5.5vw, 4rem);
-    font-weight: 800;
-    letter-spacing: -0.035em;
-    max-width: 16ch;
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--papier); color: var(--atrament);
+    font-family: var(--font); font-size: 0.97rem; font-weight: 400; line-height: 1.6;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--atrament); outline-offset: 3px; }
+  h1, h2, h3 { font-weight: 500; line-height: 1.06; letter-spacing: -0.028em; margin: 0; text-wrap: balance; overflow-wrap: break-word; }
+  p { margin: 0; text-wrap: pretty; }
+
+  .wrap { width: min(100% - 3rem, 1200px); margin-inline: auto; }
+  .band { padding-block: clamp(4rem, 9vw, 7.5rem); }
+  .band--kreska { border-top: 1px solid var(--linia); }
+  .band--ciemny { background: var(--atrament); color: var(--papier); }
+
+  .label {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--szary); margin-bottom: 1.1rem;
+  }
+  .band--ciemny .label { color: var(--szary-jasny); }
+
+  .h2 { font-size: clamp(1.9rem, 4.2vw, 3rem); }
+  .lede { color: var(--szary); max-width: 48ch; margin-top: 1.25rem; }
+  .band--ciemny .lede { color: var(--szary-jasny); }
+  .drobne { font-family: var(--mono); font-size: 0.72rem; color: var(--szary); margin-top: 2.5rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+    padding: 0.95rem 1.8rem; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.06em;
+    border: 1px solid var(--atrament); transition: background 0.3s var(--ease), color 0.3s var(--ease);
+  }
+  .btn--pelny { background: var(--atrament); color: var(--papier); }
+  .btn--pelny:hover { background: transparent; color: var(--atrament); }
+  .btn--jasny { background: var(--papier); color: var(--atrament); border-color: var(--papier); }
+  .btn--jasny:hover { background: transparent; color: var(--papier); }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }
+  .reveal.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    .reveal { opacity: 1; transform: none; }
   }
 
-  .lead { font-size: 1.1rem; color: var(--muted); max-width: 46ch; margin-top: 1.5rem; }
+  .ph { display: grid; place-items: center; text-align: center; padding: 1rem; background: var(--papier-2); color: var(--szary); font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; }
 
-  .stat { border-top: 3px solid var(--ink); padding-top: 1rem; }
-  .stat__num {
-    display: block;
-    font-family: var(--font-display);
-    font-size: clamp(4rem, 12vw, 6.5rem);
-    font-weight: 800;
-    line-height: 0.85;
-    letter-spacing: -0.06em;
-    font-variant-numeric: tabular-nums;
-  }
-  .stat__label {
-    display: block;
-    margin-top: 0.9rem;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    line-height: 1.5;
-    color: var(--muted);
-  }
+  /* ---------- nagłówek ---------- */
+  .hdr { position: fixed; inset: 0 0 auto 0; z-index: 60; padding-block: 1.4rem; transition: all 0.35s var(--ease); border-bottom: 1px solid transparent; }
+  .hdr.is-stuck { background: rgba(251, 251, 250, 0.93); backdrop-filter: blur(12px); padding-block: 0.8rem; border-bottom-color: var(--linia); }
+  .hdr__in { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+  .hdr__mark { font-size: 1.15rem; font-weight: 500; letter-spacing: -0.02em; }
+  .hdr__nav { display: none; gap: 2rem; }
+  .hdr__nav a { font-size: 0.84rem; color: var(--szary); transition: color 0.3s var(--ease); }
+  .hdr__nav a:hover { color: var(--atrament); }
+  .hdr__tel { display: none; font-family: var(--mono); font-size: 0.8rem; }
+  @media (min-width: 980px) { .hdr__nav, .hdr__tel { display: flex; } }
 
-  .band--alt { background: var(--bg-alt); }
+  /* ---------- hero ---------- */
+  .hero { padding-top: clamp(8rem, 20vh, 13rem); }
+  .hero__kicker { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--szary); margin-bottom: 2rem; }
+  .hero h1 { font-size: clamp(2.2rem, 6vw, 4.6rem); }
+  .hero__stopa { display: grid; gap: 2rem; margin-top: clamp(3rem, 8vw, 5rem); padding-bottom: clamp(3rem, 8vw, 5rem); }
+  @media (min-width: 880px) { .hero__stopa { grid-template-columns: 1fr auto; align-items: end; } }
+  .hero__lede { color: var(--szary); max-width: 44ch; }
+  .hero__pasek { border-top: 1px solid var(--linia); border-bottom: 1px solid var(--linia); }
+  .hero__liczby { display: grid; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 720px) { .hero__liczby { grid-template-columns: repeat(4, 1fr); } }
+  .hero__liczby div { padding: 1.4rem 0; border-right: 1px solid var(--linia); }
+  .hero__liczby div:last-child { border-right: 0; }
+  .hero__liczby span { font-family: var(--mono); font-size: 0.95rem; }
 
-  .h2 { font-size: clamp(1.7rem, 3.6vw, 2.5rem); font-weight: 600; letter-spacing: -0.03em; margin-bottom: 2rem; }
+  /* ---------- narzędzia listy ---------- */
+  .sekcja__glowa { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+  .sekcja__licznik { font-family: var(--mono); font-size: 0.78rem; color: var(--szary); }
+  .narzedzia { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; margin: 2.5rem 0 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--linia); }
+  .filtry { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .chip { padding: 0.45rem 1rem; border: 1px solid var(--linia); font-size: 0.8rem; transition: all 0.25s var(--ease); }
+  .chip:hover { border-color: var(--atrament); }
+  .chip.is-active { background: var(--atrament); color: var(--papier); border-color: var(--atrament); }
+  .sortowanie { display: flex; align-items: center; gap: 0.7rem; font-size: 0.8rem; color: var(--szary); }
+  .sortowanie select { border: 0; border-bottom: 1px solid var(--linia); background: none; padding: 0.35rem 0; font: inherit; color: var(--atrament); cursor: pointer; }
 
-  .oferty { display: grid; gap: 1.75rem; }
-  @media (min-width: 700px) { .oferty { grid-template-columns: repeat(2, 1fr); } }
+  /* ---------- oferty ---------- */
+  .oferty { display: grid; gap: 2.5rem 1.75rem; }
+  @media (min-width: 680px) { .oferty { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1020px) { .oferty { grid-template-columns: repeat(3, 1fr); } }
+  .oferta.is-hidden { display: none; }
+  .oferta__ciało { padding-top: 1.1rem; }
+  .oferta__typ { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--szary); }
+  .oferta h3 { font-size: 1.12rem; margin-top: 0.35rem; }
+  .metryka { margin: 1.1rem 0 1.2rem; }
+  .metryka > div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0; border-bottom: 1px solid var(--linia); font-family: var(--mono); font-size: 0.72rem; }
+  .metryka dt { color: var(--szary); margin: 0; }
+  .metryka dd { margin: 0; }
+  .oferta__stopa { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  .oferta__cena { font-size: 1.15rem; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .oferta__btn { font-size: 0.78rem; color: var(--szary); border-bottom: 1px solid var(--linia); padding-bottom: 2px; transition: all 0.25s var(--ease); }
+  .oferta__btn:hover { color: var(--atrament); border-color: var(--atrament); }
 
-  .oferta { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-  .oferta__body { padding: 1.25rem 1.35rem 1.5rem; }
-  .oferta__typ {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 0.35rem;
+  /* ---------- zasady ---------- */
+  .zasady { display: grid; gap: 0; margin: 2.5rem 0 0; }
+  .zasady > div { display: grid; gap: 0.5rem 3rem; padding: 1.9rem 0; border-top: 1px solid var(--linia); }
+  @media (min-width: 800px) { .zasady > div { grid-template-columns: 10rem 1fr; align-items: baseline; } }
+  .zasady dt { font-family: var(--mono); font-size: 1.05rem; }
+  .zasady dd { margin: 0; color: var(--szary); max-width: 56ch; }
+
+  /* ---------- zespół ---------- */
+  .zespol { display: grid; gap: 3rem; }
+  @media (min-width: 980px) { .zespol { grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; } }
+  .zespol__osoby { display: grid; gap: 0; }
+  .osoba { padding: 1.75rem 0; border-top: 1px solid var(--linia); }
+  .osoba:last-child { border-bottom: 1px solid var(--linia); }
+  .osoba h3 { font-size: 1.2rem; }
+  .osoba p { color: var(--szary); font-size: 0.9rem; margin: 0.3rem 0 0.7rem; }
+  .osoba a { font-family: var(--mono); font-size: 0.88rem; border-bottom: 1px solid var(--linia); padding-bottom: 2px; }
+
+  /* ---------- formularz ---------- */
+  .oglad { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 980px) { .oglad { grid-template-columns: 0.85fr 1.15fr; gap: 5rem; } }
+  .oglad__alt { margin-top: 2rem; font-size: 0.9rem; color: var(--szary-jasny); }
+  .oglad__alt a { font-family: var(--mono); color: var(--papier); border-bottom: 1px solid var(--linia-jasna); }
+
+  .form__rzad { margin-bottom: 1.25rem; }
+  .form__rzad--dwa { display: grid; gap: 1.25rem; }
+  @media (min-width: 620px) { .form__rzad--dwa { grid-template-columns: 1fr 1fr; } }
+  .pole span { display: block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--szary-jasny); margin-bottom: 0.5rem; }
+  .pole span em { font-style: normal; text-transform: none; letter-spacing: 0; }
+  .pole input, .pole select, .pole textarea {
+    width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--linia-jasna);
+    color: var(--papier); font: inherit; padding: 0.7rem 0; border-radius: 0;
+    transition: border-color 0.3s var(--ease);
   }
-  .oferta h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; }
+  .pole textarea { resize: vertical; }
+  .pole select option { background: var(--atrament-2); color: var(--papier); }
+  .pole input:focus, .pole select:focus, .pole textarea:focus { outline: none; border-bottom-color: var(--papier); }
+  .pole input::placeholder, .pole textarea::placeholder { color: rgba(251,251,250,0.3); }
+  .pole.is-blad input, .pole.is-blad select { border-bottom-color: #d98a8a; }
+  .pole__blad { display: block; font-size: 0.72rem; color: #d98a8a; margin-top: 0.35rem; }
 
-  .metryka { margin: 1.1rem 0 1.25rem; display: grid; gap: 0; }
-  .metryka > div {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.4rem 0;
-    border-bottom: 1px solid var(--line);
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-  }
-  .metryka dt { color: var(--muted); margin: 0; }
-  .metryka dd { margin: 0; font-weight: 500; }
+  .klauzula { margin: 2rem 0 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--linia-jasna); }
+  .klauzula p { font-size: 0.76rem; line-height: 1.6; color: var(--szary-jasny); }
+  .klauzula details { margin-top: 0.75rem; }
+  .klauzula summary { font-size: 0.76rem; color: var(--papier); cursor: pointer; }
+  .klauzula details p { margin-top: 0.6rem; }
+  .klauzula a { border-bottom: 1px solid var(--linia-jasna); }
 
-  .oferta__cena {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 1.3rem;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
+  .zgoda { display: flex; gap: 0.75rem; margin-top: 1.25rem; cursor: pointer; }
+  .zgoda input { margin-top: 0.25rem; accent-color: var(--papier); flex: none; width: 1rem; height: 1rem; }
+  .zgoda span { font-size: 0.76rem; line-height: 1.55; color: var(--szary-jasny); }
 
-  .fine { font-size: 0.85rem; color: var(--muted); margin-top: 1.75rem; max-width: 62ch; }
+  .form__wyslij { width: 100%; }
+  @media (min-width: 620px) { .form__wyslij { width: auto; min-width: 16rem; } }
+  .form__status { margin-top: 1rem; font-size: 0.82rem; min-height: 1.4em; }
+  .form__status.is-ok { color: #9ec2a3; }
+  .form__status.is-blad { color: #d98a8a; }
 
-  .dwie { display: grid; gap: 2.5rem; align-items: center; }
-  @media (min-width: 900px) { .dwie { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+  /* ---------- miejsce ---------- */
+  .miejsce { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 980px) { .miejsce { grid-template-columns: 0.8fr 1.2fr; gap: 5rem; } }
+  .miejsce__adres { font-style: normal; font-size: clamp(1.35rem, 2.8vw, 1.9rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; margin-top: 0.5rem; }
+  .miejsce__godziny { margin-top: 1.5rem; color: var(--szary); font-family: var(--mono); font-size: 0.78rem; }
+  .miejsce__linki { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 2rem; }
+  .miejsce__linki a { font-size: 0.88rem; width: fit-content; border-bottom: 1px solid var(--linia); padding-bottom: 2px; }
+  .miejsce__linki a:hover { border-color: var(--atrament); }
+  .mapa { position: relative; aspect-ratio: 4/3; border: 1px solid var(--linia); overflow: hidden; }
+  .mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .mapa__zaslepka { position: absolute; inset: 0; display: grid; place-content: center; gap: 1.5rem; text-align: center; padding: 2rem; }
+  .mapa__zaslepka p { font-size: 0.82rem; color: var(--szary); }
+  .mapa__zaslepka .btn { margin-inline: auto; }
 
-  .lista { list-style: none; margin: 0; padding: 0; }
-  .lista li { padding: 0.9rem 0; border-bottom: 1px solid var(--line); color: var(--muted); }
-  .lista strong { color: var(--ink); }
-
-  .osoby { display: grid; gap: 1.75rem; }
-  @media (min-width: 700px) { .osoby { grid-template-columns: 1fr 1fr; gap: 3rem; } }
-  .osoba { border-top: 2px solid var(--ink); padding-top: 1.1rem; }
-  .osoba h3 { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; }
-  .osoba__rola { color: var(--muted); font-size: 0.95rem; margin: 0.35rem 0 0.9rem; }
-  .osoba__tel {
-    font-family: var(--font-mono);
-    font-size: 1.05rem;
-    text-decoration: none;
-    border-bottom: 2px solid var(--line);
-  }
-  .osoba__tel:hover { border-color: var(--ink); }
-
-  .ph {
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 1rem;
-    aspect-ratio: 3 / 2;
-    background: #e3e4dd;
-    color: var(--muted);
-    font-size: 0.8rem;
-  }
-  .ph--wide { aspect-ratio: 4 / 3; border: 1px solid var(--line); }
+  /* ---------- stopka ---------- */
+  .stopka { border-top: 1px solid var(--linia); padding-block: 2rem; }
+  .stopka__dol { display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; justify-content: space-between; font-family: var(--mono); font-size: 0.7rem; color: var(--szary); }
+  .pasek { position: fixed; inset: auto 0 0 0; z-index: 70; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--linia); background: rgba(251,251,250,0.96); backdrop-filter: blur(10px); }
+  .pasek a { padding: 1rem 0.5rem; text-align: center; font-size: 0.78rem; }
+  .pasek a:first-child { background: var(--atrament); color: var(--papier); }
+  body { padding-bottom: 3.4rem; }
+  @media (min-width: 980px) { .pasek { display: none; } body { padding-bottom: 0; } }
 </style>
+
+<script define:vars={{ formKey: biz.formKey, mailKontakt: biz.email }}>
+  // ---- nagłówek ----
+  const hdr = document.getElementById('hdr');
+  const przelaczHdr = () => hdr?.classList.toggle('is-stuck', window.scrollY > 60);
+  przelaczHdr();
+  window.addEventListener('scroll', przelaczHdr, { passive: true });
+
+  // ---- wejścia sekcji ----
+  const obs = new IntersectionObserver((wpisy) => {
+    wpisy.forEach((w) => { if (w.isIntersecting) { w.target.classList.add('is-in'); obs.unobserve(w.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${Math.min(i % 3, 2) * 80}ms`;
+    obs.observe(el);
+  });
+
+  // ---- filtry i sortowanie ofert ----
+  const lista = document.getElementById('listaOfert');
+  const karty = Array.from(document.querySelectorAll('.oferta'));
+  const licznik = document.getElementById('licznikOfert');
+  let aktywnyTyp = 'wszystko';
+
+  function odswiez() {
+    let widoczne = 0;
+    karty.forEach((k) => {
+      const pasuje = aktywnyTyp === 'wszystko' || k.dataset.typ === aktywnyTyp;
+      k.classList.toggle('is-hidden', !pasuje);
+      if (pasuje) widoczne++;
+    });
+    if (licznik) licznik.textContent = `${widoczne} ${widoczne === 1 ? 'oferta' : widoczne < 5 ? 'oferty' : 'ofert'}`;
+  }
+
+  document.querySelectorAll('.chip').forEach((c) => c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach((x) => x.classList.remove('is-active'));
+    c.classList.add('is-active');
+    aktywnyTyp = c.dataset.typ;
+    odswiez();
+  }));
+
+  document.getElementById('sortowanie')?.addEventListener('change', (e) => {
+    const tryb = e.target.value;
+    const posortowane = [...karty].sort((a, b) => {
+      const ca = +a.dataset.cena, cb = +b.dataset.cena;
+      const ma = +a.dataset.m, mb = +b.dataset.m;
+      if (tryb === 'cena-asc') return ca - cb;
+      if (tryb === 'cena-desc') return cb - ca;
+      if (tryb === 'm-desc') return mb - ma;
+      return ca / ma - cb / mb;
+    });
+    posortowane.forEach((k) => lista?.appendChild(k));
+  });
+  odswiez();
+
+  // ---- "Umów oglądanie" z karty: wypełnia formularz i przewija ----
+  document.querySelectorAll('[data-oglad]').forEach((b) => b.addEventListener('click', () => {
+    const sel = document.getElementById('polaNieruchomosc');
+    if (sel) sel.value = b.dataset.oglad;
+    document.getElementById('oglad')?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => document.getElementById('polaDzien')?.focus(), 600);
+  }));
+
+  // ---- kalendarz: nie da się wybrać wczoraj ani niedzieli ----
+  const dzien = document.getElementById('polaDzien');
+  if (dzien) {
+    const jutro = new Date(Date.now() + 86400000);
+    dzien.min = jutro.toISOString().slice(0, 10);
+    const zaMiesiac = new Date(Date.now() + 45 * 86400000);
+    dzien.max = zaMiesiac.toISOString().slice(0, 10);
+  }
+
+  // ---- walidacja i wysyłka ----
+  const form = document.getElementById('formOglad');
+  const status = document.getElementById('formStatus');
+  const przycisk = document.getElementById('formWyslij');
+
+  const pokazBlad = (pole, tekst) => {
+    const wrapper = pole.closest('.pole');
+    wrapper?.classList.add('is-blad');
+    if (!wrapper?.querySelector('.pole__blad')) {
+      const s = document.createElement('span');
+      s.className = 'pole__blad';
+      s.textContent = tekst;
+      wrapper?.appendChild(s);
+    }
+  };
+  const wyczyscBledy = () => document.querySelectorAll('.pole').forEach((p) => {
+    p.classList.remove('is-blad');
+    p.querySelector('.pole__blad')?.remove();
+  });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    wyczyscBledy();
+    if (status) { status.textContent = ''; status.className = 'form__status'; }
+
+    const dane = new FormData(form);
+    let ok = true;
+
+    const wymagane = [
+      ['nieruchomosc', 'Wybierz nieruchomość'],
+      ['dzien', 'Podaj dzień'],
+      ['godzina', 'Wybierz godzinę'],
+      ['imie', 'Podaj imię i nazwisko'],
+      ['telefon', 'Podaj numer telefonu'],
+    ];
+    wymagane.forEach(([nazwa, komunikat]) => {
+      const pole = form.elements[nazwa];
+      if (!String(dane.get(nazwa) || '').trim()) { pokazBlad(pole, komunikat); ok = false; }
+    });
+
+    const telefon = String(dane.get('telefon') || '').replace(/[^\d+]/g, '');
+    if (telefon && telefon.replace(/\D/g, '').length < 9) {
+      pokazBlad(form.elements['telefon'], 'Numer wygląda na niepełny'); ok = false;
+    }
+    const mail = String(dane.get('email') || '').trim();
+    if (mail && !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(mail)) {
+      pokazBlad(form.elements['email'], 'Sprawdź adres e-mail'); ok = false;
+    }
+
+    if (!ok) {
+      if (status) { status.textContent = 'Uzupełnij zaznaczone pola.'; status.className = 'form__status is-blad'; }
+      return;
+    }
+
+    // Brak klucza = tryb pokazowy. Nic nie wychodzi poza przeglądarkę.
+    if (!formKey) {
+      if (status) {
+        status.textContent = 'Tryb pokazowy — formularz działa poprawnie, ale wiadomość nie została wysłana. Po podaniu klucza usługi trafi na ' + mailKontakt + '.';
+        status.className = 'form__status is-ok';
+      }
+      form.reset();
+      return;
+    }
+
+    przycisk.disabled = true;
+    przycisk.textContent = 'Wysyłam…';
+    try {
+      const odp = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: formKey,
+          subject: 'Nowe zgłoszenie oglądania — strona Kontur',
+          from_name: 'Kontur Nieruchomości',
+          ...Object.fromEntries(dane),
+        }),
+      });
+      const wynik = await odp.json();
+      if (wynik.success) {
+        if (status) { status.textContent = 'Dziękujemy. Potwierdzimy termin telefonicznie w ciągu dnia roboczego.'; status.className = 'form__status is-ok'; }
+        form.reset();
+      } else { throw new Error(wynik.message || 'blad'); }
+    } catch {
+      if (status) { status.textContent = 'Nie udało się wysłać. Zadzwoń albo napisz na ' + mailKontakt + '.'; status.className = 'form__status is-blad'; }
+    } finally {
+      przycisk.disabled = false;
+      przycisk.textContent = 'Umów oglądanie';
+    }
+  });
+
+  // ---- mapa po kliknięciu ----
+  const mapa = document.getElementById('mapa');
+  document.getElementById('mapaPokaz')?.addEventListener('click', () => {
+    if (!mapa) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = mapa.dataset.src || '';
+    iframe.loading = 'lazy';
+    iframe.title = 'Mapa dojazdu do biura Kontur Nieruchomości';
+    mapa.appendChild(iframe);
+    document.getElementById('mapaZaslepka')?.remove();
+  });
+</script>

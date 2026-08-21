@@ -1,18 +1,209 @@
 ---
-import Site from '../../../layouts/Site.astro';
-import Polityka from '../../../components/Polityka.astro';
 import { nieruchomosci as biz } from '../../../data/firmy.js';
-const fonts = 'https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Roboto+Mono:wght@400;500&family=Syne:wght@600;800&display=swap';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const tel = biz.phone.replace(/[^+\d]/g, '');
 ---
-<Site title={`Polityka prywatności — ${biz.name}`} description="Zasady przetwarzania danych osobowych." fonts={fonts} biz={biz}>
-  <Polityka biz={biz} />
-</Site>
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Polityka prywatności — {biz.name}</title>
+    <meta name="description" content="Zasady przetwarzania danych osobowych w Kontur Nieruchomości." />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600&display=swap" />
+  </head>
+  <body>
+    <header class="hdr">
+      <div class="wrap hdr__in">
+        <a class="hdr__mark" href={`${base}/nieruchomosci/`}>Kontur</a>
+        <a class="hdr__tel" href={`tel:${tel}`}>{biz.phone}</a>
+      </div>
+    </header>
+
+    <main class="band">
+      <div class="wrap tresc">
+        <p class="label">Dokument · aktualizacja sierpień 2026</p>
+        <h1>Polityka prywatności</h1>
+        <p class="wstep">
+          Dokument opisuje, jakie dane osobowe zbieramy przez stronę
+          {biz.name}, po co, na jakiej podstawie prawnej i jak długo je przechowujemy.
+        </p>
+
+        <h2>1. Administrator danych</h2>
+        <p>
+          Administratorem danych osobowych jest {biz.legalName} z siedzibą przy {biz.street},
+          {biz.zip} {biz.city}, NIP {biz.nip}. Kontakt w sprawach danych osobowych:
+          <a href={`mailto:${biz.email}`}>{biz.email}</a>, tel. {biz.phone}.
+        </p>
+        <p>
+          Nie powołaliśmy inspektora ochrony danych — we wszystkich sprawach dotyczących
+          przetwarzania piszcie na powyższy adres.
+        </p>
+
+        <h2>2. Jakie dane zbieramy</h2>
+        <p><strong>Formularz umówienia oglądania.</strong> Zbieramy:</p>
+        <ul>
+          <li>imię i nazwisko oraz numer telefonu — pola obowiązkowe, bez nich nie umówimy terminu;</li>
+          <li>adres e-mail — pole opcjonalne, wykorzystywane wyłącznie do potwierdzenia terminu;</li>
+          <li>wskazaną nieruchomość, preferowany dzień i godzinę oraz treść uwag, jeśli zostały wpisane.</li>
+        </ul>
+        <p><strong>Dane techniczne.</strong> Serwer hostingowy zapisuje w logach adres IP, datę i godzinę zapytania, typ przeglądarki oraz adres strony odsyłającej.</p>
+
+        <h2>3. Cele i podstawy prawne</h2>
+        <table class="tabela">
+          <thead>
+            <tr><th>Cel</th><th>Podstawa prawna</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Umówienie i potwierdzenie oglądania nieruchomości</td>
+              <td>art. 6 ust. 1 lit. b RODO — działania podejmowane na żądanie osoby, której dane dotyczą, przed zawarciem umowy</td>
+            </tr>
+            <tr>
+              <td>Prowadzenie bieżącej korespondencji i kontaktu telefonicznego</td>
+              <td>art. 6 ust. 1 lit. f RODO — prawnie uzasadniony interes administratora</td>
+            </tr>
+            <tr>
+              <td>Przesyłanie powiadomień o nowych ofertach</td>
+              <td>art. 6 ust. 1 lit. a RODO — dobrowolna zgoda, wyrażana osobnym zaznaczeniem w formularzu</td>
+            </tr>
+            <tr>
+              <td>Bezpieczeństwo strony i statystyka odwiedzin</td>
+              <td>art. 6 ust. 1 lit. f RODO — prawnie uzasadniony interes administratora</td>
+            </tr>
+            <tr>
+              <td>Rozliczenia podatkowe i księgowe, jeśli dojdzie do transakcji</td>
+              <td>art. 6 ust. 1 lit. c RODO — obowiązek prawny</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>4. Dobrowolność podania danych</h2>
+        <p>
+          Podanie danych jest dobrowolne. Bez imienia i numeru telefonu nie jesteśmy w stanie
+          umówić ani potwierdzić oglądania. Zaznaczenie zgody na powiadomienia o ofertach nie
+          jest warunkiem obsługi zgłoszenia i jej brak nie powoduje żadnych negatywnych skutków.
+        </p>
+
+        <h2>5. Okres przechowywania</h2>
+        <ul>
+          <li>dane ze zgłoszenia — 12 miesięcy od ostatniego kontaktu, chyba że wcześniej poprosisz o ich usunięcie;</li>
+          <li>dane związane z zawartą umową — przez okres wymagany przepisami podatkowymi, co do zasady 5 lat od końca roku rozliczeniowego;</li>
+          <li>dane przetwarzane na podstawie zgody — do momentu jej wycofania;</li>
+          <li>logi serwera — nie dłużej niż 12 miesięcy.</li>
+        </ul>
+
+        <h2>6. Odbiorcy danych</h2>
+        <p>
+          Dane mogą być powierzone podmiotom, które przetwarzają je w naszym imieniu na podstawie
+          umowy powierzenia: dostawcy hostingu strony, dostawcy usługi obsługi formularza
+          kontaktowego oraz — w razie zawarcia umowy — biuru rachunkowemu i kancelarii notarialnej.
+          Nie sprzedajemy danych i nie udostępniamy ich w celach marketingowych podmiotom trzecim.
+        </p>
+        <p>
+          Jeżeli dostawca usługi formularza przetwarza dane poza Europejskim Obszarem Gospodarczym,
+          odbywa się to na podstawie standardowych klauzul umownych zatwierdzonych przez Komisję Europejską.
+        </p>
+
+        <h2>7. Twoje uprawnienia</h2>
+        <p>Masz prawo do:</p>
+        <ul>
+          <li>dostępu do swoich danych oraz otrzymania ich kopii;</li>
+          <li>sprostowania danych nieprawidłowych lub niekompletnych;</li>
+          <li>usunięcia danych;</li>
+          <li>ograniczenia przetwarzania;</li>
+          <li>przenoszenia danych przetwarzanych na podstawie umowy lub zgody;</li>
+          <li>wniesienia sprzeciwu wobec przetwarzania opartego na prawnie uzasadnionym interesie;</li>
+          <li>wycofania zgody w dowolnym momencie — bez wpływu na zgodność z prawem przetwarzania sprzed jej wycofania;</li>
+          <li>wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych, ul. Stawki 2, 00-193 Warszawa.</li>
+        </ul>
+        <p>Żądanie realizujemy niezwłocznie, nie później niż w ciągu miesiąca od jego otrzymania.</p>
+
+        <h2>8. Profilowanie</h2>
+        <p>
+          Nie profilujemy danych i nie podejmujemy wobec Ciebie decyzji opierających się wyłącznie
+          na zautomatyzowanym przetwarzaniu, które wywoływałyby skutki prawne.
+        </p>
+
+        <h2>9. Pliki cookies i mapa Google</h2>
+        <p>
+          Strona nie używa plików cookies do celów marketingowych ani do śledzenia odwiedzających
+          między witrynami. Mapa dojazdu ładowana jest z serwisu Google Maps dopiero po kliknięciu
+          przycisku „Pokaż mapę" — do tego momentu strona nie nawiązuje połączenia z serwerami Google.
+          Po jej wczytaniu Google może zapisać własne pliki cookies zgodnie ze swoją polityką prywatności.
+        </p>
+
+        <h2>10. Zmiany dokumentu</h2>
+        <p>
+          W razie zmiany zakresu przetwarzania zaktualizujemy tę stronę i zmienimy datę
+          widniejącą na jej początku.
+        </p>
+
+        <p class="powrot"><a href={`${base}/nieruchomosci/`}>← Powrót na stronę główną</a></p>
+
+        <p class="zastrzezenie">
+          Dokument przygotowany jako wzór dla strony wizytówkowej z formularzem kontaktowym.
+          Przy większej skali przetwarzania danych warto zlecić jego weryfikację prawnikowi.
+        </p>
+      </div>
+    </main>
+
+    <footer class="stopka">
+      <div class="wrap stopka__dol">
+        <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
+        <a href={`${base}/nieruchomosci/`}>Kontur Nieruchomości</a>
+      </div>
+    </footer>
+  </body>
+</html>
+
 <style is:global>
   :root {
-    --bg:#f7f7f4; --bg-alt:#ecece7; --ink:#14213a; --muted:#5f6a80; --line:#d5d6ce;
-    --accent:#14213a; --accent-dark:#0c1729; --on-accent:#f7f7f4; --radius:3px; --maxw:1180px;
-    --font-display:'Syne',system-ui,sans-serif;
-    --font-body:'Public Sans',system-ui,sans-serif;
-    --font-mono:'Roboto Mono',ui-monospace,monospace;
+    --papier: #fbfbfa; --papier-2: #f2f2f0; --atrament: #101112; --szary: #6e7276; --linia: #e2e2df;
+    --font: 'Schibsted Grotesk', system-ui, sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace;
   }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--papier); color: var(--atrament); font-family: var(--font); font-size: 0.97rem; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { width: min(100% - 3rem, 1200px); margin-inline: auto; }
+  .band { padding-block: clamp(7rem, 14vw, 9rem) clamp(4rem, 8vw, 6rem); }
+
+  .hdr { position: fixed; inset: 0 0 auto 0; z-index: 10; background: rgba(251,251,250,0.93); backdrop-filter: blur(12px); border-bottom: 1px solid var(--linia); padding-block: 0.9rem; }
+  .hdr__in { display: flex; align-items: center; justify-content: space-between; }
+  .hdr__mark { font-size: 1.15rem; font-weight: 500; letter-spacing: -0.02em; text-decoration: none; }
+  .hdr__tel { font-family: var(--mono); font-size: 0.8rem; text-decoration: none; }
+
+  .tresc { max-width: 68ch; }
+  .label { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--szary); margin: 0 0 1rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 500; letter-spacing: -0.03em; margin: 0 0 1.5rem; }
+  h2 { font-size: 1.1rem; font-weight: 500; letter-spacing: -0.01em; margin: 2.75rem 0 0.75rem; padding-top: 1.5rem; border-top: 1px solid var(--linia); }
+  p { margin: 0 0 1rem; }
+  .wstep { color: var(--szary); font-size: 1.05rem; }
+  ul { padding-left: 1.15rem; margin: 0 0 1rem; color: var(--szary); }
+  li { margin-bottom: 0.4rem; }
+  p:not(.wstep):not(.label) { color: var(--szary); }
+  strong { color: var(--atrament); font-weight: 500; }
+
+  .tabela { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.86rem; }
+  .tabela th { text-align: left; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--szary); font-weight: 400; padding: 0 1rem 0.6rem 0; border-bottom: 1px solid var(--linia); }
+  .tabela td { padding: 0.85rem 1rem 0.85rem 0; border-bottom: 1px solid var(--linia); color: var(--szary); vertical-align: top; }
+  .tabela td:first-child { color: var(--atrament); width: 42%; }
+  @media (max-width: 620px) {
+    .tabela, .tabela tbody, .tabela tr, .tabela td { display: block; width: 100%; }
+    .tabela thead { display: none; }
+    .tabela tr { border-bottom: 1px solid var(--linia); padding: 0.9rem 0; }
+    .tabela td { border: 0; padding: 0; }
+    .tabela td:first-child { width: auto; margin-bottom: 0.3rem; }
+  }
+
+  .powrot { margin-top: 3rem; }
+  .powrot a { font-size: 0.88rem; }
+  .zastrzezenie { margin-top: 2.5rem; padding: 1rem 1.25rem; background: var(--papier-2); font-size: 0.8rem; }
+
+  .stopka { border-top: 1px solid var(--linia); padding-block: 2rem; }
+  .stopka__dol { display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; justify-content: space-between; font-family: var(--mono); font-size: 0.7rem; color: var(--szary); }
+  .stopka__dol a { text-decoration: none; }
 </style>

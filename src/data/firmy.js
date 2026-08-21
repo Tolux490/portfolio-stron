@@ -46,6 +46,11 @@ export const nieruchomosci = {
   city: 'Wołomin',
   nip: '1250000002',
   mapUrl: 'https://maps.google.com/?q=Wołomin+Legionów+8',
+  facebook: 'https://www.facebook.com/',
+  instagram: 'https://www.instagram.com/',
+  // Klucz z web3forms.com — wklej, żeby formularz zaczął realnie wysyłać.
+  // Puste = tryb pokazowy (walidacja działa, nic nie wychodzi na zewnątrz).
+  formKey: '',
   slug: 'nieruchomosci',
   schemaType: 'RealEstateAgent',
   openingHours: ['Mo-Fr 09:00-17:00'],
