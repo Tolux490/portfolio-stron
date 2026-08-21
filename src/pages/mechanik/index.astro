@@ -429,6 +429,9 @@ const opinie = [
   .hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 2.5rem; }
   .hero__media { position: absolute; inset: 0; }
   .hero__media :global(.ph), .hero__media :global(img) { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto !important; border: 0; }
+  /* Zaślepka w hero jest tłem, nie treścią — jej opis nie może wchodzić na nagłówek.
+     Po podmianie na prawdziwe zdjęcie ta reguła przestaje mieć znaczenie. */
+  .hero__media :global(.ph) { font-size: 0; padding: 0; }
   .hero__veil {
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(14,16,18,0.82) 0%, rgba(14,16,18,0.42) 42%, rgba(14,16,18,0.94) 100%);
