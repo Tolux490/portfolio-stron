@@ -176,7 +176,7 @@ const opinie = [
     </section>
 
     <!-- ============ PASEK-PRZERYWNIK ============ -->
-    <section class="przerywnik" aria-hidden="true">
+    <section class="przerywnik reveal" aria-hidden="true">
       <Foto src="warsztat-galeria-4.webp" alt="" ratio="21/9" label="Pas — komora silnika" />
     </section>
 
@@ -284,7 +284,7 @@ const opinie = [
           { plik: 'warsztat-galeria-5.webp', opis: 'Serwis — klucz przy silniku' },
           { plik: 'warsztat-galeria-6.webp', opis: 'Mechanik przy pracy' },
         ].map((g, i) => (
-          <button class="galeria__kafel" data-opis={g.opis} type="button">
+          <button class="galeria__kafel reveal" data-opis={g.opis} type="button">
             <Foto src={g.plik} alt={g.opis} ratio={i % 3 === 0 ? '3/4' : '4/3'} label={g.opis} />
           </button>
         ))}
@@ -450,13 +450,17 @@ const opinie = [
   @media (prefers-reduced-motion: reduce) { .marki__tor { animation: none; } }
 
   /* ---------- zakres ---------- */
-  .zakres { display: grid; gap: 3.5rem; }
+  .zakres { display: grid; gap: 3rem; }
   @media (min-width: 1000px) {
     .zakres { grid-template-columns: 1fr 1fr 0.85fr; gap: 4rem; align-items: start; }
     .zakres__foto { margin-top: 0; position: sticky; top: 6rem; }
-    .zakres__foto :global(img), .zakres__foto :global(.ph) { height: 100%; }
   }
-  .zakres__foto { margin-top: 3rem; }
+  .zakres__foto { margin-top: 2rem; overflow: hidden; }
+  /* Na wąskim ekranie wysoki pion zajmuje cały ekran — przycinamy do 3/2 przez ramkę */
+  @media (max-width: 999px) {
+    .zakres__foto { aspect-ratio: 3 / 2; }
+    .zakres__foto :global(img) { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto !important; }
+  }
   .zakres__lista { list-style: none; margin: 0; padding: 0; }
   .zakres__lista li { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; padding: 2.25rem 0; border-top: 1px solid var(--line); }
   .zakres__lista li:last-child { border-bottom: 1px solid var(--line); }
@@ -612,9 +616,22 @@ const opinie = [
   .lightbox__zamknij { position: absolute; top: 1.25rem; right: 1.5rem; font-size: 1.4rem; color: var(--bone); padding: 0.5rem; }
 
   /* ---------- pasek-przerywnik ---------- */
-  .przerywnik { position: relative; overflow: hidden; }
-  .przerywnik :global(.ph), .przerywnik :global(img) { width: 100%; }
-  @media (min-width: 700px) { .przerywnik :global(.ph), .przerywnik :global(img) { max-height: 44vh; object-fit: cover; } }
+  .przerywnik { position: relative; overflow: hidden; height: clamp(200px, 38vh, 360px); }
+  .przerywnik :global(.ph), .przerywnik :global(img) {
+    width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto !important;
+    transform: scale(1.08); transition: transform 1.4s var(--ease);
+  }
+  .przerywnik.is-in :global(img), .przerywnik.is-in :global(.ph) { transform: scale(1); }
+
+  /* ---------- płynne wejście zdjęć ---------- */
+  .reveal :global(.foto) {
+    transform: scale(1.04);
+    transition: transform 1.1s var(--ease);
+    will-change: transform;
+  }
+  .reveal.is-in :global(.foto) { transform: scale(1); }
+  /* galeria: hover-zoom już jest; przy wejściu też delikatnie */
+  .galeria__kafel :global(.foto) { transition: transform 0.7s var(--ease); }
 </style>
 
 <script>
