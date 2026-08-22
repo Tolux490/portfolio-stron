@@ -155,9 +155,6 @@ const opinie = [
             Nie robimy blacharstwa ani lakiernictwa. Wolimy być bardzo dobrzy
             w wąskim zakresie niż przeciętni we wszystkim.
           </p>
-          <div class="zakres__foto">
-            <Foto src="warsztat-detal.webp" alt="Skrzynka z narzędziami" ratio="4/5" label="Detal" />
-          </div>
         </div>
 
         <ol class="zakres__lista">
@@ -171,7 +168,16 @@ const opinie = [
             </li>
           ))}
         </ol>
+
+        <div class="zakres__foto reveal">
+          <Foto src="warsztat-detal.webp" alt="Skrzynka z narzędziami" ratio="4/5" label="Detal" />
+        </div>
       </div>
+    </section>
+
+    <!-- ============ PASEK-PRZERYWNIK ============ -->
+    <section class="przerywnik" aria-hidden="true">
+      <Foto src="warsztat-galeria-4.webp" alt="" ratio="21/9" label="Pas — komora silnika" />
     </section>
 
     <!-- ============ KALKULATOR WYCENY ============ -->
@@ -411,7 +417,9 @@ const opinie = [
   .hero__media :global(.ph) { font-size: 0; padding: 0; }
   .hero__veil {
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(14,16,18,0.82) 0%, rgba(14,16,18,0.42) 42%, rgba(14,16,18,0.94) 100%);
+    background:
+      linear-gradient(90deg, rgba(14,16,18,0.9) 0%, rgba(14,16,18,0.55) 45%, rgba(14,16,18,0.25) 100%),
+      linear-gradient(180deg, rgba(14,16,18,0.7) 0%, rgba(14,16,18,0.35) 40%, rgba(14,16,18,0.92) 100%);
   }
   .hero__in { position: relative; padding-top: 9rem; }
   .hero__kicker { font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--brass); margin-bottom: 1.5rem; }
@@ -443,7 +451,11 @@ const opinie = [
 
   /* ---------- zakres ---------- */
   .zakres { display: grid; gap: 3.5rem; }
-  @media (min-width: 1000px) { .zakres { grid-template-columns: 0.9fr 1.1fr; gap: 5rem; align-items: start; } }
+  @media (min-width: 1000px) {
+    .zakres { grid-template-columns: 1fr 1fr 0.85fr; gap: 4rem; align-items: start; }
+    .zakres__foto { margin-top: 0; position: sticky; top: 6rem; }
+    .zakres__foto :global(img), .zakres__foto :global(.ph) { height: 100%; }
+  }
   .zakres__foto { margin-top: 3rem; }
   .zakres__lista { list-style: none; margin: 0; padding: 0; }
   .zakres__lista li { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; padding: 2.25rem 0; border-top: 1px solid var(--line); }
@@ -598,6 +610,11 @@ const opinie = [
   .lightbox__tresc { max-width: min(1000px, 92vw); max-height: 84vh; }
   .lightbox__tresc :global(img), .lightbox__tresc :global(.ph) { max-height: 84vh; width: auto; margin-inline: auto; }
   .lightbox__zamknij { position: absolute; top: 1.25rem; right: 1.5rem; font-size: 1.4rem; color: var(--bone); padding: 0.5rem; }
+
+  /* ---------- pasek-przerywnik ---------- */
+  .przerywnik { position: relative; overflow: hidden; }
+  .przerywnik :global(.ph), .przerywnik :global(img) { width: 100%; }
+  @media (min-width: 700px) { .przerywnik :global(.ph), .przerywnik :global(img) { max-height: 44vh; object-fit: cover; } }
 </style>
 
 <script>
