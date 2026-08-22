@@ -106,7 +106,7 @@ const opinie = [
     <!-- ============ HERO ============ -->
     <section class="hero" id="gora">
       <div class="hero__media">
-        <Foto src="" alt="Hala serwisu" ratio="16/9" label="Kadr hali — auto na podnośniku, wieczorne światło" />
+        <Foto src="warsztat-hero.webp" alt="Auto na podnośniku w hali serwisu" ratio="16/9" label="Hero" />
       </div>
       <div class="hero__veil"></div>
 
@@ -156,7 +156,7 @@ const opinie = [
             w wąskim zakresie niż przeciętni we wszystkim.
           </p>
           <div class="zakres__foto">
-            <Foto src="" alt="Stanowisko diagnostyczne" ratio="4/5" label="Detal — ręce przy pracy, narzędzie, ostre światło" />
+            <Foto src="warsztat-detal.webp" alt="Skrzynka z narzędziami" ratio="4/5" label="Detal" />
           </div>
         </div>
 
@@ -237,29 +237,6 @@ const opinie = [
     </section>
 
     <!-- ============ PRZED / PO ============ -->
-    <section class="band">
-      <div class="wrap--narrow reveal">
-        <p class="label">Renowacja</p>
-        <h2 class="h2">Przeciągnij, żeby zobaczyć różnicę.</h2>
-        <p class="lede">Renowacja przednich lamp w Passacie B8 — dwie godziny pracy, bez wymiany kloszy.</p>
-      </div>
-
-      <div class="wrap--narrow porownanie reveal" id="porownanie">
-        <div class="porownanie__ramka">
-          <div class="porownanie__po">
-            <Foto src="" alt="Lampa po renowacji" ratio="16/10" label="Stan po renowacji" />
-          </div>
-          <div class="porownanie__przed" id="przedWarstwa">
-            <Foto src="" alt="Lampa przed renowacją" ratio="16/10" label="Stan przed renowacją" />
-          </div>
-          <div class="porownanie__uchwyt" id="uchwyt"><span></span></div>
-          <input class="porownanie__suwak" id="suwak" type="range" min="0" max="100" value="50"
-                 aria-label="Suwak porównania: przed i po renowacji" />
-        </div>
-        <div class="porownanie__opisy"><span>Przed</span><span>Po</span></div>
-      </div>
-    </section>
-
     <!-- ============ CENNIK ============ -->
     <section id="cennik" class="band band--light">
       <div class="wrap cennik-blok">
@@ -294,15 +271,15 @@ const opinie = [
       </div>
       <div class="wrap galeria reveal" id="galeria">
         {[
-          'Hala — dwa stanowiska z podnośnikiem',
-          'Diagnostyka — komputer podpięty do auta',
-          'Detal — narzędzia na ścianie',
-          'Silnik rozłożony na stole',
-          'Geometria 3D w trakcie pomiaru',
-          'Recepcja i miejsce oczekiwania',
-        ].map((opis, i) => (
-          <button class="galeria__kafel" data-opis={opis} type="button">
-            <Foto src="" alt={opis} ratio={i % 3 === 0 ? '3/4' : '4/3'} label={opis} />
+          { plik: 'warsztat-galeria-1.webp', opis: 'Hala serwisu — auta na stanowiskach' },
+          { plik: 'warsztat-galeria-2.webp', opis: 'Diagnostyka komputerowa' },
+          { plik: 'warsztat-galeria-3.webp', opis: 'Narzędzia — zestaw nasadek' },
+          { plik: 'warsztat-galeria-4.webp', opis: 'Praca w komorze silnika' },
+          { plik: 'warsztat-galeria-5.webp', opis: 'Serwis — klucz przy silniku' },
+          { plik: 'warsztat-galeria-6.webp', opis: 'Mechanik przy pracy' },
+        ].map((g, i) => (
+          <button class="galeria__kafel" data-opis={g.opis} type="button">
+            <Foto src={g.plik} alt={g.opis} ratio={i % 3 === 0 ? '3/4' : '4/3'} label={g.opis} />
           </button>
         ))}
       </div>
@@ -362,7 +339,7 @@ const opinie = [
           </div>
         </div>
         <div class="reveal">
-          <Foto src="" alt="Wjazd do warsztatu" ratio="3/4" label="Wjazd do warsztatu — szyld, brama, ujęcie z ulicy" />
+          <Foto src="warsztat-wjazd.webp" alt="Hala serwisu" ratio="3/4" label="Wjazd / hala" />
         </div>
       </div>
     </section>
@@ -693,16 +670,6 @@ const opinie = [
 
   kalk?.addEventListener('change', przelicz);
   przelicz();
-
-  // ---- 4. Suwak przed / po ----
-  const suwak = document.getElementById('suwak') as HTMLInputElement | null;
-  const warstwa = document.getElementById('przedWarstwa');
-  const uchwyt = document.getElementById('uchwyt');
-  suwak?.addEventListener('input', () => {
-    const v = suwak.value + '%';
-    if (warstwa) warstwa.style.width = v;
-    if (uchwyt) uchwyt.style.left = v;
-  });
 
   // ---- 5. Lightbox galerii ----
   const lb = document.getElementById('lightbox');
