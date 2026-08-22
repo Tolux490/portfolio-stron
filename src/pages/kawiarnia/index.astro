@@ -110,7 +110,7 @@ const opinie = [
         <Foto src="kawiarnia-hero.webp" alt="Cynamonka i latte Café Prolog" ratio="4/5" label="Hero — drożdżówka z latte (kawiarnia-hero.webp)" />
       </div>
       <div class="hero__foto-mobile">
-        <Foto src="kawiarnia-hero.webp" alt="Cynamonka i latte Café Prolog" ratio="4/3" label="Hero mobile" />
+        <Foto src="kawiarnia-hero.webp" alt="Cynamonka i latte Café Prolog" ratio="3/4" label="Hero mobile" />
       </div>
     </section>
 
@@ -396,15 +396,8 @@ const opinie = [
     .hero__foto .ph, .hero__foto img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto !important; border: 0; border-left: 1px solid var(--linia); }
     .hero__foto-mobile { display: none; }
   }
-.hero__foto-mobile {
-  margin-top: 2.5rem;
-  width: min(100% - 3rem, 1220px);
-  margin-inline: auto;
-}
-.hero__foto-mobile .ph, .hero__foto-mobile img { width: 100%; }
-
-
-
+  .hero__foto-mobile { margin-top: 2.5rem; }
+  .hero__foto-mobile .ph, .hero__foto-mobile img { width: 100%; }
 
   /* ---------- menu ---------- */
   .menu__filtry { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 2.4rem 0 2.8rem; }
@@ -599,4 +592,3 @@ const opinie = [
     document.getElementById('mapaZaslepka')?.remove();
   });
 </script>
-
