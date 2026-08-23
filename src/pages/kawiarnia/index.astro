@@ -56,6 +56,10 @@ const opinie = [
     <meta property="og:description" content="Przelewy single origin, matcha ceremonialna, wypieki z własnego pieca." />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content={new URL('/og/kawiarnia.png', Astro.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,420;1,9..144,340&family=Albert+Sans:wght@400;500;600&display=swap" />
@@ -266,7 +270,7 @@ const opinie = [
         </div>
         <div class="stopka__dol">
           <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
-          <a href={`${base}/kawiarnia/polityka-prywatnosci/`}>Polityka prywatności</a>
+          <span><a href={`${base}/`}>Realizacja · Vervo Studio ↗</a> &nbsp;·&nbsp; <a href={`${base}/kawiarnia/polityka-prywatnosci/`}>Polityka prywatności</a></span>
         </div>
       </div>
     </footer>

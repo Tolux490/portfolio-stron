@@ -97,6 +97,10 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
     <meta property="og:description" content="Mieszkania, domy i działki. Prowizja 2% + VAT, umowa na trzy miesiące." />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content={new URL('/og/nieruchomosci.png', Astro.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600&display=swap" />
@@ -399,7 +403,7 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
     <footer class="stopka">
       <div class="wrap stopka__dol">
         <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city} · {biz.phone}</span>
-        <a href={`${base}/nieruchomosci/polityka-prywatnosci/`}>Polityka prywatności</a>
+        <span><a href={`${base}/`}>Realizacja · Vervo Studio ↗</a> &nbsp;·&nbsp; <a href={`${base}/nieruchomosci/polityka-prywatnosci/`}>Polityka prywatności</a></span>
       </div>
     </footer>
 

@@ -44,11 +44,14 @@ const inicjaly = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpp
     <meta name="description" content="Poznaj OKTAN — warszawski serwis samochodowy od 2007 roku. Zespół mechaników, którzy mówią wprost, ile zapłacisz. Uczciwa wycena, gwarancja 24 miesiące." />
     <link rel="canonical" href={Astro.url.href} />
     <meta name="theme-color" content="#0e1013" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:title" content="O nas i zespół — OKTAN Serwis, Warszawa" />
     <meta property="og:description" content="Warszawski serwis od 2007 roku. Zespół, który mówi wprost, ile zapłacisz." />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
-    <meta property="og:image" content={new URL(img('warsztat-galeria-1.webp'), Astro.url).href} />
+    <meta property="og:image" content={new URL('/og/oktan.png', Astro.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" />
@@ -205,7 +208,7 @@ const inicjaly = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpp
         </div>
         <div class="foot__legal">
           <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
-          <a href={`${root}/polityka-prywatnosci/`}>Polityka prywatności</a>
+          <span><a href={`${base}/`}>Realizacja · Vervo Studio ↗</a> &nbsp;·&nbsp; <a href={`${root}/polityka-prywatnosci/`}>Polityka prywatności</a></span>
         </div>
       </div>
     </footer>
