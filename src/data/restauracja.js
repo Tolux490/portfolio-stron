@@ -13,7 +13,7 @@ export const menu = [
       { n: 'Tatar z polędwicy', o: 'żółtko konfitowane, ogórek małosolny, musztarda własnej roboty', c: '42', tag: 'sygnatura' },
       { n: 'Śledź w oleju rzepakowym', o: 'kiszone jabłko, koperek, cebula z octu', c: '28' },
       { n: 'Burak pieczony w soli', o: 'twaróg z koziego mleka, orzech laskowy, olej lubczykowy', c: '32', tag: 'wege' },
-      { n: 'Ostrygi z Bretanii', o: 'szalotka w occie winnym, cytryna — sztuka', c: '18' },
+      { n: 'Ostrygi z Bretanii', o: 'szalotka w occie winnym, cytryna, cena za sztukę', c: '18' },
       { n: 'Grzanka z podpłomyka', o: 'masło ziołowe, smalec gęsi, ogórek', c: '24' },
     ],
   },
@@ -105,7 +105,7 @@ export const wina = [
   {
     grupa: 'Na koniec wieczoru',
     pozycje: [
-      { n: 'Tokaji Aszú 5 Puttonyos', reg: 'Tokaj, Węgry', desc: 'morela, miód, akacja — do serów i deserów', kieliszek: '38', butelka: '240' },
+      { n: 'Tokaji Aszú 5 Puttonyos', reg: 'Tokaj, Węgry', desc: 'morela, miód, akacja, do serów i deserów', kieliszek: '38', butelka: '240' },
       { n: 'Porto Tawny 10 lat', reg: 'Douro, Portugalia', desc: 'orzech, karmel, suszona figa', kieliszek: '30', butelka: '200' },
     ],
   },
@@ -116,12 +116,12 @@ export const wina = [
 // ————————————————————————————————————————————————
 export const opinie = [
   { a: 'Magdalena P.', g: 5, kiedy: '2 tygodnie temu', lokalny: true, t: 'Karta na kilka pozycji brzmi ryzykownie, dopóki nie zjesz policzków wołowych. Wszystko smakuje, jakby ktoś gotował dla dziesięciu osób, nie dla stu. Obsługa doradziła wino idealnie.' },
-  { a: 'Tomasz W.', g: 5, kiedy: 'miesiąc temu', lokalny: true, t: 'Byliśmy w środę na wejściu nowej karty — szef kuchni wyszedł na salę i opowiadał o każdym daniu. W Warszawie płaciłbym za to dwa razy tyle. Wracamy na menu degustacyjne.' },
+  { a: 'Tomasz W.', g: 5, kiedy: 'miesiąc temu', lokalny: true, t: 'Byliśmy w środę na wejściu nowej karty. Szef kuchni wyszedł na salę i opowiadał o każdym daniu. W Warszawie płaciłbym za to dwa razy tyle. Wracamy na menu degustacyjne.' },
   { a: 'Anna K.', g: 5, kiedy: 'miesiąc temu', lokalny: false, t: 'Najlepsza kolacja w tej okolicy od lat. Klimat świec i drewna, cicho, elegancko, bez zadęcia. Deser czekoladowy to poezja.' },
   { a: 'Piotr Zawadzki', g: 5, kiedy: '2 miesiące temu', lokalny: true, t: 'Rezerwacja telefoniczna, odebrali po dwóch sygnałach, stolik przy kominku dokładnie jak prosiłem. Wina naturalne, których nie znajdziesz nigdzie indziej w mieście.' },
   { a: 'Julia N.', g: 5, kiedy: '2 miesiące temu', lokalny: true, t: 'Świętowaliśmy rocznicę. Dostaliśmy powitanie od kuchni i kartkę z życzeniami. Detale, które robią różnicę. Pstrąg rozpływał się w ustach.' },
-  { a: 'Marek Dąbrowski', g: 4, kiedy: '3 miesiące temu', lokalny: false, t: 'Bardzo dobre jedzenie i piękne wnętrze. Jedna gwiazdka mniej tylko za to, że trzeba rezerwować z wyprzedzeniem — ale rozumiem, miejsc jest niewiele.' },
-  { a: 'Ewa Lorenc', g: 5, kiedy: '4 miesiące temu', lokalny: true, t: 'Kaczka z wiśnią w porto — zamawiam ją za każdym razem i za każdym razem jest równie dobra. Personel pamięta stałych gości. Czuć, że to miejsce z sercem.' },
+  { a: 'Marek Dąbrowski', g: 4, kiedy: '3 miesiące temu', lokalny: false, t: 'Bardzo dobre jedzenie i piękne wnętrze. Jedna gwiazdka mniej tylko za to, że trzeba rezerwować z wyprzedzeniem, ale rozumiem, miejsc jest niewiele.' },
+  { a: 'Ewa Lorenc', g: 5, kiedy: '4 miesiące temu', lokalny: true, t: 'Kaczkę z wiśnią w porto zamawiam za każdym razem i za każdym razem jest równie dobra. Personel pamięta stałych gości. Czuć, że to miejsce z sercem.' },
   { a: 'Krzysztof B.', g: 5, kiedy: '5 miesięcy temu', lokalny: true, t: 'Kolacja degustacyjna z winami to było przeżycie na cały wieczór. Siedem dań, każde zaskakiwało. Sommelier wie, o czym mówi. Polecam każdemu.' },
   { a: 'Natalia S.', g: 5, kiedy: '6 miesięcy temu', lokalny: false, t: 'Wege wersje dań na życzenie i naprawdę przemyślane, nie na odczep. Risotto z borowikami zapamiętam na długo. Dziękuję za wieczór.' },
 ];
@@ -147,7 +147,7 @@ export const wydarzenia = [
   {
     t: 'Wieczory z winami naturalnymi',
     kiedy: 'Raz w miesiącu, czwartek',
-    d: 'Spotkanie z winiarzem z małej winnicy — Polska, Morawy, Burgenland. Sześć win, przekąski od kuchni, rozmowa przy stole.',
+    d: 'Spotkanie z winiarzem z małej winnicy: Polska, Morawy albo Burgenland. Sześć win, przekąski od kuchni, rozmowa przy stole.',
     m: '140 zł / os.',
     foto: 'wino-kieliszki',
   },
@@ -164,7 +164,7 @@ export const wydarzenia = [
 export const prywatne = [
   { t: 'Cała sala na wyłączność', d: 'Do 34 osób przy stołach, do 50 w formule koktajlowej. Urodziny, rocznice, kolacje firmowe.' },
   { t: 'Menu ustalane wcześniej', d: 'Wybieracie 3, 5 lub 7 dań. Wersje wege, bezglutenowe i alergie ustalamy przy rezerwacji.' },
-  { t: 'Własne wino za korkowe', d: 'Macie butelkę na specjalną okazję? Możecie ją przynieść — otwieramy i podajemy za 40 zł od butelki.' },
+  { t: 'Własne wino za korkowe', d: 'Macie butelkę na specjalną okazję? Możecie ją przynieść, otworzymy i podamy za 40 zł od butelki.' },
 ];
 
 // ————————————————————————————————————————————————
@@ -194,7 +194,7 @@ export const galeria = [
 // ————————————————————————————————————————————————
 export const zespol = [
   { imie: 'Jan Ogrodowy', rola: 'Szef kuchni i współwłaściciel', o: 'Wcześniej w kuchniach Warszawy i Kopenhagi. Wrócił do Wołomina, żeby gotować z tego, co rośnie obok.' },
-  { imie: 'Weronika Malec', rola: 'Sommelierka', o: 'Prowadzi kartę win naturalnych. Dobiera kieliszek do każdego dania — pytaj śmiało, doradza bez zadęcia.' },
+  { imie: 'Weronika Malec', rola: 'Sommelierka', o: 'Prowadzi kartę win naturalnych. Dobiera kieliszek do każdego dania. Pytaj śmiało, doradza bez zadęcia.' },
   { imie: 'Adam Rey', rola: 'Kierownik sali', o: 'Dba, żeby wieczór miał rytm. Zna stałych gości po imieniu i pamięta ich ulubiony stolik.' },
 ];
 
@@ -202,10 +202,10 @@ export const zespol = [
 //  FAQ
 // ————————————————————————————————————————————————
 export const faq = [
-  { q: 'Jak zarezerwować stolik?', a: 'Najprościej telefonicznie — przy kilkunastu stolikach telefon jest szybszy niż cokolwiek. Odbieramy od 15:00. Możesz też wysłać prośbę przez formularz, potwierdzimy ją tego samego dnia roboczego.' },
+  { q: 'Jak zarezerwować stolik?', a: 'Najprościej telefonicznie, bo przy kilkunastu stolikach to najszybsza droga. Odbieramy od 15:00. Możesz też wysłać prośbę przez formularz, potwierdzimy ją tego samego dnia roboczego.' },
   { q: 'Czy macie dania wegetariańskie?', a: 'Tak. Kilka pozycji w karcie jest bezmięsnych, a większość dań przygotujemy w wersji wege, jeśli wspomnisz o tym przy rezerwacji.' },
   { q: 'Czy dostosowujecie menu do alergii?', a: 'Tak, o alergiach i nietolerancjach powiedz przy rezerwacji albo obsłudze na miejscu. Kuchnia dobierze dania i zamienniki.' },
   { q: 'Czy można przyjść z dziećmi?', a: 'Oczywiście. Mamy krzesełka i mniejsze porcje wybranych dań. Wieczory degustacyjne są jednak pomyślane dla dorosłych.' },
-  { q: 'Czy przyjmujecie większe grupy?', a: 'Do ośmiu osób rezerwujemy standardowo. Grupy powyżej ośmiu osób i sala na wyłączność — mailowo, ustalimy menu i termin.' },
-  { q: 'Czy mogę przynieść własne wino?', a: 'Tak, za korkowe 40 zł od butelki. Jeśli masz coś wyjątkowego na specjalną okazję — chętnie otworzymy i podamy w odpowiednich kieliszkach.' },
+  { q: 'Czy przyjmujecie większe grupy?', a: 'Do ośmiu osób rezerwujemy standardowo. Grupy powyżej ośmiu osób i salę na wyłączność ustalamy mailowo, dobierzemy menu i termin.' },
+  { q: 'Czy mogę przynieść własne wino?', a: 'Tak, za korkowe 40 zł od butelki. Jeśli masz coś wyjątkowego na specjalną okazję, chętnie otworzymy i podamy w odpowiednich kieliszkach.' },
 ];

@@ -15,6 +15,7 @@ const root = `${base}/restauracja`;
 const img = (p) => `${base}/img/${p}`;
 
 const nav = [
+  { id: 'home',       href: `${root}/`,             label: 'Start' },
   { id: 'menu',       href: `${root}/menu/`,        label: 'Karta' },
   { id: 'wina',       href: `${root}/wina/`,        label: 'Wina' },
   { id: 'o-nas',      href: `${root}/o-nas/`,       label: 'Kuchnia' },
@@ -66,7 +67,7 @@ const schema = {
   <body>
     <header class="site" id="site">
       <div class="wrap site__in">
-        <a class="brand" href={`${root}/`} aria-label={`${biz.name} — strona główna`}>
+        <a class="brand" href={`${root}/`} aria-label={`${biz.name}, strona główna`}>
           <span class="brand__name">Ogrodowa <em>3</em></span>
           <span class="brand__sub">Kuchnia sezonowa · Wołomin</span>
         </a>

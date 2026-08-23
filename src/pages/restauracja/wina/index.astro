@@ -9,7 +9,7 @@ const root = `${base}/restauracja`;
 const sommelier = zespol.find((z) => z.rola.toLowerCase().includes('somm'));
 ---
 <Restauracja
-  title="Karta win — Ogrodowa 3, Wołomin"
+  title="Karta win · Ogrodowa 3, Wołomin"
   description="Wina naturalne i klasyka z małych winnic: Polska, Morawy, Austria, Gruzja, Tokaj. Kieliszek od 26 zł, doradztwo sommelierki bez zadęcia."
   current="wina"
   ogImage="restauracja/piwnica-win.webp">
@@ -22,10 +22,10 @@ const sommelier = zespol.find((z) => z.rola.toLowerCase().includes('somm'));
     <div class="hero__veil"></div>
     <div class="wrap">
       <p class="eyebrow reveal">Piwniczka</p>
-      <h1 class="reveal">Karta win.</h1>
+      <h1 class="reveal">Karta win</h1>
       <p class="lede reveal">
         Stawiamy na wina z małych winnic i naturalne roczniki, których nie znajdziesz w markecie.
-        Kieliszek od 26 zł — do każdego dania z karty dobierzemy parę.
+        Kieliszek od 26 zł, a do każdego dania z karty dobierzemy parę.
       </p>
     </div>
   </section>
@@ -59,7 +59,7 @@ const sommelier = zespol.find((z) => z.rola.toLowerCase().includes('somm'));
       ))}
 
       <p class="mono-note reveal maxw-prose">
-        Ceny w złotych. Karta win zmienia się częściej niż karta dań — powyższa lista jest przykładowa.
+        Ceny w złotych. Karta win zmienia się częściej niż karta dań, więc powyższa lista jest przykładowa.
         Masz butelkę na wyjątkową okazję? Możesz ją przynieść, korkowe 40 zł od butelki.
       </p>
     </div>
@@ -74,10 +74,10 @@ const sommelier = zespol.find((z) => z.rola.toLowerCase().includes('somm'));
         </div>
         <div class="reveal">
           <p class="eyebrow">Sommelier</p>
-          <h2 class="h2">Zapytaj, dobierzemy.</h2>
+          <h2 class="h2">Zapytaj, a dobierzemy</h2>
           <p class="lede">{sommelier.o}</p>
           <p class="lede">
-            Nie wiesz, co wybrać? Powiedz, co lubisz i na co masz ochotę — resztę zostaw nam.
+            Nie wiesz, co wybrać? Powiedz, co lubisz i na co masz ochotę, a resztę zostaw nam.
             Pół kieliszka na spróbowanie zawsze się znajdzie.
           </p>
           <a class="btn btn--outline mt-m" href={`${root}/rezerwacja/`}>Zarezerwuj wieczór →</a>

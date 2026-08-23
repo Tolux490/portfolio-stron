@@ -11,18 +11,18 @@ const osoby = ['1 osoba', '2 osoby', '3 osoby', '4 osoby', '5 osób', '6 osób',
 const godziny = ['16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
 ---
 <Restauracja
-  title="Rezerwacja stolika — Ogrodowa 3, Wołomin"
-  description="Zarezerwuj stolik w restauracji Ogrodowa 3 w Wołominie. Telefonicznie od 15:00 lub przez formularz — potwierdzamy tego samego dnia."
+  title="Rezerwacja stolika · Ogrodowa 3, Wołomin"
+  description="Zarezerwuj stolik w restauracji Ogrodowa 3 w Wołominie. Telefonicznie od 15:00 lub przez formularz, potwierdzamy tego samego dnia."
   current="rezerwacja"
   ogImage="restauracja/stol-nakrycie.webp">
 
   <section class="pagehead">
     <div class="wrap">
       <p class="eyebrow reveal">Rezerwacja</p>
-      <h1 class="reveal">Zarezerwuj wieczór.</h1>
+      <h1 class="reveal">Zarezerwuj wieczór</h1>
       <p class="lede reveal">
-        Przy kilkunastu stolikach telefon jest najszybszy — odbieramy od 15:00. Wolisz online?
-        Wypełnij formularz, a my potwierdzimy termin telefonicznie tego samego dnia roboczego.
+        Przy kilkunastu stolikach najszybszy jest telefon. Odbieramy od 15:00. Wolisz online?
+        Wypełnij formularz, a potwierdzimy termin telefonicznie tego samego dnia roboczego.
       </p>
     </div>
   </section>
@@ -82,7 +82,7 @@ const godziny = ['16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', 
           <p>
             Administratorem Twoich danych jest {biz.legalName}, {biz.street}, {biz.zip} {biz.city},
             NIP {biz.nip}. Dane z formularza przetwarzamy wyłącznie po to, żeby przyjąć i potwierdzić
-            rezerwację — podstawą są działania na Twoje żądanie przed zawarciem umowy
+            rezerwację. Podstawą są działania na Twoje żądanie przed zawarciem umowy
             (art. 6 ust. 1 lit. b RODO) oraz nasz uzasadniony interes w kontakcie (art. 6 ust. 1 lit. f RODO).
           </p>
           <details>
@@ -122,7 +122,7 @@ const godziny = ['16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', 
             <h3>Dobrze wiedzieć</h3>
             <p style="margin-top:.5rem;color:var(--cichy);font-size:.88rem">Stolik trzymamy 15 minut po godzinie rezerwacji.</p>
             <p style="color:var(--cichy);font-size:.88rem">Ostatnie zamówienie 45 minut przed zamknięciem kuchni.</p>
-            <p style="color:var(--cichy);font-size:.88rem">Grupy powyżej 8 osób — mailowo: <a class="ulink" href={`mailto:${biz.email}`} style="color:var(--zloto-jasne)">{biz.email}</a></p>
+            <p style="color:var(--cichy);font-size:.88rem">Grupy powyżej 8 osób ustalamy mailowo: <a class="ulink" href={`mailto:${biz.email}`} style="color:var(--zloto-jasne)">{biz.email}</a></p>
           </div>
         </div>
       </aside>
@@ -195,7 +195,7 @@ const godziny = ['16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', 
       // Tryb pokazowy — bez klucza web3forms nic nie wychodzi na zewnątrz.
       if (!formKey) {
         submit.disabled = true;
-        status.textContent = 'Dziękujemy! (tryb demo — prośba nie została nigdzie wysłana). Wpisz klucz web3forms w danych firmy, aby uruchomić realną wysyłkę.';
+        status.textContent = 'Dziękujemy! (tryb demo, prośba nie została nigdzie wysłana). Wpisz klucz web3forms w danych firmy, aby uruchomić realną wysyłkę.';
         status.classList.add('is-ok');
         form.reset();
         setTimeout(() => { submit.disabled = false; }, 400);
@@ -210,14 +210,14 @@ const godziny = ['16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', 
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
             access_key: formKey,
-            subject: `Rezerwacja — ${nazwa}: ${dane.osoby}, ${dane.data} ${dane.godzina}`,
+            subject: `Rezerwacja ${nazwa}: ${dane.osoby}, ${dane.data} ${dane.godzina}`,
             from_name: dane.imie,
             ...dane,
           }),
         });
         const wynik = await res.json();
         if (wynik.success) {
-          status.textContent = 'Dziękujemy! Prośba dotarła — potwierdzimy telefonicznie tego samego dnia roboczego.';
+          status.textContent = 'Dziękujemy! Prośba dotarła, potwierdzimy telefonicznie tego samego dnia roboczego.';
           status.classList.add('is-ok');
           form.reset();
         } else {

@@ -15,9 +15,9 @@ const wybor = [menu[0], menu[2]]; // Na początek + Dania główne
 const paskoweFoto = galeria.slice(0, 8);
 ---
 <Restauracja
-  title="Ogrodowa 3 — kuchnia sezonowa i wina naturalne, Wołomin"
+  title="Ogrodowa 3 · Kuchnia sezonowa i wina naturalne, Wołomin"
   description="Kameralna restauracja w Wołominie. Karta sezonowa, wina naturalne, kolacje degustacyjne. Rezerwuj stolik wieczorem przy świecach."
-  current="">
+  current="home">
 
   <!-- ===================== HERO ===================== -->
   <section class="hero">
@@ -28,7 +28,7 @@ const paskoweFoto = galeria.slice(0, 8);
     <Bottle3D />
     <div class="wrap hero__in">
       <p class="hero__kicker">Kuchnia sezonowa · Wina naturalne · Wołomin</p>
-      <h1>Wieczór, świece<br /><em>i wino, które pamiętasz.</em></h1>
+      <h1>Wieczór, świece<br /><em>i wino, które pamiętasz</em></h1>
       <p class="hero__lede">
         Gotujemy z produktów z promienia czterdziestu kilometrów, a kartę piszemy
         wraz z sezonem. Kilkanaście stolików i jeden wieczór, żeby naprawdę zwolnić.
@@ -47,11 +47,11 @@ const paskoweFoto = galeria.slice(0, 8);
     <div class="wrap--w center reveal">
       <p class="eyebrow eyebrow--center">Ogrodowa 3</p>
       <p class="h3" style="font-family:var(--serif);line-height:1.3;max-width:22ch;margin-inline:auto">
-        Miejsce, w którym kolacja trwa cały wieczór, a nie kwadrans.
+        Miejsce, w którym kolacja trwa cały wieczór, a nie kwadrans
       </p>
       <p class="lede" style="margin-inline:auto;text-align:center">
-        Prowadzimy małą restaurację przy Ogrodowej. Bez pośpiechu, bez muzyki na cały regulator —
-        drewno, świece, kieliszek dobrego wina i talerz, za którym stoi konkretny dostawca.
+        Prowadzimy małą restaurację przy Ogrodowej. Bez pośpiechu i bez głośnej muzyki.
+        Drewno, świece, kieliszek dobrego wina i talerz, za którym stoi konkretny dostawca.
       </p>
     </div>
   </section>
@@ -62,7 +62,7 @@ const paskoweFoto = galeria.slice(0, 8);
       <div class="menu-head reveal">
         <div>
           <p class="eyebrow">Wybór z karty</p>
-          <h2 class="h2">To, po co warto przyjść.</h2>
+          <h2 class="h2">To, po co warto przyjść</h2>
         </div>
         <a class="btn btn--outline" href={`${root}/menu/`}>Pełna karta →</a>
       </div>
@@ -86,7 +86,7 @@ const paskoweFoto = galeria.slice(0, 8);
           </ul>
         </div>
       ))}
-      <p class="mono-note reveal">Ceny w złotych. Wersję wegetariańską większości dań przygotujemy — wspomnij o tym przy rezerwacji.</p>
+      <p class="mono-note reveal">Ceny w złotych. Wersję wegetariańską większości dań przygotujemy, jeśli wspomnisz o tym przy rezerwacji.</p>
     </div>
   </section>
 
@@ -99,14 +99,14 @@ const paskoweFoto = galeria.slice(0, 8);
       </div>
       <div class="reveal">
         <p class="eyebrow">Kuchnia</p>
-        <h2 class="h2">Dostawcy z promienia<br />czterdziestu kilometrów.</h2>
+        <h2 class="h2">Dostawcy z promienia<br />czterdziestu kilometrów</h2>
         <p class="lede">
           Warzywa z gospodarstwa w Kobyłce, pieczywo z piekarni na Legionów, ryby dwa razy
-          w tygodniu. Kiedy czegoś nie ma u dostawcy — tego dnia nie ma tego w karcie. I tyle.
+          w tygodniu. Kiedy czegoś nie ma u dostawcy, tego dnia nie ma tego w karcie.
         </p>
         <dl class="facts">
           <div><dt>34</dt><dd>miejsca na sali</dd></div>
-          <div><dt>40</dt><dd>km — promień dostaw</dd></div>
+          <div><dt>40</dt><dd>km · promień dostaw</dd></div>
           <div><dt>52</dt><dd>karty w roku</dd></div>
         </dl>
         <a class="btn btn--outline mt-l" href={`${root}/o-nas/`}>Poznaj kuchnię →</a>
@@ -119,9 +119,9 @@ const paskoweFoto = galeria.slice(0, 8);
     <div class="wrap split split--wide-l">
       <div class="reveal">
         <p class="eyebrow">Piwniczka</p>
-        <h2 class="h2">Wina naturalne<br />z małych winnic.</h2>
+        <h2 class="h2">Wina naturalne<br />z małych winnic</h2>
         <p class="lede">
-          Karta win prowadzona przez naszą sommelierkę — Polska, Morawy, Burgenland, Gruzja.
+          Kartę win prowadzi nasza sommelierka: Polska, Morawy, Burgenland, Gruzja.
           Kieliszek od 26 zł, doradzamy bez zadęcia. Do każdego dania znajdzie się para.
         </p>
         <a class="btn btn--outline mt-m" href={`${root}/wina/`}>Karta win →</a>
@@ -138,7 +138,7 @@ const paskoweFoto = galeria.slice(0, 8);
       <div class="menu-head reveal">
         <div>
           <p class="eyebrow">Wieczory</p>
-          <h2 class="h2">Powody, żeby zostać dłużej.</h2>
+          <h2 class="h2">Powody, żeby zostać dłużej</h2>
         </div>
         <a class="btn btn--outline" href={`${root}/wydarzenia/`}>Wszystkie wieczory →</a>
       </div>
@@ -160,7 +160,7 @@ const paskoweFoto = galeria.slice(0, 8);
     <div class="wrap strip-head reveal">
       <div>
         <p class="eyebrow">Sala i talerze</p>
-        <h2 class="h2">Zajrzyj do środka.</h2>
+        <h2 class="h2">Zajrzyj do środka</h2>
       </div>
       <div class="strip-arrows">
         <button id="stripPrev" aria-label="Poprzednie" type="button">←</button>
@@ -184,7 +184,7 @@ const paskoweFoto = galeria.slice(0, 8);
     <div class="wrap">
       <div class="center reveal" style="margin-bottom:2.5rem">
         <p class="eyebrow eyebrow--center">Opinie gości</p>
-        <h2 class="h2">Ocena {biz.googleRating.toString().replace('.', ',')} na Google.</h2>
+        <h2 class="h2">Ocena {biz.googleRating.toString().replace('.', ',')} na Google</h2>
       </div>
       <GoogleReviews limit={3} cols3={true} />
       <div class="center" style="margin-top:2.5rem">
@@ -198,9 +198,9 @@ const paskoweFoto = galeria.slice(0, 8);
     <div class="wrap rez-grid">
       <div class="reveal">
         <p class="eyebrow">Rezerwacja</p>
-        <h2 class="h2">Zarezerwuj stolik<br />na wieczór.</h2>
+        <h2 class="h2">Zarezerwuj stolik<br />na wieczór</h2>
         <p class="lede">
-          Przy kilkunastu stolikach telefon jest najszybszy — odbieramy od 15:00.
+          Przy kilkunastu stolikach najszybszy jest telefon. Odbieramy od 15:00.
           Grupy powyżej ośmiu osób i wieczory na wyłączność ustalamy mailowo.
         </p>
         <a class="btn btn--gold mt-m" href={`tel:${tel}`}>{biz.phone}</a>

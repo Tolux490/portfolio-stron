@@ -173,14 +173,14 @@ p { margin: 0; text-wrap: pretty; }
 .brand__name em { font-style: normal; font-weight: 400; color: var(--zloto); }
 .brand__sub { font-size: 0.56rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cichy); margin-top: 0.35rem; }
 
-.nav { display: none; align-items: center; gap: 2rem; }
-.nav a { font-size: 0.74rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--cichy); transition: color 0.3s var(--ease); }
+.nav { display: none; align-items: center; gap: 1.5rem; }
+.nav a { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cichy); transition: color 0.3s var(--ease); white-space: nowrap; }
 .nav a:hover, .nav a[aria-current="page"] { color: var(--krem); }
 .nav a[aria-current="page"] { color: var(--zloto-jasne); }
 .site__cta { display: none; }
 .site__cta .btn { padding: 0.7rem 1.5rem; }
 
-@media (min-width: 1080px) {
+@media (min-width: 1160px) {
   .nav { display: flex; }
   .site__cta { display: inline-flex; }
   .burger { display: none; }
@@ -207,7 +207,7 @@ body.menu-open .drawer { opacity: 1; visibility: visible; transform: none; }
 .drawer a:hover, .drawer a[aria-current="page"] { color: var(--zloto-jasne); }
 .drawer__foot { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: var(--cichy); }
 .drawer__foot a { font-family: var(--sans); font-size: 0.95rem; border: 0; padding: 0; color: var(--zloto-jasne); }
-@media (min-width: 1080px) { .drawer, .burger { display: none; } }
+@media (min-width: 1160px) { .drawer, .burger { display: none; } }
 
 /* =========================================================================
    HERO

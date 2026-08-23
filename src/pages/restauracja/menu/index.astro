@@ -7,7 +7,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/restauracja`;
 ---
 <Restauracja
-  title="Karta — Ogrodowa 3, Wołomin"
+  title="Karta · Ogrodowa 3, Wołomin"
   description="Karta sezonowa restauracji Ogrodowa 3: przystawki, dania główne, desery i menu degustacyjne z parowaniem win. Zmieniamy ją wraz z sezonem."
   current="menu"
   ogImage="restauracja/danie-sygnatura.webp">
@@ -15,10 +15,10 @@ const root = `${base}/restauracja`;
   <section class="pagehead">
     <div class="wrap">
       <p class="eyebrow reveal">Karta</p>
-      <h1 class="reveal">Karta sezonu.</h1>
+      <h1 class="reveal">Karta sezonu</h1>
       <p class="lede reveal">
         Piszemy ją wraz z sezonem i tym, co przywiozą dostawcy. Poniżej pełna karta à la carte
-        oraz menu degustacyjne prowadzone przez kuchnię. Alergeny i wersje wege — ustalimy przy stole.
+        oraz menu degustacyjne prowadzone przez kuchnię. Alergeny i wersje wege ustalimy przy stole.
       </p>
     </div>
   </section>
@@ -26,7 +26,7 @@ const root = `${base}/restauracja`;
   <section class="band band--tight">
     <div class="wrap">
       <div class="badge reveal" style="display:inline-block;margin-bottom:2.5rem">
-        <strong>Nowa karta w każdą środę</strong> — pierwszy wieczór prowadzi szef kuchni
+        <strong>Nowa karta w każdą środę</strong>, pierwszy wieczór prowadzi szef kuchni
       </div>
 
       {menu.map((g) => (
@@ -55,7 +55,7 @@ const root = `${base}/restauracja`;
       ))}
 
       <p class="mono-note reveal maxw-prose">
-        Ceny w złotych. Alergeny omawiamy przy zamówieniu — kuchnia dobierze zamienniki.
+        Ceny w złotych. Alergeny omawiamy przy zamówieniu, a kuchnia dobierze zamienniki.
         Wersję wegetariańską większości dań przygotujemy, jeśli wspomnisz o tym przy rezerwacji.
         Do rachunku nie doliczamy opłaty serwisowej.
       </p>
@@ -92,8 +92,8 @@ const root = `${base}/restauracja`;
   <section class="band cta">
     <div class="cta__in wrap--w">
       <p class="eyebrow eyebrow--center reveal">Zapraszamy</p>
-      <h2 class="reveal">Kartę najlepiej czytać<br />przy stoliku.</h2>
-      <p class="lede reveal">Zarezerwuj wieczór — resztą zajmiemy się my.</p>
+      <h2 class="reveal">Kartę najlepiej czytać<br />przy stoliku</h2>
+      <p class="lede reveal">Zarezerwuj wieczór, resztą zajmiemy się my.</p>
       <a class="btn btn--gold reveal" href={`${root}/rezerwacja/`}>Rezerwuj stolik</a>
     </div>
   </section>
