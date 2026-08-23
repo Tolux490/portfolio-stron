@@ -1,0 +1,75 @@
+---
+import '../../../styles/oktan.css';
+import { oktan as biz } from '../../../data/firmy.js';
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/oktan`;
+---
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Polityka prywatności — OKTAN Serwis, Warszawa</title>
+    <meta name="description" content="Zasady przetwarzania danych osobowych w serwisie OKTAN: logi serwera oraz formularz umawiania wizyt." />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta name="theme-color" content="#0e1013" />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" />
+  </head>
+  <body>
+    <header class="top stuck">
+      <div class="wrap top__in">
+        <a class="logo" href={`${root}/`} aria-label="OKTAN — strona główna">
+          <span class="logo__dot"></span>
+          <span>OKTAN<small>Serwis · Warszawa</small></span>
+        </a>
+        <a class="btn btn--ghost" href={`${root}/`}>← Powrót</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="pagehead">
+        <div class="wrap">
+          <p class="kicker">Dokument</p>
+          <h1>Polityka prywatności</h1>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:0">
+        <div class="wrap prose">
+          <p>Dokument opisuje, jakie dane są przetwarzane w związku z korzystaniem ze strony internetowej {biz.name} i na jakich zasadach. To wzór roboczy, nie opinia prawna, więc przy większym wdrożeniu warto, żeby przejrzał go prawnik.</p>
+
+          <h2>1. Administrator danych</h2>
+          <p>Administratorem danych jest {biz.legalName}, {biz.street}, {biz.zip} {biz.city}, NIP {biz.nip}. Kontakt: {biz.email}, {biz.phone}.</p>
+
+          <h2>2. Jakie dane zbieramy</h2>
+          <ul>
+            <li>dane z <strong>formularza umawiania wizyty</strong>: imię, telefon, opcjonalnie markę i model auta, rok, wybraną usługę, termin oraz opis problemu;</li>
+            <li>dane zapisywane automatycznie w logach serwera: adres IP, data i godzina zapytania, typ przeglądarki, adres strony odsyłającej;</li>
+            <li>zbiorcze statystyki odwiedzin, w sposób uniemożliwiający identyfikację pojedynczej osoby.</li>
+          </ul>
+
+          <h2>3. Cel i podstawa prawna</h2>
+          <p>Dane z formularza przetwarzamy, aby umówić i potwierdzić wizytę w serwisie — podstawą są działania na Twoje żądanie przed zawarciem umowy (art. 6 ust. 1 lit. b RODO) oraz nasz prawnie uzasadniony interes w kontakcie (art. 6 ust. 1 lit. f RODO). Dane z logów przetwarzamy dla bezpieczeństwa i poprawnego działania strony (art. 6 ust. 1 lit. f RODO).</p>
+
+          <h2>4. Okres przechowywania</h2>
+          <p>Dane z formularza przechowujemy do 12 miesięcy od ostatniego kontaktu, a w razie wykonania usługi — przez okres wymagany przepisami podatkowymi. Logi serwera trzymamy nie dłużej niż 12 miesięcy.</p>
+
+          <h2>5. Odbiorcy danych</h2>
+          <p>Dane mogą być powierzone dostawcy hostingu oraz dostawcy usługi obsługi formularza, działającym na podstawie umowy powierzenia przetwarzania danych.</p>
+
+          <h2>6. Pliki cookies i mapa</h2>
+          <p>Strona nie wykorzystuje plików cookies do celów marketingowych ani do śledzenia między witrynami. Mapa Google wczytuje się dopiero po Twoim kliknięciu i do tego czasu nie łączymy się z serwerami Google.</p>
+
+          <h2>7. Uprawnienia</h2>
+          <p>Przysługuje Ci prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz wniesienia sprzeciwu, a także prawo wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych, ul. Stawki 2, 00-193 Warszawa.</p>
+
+          <p style="margin-top:2.5rem"><a href={`${root}/`}>← Powrót na stronę główną</a></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

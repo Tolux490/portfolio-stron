@@ -88,3 +88,29 @@ export const kawiarnia = {
   hours: ['pon.–pt. 7:30–18:00', 'sob.–niedz. 9:00–17:00'],
 };
 
+export const oktan = {
+  name: 'OKTAN',
+  legalName: 'OKTAN Serwis Sp. z o.o.',
+  tagline: 'Serwis samochodowy w Warszawie. Wszystkie marki, uczciwa wycena z góry.',
+  phone: '+48 512 900 300',
+  email: 'kontakt@oktanserwis.pl',
+  street: 'ul. Grochowska 210',
+  zip: '04-077',
+  city: 'Warszawa',
+  nip: '1130000000',
+  mapUrl: 'https://maps.google.com/?q=Warszawa+Grochowska+210',
+  facebook: 'https://www.facebook.com/',
+  instagram: 'https://www.instagram.com/',
+  // Klucz z web3forms.com — wklej, żeby formularz umawiania wizyt realnie wysyłał maile.
+  // Puste = tryb pokazowy (walidacja działa, nic nie wychodzi na zewnątrz).
+  formKey: '',
+  slug: 'oktan',
+  schemaType: 'AutoRepair',
+  priceRange: '$$',
+  googleRating: 4.9,
+  googleCount: 512,
+  googleUrl: 'https://maps.google.com/?q=Warszawa+Grochowska+210',
+  openingHours: ['Mo-Fr 08:00-18:00', 'Sa 08:00-14:00'],
+  hours: ['pon.–pt. 8:00–18:00', 'sob. 8:00–14:00', 'niedz. nieczynne'],
+};
+

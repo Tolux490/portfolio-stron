@@ -1,0 +1,650 @@
+---
+import '../../styles/oktan.css';
+import Foto from '../../components/Foto.astro';
+import { oktan as biz } from '../../data/firmy.js';
+
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/oktan`;
+const img = (p) => `${base}/img/${p}`;
+const mapSrc = 'https://maps.google.com/maps?q=Warszawa%20Grochowska%20210&z=15&output=embed';
+
+const nav = [
+  { href: '#uslugi', label: 'Usługi' },
+  { href: '#cennik', label: 'Cennik' },
+  { href: '#proces', label: 'Proces' },
+  { href: '#galeria', label: 'Realizacje' },
+  { href: '#opinie', label: 'Opinie' },
+  { href: '#kontakt', label: 'Kontakt' },
+];
+
+// ikony (proste, techniczne)
+const ico = {
+  wrench: 'M14.6 6.4a3.6 3.6 0 0 0-4.7 4.7L3.8 17.2 6.8 20.2l6.1-6.1a3.6 3.6 0 0 0 4.7-4.7l-2.3 2.3-2.1-.5-.5-2.1z',
+  scan: 'M3 5h18v11H3z M3 12h4l2-4 3 8 2-4h4 M9 20h6 M12 16v4',
+  disc: 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  drop: 'M12 3c3.4 3.9 5.8 7 5.8 9.8a5.8 5.8 0 0 1-11.6 0C6.2 10 8.6 6.9 12 3z',
+  snow: 'M12 2v20 M4.2 7l15.6 10 M19.8 7 4.2 17 M9.5 4.5 12 6l2.5-1.5 M9.5 19.5 12 18l2.5 1.5 M4.7 9.7 5 12l-2.3 1M19.3 9.7 19 12l2.3 1',
+  shock: 'M12 3v18 M8 7l4-4 4 4 M8 17l4 4 4-4',
+  gear: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z M12 3v2.2 M12 18.8V21 M4.2 7.5l1.9 1.1 M17.9 15.4l1.9 1.1 M4.2 16.5l1.9-1.1 M17.9 8.6l1.9-1.1',
+  tire: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+  bolt: 'M13 2 5 13h6l-1 9 9-12h-6z',
+  clip: 'M9 4h6v3H9z M8.5 4H6a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2.5 M8.5 13l2 2 4-4',
+};
+
+const uslugi = [
+  { i: 'wrench', t: 'Mechanika ogólna', o: 'Naprawy bieżące i awarie — od wymiany filtra po remont zawieszenia.' },
+  { i: 'scan', t: 'Diagnostyka komputerowa', o: 'Odczyt błędów, żywe parametry, kasowanie kontrolek. Wiemy, co jest, zanim ruszymy.' },
+  { i: 'disc', t: 'Układ hamulcowy', o: 'Klocki, tarcze, płyn, przewody. Bezpieczeństwo bez kompromisów.' },
+  { i: 'drop', t: 'Oleje i płyny', o: 'Wymiana oleju, filtrów, płynów. Oryginalne oleje w cenie usługi.' },
+  { i: 'snow', t: 'Klimatyzacja', o: 'Odgrzybianie, nabicie czynnika R134a i R1234yf, kontrola szczelności.' },
+  { i: 'shock', t: 'Zawieszenie i geometria', o: 'Amortyzatory, wahacze, łożyska, geometria kół 3D.' },
+  { i: 'gear', t: 'Rozrząd i silnik', o: 'Wymiana rozrządu, uszczelek, naprawy osprzętu silnika.' },
+  { i: 'tire', t: 'Opony i wymiana sezonowa', o: 'Wymiana, wyważanie, przechowanie opon. Komplet w kilkanaście minut.' },
+  { i: 'bolt', t: 'Elektryka i elektronika', o: 'Rozruszniki, alternatory, akumulatory, czujniki, instalacja.' },
+  { i: 'clip', t: 'Przygotowanie do przeglądu', o: 'Sprawdzimy auto przed badaniem technicznym i usuniemy usterki.' },
+];
+
+const cennikA = [
+  { n: 'Przegląd + diagnostyka komputerowa', v: '149' },
+  { n: 'Wymiana oleju i filtra', d: 'olej syntetyczny w cenie', v: '289' },
+  { n: 'Klocki hamulcowe — oś', d: 'robocizna + typowe klocki', v: '349' },
+  { n: 'Tarcze + klocki — oś', v: '690' },
+  { n: 'Geometria kół 3D', v: '189' },
+  { n: 'Klimatyzacja — odgrzybianie', d: 'ozonowanie kabiny', v: '149' },
+];
+const cennikB = [
+  { n: 'Klimatyzacja — nabicie czynnika', d: 'R134a / R1234yf', v: '259' },
+  { n: 'Rozrząd — pasek, komplet', v: '1290' },
+  { n: 'Amortyzator — szt.', d: 'robocizna', v: '149' },
+  { n: 'Wymiana opon — komplet 4 szt.', v: '120' },
+  { n: 'Diagnostyka usterki', d: 'odliczana od naprawy', v: '120' },
+  { n: 'Roboczogodzina', v: '160', flat: true },
+];
+
+const proces = [
+  { t: 'Umów', o: 'Online w minutę albo telefonicznie. Wybierasz usługę i pasujący termin.' },
+  { t: 'Diagnoza i wycena', o: 'Sprawdzamy auto i podajemy cenę z góry, zanim cokolwiek ruszymy.' },
+  { t: 'Naprawa', o: 'Oryginalne lub porównywalne części, robota zrobiona na czas.' },
+  { t: 'Odbiór', o: 'Faktura, protokół i 24 miesiące gwarancji na robociznę. Gotowe.' },
+];
+
+const checks = [
+  { b: 'Wycena z góry', s: 'Poznajesz cenę przed naprawą i płacisz dokładnie tyle. Zero dopisywania na fakturze.' },
+  { b: 'Gwarancja 24 miesiące', s: 'Na każdą robociznę. Coś nie tak po naprawie? Poprawiamy na nasz koszt.' },
+  { b: 'Wszystkie marki', s: 'Osobowe i dostawcze, benzyna, diesel, hybrydy. Jeden serwis do wszystkiego.' },
+  { b: 'Terminy 24–48 h', s: 'Nie oddajesz auta na tydzień. Większość napraw tego samego lub następnego dnia.' },
+];
+
+const galeria = [
+  { s: 'warsztat-hero.webp', a: 'Auto na podnośniku w hali serwisu', big: true },
+  { s: 'warsztat-galeria-2.webp', a: 'Diagnostyka komputerowa tabletem' },
+  { s: 'warsztat-detal.webp', a: 'Zestaw kluczy i nasadek' },
+  { s: 'warsztat-galeria-4.webp', a: 'Praca w komorze silnika' },
+  { s: 'warsztat-galeria-5.webp', a: 'Wymiana płynów' },
+  { s: 'warsztat-galeria-1.webp', a: 'Hala serwisu — auta na stanowiskach' },
+];
+
+const opinie = [
+  { a: 'Michał R.', g: 5, k: '2 tygodnie temu', t: 'Zawiozłem z błędem silnika, w innym miejscu chcieli wymieniać pół auta. Tu zdiagnozowali czujnik za 200 zł i tyle. Uczciwie i konkretnie.' },
+  { a: 'Katarzyna W.', g: 5, k: 'miesiąc temu', t: 'Wycena podana z góry i ani grosza więcej. Auto zastępcze na czas, bo czekali na część. Wreszcie serwis, do którego się nie boję przyjechać.' },
+  { a: 'Grzegorz P.', g: 5, k: 'miesiąc temu', t: 'Wymiana rozrządu w jeden dzień, bez niespodzianek na fakturze. Mechanik wytłumaczył wszystko po ludzku, pokazał stare części.' },
+  { a: 'Anna S.', g: 5, k: '2 miesiące temu', t: 'Klocki i tarcze zrobione w godzinę, umówione online poprzedniego wieczoru. Szybko, czysto, profesjonalnie.' },
+  { a: 'Tomasz L.', g: 4, k: '3 miesiące temu', t: 'Konkretnie i rzetelnie. Gwiazdka mniej, bo trzeba się umawiać z wyprzedzeniem — ale widać, że mają pełne ręce roboty.' },
+  { a: 'Paweł N.', g: 5, k: '4 miesiące temu', t: 'Robią wszystkie marki. Mam starego passata i hybrydę żony, oba ogarnięte w jednym miejscu. Ceny warszawskie, ale uczciwe.' },
+];
+
+const faq = [
+  { q: 'Czy trzeba się umawiać?', a: 'Najlepiej tak — online lub telefonicznie. Dzięki temu masz konkretną godzinę i nie czekasz. Na drobne sprawy, jak zapalona kontrolka czy szybka diagnoza, często przyjmiemy od ręki.' },
+  { q: 'Ile kosztuje naprawa?', a: 'Cennik podaje ceny orientacyjne „od”. Dokładną kwotę podajemy po bezpłatnych oględzinach, zawsze przed rozpoczęciem pracy. U nas nie ma niespodzianek na fakturze.' },
+  { q: 'Części oryginalne czy zamienniki?', a: 'Wybór należy do Ciebie. Doradzamy uczciwie: gdzie warto dopłacić za oryginał (OEM), a gdzie dobry zamiennik da to samo taniej.' },
+  { q: 'Czy dostanę gwarancję?', a: 'Tak. 24 miesiące na robociznę oraz gwarancja producenta na części. Fakturę i protokół naprawy dostajesz na maila.' },
+  { q: 'Czy jest auto zastępcze?', a: 'Przy większych naprawach udostępniamy auto zastępcze po wcześniejszym ustaleniu. Wystarczy zapytać przy umawianiu wizyty.' },
+  { q: 'Jak można zapłacić?', a: 'Gotówka, karta, BLIK i przelew. Dla firm wystawiamy fakturę z odroczonym terminem płatności.' },
+];
+
+const uslugiForm = uslugi.map((u) => u.t).concat(['Inne / nie wiem — doradźcie']);
+const godziny = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+
+const star = 'M8 1.3l1.9 3.8 4.2.6-3 3 .7 4.2L8 12l-3.7 1.9.7-4.2-3-3 4.2-.6z';
+
+const schema = {
+  '@context': 'https://schema.org', '@type': 'AutoRepair', name: biz.name, telephone: biz.phone, email: biz.email,
+  priceRange: biz.priceRange, url: Astro.url.origin + root + '/',
+  image: new URL(img('warsztat-hero.webp'), Astro.url).href,
+  address: { '@type': 'PostalAddress', streetAddress: biz.street, addressLocality: biz.city, postalCode: biz.zip, addressCountry: 'PL' },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:00', closes: '18:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '08:00', closes: '14:00' },
+  ],
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: biz.googleRating, reviewCount: biz.googleCount, bestRating: 5 },
+};
+---
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OKTAN — serwis samochodowy w Warszawie | wszystkie marki, uczciwa wycena</title>
+    <meta name="description" content="OKTAN — serwis samochodowy na warszawskiej Pradze. Mechanika, diagnostyka, hamulce, klimatyzacja, rozrząd. Wycena z góry, gwarancja 24 miesiące, terminy 24–48 h. Umów wizytę online." />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta name="theme-color" content="#0e1013" />
+    <meta property="og:title" content="OKTAN — serwis samochodowy w Warszawie" />
+    <meta property="og:description" content="Wszystkie marki, wycena z góry, gwarancja 24 miesiące. Umów wizytę online." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content={new URL(img('warsztat-hero.webp'), Astro.url).href} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+
+  <body>
+    <!-- ===================== NAGŁÓWEK ===================== -->
+    <header class="top" id="top">
+      <div class="wrap top__in">
+        <a class="logo" href="#gora" aria-label="OKTAN — góra strony">
+          <span class="logo__dot"></span>
+          <span>OKTAN<small>Serwis · Warszawa</small></span>
+        </a>
+        <nav class="nav" aria-label="Nawigacja">
+          {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+        <div class="top__cta">
+          <a class="top__tel" href={`tel:${tel}`}>{biz.phone}</a>
+          <a class="btn btn--red" href="#umow">Umów wizytę</a>
+        </div>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span></button>
+      </div>
+    </header>
+
+    <div class="drawer" id="drawer">
+      {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href="#umow">Umów wizytę</a>
+      <div class="drawer__foot">
+        <a href={`tel:${tel}`}>{biz.phone}</a>
+        <span>{biz.street}, {biz.city}</span>
+        <span>pon.–pt. 8:00–18:00 · sob. 8:00–14:00</span>
+      </div>
+    </div>
+
+    <main id="gora">
+      <!-- ===================== HERO ===================== -->
+      <section class="hero">
+        <div class="hero__media">
+          <Foto src="warsztat-hero.webp" alt="Sportowe auto na podnośniku w hali serwisu OKTAN" ratio="16/9" label="Hala serwisu" eager={true} />
+        </div>
+        <div class="wrap hero__in">
+          <p class="hero__tag">Serwis samochodowy · Warszawa-Praga</p>
+          <h1>Serwis samochodowy <span class="mark">bez ściemy</span></h1>
+          <p class="hero__lede">
+            Mechanika, diagnostyka i naprawy wszystkich marek. Wycenę podajemy z góry,
+            dajemy 24 miesiące gwarancji na robociznę, a większość aut wraca do Ciebie w 24–48 godzin.
+          </p>
+          <div class="hero__cta">
+            <a class="btn btn--red" href="#umow">Umów wizytę</a>
+            <a class="btn btn--ghost" href={`tel:${tel}`}>Zadzwoń: {biz.phone}</a>
+          </div>
+          <div class="hero__chips">
+            <span class="hero__chip"><b>4,9<span class="mark">★</span></b> 512 opinii Google</span>
+            <span class="hero__chip"><b>18</b> lat w Warszawie</span>
+            <span class="hero__chip"><b>24</b> mies. gwarancji</span>
+          </div>
+          <p class="hero__status" id="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- ===================== PASEK ZAUFANIA ===================== -->
+      <section class="trust">
+        <div class="wrap trust__in">
+          <div class="trust__cell"><span class="trust__num">18</span><span class="trust__lab">lat na rynku</span></div>
+          <div class="trust__cell"><span class="trust__num">40<span class="mark">k+</span></span><span class="trust__lab">naprawionych aut</span></div>
+          <div class="trust__cell"><span class="trust__num">4,9<span class="mark">★</span></span><span class="trust__lab">ocena Google</span></div>
+          <div class="trust__cell"><span class="trust__num">24</span><span class="trust__lab">mies. gwarancji</span></div>
+        </div>
+      </section>
+
+      <!-- ===================== USŁUGI ===================== -->
+      <section class="section" id="uslugi">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">Zakres</p>
+              <h2 class="h2">Co dla Ciebie zrobimy</h2>
+            </div>
+            <a class="btn btn--ghost" href="#cennik">Zobacz cennik</a>
+          </div>
+          <div class="services">
+            {uslugi.map((u) => (
+              <article class="svc reveal">
+                <span class="svc__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={`<path d="${ico[u.i]}"/>`}></svg></span>
+                <h3>{u.t}</h3>
+                <p>{u.o}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CENNIK ===================== -->
+      <section class="section section--alt" id="cennik">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">Cennik</p>
+              <h2 class="h2">Ceny, które nie zaskakują</h2>
+            </div>
+            <a class="btn btn--red" href="#umow">Umów i poznaj dokładną cenę</a>
+          </div>
+          <div class="price-grid">
+            <div class="price reveal">
+              {cennikA.map((p) => (
+                <div class="price__row">
+                  <span class="price__name">{p.n}</span>
+                  {p.d && <span class="price__desc">{p.d}</span>}
+                  <span class="price__val">{p.v}<span style="font-size:.6em"> zł</span><small>{p.flat ? 'za godzinę' : 'od'}</small></span>
+                </div>
+              ))}
+            </div>
+            <div class="price reveal">
+              {cennikB.map((p) => (
+                <div class="price__row">
+                  <span class="price__name">{p.n}</span>
+                  {p.d && <span class="price__desc">{p.d}</span>}
+                  <span class="price__val">{p.v}<span style="font-size:.6em"> zł</span><small>{p.flat ? 'za godzinę' : 'od'}</small></span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p class="note reveal mt-m">
+            Ceny orientacyjne (od) i typowe dla Warszawy. Dokładną wycenę podajemy po bezpłatnych oględzinach,
+            zawsze przed rozpoczęciem naprawy. Części oryginalne lub porównywalne — wybierasz sam.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================== PROCES ===================== -->
+      <section class="section" id="proces">
+        <div class="wrap">
+          <div class="reveal" style="max-width:52ch">
+            <p class="kicker">Jak to działa</p>
+            <h2 class="h2">Cztery kroki i po sprawie</h2>
+          </div>
+          <div class="steps mt-l">
+            {proces.map((s, i) => (
+              <div class="step reveal">
+                <span class="step__n">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{s.t}</h3>
+                <p>{s.o}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== DLACZEGO MY ===================== -->
+      <section class="section section--alt">
+        <div class="wrap split split--rev">
+          <div class="reveal">
+            <p class="kicker">Dlaczego OKTAN</p>
+            <h2 class="h2">Serwis, do którego wracasz</h2>
+            <p class="lede">Nie musisz znać się na autach, żeby czuć, że nikt Cię tu nie robi w konia.</p>
+            <ul class="checks">
+              {checks.map((c) => (
+                <li>
+                  <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg></span>
+                  <span><b>{c.b}</b><span>{c.s}</span></span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="split__media reveal">
+            <Foto src="warsztat-galeria-6.webp" alt="Mechanik OKTAN przy pracy w komorze silnika" ratio="4/3" label="Mechanik" />
+            <span class="tagbox">Realny warsztat, realni ludzie</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== GALERIA ===================== -->
+      <section class="section" id="galeria">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">Realizacje</p>
+              <h2 class="h2">Zajrzyj do warsztatu</h2>
+            </div>
+          </div>
+          <div class="gallery">
+            {galeria.map((g, i) => (
+              <button class={`reveal${g.big ? ' big' : ''}`} type="button" data-lb={i} data-full={img(g.s)} data-alt={g.a} aria-label={`Powiększ: ${g.a}`}>
+                <Foto src={g.s} alt={g.a} ratio={g.big ? '1/1' : '3/2'} label="Warsztat" />
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== OPINIE ===================== -->
+      <section class="section section--alt" id="opinie">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">Opinie</p>
+              <h2 class="h2">Co mówią kierowcy</h2>
+            </div>
+          </div>
+          <div class="gsum reveal">
+            <div class="gsum__score">4,9</div>
+            <div>
+              <span class="stars" role="img" aria-label="4,9 na 5">
+                {Array.from({ length: 5 }).map(() => <svg viewBox="0 0 16 16" aria-hidden="true"><path d={star} fill="currentColor"/></svg>)}
+              </span>
+              <div class="gsum__meta"><span class="glogo"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span><span>· 512 opinii</span></div>
+            </div>
+            <a class="btn btn--ghost" href={biz.googleUrl} target="_blank" rel="noopener" style="margin-left:auto">Zobacz na Google</a>
+          </div>
+          <div class="reviews">
+            {opinie.map((o) => (
+              <figure class="rev reveal">
+                <div class="rev__top">
+                  <span class="rev__ava" aria-hidden="true">{o.a.charAt(0)}</span>
+                  <figcaption class="rev__who"><b>{o.a}</b><div>{o.k}</div></figcaption>
+                </div>
+                <span class="stars" role="img" aria-label={`${o.g} na 5`}>
+                  {Array.from({ length: 5 }).map((_, s) => <svg viewBox="0 0 16 16" class={s < o.g ? '' : 'off'} aria-hidden="true"><path d={star} fill="currentColor"/></svg>)}
+                </span>
+                <blockquote class="rev__t">{o.t}</blockquote>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== UMÓW WIZYTĘ ===================== -->
+      <section class="section" id="umow">
+        <div class="wrap">
+          <div class="reveal" style="max-width:56ch">
+            <p class="kicker">Umów wizytę</p>
+            <h2 class="h2">Zarezerwuj termin online</h2>
+            <p class="lede">Wypełnij formularz — oddzwonimy, żeby potwierdzić godzinę i wstępny zakres. Zwykle jeszcze tego samego dnia.</p>
+          </div>
+          <div class="book mt-l">
+            <form class="reveal" id="bookForm" novalidate>
+              <div class="row2">
+                <label class="field"><span>Usługa</span>
+                  <select name="usluga" required>
+                    <option value="">Wybierz</option>
+                    {uslugiForm.map((u) => <option value={u}>{u}</option>)}
+                  </select>
+                </label>
+                <label class="field"><span>Marka i model</span>
+                  <input type="text" name="auto" placeholder="np. Skoda Octavia" required />
+                </label>
+              </div>
+              <div class="row2">
+                <label class="field"><span>Rok produkcji <em>(opcjonalnie)</em></span>
+                  <input type="text" name="rok" inputmode="numeric" placeholder="np. 2016" />
+                </label>
+                <label class="field"><span>Preferowany dzień</span>
+                  <input type="date" name="data" required />
+                </label>
+              </div>
+              <div class="row2">
+                <label class="field"><span>Godzina</span>
+                  <select name="godzina" required>
+                    <option value="">Wybierz</option>
+                    {godziny.map((g) => <option value={g}>{g}</option>)}
+                  </select>
+                </label>
+                <label class="field"><span>Telefon</span>
+                  <input type="tel" name="telefon" autocomplete="tel" inputmode="tel" required />
+                </label>
+              </div>
+              <label class="field"><span>Imię</span>
+                <input type="text" name="imie" autocomplete="name" required />
+              </label>
+              <label class="field"><span>Opis problemu <em>(opcjonalnie)</em></span>
+                <textarea name="uwagi" rows="3" placeholder="Np. stukanie z przodu przy hamowaniu, zapaliła się kontrolka silnika"></textarea>
+              </label>
+
+              <div class="klauzula">
+                <p>Administratorem danych jest {biz.legalName}, {biz.street}, {biz.zip} {biz.city}, NIP {biz.nip}. Dane z formularza służą wyłącznie do umówienia i potwierdzenia wizyty (art. 6 ust. 1 lit. b i f RODO).</p>
+                <details><summary>Rozwiń pełną informację</summary>
+                  <p>Podanie danych jest dobrowolne, ale bez imienia i telefonu nie potwierdzimy terminu. Dane przechowujemy do 12 miesięcy od ostatniego kontaktu. Masz prawo dostępu, sprostowania, usunięcia, ograniczenia i sprzeciwu oraz skargi do Prezesa UODO. Szczegóły: <a href={`${root}/polityka-prywatnosci/`}>polityka prywatności</a>.</p>
+                </details>
+                <label class="consent">
+                  <input type="checkbox" name="zgoda" value="tak" required />
+                  <span>Zapoznałem/am się z informacją o przetwarzaniu danych i chcę wysłać prośbę o wizytę.</span>
+                </label>
+              </div>
+
+              <button class="btn btn--red btn--block btn--auto" type="submit" id="bookSubmit">Wyślij prośbę o termin</button>
+              <p class="formstat" id="bookStat" role="status" aria-live="polite"></p>
+            </form>
+
+            <aside class="book__side reveal">
+              <div>
+                <h3>Wolisz zadzwonić?</h3>
+                <p style="margin-top:.5rem"><a href={`tel:${tel}`} style="font-family:var(--font-display);font-weight:700;font-size:1.6rem">{biz.phone}</a></p>
+                <p style="color:var(--muted);font-size:.85rem;margin-top:.3rem">Odbieramy w godzinach otwarcia.</p>
+              </div>
+              <div>
+                <h3>Godziny</h3>
+                {biz.hours.map((h) => <p style="margin-top:.25rem">{h}</p>)}
+              </div>
+              <div>
+                <h3>Dobrze wiedzieć</h3>
+                <p style="color:var(--muted);font-size:.88rem">Auto zastępcze przy większych naprawach (po ustaleniu).</p>
+                <p style="color:var(--muted);font-size:.88rem">Płatność: gotówka, karta, BLIK, przelew. Faktury dla firm.</p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== KONTAKT + MAPA ===================== -->
+      <section class="section section--alt" id="kontakt">
+        <div class="wrap contact">
+          <div class="reveal">
+            <p class="kicker">Kontakt</p>
+            <h2 class="h2">{biz.street}<br />{biz.zip} {biz.city}</h2>
+            <p class="lede">Warszawa-Praga, przy Grochowskiej. Dojazd i parking dla klientów przed warsztatem.</p>
+            <div class="contact__links">
+              <a href={`tel:${tel}`}>{biz.phone}</a>
+              <a href={`mailto:${biz.email}`}>{biz.email}</a>
+              <a href={biz.mapUrl} target="_blank" rel="noopener">Otwórz w Google Maps →</a>
+            </div>
+            <div class="hours">
+              <div><span>Poniedziałek – piątek</span><span>8:00 – 18:00</span></div>
+              <div><span>Sobota</span><span>8:00 – 14:00</span></div>
+              <div><span>Niedziela</span><span>nieczynne</span></div>
+            </div>
+          </div>
+          <div class="reveal">
+            <div class="mapbox" data-src={mapSrc}>
+              <div class="mapbox__ph">
+                <p>Mapa Google wczyta się po kliknięciu —<br />do tego czasu strona nie zapisuje żadnych cookies.</p>
+                <button class="btn btn--red map-load" type="button">Pokaż mapę dojazdu</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== FAQ ===================== -->
+      <section class="section">
+        <div class="wrap" style="max-width:820px">
+          <div class="reveal">
+            <p class="kicker">FAQ</p>
+            <h2 class="h2">Częste pytania</h2>
+          </div>
+          <div class="faq reveal mt-m">
+            {faq.map((f) => (
+              <details><summary>{f.q}</summary><p>{f.a}</p></details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CTA ===================== -->
+      <section class="section band">
+        <div class="wrap">
+          <p class="kicker kicker--center">Gotowy?</p>
+          <h2>Umów wizytę i miej to z głowy</h2>
+          <p>Podjedź, gdy Ci pasuje. Wycena z góry, gwarancja 24 miesiące i auto gotowe na czas.</p>
+          <div class="band__cta">
+            <a class="btn btn--light" href="#umow">Umów wizytę</a>
+            <a class="btn btn--outline-light" href={`tel:${tel}`}>Zadzwoń: {biz.phone}</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== STOPKA ===================== -->
+    <footer class="foot">
+      <div class="wrap">
+        <div class="foot__grid">
+          <div>
+            <span class="logo"><span class="logo__dot"></span><span>OKTAN<small>Serwis · Warszawa</small></span></span>
+            <p class="foot__tag">{biz.tagline}</p>
+          </div>
+          <div>
+            <h4>Serwis</h4>
+            <ul>
+              <li>{biz.street}</li>
+              <li>{biz.zip} {biz.city}</li>
+              <li><a href={`tel:${tel}`}>{biz.phone}</a></li>
+              <li><a href={`mailto:${biz.email}`}>{biz.email}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Godziny</h4>
+            <ul>{biz.hours.map((h) => <li>{h}</li>)}</ul>
+            <h4 style="margin-top:1.5rem">Menu</h4>
+            <ul>
+              <li><a href="#uslugi">Usługi</a></li>
+              <li><a href="#cennik">Cennik</a></li>
+              <li><a href="#umow">Umów wizytę</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__legal">
+          <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
+          <a href={`${root}/polityka-prywatnosci/`}>Polityka prywatności</a>
+        </div>
+      </div>
+    </footer>
+
+    <div class="callbar">
+      <a href="#umow">Umów wizytę</a>
+      <a href={`tel:${tel}`}>Zadzwoń</a>
+    </div>
+
+    <!-- lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Powiększone zdjęcie">
+      <button class="lightbox__x" id="lbX" aria-label="Zamknij">✕</button>
+      <button class="lightbox__nav prev" id="lbPrev" aria-label="Poprzednie">‹</button>
+      <img id="lbImg" src="" alt="" />
+      <button class="lightbox__nav next" id="lbNext" aria-label="Następne">›</button>
+    </div>
+
+    <script define:vars={{ formKey: biz.formKey, mail: biz.email, nazwa: biz.name, phone: biz.phone }}>
+      // sticky header
+      const top = document.getElementById('top');
+      const onScroll = () => top?.classList.toggle('stuck', window.scrollY > 30);
+      onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+      // mobilne menu
+      const burger = document.getElementById('burger');
+      const setMenu = (open) => {
+        const o = open ?? !document.body.classList.contains('nav-open');
+        document.body.classList.toggle('nav-open', o);
+        burger?.setAttribute('aria-expanded', String(o));
+      };
+      burger?.addEventListener('click', () => setMenu());
+      document.querySelectorAll('#drawer a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+
+      // reveal
+      const obs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); } }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (Math.min(i % 3, 2) * 70) + 'ms'; obs.observe(el); });
+
+      // status otwarcia (pon-pt 8-18, sob 8-14)
+      const st = document.getElementById('status');
+      if (st) {
+        const d = new Date(); const day = d.getDay(); const min = d.getHours() * 60 + d.getMinutes();
+        let open = false, close = 0;
+        if (day >= 1 && day <= 5) { open = min >= 480 && min < 1080; close = 1080; }
+        else if (day === 6) { open = min >= 480 && min < 840; close = 840; }
+        const fmt = (m) => Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0');
+        st.innerHTML = open
+          ? '<span class="dot dot--on"></span><b>Otwarte teraz</b> · dziś do ' + fmt(close)
+          : '<span class="dot dot--off"></span>Teraz zamknięte · umów wizytę online o dowolnej porze';
+      }
+
+      // mapa
+      document.querySelectorAll('.map-load').forEach((b) => b.addEventListener('click', () => {
+        const box = b.closest('.mapbox'); if (!box) return;
+        const f = document.createElement('iframe');
+        f.src = box.getAttribute('data-src'); f.loading = 'lazy'; f.title = 'Mapa dojazdu do OKTAN, Warszawa';
+        f.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        box.appendChild(f); box.querySelector('.mapbox__ph')?.remove();
+      }));
+
+      // galeria / lightbox
+      const btns = Array.from(document.querySelectorAll('[data-lb]'));
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lbImg');
+      let idx = 0;
+      const show = (i) => { idx = (i + btns.length) % btns.length; const b = btns[idx]; lbImg.src = b.dataset.full; lbImg.alt = b.dataset.alt; };
+      const openLb = (i) => { show(i); lb.classList.add('open'); document.body.style.overflow = 'hidden'; };
+      const closeLb = () => { lb.classList.remove('open'); document.body.style.overflow = ''; };
+      btns.forEach((b, i) => b.addEventListener('click', () => openLb(i)));
+      document.getElementById('lbX')?.addEventListener('click', closeLb);
+      document.getElementById('lbPrev')?.addEventListener('click', () => show(idx - 1));
+      document.getElementById('lbNext')?.addEventListener('click', () => show(idx + 1));
+      lb?.addEventListener('click', (e) => { if (e.target === lb) closeLb(); });
+      window.addEventListener('keydown', (e) => { if (!lb.classList.contains('open')) return; if (e.key === 'Escape') closeLb(); if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
+
+      // formularz
+      const form = document.getElementById('bookForm');
+      const stat = document.getElementById('bookStat');
+      const submit = document.getElementById('bookSubmit');
+      const err = (pole, txt) => { const f = pole.closest('.field'); f?.classList.add('err'); if (!f?.querySelector('.msg')) { const s = document.createElement('span'); s.className = 'msg'; s.textContent = txt; f?.appendChild(s); } };
+      const clear = () => { form.querySelectorAll('.field.err').forEach((f) => f.classList.remove('err')); form.querySelectorAll('.msg').forEach((m) => m.remove()); };
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault(); clear(); stat.textContent = ''; stat.className = 'formstat';
+        let ok = true;
+        form.querySelectorAll('[required]').forEach((p) => {
+          if (p.type === 'checkbox') { if (!p.checked) ok = false; return; }
+          if (!p.value.trim()) { err(p, 'Uzupełnij to pole'); ok = false; }
+        });
+        const t = form.querySelector('[name="telefon"]');
+        if (t?.value && t.value.replace(/[^\d]/g, '').length < 9) { err(t, 'Podaj poprawny numer'); ok = false; }
+        const zg = form.querySelector('[name="zgoda"]');
+        if (zg && !zg.checked) { stat.textContent = 'Zaznacz zgodę na przetwarzanie danych.'; stat.classList.add('bad'); }
+        if (!ok) { if (!stat.textContent) { stat.textContent = 'Uzupełnij zaznaczone pola.'; stat.classList.add('bad'); } form.querySelector('.field.err input, .field.err select')?.focus(); return; }
+
+        const dane = Object.fromEntries(new FormData(form).entries());
+        if (!formKey) {
+          submit.disabled = true;
+          stat.textContent = 'Dziękujemy! (tryb demo — prośba nie została nigdzie wysłana). Wpisz klucz web3forms w danych firmy, aby uruchomić realną wysyłkę.';
+          stat.classList.add('ok'); form.reset(); setTimeout(() => { submit.disabled = false; }, 400); return;
+        }
+        try {
+          submit.disabled = true; submit.textContent = 'Wysyłanie…';
+          const res = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ access_key: formKey, subject: `Wizyta ${nazwa}: ${dane.usluga} — ${dane.auto} (${dane.data} ${dane.godzina})`, from_name: dane.imie, ...dane }),
+          });
+          const r = await res.json();
+          if (r.success) { stat.textContent = 'Dziękujemy! Prośba dotarła — oddzwonimy, żeby potwierdzić termin.'; stat.classList.add('ok'); form.reset(); }
+          else throw new Error(r.message || 'błąd');
+        } catch (e2) {
+          stat.textContent = `Nie udało się wysłać. Zadzwoń: ${phone} albo napisz na ${mail}.`; stat.classList.add('bad');
+        } finally { submit.disabled = false; submit.textContent = 'Wyślij prośbę o termin'; }
+      });
+    </script>
+  </body>
+</html>
