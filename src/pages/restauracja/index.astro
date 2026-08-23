@@ -1,0 +1,248 @@
+---
+import Restauracja from '../../layouts/Restauracja.astro';
+import Foto from '../../components/Foto.astro';
+import Bottle3D from '../../components/rest/Bottle3D.astro';
+import GoogleReviews from '../../components/rest/GoogleReviews.astro';
+import MapaRest from '../../components/rest/MapaRest.astro';
+import { restauracja as biz } from '../../data/firmy.js';
+import { menu, wydarzenia, galeria } from '../../data/restauracja.js';
+
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja`;
+
+const wybor = [menu[0], menu[2]]; // Na początek + Dania główne
+const paskoweFoto = galeria.slice(0, 8);
+---
+<Restauracja
+  title="Ogrodowa 3 — kuchnia sezonowa i wina naturalne, Wołomin"
+  description="Kameralna restauracja w Wołominie. Karta sezonowa, wina naturalne, kolacje degustacyjne. Rezerwuj stolik wieczorem przy świecach."
+  current="">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="hero__bg">
+      <Foto src="restauracja/hero-sala.webp" alt="Sala restauracji Ogrodowa 3 wieczorem, świece i kominek" ratio="16/9" label="Sala wieczorem" eager={true} />
+    </div>
+    <div class="hero__veil"></div>
+    <Bottle3D />
+    <div class="wrap hero__in">
+      <p class="hero__kicker">Kuchnia sezonowa · Wina naturalne · Wołomin</p>
+      <h1>Wieczór, świece<br /><em>i wino, które pamiętasz.</em></h1>
+      <p class="hero__lede">
+        Gotujemy z produktów z promienia czterdziestu kilometrów, a kartę piszemy
+        wraz z sezonem. Kilkanaście stolików i jeden wieczór, żeby naprawdę zwolnić.
+      </p>
+      <div class="hero__cta">
+        <a class="btn btn--gold" href={`${root}/rezerwacja/`}>Rezerwuj stolik</a>
+        <a class="btn btn--outline" href={`${root}/menu/`}>Zobacz kartę</a>
+      </div>
+      <p class="hero__status" id="status" aria-live="polite"></p>
+    </div>
+    <span class="hero__scroll">przewiń</span>
+  </section>
+
+  <!-- ===================== INTRO / FILOZOFIA ===================== -->
+  <section class="band band--tight">
+    <div class="wrap--w center reveal">
+      <p class="eyebrow eyebrow--center">Ogrodowa 3</p>
+      <p class="h3" style="font-family:var(--serif);line-height:1.3;max-width:22ch;margin-inline:auto">
+        Miejsce, w którym kolacja trwa cały wieczór, a nie kwadrans.
+      </p>
+      <p class="lede" style="margin-inline:auto;text-align:center">
+        Prowadzimy małą restaurację przy Ogrodowej. Bez pośpiechu, bez muzyki na cały regulator —
+        drewno, świece, kieliszek dobrego wina i talerz, za którym stoi konkretny dostawca.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== WYBÓR Z KARTY ===================== -->
+  <section class="band band--krem">
+    <div class="wrap">
+      <div class="menu-head reveal">
+        <div>
+          <p class="eyebrow">Wybór z karty</p>
+          <h2 class="h2">To, po co warto przyjść.</h2>
+        </div>
+        <a class="btn btn--outline" href={`${root}/menu/`}>Pełna karta →</a>
+      </div>
+
+      {wybor.map((g) => (
+        <div class="course reveal">
+          <div class="course__top">
+            <span class="course__name">{g.grupa}</span>
+          </div>
+          <ul class="dish">
+            {g.dania.slice(0, 4).map((d) => (
+              <li>
+                <div class="dish__main">
+                  <span class="dish__n">{d.n}{d.tag === 'sygnatura' && <span class="tag">Sygnatura</span>}{d.tag === 'wege' && <span class="tag tag--wege">Wege</span>}</span>
+                  <span class="dish__o">{d.o}</span>
+                </div>
+                <span class="dish__leader" aria-hidden="true"></span>
+                <span class="dish__c">{d.c}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <p class="mono-note reveal">Ceny w złotych. Wersję wegetariańską większości dań przygotujemy — wspomnij o tym przy rezerwacji.</p>
+    </div>
+  </section>
+
+  <!-- ===================== KUCHNIA / DOSTAWCY ===================== -->
+  <section class="band">
+    <div class="wrap split split--wide-r">
+      <div class="split__media figure reveal">
+        <Foto src="restauracja/szef-kuchni.webp" alt="Szef kuchni Ogrodowej 3 przy wydawce" ratio="3/2" label="Szef kuchni" />
+        <span class="figure__cap">Wydawka, godzina 19:00</span>
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">Kuchnia</p>
+        <h2 class="h2">Dostawcy z promienia<br />czterdziestu kilometrów.</h2>
+        <p class="lede">
+          Warzywa z gospodarstwa w Kobyłce, pieczywo z piekarni na Legionów, ryby dwa razy
+          w tygodniu. Kiedy czegoś nie ma u dostawcy — tego dnia nie ma tego w karcie. I tyle.
+        </p>
+        <dl class="facts">
+          <div><dt>34</dt><dd>miejsca na sali</dd></div>
+          <div><dt>40</dt><dd>km — promień dostaw</dd></div>
+          <div><dt>52</dt><dd>karty w roku</dd></div>
+        </dl>
+        <a class="btn btn--outline mt-l" href={`${root}/o-nas/`}>Poznaj kuchnię →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WINO ===================== -->
+  <section class="band band--zielen">
+    <div class="wrap split split--wide-l">
+      <div class="reveal">
+        <p class="eyebrow">Piwniczka</p>
+        <h2 class="h2">Wina naturalne<br />z małych winnic.</h2>
+        <p class="lede">
+          Karta win prowadzona przez naszą sommelierkę — Polska, Morawy, Burgenland, Gruzja.
+          Kieliszek od 26 zł, doradzamy bez zadęcia. Do każdego dania znajdzie się para.
+        </p>
+        <a class="btn btn--outline mt-m" href={`${root}/wina/`}>Karta win →</a>
+      </div>
+      <div class="split__media figure reveal">
+        <Foto src="restauracja/wino-kieliszki.webp" alt="Kieliszki wina naturalnego na sali" ratio="4/5" label="Wino" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WIECZORY ===================== -->
+  <section class="band">
+    <div class="wrap">
+      <div class="menu-head reveal">
+        <div>
+          <p class="eyebrow">Wieczory</p>
+          <h2 class="h2">Powody, żeby zostać dłużej.</h2>
+        </div>
+        <a class="btn btn--outline" href={`${root}/wydarzenia/`}>Wszystkie wieczory →</a>
+      </div>
+      <div class="cards cards--3">
+        {wydarzenia.slice(0, 3).map((w) => (
+          <article class="card reveal">
+            <span class="card__k">{w.kiedy}</span>
+            <h3>{w.t}</h3>
+            <p>{w.d}</p>
+            <span class="card__m">{w.m}</span>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PASEK GALERII ===================== -->
+  <section class="band band--tight">
+    <div class="wrap strip-head reveal">
+      <div>
+        <p class="eyebrow">Sala i talerze</p>
+        <h2 class="h2">Zajrzyj do środka.</h2>
+      </div>
+      <div class="strip-arrows">
+        <button id="stripPrev" aria-label="Poprzednie" type="button">←</button>
+        <button id="stripNext" aria-label="Następne" type="button">→</button>
+      </div>
+    </div>
+    <div class="strip" id="strip" tabindex="0">
+      {paskoweFoto.map((f) => (
+        <div class="strip__item">
+          <Foto src={`restauracja/${f.src}.webp`} alt={f.alt} ratio={f.ratio} label={f.tag} />
+        </div>
+      ))}
+    </div>
+    <div class="wrap center" style="margin-top:2rem">
+      <a class="btn btn--outline reveal" href={`${root}/galeria/`}>Cała galeria →</a>
+    </div>
+  </section>
+
+  <!-- ===================== OPINIE GOOGLE ===================== -->
+  <section class="band band--krem">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:2.5rem">
+        <p class="eyebrow eyebrow--center">Opinie gości</p>
+        <h2 class="h2">Ocena {biz.googleRating.toString().replace('.', ',')} na Google.</h2>
+      </div>
+      <GoogleReviews limit={3} cols3={true} />
+      <div class="center" style="margin-top:2.5rem">
+        <a class="btn btn--outline reveal" href={`${root}/opinie/`}>Więcej opinii →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== REZERWACJA + MAPA ===================== -->
+  <section class="band">
+    <div class="wrap rez-grid">
+      <div class="reveal">
+        <p class="eyebrow">Rezerwacja</p>
+        <h2 class="h2">Zarezerwuj stolik<br />na wieczór.</h2>
+        <p class="lede">
+          Przy kilkunastu stolikach telefon jest najszybszy — odbieramy od 15:00.
+          Grupy powyżej ośmiu osób i wieczory na wyłączność ustalamy mailowo.
+        </p>
+        <a class="btn btn--gold mt-m" href={`tel:${tel}`}>{biz.phone}</a>
+        <div class="divlist mt-l">
+          <div>
+            <h4 style="font-family:var(--sans);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--zloto);margin-bottom:.6rem">Godziny</h4>
+            {biz.hours.map((h) => <p style="color:var(--krem-2)">{h}</p>)}
+          </div>
+          <div>
+            <h4 style="font-family:var(--sans);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--zloto);margin-bottom:.6rem">Adres</h4>
+            <p style="color:var(--krem-2)">{biz.street}, {biz.zip} {biz.city}</p>
+            <a class="ulink" href={biz.mapUrl} target="_blank" rel="noopener" style="color:var(--zloto-jasne)">Google Maps →</a>
+          </div>
+        </div>
+        <a class="btn btn--outline mt-l" href={`${root}/rezerwacja/`}>Formularz rezerwacji →</a>
+      </div>
+      <div class="reveal">
+        <MapaRest />
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // status kuchni: śr–sob 16–22, nd 12–18; ostatnie zamówienie 45 min przed
+    const grafik: Record<number, [number, number] | null> = {
+      0: [720, 1080], 1: null, 2: null, 3: [960, 1320], 4: [960, 1320], 5: [960, 1320], 6: [960, 1320],
+    };
+    const status = document.getElementById('status');
+    if (status) {
+      const t = new Date();
+      const dzis = grafik[t.getDay()];
+      const min = t.getHours() * 60 + t.getMinutes();
+      const fmt = (m: number) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
+      if (dzis && min >= dzis[0] && min < dzis[1] - 45) status.innerHTML = `<strong>Otwarte</strong> · ostatnie zamówienia o ${fmt(dzis[1] - 45)}`;
+      else if (dzis && min >= dzis[1] - 45 && min < dzis[1]) status.innerHTML = `<strong>Ostatnie zamówienia</strong> · kuchnia kończy o ${fmt(dzis[1])}`;
+      else status.innerHTML = 'Dziś zamknięte · gotujemy od środy do niedzieli';
+    }
+
+    // pasek galerii — strzałki
+    const strip = document.getElementById('strip');
+    const krok = () => (strip?.querySelector('.strip__item') as HTMLElement | null)?.offsetWidth || 360;
+    document.getElementById('stripPrev')?.addEventListener('click', () => strip?.scrollBy({ left: -krok() - 16, behavior: 'smooth' }));
+    document.getElementById('stripNext')?.addEventListener('click', () => strip?.scrollBy({ left: krok() + 16, behavior: 'smooth' }));
+  </script>
+</Restauracja>

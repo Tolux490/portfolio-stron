@@ -1,0 +1,26 @@
+---
+// Mapa Google ładowana dopiero po kliknięciu — bez cookies do czasu zgody.
+const src = 'https://maps.google.com/maps?q=Wo%C5%82omin%20Ogrodowa%203&z=16&output=embed';
+---
+<div class="mapa" data-src={src}>
+  <div class="mapa__ph">
+    <p>Mapa Google wczyta się po kliknięciu —<br />do tego czasu strona nie zapisuje żadnych plików cookies.</p>
+    <button class="btn btn--gold mapa-load" type="button">Pokaż mapę dojazdu</button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.mapa-load').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const mapa = btn.closest('.mapa');
+      if (!mapa) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = mapa.getAttribute('data-src') || '';
+      iframe.loading = 'lazy';
+      iframe.title = 'Mapa dojazdu do restauracji Ogrodowa 3, Wołomin';
+      iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+      mapa.appendChild(iframe);
+      mapa.querySelector('.mapa__ph')?.remove();
+    });
+  });
+</script>

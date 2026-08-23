@@ -1,0 +1,85 @@
+---
+import Restauracja from '../../../layouts/Restauracja.astro';
+import Foto from '../../../components/Foto.astro';
+import { restauracja as biz } from '../../../data/firmy.js';
+import { wydarzenia, prywatne } from '../../../data/restauracja.js';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja`;
+---
+<Restauracja
+  title="Wieczory i wydarzenia — Ogrodowa 3, Wołomin"
+  description="Kolacje degustacyjne, wieczory z winami naturalnymi, stół szefa kuchni i imprezy prywatne. Sala na wyłączność do 50 osób w Wołominie."
+  current="wydarzenia"
+  ogImage="restauracja/danie-sygnatura.webp">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">Wieczory</p>
+      <h1 class="reveal">Coś więcej niż kolacja.</h1>
+      <p class="lede reveal">
+        Poza codzienną kartą prowadzimy wieczory tematyczne i organizujemy prywatne okazje.
+        Kilka powodów, żeby przyjść nie tylko na obiad.
+      </p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap">
+      <div class="cards cards--2">
+        {wydarzenia.map((w) => (
+          <article class="card card--foto reveal">
+            <div class="card__media">
+              <Foto src={`restauracja/${w.foto}.webp`} alt={w.t} ratio="3/2" label={w.t} />
+            </div>
+            <div class="card__body">
+              <span class="card__k">{w.kiedy}</span>
+              <h3>{w.t}</h3>
+              <p>{w.d}</p>
+              <span class="card__m">{w.m}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- prywatne okazje -->
+  <section class="band band--zielen">
+    <div class="wrap split split--wide-l">
+      <div class="reveal">
+        <p class="eyebrow">Na wyłączność</p>
+        <h2 class="h2">Prywatne okazje<br />i całą salę dla Was.</h2>
+        <p class="lede">
+          Urodziny, rocznica, kolacja firmowa albo chrzciny — bierzemy salę na wyłączność
+          i układamy menu pod Wasz wieczór. Do 34 osób przy stołach, do 50 w formule koktajlowej.
+        </p>
+        <a class="btn btn--gold mt-m" href={`mailto:${biz.email}?subject=Rezerwacja%20na%20wy%C5%82%C4%85czno%C5%9B%C4%87`}>Napisz do nas</a>
+      </div>
+      <div class="reveal">
+        <div class="divlist">
+          {prywatne.map((p) => (
+            <div>
+              <h3 class="h3" style="font-size:1.35rem;margin-bottom:.4rem">{p.t}</h3>
+              <p style="color:var(--cichy)">{p.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="band cta">
+    <div class="cta__bg"><Foto src="restauracja/wnetrze-kominek.webp" alt="" ratio="16/9" label="" /></div>
+    <div class="cta__in wrap--w">
+      <p class="eyebrow eyebrow--center reveal">Zaplanujmy to razem</p>
+      <h2 class="reveal">Macie okazję —<br />my mamy salę.</h2>
+      <p class="lede reveal">Napisz albo zadzwoń, ustalimy termin, menu i wszystkie szczegóły.</p>
+      <div class="hero__cta reveal" style="justify-content:center">
+        <a class="btn btn--gold" href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>{biz.phone}</a>
+        <a class="btn btn--outline" href={`${root}/rezerwacja/`}>Formularz →</a>
+      </div>
+    </div>
+  </section>
+</Restauracja>

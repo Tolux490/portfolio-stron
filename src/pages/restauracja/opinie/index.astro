@@ -1,0 +1,68 @@
+---
+import Restauracja from '../../../layouts/Restauracja.astro';
+import GoogleReviews from '../../../components/rest/GoogleReviews.astro';
+import Stars from '../../../components/rest/Stars.astro';
+import { restauracja as biz } from '../../../data/firmy.js';
+import { opinie } from '../../../data/restauracja.js';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja`;
+
+// rozkład ocen (na bazie widocznych opinii)
+const rozklad = [5, 4, 3, 2, 1].map((g) => ({
+  g,
+  n: opinie.filter((o) => o.g === g).length,
+}));
+const maxN = Math.max(...rozklad.map((r) => r.n), 1);
+---
+<Restauracja
+  title="Opinie gości — Ogrodowa 3, Wołomin"
+  description={`Ocena ${biz.googleRating} na ${biz.googleCount} opinii Google. Przeczytaj, co goście mówią o restauracji Ogrodowa 3 w Wołominie.`}
+  current="opinie"
+  ogImage="restauracja/stol-nakrycie.webp">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">Opinie</p>
+      <h1 class="reveal">Co mówią goście.</h1>
+      <p class="lede reveal">
+        Nie prosimy o opinie — piszą je sami. Poniżej to, co goście zostawili na naszej wizytówce Google.
+      </p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap">
+      <!-- podsumowanie z rozkładem -->
+      <div class="split reveal" style="align-items:center;margin-bottom:3rem">
+        <div class="center" style="border:1px solid var(--linia);border-radius:3px;padding:2.5rem">
+          <div class="gsum__score" style="font-size:4.5rem">{biz.googleRating.toString().replace('.', ',')}</div>
+          <div style="display:flex;justify-content:center;margin:.5rem 0"><Stars g={biz.googleRating} /></div>
+          <p class="mono-note">na podstawie {biz.googleCount} opinii Google</p>
+        </div>
+        <div>
+          {rozklad.map((r) => (
+            <div style="display:flex;align-items:center;gap:1rem;margin:.55rem 0">
+              <span style="font-size:.8rem;color:var(--cichy);min-width:2.5rem">{r.g} ★</span>
+              <span style="flex:1;height:6px;background:var(--linia);border-radius:20px;overflow:hidden">
+                <span style={`display:block;height:100%;width:${(r.n / maxN) * 100}%;background:var(--zloto);border-radius:20px`}></span>
+              </span>
+              <span style="font-size:.8rem;color:var(--cichy);min-width:1.5rem;text-align:right">{r.n}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <GoogleReviews limit={opinie.length} cols3={true} />
+
+      <p class="mono-note reveal maxw-prose" style="margin-top:2.5rem">
+        Opinie pochodzą z wizytówki Google (na potrzeby tego demo są fikcyjne). Byłeś u nas?
+        Będzie nam miło, jeśli zostawisz kilka słów.
+      </p>
+      <div class="center mt-l">
+        <a class="btn btn--outline reveal" href={biz.googleUrl} target="_blank" rel="noopener" style="margin-right:.5rem">Dodaj opinię na Google</a>
+        <a class="btn btn--gold reveal" href={`${root}/rezerwacja/`}>Zarezerwuj stolik</a>
+      </div>
+    </div>
+  </section>
+</Restauracja>

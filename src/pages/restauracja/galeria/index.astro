@@ -1,0 +1,79 @@
+---
+import Restauracja from '../../../layouts/Restauracja.astro';
+import Foto from '../../../components/Foto.astro';
+import { galeria } from '../../../data/restauracja.js';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja`;
+const full = (s) => `${base}/img/restauracja/${s}.webp`;
+---
+<Restauracja
+  title="Galeria — Ogrodowa 3, Wołomin"
+  description="Sala, talerze, kuchnia i wina restauracji Ogrodowa 3 w Wołominie. Zajrzyj do środka, zanim zarezerwujesz stolik."
+  current="galeria"
+  ogImage="restauracja/wnetrze-kominek.webp">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">Galeria</p>
+      <h1 class="reveal">Zajrzyj do środka.</h1>
+      <p class="lede reveal">
+        Sala przy świecach, talerze prosto z wydawki, wina z piwniczki. Kliknij zdjęcie, żeby powiększyć.
+      </p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap">
+      <div class="masonry" id="masonry">
+        {galeria.map((f, i) => (
+          <figure class="reveal">
+            <button type="button" data-lightbox={i} data-full={full(f.src)} data-alt={f.alt} aria-label={`Powiększ: ${f.alt}`}>
+              <Foto src={`restauracja/${f.src}.webp`} alt={f.alt} ratio={f.ratio} label={f.tag} />
+            </button>
+            <figcaption>{f.tag}</figcaption>
+          </figure>
+        ))}
+      </div>
+      <div class="center mt-l">
+        <a class="btn btn--gold reveal" href={`${root}/rezerwacja/`}>Zarezerwuj stolik</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Powiększone zdjęcie">
+    <button class="lightbox__close" id="lbClose" aria-label="Zamknij">✕</button>
+    <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="Poprzednie">‹</button>
+    <img id="lbImg" src="" alt="" />
+    <button class="lightbox__nav lightbox__nav--next" id="lbNext" aria-label="Następne">›</button>
+  </div>
+
+  <script>
+    const btns = Array.from(document.querySelectorAll('[data-lightbox]')) as HTMLButtonElement[];
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg') as HTMLImageElement;
+    let idx = 0;
+
+    const show = (i: number) => {
+      idx = (i + btns.length) % btns.length;
+      const b = btns[idx];
+      lbImg.src = b.dataset.full || '';
+      lbImg.alt = b.dataset.alt || '';
+    };
+    const open = (i: number) => { show(i); lb?.classList.add('is-open'); document.body.style.overflow = 'hidden'; };
+    const close = () => { lb?.classList.remove('is-open'); document.body.style.overflow = ''; };
+
+    btns.forEach((b, i) => b.addEventListener('click', () => open(i)));
+    document.getElementById('lbClose')?.addEventListener('click', close);
+    document.getElementById('lbPrev')?.addEventListener('click', () => show(idx - 1));
+    document.getElementById('lbNext')?.addEventListener('click', () => show(idx + 1));
+    lb?.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    window.addEventListener('keydown', (e) => {
+      if (!lb?.classList.contains('is-open')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(idx - 1);
+      if (e.key === 'ArrowRight') show(idx + 1);
+    });
+  </script>
+</Restauracja>

@@ -1,0 +1,103 @@
+---
+import '../styles/base.css';
+
+const {
+  title,
+  description,
+  fonts = '',
+  biz,              // dane firmy, patrz src/data/*.js
+  links = [],       // [{href, label}]
+} = Astro.props;
+
+const tel = biz.phone.replace(/[^+\d]/g, '');
+// BASE_URL = '/' na własnej domenie, '/nazwa-repo/' na GitHub Pages
+const root = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${biz.slug}/`;
+---
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {fonts && <link rel="stylesheet" href={fonts} />}
+
+    <!-- Dane strukturalne: pomagają w wynikach lokalnych Google -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': biz.schemaType,
+      name: biz.name,
+      telephone: biz.phone,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: biz.street,
+        addressLocality: biz.city,
+        postalCode: biz.zip,
+        addressCountry: 'PL',
+      },
+      openingHours: biz.openingHours,
+      url: Astro.url.origin,
+    })} />
+  </head>
+
+  <body>
+    <header class="wrap">
+      <nav class="nav">
+        <a class="nav__brand" href={root}>{biz.name}</a>
+        <div class="nav__links">
+          {links.map((l) => <a href={l.href}>{l.label}</a>)}
+          <a class="nav__phone" href={`tel:${tel}`}>{biz.phone}</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <div class="foot__grid">
+          <div>
+            <h3>{biz.name}</h3>
+            <p style="margin:0">{biz.tagline}</p>
+          </div>
+          <div>
+            <h3>Kontakt</h3>
+            <ul>
+              <li><a href={`tel:${tel}`}>{biz.phone}</a></li>
+              <li><a href={`mailto:${biz.email}`}>{biz.email}</a></li>
+              <li>{biz.street}</li>
+              <li>{biz.zip} {biz.city}</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Godziny</h3>
+            <ul>
+              {biz.hours.map((h) => <li>{h}</li>)}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Wymóg ustawy o świadczeniu usług drogą elektroniczną:
+             pełna nazwa, adres i NIP muszą być dostępne na stronie -->
+        <div class="foot__legal">
+          <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
+          <a href={`${root}polityka-prywatnosci/`}>Polityka prywatności</a>
+        </div>
+      </div>
+    </footer>
+
+    <div class="callbar">
+      <a href={`tel:${tel}`}>Zadzwoń</a>
+      <a href={biz.mapUrl} target="_blank" rel="noopener">Dojazd</a>
+    </div>
+  </body>
+</html>

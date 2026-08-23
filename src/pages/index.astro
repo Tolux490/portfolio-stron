@@ -1,0 +1,115 @@
+---
+import '../styles/base.css';
+
+const b = import.meta.env.BASE_URL.replace(/\/$/, '');
+const demo = [
+  { href: `${b}/kawiarnia/`, nazwa: 'Prolog', bran: 'Kawiarnia speciality', opis: 'Menu z filtrami kategorii, cyfrowa karta pieczątek zapisywana w telefonie, mapa ładowana bez cookies, status „otwarte teraz" liczony na żywo.' },
+  { href: `${b}/mechanik/`, nazwa: 'Serwis Kołodziej', bran: 'Warsztat samochodowy', opis: 'Cennik robocizny z czasem naprawy, tabliczka z dostępnością stanowisk, kontakt wyłącznie telefoniczny.' },
+  { href: `${b}/restauracja/`, nazwa: 'Ogrodowa 3', bran: 'Restauracja', opis: 'Pełna, wielostronicowa witryna: karta i menu degustacyjne, karta win, galeria z lightboxem, opinie Google, rezerwacja online i obracany model 3D butelki wina w hero.' },
+  { href: `${b}/nieruchomosci/`, nazwa: 'Kontur Nieruchomości', bran: 'Biuro nieruchomości', opis: 'Minimalistyczna siatka z filtrowaniem i sortowaniem ofert, formularz umawiania oglądań z pełną klauzulą RODO.' },
+];
+---
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Realizacje — strony dla firm lokalnych</title>
+    <meta name="description" content="Przykładowe realizacje stron internetowych dla firm lokalnych." />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Syne:wght@600;800&display=swap" />
+  </head>
+  <body>
+    <main class="band">
+      <div class="wrap">
+        <p class="eyebrow">Realizacje</p>
+        <h1 class="tytul">Cztery strony, cztery różne branże.</h1>
+        <p class="wstep">
+          Każda z nich zbudowana na tym samym silniku, ale z osobną typografią,
+          paletą i układem — strona warsztatu nie powinna wyglądać jak strona restauracji.
+          Wszystkie ładują się poniżej sekundy i działają bez plików cookies.
+        </p>
+
+        <ul class="lista">
+          {demo.map((d) => (
+            <li>
+              <a href={d.href}>
+                <span class="lista__bran">{d.bran}</span>
+                <h2>{d.nazwa}</h2>
+                <p>{d.opis}</p>
+                <span class="lista__link">Zobacz stronę →</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <section class="poza">
+          <p class="poza__etykieta">Projekt własny</p>
+          <a class="poza__link" href="https://tolux490.github.io/Fiches/" target="_blank" rel="noopener">
+            <span class="poza__nazwa">Fiches</span>
+            <span class="poza__opis">Aplikacja do nauki francuskiego — fiszki generowane przez AI</span>
+            <span class="poza__strzalka" aria-hidden="true">↗</span>
+          </a>
+        </section>
+      </div>
+    </main>
+
+    <style is:global>
+      :root {
+        --bg: #f7f7f4;
+        --ink: #14213a;
+        --muted: #5f6a80;
+        --line: #d9dad2;
+        --accent: #14213a;
+        --accent-dark: #0c1729;
+        --on-accent: #f7f7f4;
+        --maxw: 900px;
+        --font-display: 'Syne', system-ui, sans-serif;
+        --font-body: 'Public Sans', system-ui, sans-serif;
+      }
+      body { padding-bottom: 0; }
+      .tytul { font-size: clamp(2rem, 6vw, 3.4rem); font-weight: 800; letter-spacing: -0.035em; }
+      .wstep { color: var(--muted); max-width: 54ch; margin: 1.5rem 0 3.5rem; }
+      .lista { list-style: none; margin: 0; padding: 0; }
+      .lista li { border-top: 1px solid var(--line); }
+      .lista li:last-child { border-bottom: 1px solid var(--line); }
+      .lista a { display: block; padding: 2rem 0; text-decoration: none; }
+      .lista a:hover h2 { text-decoration: underline; }
+      .lista__bran {
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .lista h2 {
+        font-family: var(--font-display);
+        font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        margin: 0.5rem 0 0.65rem;
+      }
+      .lista p { color: var(--muted); max-width: 56ch; margin: 0 0 1rem; }
+      .lista__link { font-size: 0.9rem; font-weight: 600; }
+
+      .poza { margin-top: 4.5rem; padding-top: 1.75rem; border-top: 1px solid var(--line); }
+      .poza__etykieta {
+        font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--muted); margin: 0 0 1rem;
+      }
+      .poza__link {
+        display: grid; grid-template-columns: 1fr auto; align-items: baseline;
+        gap: 0.35rem 1.25rem; text-decoration: none; padding: 0.5rem 0;
+      }
+      .poza__nazwa {
+        font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+      .poza__opis { grid-column: 1 / -1; font-size: 0.9rem; color: var(--muted); }
+      .poza__strzalka { font-size: 1rem; color: var(--muted); transition: transform 0.25s ease; }
+      .poza__link:hover .poza__nazwa { text-decoration: underline; }
+      .poza__link:hover .poza__strzalka { transform: translate(2px, -2px); color: var(--ink); }
+    </style>
+  </body>
+</html>

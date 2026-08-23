@@ -1,0 +1,235 @@
+---
+import Restauracja from '../../../layouts/Restauracja.astro';
+import MapaRest from '../../../components/rest/MapaRest.astro';
+import { restauracja as biz } from '../../../data/firmy.js';
+
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja`;
+
+const osoby = ['1 osoba', '2 osoby', '3 osoby', '4 osoby', '5 osób', '6 osób', '7 osób', '8 osób', 'więcej niż 8'];
+const godziny = ['16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
+---
+<Restauracja
+  title="Rezerwacja stolika — Ogrodowa 3, Wołomin"
+  description="Zarezerwuj stolik w restauracji Ogrodowa 3 w Wołominie. Telefonicznie od 15:00 lub przez formularz — potwierdzamy tego samego dnia."
+  current="rezerwacja"
+  ogImage="restauracja/stol-nakrycie.webp">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">Rezerwacja</p>
+      <h1 class="reveal">Zarezerwuj wieczór.</h1>
+      <p class="lede reveal">
+        Przy kilkunastu stolikach telefon jest najszybszy — odbieramy od 15:00. Wolisz online?
+        Wypełnij formularz, a my potwierdzimy termin telefonicznie tego samego dnia roboczego.
+      </p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap rez-grid">
+      <!-- FORMULARZ -->
+      <form class="reveal" id="rezForm" novalidate>
+        <div class="form__row form__row--2">
+          <label class="field">
+            <span>Liczba osób</span>
+            <select name="osoby" required>
+              <option value="">Wybierz</option>
+              {osoby.map((o) => <option value={o}>{o}</option>)}
+            </select>
+          </label>
+          <label class="field">
+            <span>Data</span>
+            <input type="date" name="data" required />
+          </label>
+        </div>
+
+        <div class="form__row form__row--2">
+          <label class="field">
+            <span>Godzina</span>
+            <select name="godzina" required>
+              <option value="">Wybierz</option>
+              {godziny.map((g) => <option value={g}>{g}</option>)}
+            </select>
+          </label>
+          <label class="field">
+            <span>Telefon</span>
+            <input type="tel" name="telefon" autocomplete="tel" inputmode="tel" required />
+          </label>
+        </div>
+
+        <div class="form__row form__row--2">
+          <label class="field">
+            <span>Imię i nazwisko</span>
+            <input type="text" name="imie" autocomplete="name" required />
+          </label>
+          <label class="field">
+            <span>E-mail <em>(opcjonalnie)</em></span>
+            <input type="email" name="email" autocomplete="email" />
+          </label>
+        </div>
+
+        <div class="form__row">
+          <label class="field">
+            <span>Uwagi <em>(opcjonalnie)</em></span>
+            <textarea name="uwagi" rows="3" placeholder="Np. stolik przy oknie, alergia na orzechy, urodziny, wersja wege"></textarea>
+          </label>
+        </div>
+
+        <!-- Klauzula informacyjna (art. 13 RODO) -->
+        <div class="klauzula">
+          <p>
+            Administratorem Twoich danych jest {biz.legalName}, {biz.street}, {biz.zip} {biz.city},
+            NIP {biz.nip}. Dane z formularza przetwarzamy wyłącznie po to, żeby przyjąć i potwierdzić
+            rezerwację — podstawą są działania na Twoje żądanie przed zawarciem umowy
+            (art. 6 ust. 1 lit. b RODO) oraz nasz uzasadniony interes w kontakcie (art. 6 ust. 1 lit. f RODO).
+          </p>
+          <details>
+            <summary>Rozwiń pełną informację</summary>
+            <p>
+              Podanie danych jest dobrowolne, ale bez imienia i telefonu nie potwierdzimy rezerwacji.
+              Dane przechowujemy do 12 miesięcy od ostatniego kontaktu. Odbiorcami mogą być dostawca
+              hostingu i usługi obsługi formularza, działający na podstawie umowy powierzenia.
+              Masz prawo dostępu, sprostowania, usunięcia, ograniczenia, przenoszenia i sprzeciwu
+              oraz skargi do Prezesa UODO. Szczegóły:
+              <a href={`${root}/polityka-prywatnosci/`}>polityka prywatności</a>.
+            </p>
+          </details>
+          <label class="consent">
+            <input type="checkbox" name="zgoda" value="tak" required />
+            <span>Zapoznałem/am się z informacją o przetwarzaniu danych i chcę wysłać prośbę o rezerwację.</span>
+          </label>
+        </div>
+
+        <button class="btn btn--gold form__submit" type="submit" id="rezSubmit">Wyślij prośbę o rezerwację</button>
+        <p class="form__status" id="rezStatus" role="status" aria-live="polite"></p>
+      </form>
+
+      <!-- INFO -->
+      <aside class="reveal" style="display:grid;gap:1.25rem">
+        <div class="infocard">
+          <div>
+            <h3>Wolisz zadzwonić?</h3>
+            <p style="margin-top:.6rem"><a class="ulink" href={`tel:${tel}`} style="font-size:1.3rem;color:var(--zloto-jasne)">{biz.phone}</a></p>
+            <p style="margin-top:.4rem;color:var(--cichy);font-size:.85rem">Odbieramy codziennie od 15:00.</p>
+          </div>
+          <div>
+            <h3>Godziny otwarcia</h3>
+            {biz.hours.map((h) => <p style="margin-top:.3rem">{h}</p>)}
+          </div>
+          <div>
+            <h3>Dobrze wiedzieć</h3>
+            <p style="margin-top:.5rem;color:var(--cichy);font-size:.88rem">Stolik trzymamy 15 minut po godzinie rezerwacji.</p>
+            <p style="color:var(--cichy);font-size:.88rem">Ostatnie zamówienie 45 minut przed zamknięciem kuchni.</p>
+            <p style="color:var(--cichy);font-size:.88rem">Grupy powyżej 8 osób — mailowo: <a class="ulink" href={`mailto:${biz.email}`} style="color:var(--zloto-jasne)">{biz.email}</a></p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- MAPA -->
+  <section class="band band--tight">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="eyebrow">Dojazd</p>
+        <h2 class="h2">{biz.street}<br />{biz.zip} {biz.city}</h2>
+        <p class="lede">
+          Wejście od Ogrodowej, parking wzdłuż ulicy. Z dworca PKP Wołomin dziesięć minut spacerem.
+        </p>
+        <a class="btn btn--outline mt-m" href={biz.mapUrl} target="_blank" rel="noopener">Otwórz w Google Maps →</a>
+      </div>
+      <div class="reveal"><MapaRest /></div>
+    </div>
+  </section>
+
+  <script define:vars={{ formKey: biz.formKey, mailKontakt: biz.email, nazwa: biz.name }}>
+    const form = document.getElementById('rezForm');
+    const status = document.getElementById('rezStatus');
+    const submit = document.getElementById('rezSubmit');
+
+    const pokazBlad = (pole, tekst) => {
+      const field = pole.closest('.field');
+      field?.classList.add('is-err');
+      if (!field?.querySelector('.field__err')) {
+        const s = document.createElement('span');
+        s.className = 'field__err';
+        s.textContent = tekst;
+        field?.appendChild(s);
+      }
+    };
+    const czyscBledy = () => {
+      form.querySelectorAll('.field.is-err').forEach((f) => f.classList.remove('is-err'));
+      form.querySelectorAll('.field__err').forEach((e) => e.remove());
+    };
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      czyscBledy();
+      status.textContent = '';
+      status.className = 'form__status';
+
+      let ok = true;
+      const wymagane = form.querySelectorAll('[required]');
+      wymagane.forEach((pole) => {
+        if (pole.type === 'checkbox') {
+          if (!pole.checked) { ok = false; }
+          return;
+        }
+        if (!pole.value.trim()) { pokazBlad(pole, 'To pole jest wymagane'); ok = false; }
+      });
+      const tel = form.querySelector('[name="telefon"]');
+      if (tel?.value && tel.value.replace(/[^\d]/g, '').length < 9) { pokazBlad(tel, 'Podaj poprawny numer telefonu'); ok = false; }
+      const zgoda = form.querySelector('[name="zgoda"]');
+      if (zgoda && !zgoda.checked) { status.textContent = 'Zaznacz zgodę na przetwarzanie danych.'; status.classList.add('is-err'); }
+
+      if (!ok) {
+        if (!status.textContent) { status.textContent = 'Uzupełnij zaznaczone pola.'; status.classList.add('is-err'); }
+        form.querySelector('.field.is-err input, .field.is-err select')?.focus();
+        return;
+      }
+
+      const dane = Object.fromEntries(new FormData(form).entries());
+
+      // Tryb pokazowy — bez klucza web3forms nic nie wychodzi na zewnątrz.
+      if (!formKey) {
+        submit.disabled = true;
+        status.textContent = 'Dziękujemy! (tryb demo — prośba nie została nigdzie wysłana). Wpisz klucz web3forms w danych firmy, aby uruchomić realną wysyłkę.';
+        status.classList.add('is-ok');
+        form.reset();
+        setTimeout(() => { submit.disabled = false; }, 400);
+        return;
+      }
+
+      try {
+        submit.disabled = true;
+        submit.textContent = 'Wysyłanie…';
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: formKey,
+            subject: `Rezerwacja — ${nazwa}: ${dane.osoby}, ${dane.data} ${dane.godzina}`,
+            from_name: dane.imie,
+            ...dane,
+          }),
+        });
+        const wynik = await res.json();
+        if (wynik.success) {
+          status.textContent = 'Dziękujemy! Prośba dotarła — potwierdzimy telefonicznie tego samego dnia roboczego.';
+          status.classList.add('is-ok');
+          form.reset();
+        } else {
+          throw new Error(wynik.message || 'błąd');
+        }
+      } catch (err) {
+        status.textContent = `Nie udało się wysłać. Zadzwoń: ${document.querySelector('.infocard a')?.textContent || ''} albo napisz na ${mailKontakt}.`;
+        status.classList.add('is-err');
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Wyślij prośbę o rezerwację';
+      }
+    });
+  </script>
+</Restauracja>

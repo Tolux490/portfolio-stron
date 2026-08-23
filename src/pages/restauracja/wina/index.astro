@@ -1,0 +1,88 @@
+---
+import Restauracja from '../../../layouts/Restauracja.astro';
+import Foto from '../../../components/Foto.astro';
+import { restauracja as biz } from '../../../data/firmy.js';
+import { wina, zespol } from '../../../data/restauracja.js';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja`;
+const sommelier = zespol.find((z) => z.rola.toLowerCase().includes('somm'));
+---
+<Restauracja
+  title="Karta win — Ogrodowa 3, Wołomin"
+  description="Wina naturalne i klasyka z małych winnic: Polska, Morawy, Austria, Gruzja, Tokaj. Kieliszek od 26 zł, doradztwo sommelierki bez zadęcia."
+  current="wina"
+  ogImage="restauracja/piwnica-win.webp">
+
+  <!-- pagehead ze zdjęciem piwnicy -->
+  <section class="pagehead pagehead--foto">
+    <div class="hero__bg">
+      <Foto src="restauracja/piwnica-win.webp" alt="Półki z winami w piwniczce" ratio="3/2" label="Piwniczka" eager={true} />
+    </div>
+    <div class="hero__veil"></div>
+    <div class="wrap">
+      <p class="eyebrow reveal">Piwniczka</p>
+      <h1 class="reveal">Karta win.</h1>
+      <p class="lede reveal">
+        Stawiamy na wina z małych winnic i naturalne roczniki, których nie znajdziesz w markecie.
+        Kieliszek od 26 zł — do każdego dania z karty dobierzemy parę.
+      </p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap">
+      <div class="badge reveal" style="display:inline-block;margin-bottom:2.75rem">
+        Ceny: <strong>kieliszek</strong> 150 ml / <strong>butelka</strong> 750 ml
+      </div>
+
+      {wina.map((kat) => (
+        <div class="wine-cat reveal">
+          <div class="wine-cat__h">
+            <h3>{kat.grupa}</h3>
+            <span>{kat.pozycje.length} pozycji</span>
+          </div>
+          <ul class="wine">
+            {kat.pozycje.map((w) => (
+              <li>
+                <span class="wine__n">{w.n}</span>
+                <span class="wine__reg">{w.reg}</span>
+                <span class="wine__desc">{w.desc}</span>
+                <span class="wine__price">
+                  <b>{w.kieliszek} / {w.butelka}</b>
+                  <small>kieliszek / butelka</small>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <p class="mono-note reveal maxw-prose">
+        Ceny w złotych. Karta win zmienia się częściej niż karta dań — powyższa lista jest przykładowa.
+        Masz butelkę na wyjątkową okazję? Możesz ją przynieść, korkowe 40 zł od butelki.
+      </p>
+    </div>
+  </section>
+
+  <!-- sommelierka -->
+  {sommelier && (
+    <section class="band band--zielen">
+      <div class="wrap split split--wide-r">
+        <div class="split__media figure reveal">
+          <Foto src="restauracja/wino-kieliszki.webp" alt="Kieliszki wina naturalnego" ratio="3/4" label="Wino" />
+        </div>
+        <div class="reveal">
+          <p class="eyebrow">Sommelier</p>
+          <h2 class="h2">Zapytaj, dobierzemy.</h2>
+          <p class="lede">{sommelier.o}</p>
+          <p class="lede">
+            Nie wiesz, co wybrać? Powiedz, co lubisz i na co masz ochotę — resztę zostaw nam.
+            Pół kieliszka na spróbowanie zawsze się znajdzie.
+          </p>
+          <a class="btn btn--outline mt-m" href={`${root}/rezerwacja/`}>Zarezerwuj wieczór →</a>
+        </div>
+      </div>
+    </section>
+  )}
+</Restauracja>

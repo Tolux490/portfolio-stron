@@ -1,0 +1,139 @@
+---
+import Restauracja from '../../../layouts/Restauracja.astro';
+import Foto from '../../../components/Foto.astro';
+import { restauracja as biz } from '../../../data/firmy.js';
+import { zespol, faq } from '../../../data/restauracja.js';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja`;
+const inicjaly = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+---
+<Restauracja
+  title="Kuchnia i ludzie — Ogrodowa 3, Wołomin"
+  description="Kim jesteśmy: mała restauracja przy Ogrodowej w Wołominie. Kuchnia sezonowa, dostawcy z okolicy, zespół, który zna gości po imieniu."
+  current="o-nas"
+  ogImage="restauracja/szef-kuchni.webp">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">Kuchnia i ludzie</p>
+      <h1 class="reveal">Gotujemy blisko —<br />od ludzi, przez produkt, po stolik.</h1>
+      <p class="lede reveal">
+        Ogrodowa 3 powstała z prostego pomysłu: mała sala, krótka karta i produkty z sąsiedztwa.
+        Bez sieciowej powtarzalności, za to z twarzami, które poznasz.
+      </p>
+    </div>
+  </section>
+
+  <!-- historia -->
+  <section class="band band--tight">
+    <div class="wrap split split--wide-l">
+      <div class="reveal">
+        <p class="eyebrow">Skąd się wzięliśmy</p>
+        <h2 class="h2">Powrót do Wołomina.</h2>
+        <p class="lede">
+          Nasz szef kuchni gotował w Warszawie i Kopenhadze, a potem wrócił tam, gdzie dorastał.
+          Otworzył miejsce, w którym sam chciałby jeść — kameralne, ciepłe, z kartą krótką na tyle,
+          żeby każde danie było naprawdę dopięte.
+        </p>
+        <p class="lede">
+          Zaczynaliśmy od czternastu stolików i jednej kuchni na widoku. Do dziś niewiele się zmieniło —
+          poza tym, że dołączyli goście, którzy wracają co tydzień.
+        </p>
+      </div>
+      <div class="split__media figure reveal">
+        <Foto src="restauracja/wnetrze-fotele.webp" alt="Wnętrze sali Ogrodowej 3" ratio="3/4" label="Sala" />
+      </div>
+    </div>
+  </section>
+
+  <!-- filozofia -->
+  <section class="band band--krem">
+    <div class="wrap">
+      <div class="reveal" style="max-width:52ch">
+        <p class="eyebrow">Jak pracujemy</p>
+        <h2 class="h2">Trzy zasady, których się trzymamy.</h2>
+      </div>
+      <div class="cards cards--3" style="margin-top:2.5rem">
+        <article class="card reveal">
+          <span class="card__k">01</span>
+          <h3>Sezon dyktuje kartę</h3>
+          <p>Kartę piszemy co tydzień, na podstawie tego, co przywiozą dostawcy. Nie ma sezonu na dane danie — nie ma go w karcie.</p>
+        </article>
+        <article class="card reveal">
+          <span class="card__k">02</span>
+          <h3>Krótko i konkretnie</h3>
+          <p>Wolimy kilka dań zrobionych perfekcyjnie niż długie menu na wszystko. Mniej pozycji, więcej uwagi na talerzu.</p>
+        </article>
+        <article class="card reveal">
+          <span class="card__k">03</span>
+          <h3>Bez pośpiechu</h3>
+          <p>Rezerwujemy stolik na cały wieczór. Nie obracamy nim dwa razy — przychodzisz i zostajesz tak długo, jak chcesz.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- dostawcy / kuchnia -->
+  <section class="band">
+    <div class="wrap split split--wide-r">
+      <div class="split__media figure reveal">
+        <Foto src="restauracja/kuchnia-pinceta.webp" alt="Wykończenie dania w kuchni" ratio="3/4" label="Kuchnia" />
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">Produkt</p>
+        <h2 class="h2">Znamy nazwiska<br />naszych dostawców.</h2>
+        <p class="lede">
+          Warzywa z gospodarstwa w Kobyłce, pieczywo z piekarni na Legionów, ryby dwa razy w tygodniu,
+          sery od zagrodowej mleczarni. To nie hasło z ulotki — to konkretni ludzie, do których dzwonimy rano.
+        </p>
+        <dl class="facts">
+          <div><dt>12</dt><dd>lokalnych dostawców</dd></div>
+          <div><dt>40</dt><dd>km — promień zakupów</dd></div>
+          <div><dt>2×</dt><dd>w tygodniu świeże ryby</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- zespół -->
+  <section class="band band--zielen">
+    <div class="wrap">
+      <div class="reveal" style="max-width:48ch">
+        <p class="eyebrow">Zespół</p>
+        <h2 class="h2">Ludzie, których poznasz.</h2>
+      </div>
+      <div class="cards cards--3" style="margin-top:2.5rem">
+        {zespol.map((o) => (
+          <article class="card reveal">
+            <span class="review__ava" aria-hidden="true" style="width:3rem;height:3rem">{inicjaly(o.imie)}</span>
+            <h3>{o.imie}</h3>
+            <span class="card__k">{o.rola}</span>
+            <p>{o.o}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="band">
+    <div class="wrap--w">
+      <div class="reveal center">
+        <p class="eyebrow eyebrow--center">Dobrze wiedzieć</p>
+        <h2 class="h2">Najczęstsze pytania.</h2>
+      </div>
+      <div class="faq reveal">
+        {faq.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+      <div class="center mt-l">
+        <a class="btn btn--gold reveal" href={`${root}/rezerwacja/`}>Zarezerwuj stolik</a>
+      </div>
+    </div>
+  </section>
+</Restauracja>
