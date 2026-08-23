@@ -34,12 +34,12 @@
       envCanvas.width = 512; envCanvas.height = 256;
       const ex = envCanvas.getContext('2d');
       const eg = ex.createLinearGradient(0, 0, 0, 256);
-      eg.addColorStop(0.00, '#241a10');
-      eg.addColorStop(0.34, '#4a3417');
-      eg.addColorStop(0.46, '#e9c987');
-      eg.addColorStop(0.54, '#f3d89b');
-      eg.addColorStop(0.66, '#3a2913');
-      eg.addColorStop(1.00, '#0c0a08');
+      eg.addColorStop(0.00, '#140e08');
+      eg.addColorStop(0.40, '#241a0e');
+      eg.addColorStop(0.48, '#7a6236');
+      eg.addColorStop(0.52, '#8c7040');
+      eg.addColorStop(0.60, '#1e150c');
+      eg.addColorStop(1.00, '#070605');
       ex.fillStyle = eg; ex.fillRect(0, 0, 512, 256);
       const envTex = new THREE.CanvasTexture(envCanvas);
       envTex.mapping = THREE.EquirectangularReflectionMapping;
@@ -50,10 +50,10 @@
       envTex.dispose(); pmrem.dispose();
 
       // światła
-      scene.add(new THREE.HemisphereLight(0xfff0d8, 0x120c08, 0.5));
-      const key = new THREE.DirectionalLight(0xffe6bd, 2.4); key.position.set(12, 16, 18); scene.add(key);
-      const rim = new THREE.DirectionalLight(0xc6a15b, 1.9); rim.position.set(-16, 8, -10); scene.add(rim);
-      const fill = new THREE.PointLight(0xffd9a0, 40, 120); fill.position.set(-6, -4, 14); scene.add(fill);
+      scene.add(new THREE.HemisphereLight(0xffedd0, 0x0a0705, 0.32));
+      const key = new THREE.DirectionalLight(0xffe6bd, 1.7); key.position.set(12, 16, 18); scene.add(key);
+      const rim = new THREE.DirectionalLight(0xc6a15b, 1.5); rim.position.set(-16, 8, -10); scene.add(rim);
+      const fill = new THREE.PointLight(0xffd9a0, 22, 120); fill.position.set(-6, -4, 14); scene.add(fill);
 
       const group = new THREE.Group();
       scene.add(group);
@@ -61,28 +61,37 @@
       // profil butelki (obrót wokół osi Y)
       const P = (x, y) => new THREE.Vector2(x, y);
       const profil = [
-        P(0, 0.0), P(4.35, 0.0), P(4.5, 0.5), P(4.5, 12.6), P(4.42, 13.6),
-        P(3.9, 15.0), P(2.6, 16.7), P(1.4, 18.0), P(1.02, 19.2), P(0.95, 23.6),
-        P(1.16, 24.2), P(1.16, 24.9), P(0.86, 25.2), P(0, 25.3),
+        P(0.0, 2.2), P(1.4, 1.2), P(2.7, 0.35), P(3.4, 0.08), P(3.8, 0.25),
+        P(3.9, 0.9), P(3.9, 12.6), P(3.86, 13.4), P(3.5, 14.8), P(2.5, 16.4),
+        P(1.5, 17.8), P(0.95, 19.0), P(0.9, 23.4), P(1.08, 24.1), P(1.08, 24.8),
+        P(0.8, 25.1), P(0.0, 25.2),
       ];
-      const glassGeo = new THREE.LatheGeometry(profil, 72);
+
+      // wino w środku (nieprzezroczyste) — widoczne przez szkło
+      const wineProfile = [ P(0.0, 2.6), P(2.2, 1.2), P(3.6, 0.9), P(3.6, 14.0), P(1.8, 14.35), P(0.0, 14.4) ];
+      const wineMat = new THREE.MeshStandardMaterial({ color: 0x4a0d15, roughness: 0.26, metalness: 0.0, envMapIntensity: 0.6 });
+      group.add(new THREE.Mesh(new THREE.LatheGeometry(wineProfile, 64), wineMat));
+
+      // szkło butelki — ciemne butelkowe zielone, mocno barwione
+      const glassGeo = new THREE.LatheGeometry(profil, 96);
       const glassMat = new THREE.MeshPhysicalMaterial({
-        color: 0x0c2b1c, roughness: 0.14, metalness: 0.0,
-        clearcoat: 1.0, clearcoatRoughness: 0.18, envMapIntensity: 1.6,
-        sheen: 0.4, sheenColor: 0x2f6b4a,
+        color: 0x0a2a15, metalness: 0.0, roughness: 0.11,
+        transmission: 0.38, thickness: 4.5, ior: 1.5,
+        attenuationColor: new THREE.Color(0x03100a), attenuationDistance: 1.6,
+        clearcoat: 1.0, clearcoatRoughness: 0.12, envMapIntensity: 0.65,
       });
       group.add(new THREE.Mesh(glassGeo, glassMat));
 
       // kapsla / folia na szyjce (mosiądz)
       const capMat = new THREE.MeshStandardMaterial({ color: 0xc6a15b, metalness: 0.95, roughness: 0.32, envMapIntensity: 1.4 });
-      const capsule = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.02, 4.6, 40, 1, true), capMat);
+      const capsule = new THREE.Mesh(new THREE.CylinderGeometry(1.02, 0.92, 4.6, 40, 1, true), capMat);
       capsule.position.y = 21.5; group.add(capsule);
-      const capTop = new THREE.Mesh(new THREE.CylinderGeometry(1.16, 1.16, 0.5, 40), capMat);
+      const capTop = new THREE.Mesh(new THREE.CylinderGeometry(0.98, 0.98, 0.5, 40), capMat);
       capTop.position.y = 24.9; group.add(capTop);
 
       // korek
       const cork = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.9, 0.9, 1.4, 24),
+        new THREE.CylinderGeometry(0.78, 0.78, 1.4, 24),
         new THREE.MeshStandardMaterial({ color: 0x9a6b3c, roughness: 0.85 })
       );
       cork.position.y = 25.4; group.add(cork);
@@ -116,7 +125,7 @@
       const labelTex = new THREE.CanvasTexture(lc);
       labelTex.colorSpace = THREE.SRGBColorSpace; labelTex.anisotropy = 4;
       const arc = Math.PI * 0.78;
-      const labelGeo = new THREE.CylinderGeometry(4.54, 4.54, 5.4, 48, 1, true, -arc / 2, arc);
+      const labelGeo = new THREE.CylinderGeometry(3.94, 3.94, 5.6, 48, 1, true, -arc / 2, arc);
       const labelMat = new THREE.MeshStandardMaterial({ map: labelTex, roughness: 0.62, metalness: 0.0, side: THREE.DoubleSide, envMapIntensity: 0.5 });
       const label = new THREE.Mesh(labelGeo, labelMat);
       label.position.y = 6.7; group.add(label);
