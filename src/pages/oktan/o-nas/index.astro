@@ -1,0 +1,235 @@
+---
+import '../../../styles/oktan.css';
+import Foto from '../../../components/Foto.astro';
+import { oktan as biz } from '../../../data/firmy.js';
+
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/oktan`;
+const img = (p) => `${base}/img/${p}`;
+
+const nav = [
+  { href: `${root}/#uslugi`, label: 'Usługi' },
+  { href: `${root}/#cennik`, label: 'Cennik' },
+  { href: `${root}/#proces`, label: 'Proces' },
+  { href: `${root}/o-nas/`, label: 'O nas', current: true },
+  { href: `${root}/#galeria`, label: 'Realizacje' },
+  { href: `${root}/#opinie`, label: 'Opinie' },
+  { href: `${root}/#kontakt`, label: 'Kontakt' },
+];
+
+const wartosci = [
+  { b: 'Uczciwa wycena', s: 'Cenę znasz przed naprawą i płacisz dokładnie tyle. Nie dopisujemy nic po cichu.' },
+  { b: 'Bez wciskania na siłę', s: 'Mówimy, co trzeba zrobić teraz, a co spokojnie poczeka. Ty decydujesz.' },
+  { b: 'Gwarancja 24 miesiące', s: 'Na każdą robociznę. Coś nie tak po naprawie? Poprawiamy na nasz koszt.' },
+  { b: 'Nowoczesny sprzęt', s: 'Diagnostyka, geometria kół 3D i serwis klimatyzacji obu czynników.' },
+];
+
+const zespol = [
+  { imie: 'Marek Zieliński', rola: 'Właściciel, szef warsztatu', o: 'Od 2007 roku pod maską OKTAN. Pilnuje, żeby każda wycena była uczciwa, a każda naprawa dopięta.' },
+  { imie: 'Rafał Nowak', rola: 'Mechanik diagnosta', o: 'Elektronika i silniki nowej generacji. Jak coś miga na desce, on wie dlaczego i ile to naprawdę kosztuje.' },
+  { imie: 'Kamil Woźniak', rola: 'Mechanik', o: 'Zawieszenie, hamulce, rozrządy. Robota zawsze na czas i porządnie, bez chodzenia na skróty.' },
+  { imie: 'Adrian Lewandowski', rola: 'Elektryk samochodowy', o: 'Instalacja, czujniki, rozruch, komfort. Naprawia to, czego inni wolą nie tykać.' },
+  { imie: 'Tomasz Mazur', rola: 'Opony i geometria', o: 'Wymiana, wyważanie, geometria kół 3D. Dba, żeby auto jechało prosto i pewnie.' },
+  { imie: 'Piotr Kaczmarek', rola: 'Doradca serwisowy', o: 'Odbiera telefon i tłumaczy wszystko po ludzku. Twój pierwszy kontakt z warsztatem.' },
+];
+const inicjaly = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+---
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>O nas i zespół — OKTAN Serwis, Warszawa</title>
+    <meta name="description" content="Poznaj OKTAN — warszawski serwis samochodowy od 2007 roku. Zespół mechaników, którzy mówią wprost, ile zapłacisz. Uczciwa wycena, gwarancja 24 miesiące." />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta name="theme-color" content="#0e1013" />
+    <meta property="og:title" content="O nas i zespół — OKTAN Serwis, Warszawa" />
+    <meta property="og:description" content="Warszawski serwis od 2007 roku. Zespół, który mówi wprost, ile zapłacisz." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content={new URL(img('warsztat-galeria-1.webp'), Astro.url).href} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" />
+  </head>
+
+  <body>
+    <header class="top" id="top">
+      <div class="wrap top__in">
+        <a class="logo" href={`${root}/`} aria-label="OKTAN — strona główna">
+          <span class="logo__dot"></span>
+          <span>OKTAN<small>Serwis · Warszawa</small></span>
+        </a>
+        <nav class="nav" aria-label="Nawigacja">
+          {nav.map((l) => <a href={l.href} aria-current={l.current ? 'page' : undefined} style={l.current ? 'color:var(--ink)' : undefined}>{l.label}</a>)}
+        </nav>
+        <div class="top__cta">
+          <a class="top__tel" href={`tel:${tel}`}>{biz.phone}</a>
+          <a class="btn btn--red" href={`${root}/#umow`}>Umów wizytę</a>
+        </div>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span></button>
+      </div>
+    </header>
+
+    <div class="drawer" id="drawer">
+      {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href={`${root}/#umow`}>Umów wizytę</a>
+      <div class="drawer__foot">
+        <a href={`tel:${tel}`}>{biz.phone}</a>
+        <span>{biz.street}, {biz.city}</span>
+      </div>
+    </div>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero hero--short">
+        <div class="hero__media">
+          <Foto src="warsztat-galeria-1.webp" alt="Hala serwisu OKTAN z autami na stanowiskach" ratio="16/9" label="Warsztat" eager={true} />
+        </div>
+        <div class="wrap hero__in">
+          <p class="hero__tag">O nas · Warszawa-Praga</p>
+          <h1>Ludzie, którym <span class="mark">oddajesz kluczyki</span></h1>
+          <p class="hero__lede">
+            OKTAN to nie sieć i nie call center. To warsztat z twarzą — zespół mechaników,
+            którzy mówią wprost, co i za ile trzeba zrobić.
+          </p>
+        </div>
+      </section>
+
+      <!-- HISTORIA + WARTOŚCI -->
+      <section class="section">
+        <div class="wrap split split--rev">
+          <div class="reveal">
+            <p class="kicker">Skąd się wzięliśmy</p>
+            <h2 class="h2">Zaczęło się od jednego podnośnika</h2>
+            <p class="lede">
+              OKTAN otworzyliśmy w 2007 roku na warszawskiej Pradze: jeden podnośnik, dwie pary rąk
+              i prosta zasada — mówić klientowi prawdę.
+            </p>
+            <p class="lede" style="margin-top:1rem">
+              Dziś mamy sześć stanowisk i zespół, który ogarnia auta od miejskich maluchów po hybrydy.
+              Ale zasada się nie zmieniła: zarabiamy na dobrze zrobionej robocie i na tym, że wracasz —
+              nie na naciąganiu i strachu przed odbiorem auta.
+            </p>
+            <ul class="checks">
+              {wartosci.map((w) => (
+                <li>
+                  <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg></span>
+                  <span><b>{w.b}</b><span>{w.s}</span></span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="split__media reveal">
+            <Foto src="warsztat-galeria-6.webp" alt="Mechanik OKTAN przy pracy" ratio="4/3" label="Mechanik" />
+            <span class="tagbox">Na Pradze od 2007</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASEK LICZB -->
+      <section class="trust">
+        <div class="wrap trust__in">
+          <div class="trust__cell"><span class="trust__num">18</span><span class="trust__lab">lat na Pradze</span></div>
+          <div class="trust__cell"><span class="trust__num">6</span><span class="trust__lab">stanowisk</span></div>
+          <div class="trust__cell"><span class="trust__num">40<span class="mark">k+</span></span><span class="trust__lab">naprawionych aut</span></div>
+          <div class="trust__cell"><span class="trust__num">24</span><span class="trust__lab">mies. gwarancji</span></div>
+        </div>
+      </section>
+
+      <!-- ZESPÓŁ -->
+      <section class="section section--alt">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">Zespół</p>
+              <h2 class="h2">Poznaj ekipę OKTAN</h2>
+            </div>
+            <a class="btn btn--red" href={`${root}/#umow`}>Umów wizytę</a>
+          </div>
+          <div class="team">
+            {zespol.map((o) => (
+              <article class="member reveal">
+                <span class="member__ava" aria-hidden="true">{inicjaly(o.imie)}</span>
+                <h3>{o.imie}</h3>
+                <span class="member__role">{o.rola}</span>
+                <p>{o.o}</p>
+              </article>
+            ))}
+          </div>
+          <p class="note reveal mt-m">Imiona i opisy przykładowe — to demonstracyjna wizytówka warsztatu.</p>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section band">
+        <div class="wrap">
+          <p class="kicker kicker--center">Zapraszamy</p>
+          <h2>Podjedź i przekonaj się sam</h2>
+          <p>Umów wizytę online albo zadzwoń. Powiemy wprost, co trzeba zrobić i ile to kosztuje.</p>
+          <div class="band__cta">
+            <a class="btn btn--light" href={`${root}/#umow`}>Umów wizytę</a>
+            <a class="btn btn--outline-light" href={`tel:${tel}`}>Zadzwoń: {biz.phone}</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <div class="foot__grid">
+          <div>
+            <span class="logo"><span class="logo__dot"></span><span>OKTAN<small>Serwis · Warszawa</small></span></span>
+            <p class="foot__tag">{biz.tagline}</p>
+          </div>
+          <div>
+            <h4>Serwis</h4>
+            <ul>
+              <li>{biz.street}</li>
+              <li>{biz.zip} {biz.city}</li>
+              <li><a href={`tel:${tel}`}>{biz.phone}</a></li>
+              <li><a href={`mailto:${biz.email}`}>{biz.email}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Godziny</h4>
+            <ul>{biz.hours.map((h) => <li>{h}</li>)}</ul>
+            <h4 style="margin-top:1.5rem">Menu</h4>
+            <ul>
+              <li><a href={`${root}/`}>Strona główna</a></li>
+              <li><a href={`${root}/#cennik`}>Cennik</a></li>
+              <li><a href={`${root}/#umow`}>Umów wizytę</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__legal">
+          <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
+          <a href={`${root}/polityka-prywatnosci/`}>Polityka prywatności</a>
+        </div>
+      </div>
+    </footer>
+
+    <div class="callbar">
+      <a href={`${root}/#umow`}>Umów wizytę</a>
+      <a href={`tel:${tel}`}>Zadzwoń</a>
+    </div>
+
+    <script>
+      const top = document.getElementById('top');
+      const onScroll = () => top?.classList.toggle('stuck', window.scrollY > 30);
+      onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+      const burger = document.getElementById('burger');
+      const setMenu = (open?: boolean) => {
+        const o = open ?? !document.body.classList.contains('nav-open');
+        document.body.classList.toggle('nav-open', o);
+        burger?.setAttribute('aria-expanded', String(o));
+      };
+      burger?.addEventListener('click', () => setMenu());
+      document.querySelectorAll('#drawer a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+      const obs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); } }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      document.querySelectorAll('.reveal').forEach((el, i) => { (el as HTMLElement).style.transitionDelay = (Math.min(i % 3, 2) * 70) + 'ms'; obs.observe(el); });
+    </script>
+  </body>
+</html>
