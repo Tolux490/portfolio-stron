@@ -3,11 +3,10 @@ const b = import.meta.env.BASE_URL.replace(/\/$/, '');
 const site = Astro.site ? Astro.site.origin : 'https://vervostudio.com';
 const og = (p) => new URL(`${b}/og/${p}`, Astro.site || 'https://vervostudio.com/').href;
 
-// dane kontaktowe — na razie fikcyjne (demo)
-const email = 'kontakt@vervostudio.com';
-const telDisp = '+48 512 340 560';
-const tel = telDisp.replace(/[^+\d]/g, '');
-const formKey = ''; // klucz web3forms — puste = tryb demo (walidacja działa, nic nie wychodzi)
+// Formularz kontaktowy trafia na ten adres przez FormSubmit (bez konta i bez klucza).
+// WAŻNE: przy pierwszym wysłaniu FormSubmit przyśle na tę skrzynkę mail z linkiem
+// aktywacyjnym — kliknij go jeden raz, żeby kolejne zgłoszenia dochodziły.
+const email = 'antoni.antczak05@gmail.com';
 
 const nav = [
   { href: '#realizacje', label: 'Realizacje' },
@@ -26,9 +25,9 @@ const realizacje = [
 ];
 
 const oferta = [
-  { t: 'Responsywność', o: 'Idealnie na telefonie, tablecie i komputerze — bo większość klientów wchodzi z telefonu.' },
+  { t: 'Responsywność', o: 'Idealnie na telefonie, tablecie i komputerze, bo większość klientów wchodzi z telefonu.' },
   { t: 'Szybkość', o: 'Własny kod zamiast WordPressa i wtyczek. Strony ładują się poniżej sekundy.' },
-  { t: 'Formularze', o: 'Rezerwacje, umawianie, kontakt — działające, z powiadomieniem na e-mail i klauzulą RODO.' },
+  { t: 'Formularze', o: 'Rezerwacje, umawianie, kontakt. Działające, z powiadomieniem na e-mail i klauzulą RODO.' },
   { t: 'SEO na start', o: 'Poprawne tytuły, opisy, dane strukturalne i mapa strony, żeby Google widział Twoją firmę.' },
   { t: 'Bez cookies', o: 'Zero banerów zgody. Mapy i statystyki ładowane bez śledzenia i bez prawnego bałaganu.' },
   { t: 'Hosting i domena', o: 'Ogarniam całość: domenę, hosting i wdrożenie. Ty dostajesz gotową, działającą stronę.' },
@@ -62,7 +61,6 @@ const schema = {
   description: 'Projektowanie i tworzenie stron internetowych dla lokalnych firm.',
   url: site + '/',
   email: email,
-  telephone: telDisp,
   areaServed: 'Polska',
   serviceType: 'Projektowanie stron internetowych',
   priceRange: 'od 1500 zł',
@@ -93,7 +91,7 @@ const schema = {
     <meta name="twitter:image" content={og('vervo.png')} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&display=swap" />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
 
@@ -120,9 +118,9 @@ const schema = {
       <section class="hero">
         <div class="wrap">
           <p class="eyebrow">Vervo Studio · strony dla firm</p>
-          <h1>Strony internetowe,<br />które <span class="u">przynoszą klientów</span>.</h1>
+          <h1>Strony internetowe,<br />które <span class="u">przynoszą klientów</span></h1>
           <p class="hero__lede">
-            Projektuję i koduję strony dla lokalnych firm — restauracji, warsztatów, kawiarni, biur.
+            Projektuję i koduję strony dla lokalnych firm: restauracji, warsztatów, kawiarni, biur.
             Szybkie, ładne na telefonie, bez WordPressa i bez cookies. Gotowe w kilka dni.
           </p>
           <div class="hero__cta">
@@ -130,7 +128,7 @@ const schema = {
             <a class="btn btn--line" href="#realizacje">Zobacz realizacje</a>
           </div>
           <ul class="hero__facts">
-            <li><b>5</b> gotowych realizacji</li>
+            <li><b>100%</b> własny kod</li>
             <li><b>&lt;1 s</b> czas ładowania</li>
             <li><b>0</b> banerów cookies</li>
             <li><b>~3 dni</b> na prostą stronę</li>
@@ -142,8 +140,8 @@ const schema = {
       <section class="band" id="realizacje">
         <div class="wrap">
           <div class="sec__head">
-            <div><p class="label">Realizacje</p><h2 class="h2">Pięć branż, pięć charakterów.</h2></div>
-            <p class="sec__note">Kliknij, żeby zobaczyć każdą stronę na żywo. To działające dema — treści są przykładowe.</p>
+            <div><p class="label">Portfolio</p><h2 class="h2">Wybrane realizacje</h2></div>
+            <p class="sec__note">Przykładowe projekty. Kliknij, żeby zobaczyć każdy na żywo. To działające dema, treści są przykładowe.</p>
           </div>
           <div class="works">
             {realizacje.map((r) => (
@@ -160,7 +158,7 @@ const schema = {
             <a class="work work--project" href="https://tolux490.github.io/Fiches/" target="_blank" rel="noopener">
               <div class="work__top"><span class="work__bran">Projekt własny</span><span class="work__go" aria-hidden="true">Otwórz ↗</span></div>
               <h3>Fiches</h3>
-              <p>Aplikacja do nauki francuskiego — fiszki generowane przez AI. Dowód, że nie tylko projektuję, ale też koduję.</p>
+              <p>Aplikacja do nauki francuskiego, z fiszkami generowanymi przez AI. Dowód, że nie tylko projektuję, ale też koduję.</p>
               <ul class="tags"><li>Aplikacja</li><li>AI</li><li>Własny kod</li></ul>
             </a>
           </div>
@@ -170,7 +168,7 @@ const schema = {
       <!-- OFERTA -->
       <section class="band band--alt" id="oferta">
         <div class="wrap">
-          <div class="sec__head"><div><p class="label">Oferta</p><h2 class="h2">Co dostajesz w cenie.</h2></div></div>
+          <div class="sec__head"><div><p class="label">Oferta</p><h2 class="h2">Co dostajesz w cenie</h2></div></div>
           <div class="offer">
             {oferta.map((o) => (
               <div class="offer__i">
@@ -187,7 +185,7 @@ const schema = {
       <!-- CENNIK -->
       <section class="band" id="cennik">
         <div class="wrap">
-          <div class="sec__head"><div><p class="label">Cennik</p><h2 class="h2">Proste pakiety, jasne ceny.</h2></div></div>
+          <div class="sec__head"><div><p class="label">Cennik</p><h2 class="h2">Proste pakiety, jasne ceny</h2></div></div>
           <div class="plans">
             {pakiety.map((p) => (
               <div class={`plan${p.wyroz ? ' plan--hot' : ''}`}>
@@ -207,7 +205,7 @@ const schema = {
       <!-- PROCES -->
       <section class="band band--alt" id="proces">
         <div class="wrap">
-          <div class="sec__head"><div><p class="label">Proces</p><h2 class="h2">Jak to wygląda krok po kroku.</h2></div></div>
+          <div class="sec__head"><div><p class="label">Proces</p><h2 class="h2">Jak to wygląda krok po kroku</h2></div></div>
           <div class="steps">
             {proces.map((s, i) => (
               <div class="step"><span class="step__n">{String(i + 1).padStart(2, '0')}</span><h3>{s.t}</h3><p>{s.o}</p></div>
@@ -221,10 +219,10 @@ const schema = {
         <div class="wrap about">
           <div>
             <p class="label">O mnie</p>
-            <h2 class="h2">Cześć, tu Antoni.</h2>
+            <h2 class="h2">Cześć, tu Antoni</h2>
             <p class="about__p">
-              Projektuję i koduję strony dla lokalnych firm — sam, od początku do końca. Bez WordPressa, bez wtyczek,
-              które się psują, i bez ukrytych kosztów. Każdą stronę piszę własnym kodem, więc jest szybka, lekka i dokładnie taka, jak trzeba.
+              Projektuję i koduję strony dla lokalnych firm, sam od początku do końca. Bez WordPressa, bez wtyczek,
+              które się psują, i bez ukrytych kosztów. Każdą stronę piszę własnym kodem, więc jest szybka, lekka i dokładnie taka, jaka ma być.
             </p>
             <p class="about__p">
               Zależy mi, żeby Twoja strona nie była tylko ładna, ale realnie przynosiła telefony i rezerwacje.
@@ -243,13 +241,13 @@ const schema = {
       <!-- OPINIE -->
       <section class="band band--alt">
         <div class="wrap">
-          <div class="sec__head"><div><p class="label">Opinie</p><h2 class="h2">Co mówią klienci.</h2></div></div>
+          <div class="sec__head"><div><p class="label">Opinie</p><h2 class="h2">Co mówią klienci</h2></div></div>
           <div class="quotes">
             {opinie.map((o) => (
-              <figure class="quote"><blockquote>„{o.t}”</blockquote><figcaption>— {o.a}</figcaption></figure>
+              <figure class="quote"><blockquote>„{o.t}”</blockquote><figcaption>{o.a}</figcaption></figure>
             ))}
           </div>
-          <p class="fineprint">Opinie przykładowe — portfolio jest w budowie, prawdziwe referencje dodaję na bieżąco.</p>
+          <p class="fineprint">Opinie przykładowe. Portfolio jest w budowie, prawdziwe referencje dodaję na bieżąco.</p>
         </div>
       </section>
 
@@ -258,13 +256,11 @@ const schema = {
         <div class="wrap contact">
           <div>
             <p class="label">Kontakt</p>
-            <h2 class="h2">Napisz, wycenię za darmo.</h2>
-            <p class="about__p">Opisz krótko swoją firmę i czego potrzebujesz. Odpiszę zwykle tego samego dnia z wyceną i terminem — bez zobowiązań.</p>
+            <h2 class="h2">Napisz, wycenię za darmo</h2>
+            <p class="about__p">Opisz krótko swoją firmę i czego potrzebujesz. Odpiszę zwykle tego samego dnia z wyceną i terminem, bez zobowiązań.</p>
             <div class="contact__links">
               <a href={`mailto:${email}`}>{email}</a>
-              <a href={`tel:${tel}`}>{telDisp}</a>
             </div>
-            <p class="fineprint">Dane kontaktowe są na razie przykładowe (portfolio demonstracyjne).</p>
           </div>
           <form id="kForm" novalidate>
             <div class="frow">
@@ -279,6 +275,7 @@ const schema = {
             </div>
             <label class="fld"><span>Wiadomość</span><textarea name="wiadomosc" rows="4" placeholder="Kilka zdań o firmie i tym, czego potrzebujesz." required></textarea></label>
             <label class="consent"><input type="checkbox" name="zgoda" value="tak" required /><span>Zgadzam się na kontakt w sprawie mojego zapytania.</span></label>
+            <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0" />
             <button class="btn btn--dark kbtn" type="submit" id="kBtn">Wyślij zapytanie</button>
             <p class="kstat" id="kStat" role="status" aria-live="polite"></p>
           </form>
@@ -292,12 +289,12 @@ const schema = {
           <svg class="brand__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="brand__tx">Vervo <em>Studio</em></span>
         </a>
-        <p class="foot__tx">Strony internetowe dla lokalnych firm. Projekt, kod, wdrożenie i opieka — w jednym miejscu.</p>
+        <p class="foot__tx">Strony internetowe dla lokalnych firm. Projekt, kod, wdrożenie i opieka w jednym miejscu.</p>
         <p class="foot__legal">© {new Date().getFullYear()} Vervo Studio · <a href={`mailto:${email}`}>{email}</a></p>
       </div>
     </footer>
 
-    <script define:vars={{ formKey, email }}>
+    <script define:vars={{ email }}>
       const hdr = document.getElementById('hdr');
       const onScroll = () => hdr?.classList.toggle('stuck', window.scrollY > 20);
       onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
@@ -315,14 +312,24 @@ const schema = {
           if (!p.value.trim()) { p.closest('.fld')?.classList.add('bad'); ok = false; } else { p.closest('.fld')?.classList.remove('bad'); }
         });
         if (!ok) { stat.textContent = 'Uzupełnij wymagane pola i zgodę.'; stat.classList.add('err'); return; }
-        const dane = Object.fromEntries(new FormData(form).entries());
-        if (!formKey) { btn.disabled = true; stat.textContent = 'Dziękuję! (tryb demo — nic nie zostało wysłane). Wpisz klucz web3forms, aby uruchomić realną wysyłkę.'; stat.classList.add('ok'); form.reset(); setTimeout(() => btn.disabled = false, 400); return; }
+        const d = Object.fromEntries(new FormData(form).entries());
+        if (d._honey) return; // pułapka na boty
         try {
           btn.disabled = true; btn.textContent = 'Wysyłanie…';
-          const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ access_key: formKey, subject: `Zapytanie ze strony Vervo — ${dane.imie}`, ...dane }) });
+          const res = await fetch('https://formsubmit.co/ajax/' + email, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({
+              _subject: 'Nowe zapytanie ze strony Vervo Studio',
+              _template: 'table',
+              _captcha: 'false',
+              'Imię': d.imie, 'E-mail': d.email, 'Branża': d.branza || '(nie podano)', 'Budżet': d.budzet, 'Wiadomość': d.wiadomosc,
+            }),
+          });
           const r = await res.json();
-          if (r.success) { stat.textContent = 'Dziękuję! Odezwę się zwykle tego samego dnia.'; stat.classList.add('ok'); form.reset(); } else throw 0;
-        } catch { stat.textContent = `Nie udało się wysłać. Napisz bezpośrednio: ${email}`; stat.classList.add('err'); }
+          if (r.success === true || r.success === 'true') { stat.textContent = 'Dziękuję! Zapytanie wysłane, odezwę się zwykle tego samego dnia.'; stat.classList.add('ok'); form.reset(); }
+          else throw 0;
+        } catch { stat.textContent = 'Nie udało się wysłać. Napisz bezpośrednio na ' + email; stat.classList.add('err'); }
         finally { btn.disabled = false; btn.textContent = 'Wyślij zapytanie'; }
       });
     </script>
@@ -333,7 +340,7 @@ const schema = {
         --ink: #17191d; --ink-2: #3a3d44; --muted: #6c7075; --line: #e3e1da; --line-2: #d3d0c7;
         /* monochrom: „gold" = ciemny atrament (akcent na jasnym), „gold-2" = krem (akcent na ciemnym) */
         --gold: #17191d; --gold-2: #efede7; --dark: #17191d;
-        --font-d: 'Syne', system-ui, sans-serif; --font-b: 'Public Sans', system-ui, sans-serif;
+        --font-d: 'Public Sans', system-ui, sans-serif; --font-b: 'Public Sans', system-ui, sans-serif;
         --ease: cubic-bezier(0.22, 0.61, 0.36, 1); --maxw: 1180px;
       }
       * { box-sizing: border-box; }
@@ -349,9 +356,9 @@ const schema = {
       .wrap { width: min(100% - 2.5rem, var(--maxw)); margin-inline: auto; }
       .band { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
       .band--alt { background: var(--paper-2); }
-      .label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+      .label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
       .h2 { font-size: clamp(1.9rem, 4.4vw, 3rem); }
-      .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem; }
+      .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem; }
       .u { background: linear-gradient(transparent 62%, rgba(23,25,29,0.12) 0); }
       .fineprint { font-size: 0.82rem; color: var(--muted); margin-top: 1.75rem; max-width: 62ch; }
 
@@ -404,7 +411,7 @@ const schema = {
       .work { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 1.8rem; display: flex; flex-direction: column; gap: 0.75rem; transition: transform 0.3s var(--ease), border-color 0.3s, box-shadow 0.3s; }
       .work:hover { transform: translateY(-4px); border-color: var(--line-2); box-shadow: 0 18px 40px -22px rgba(0,0,0,0.35); }
       .work__top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-      .work__bran { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+      .work__bran { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--gold); }
       .work__go { font-size: 0.8rem; font-weight: 600; color: var(--muted); transition: color 0.2s; }
       .work:hover .work__go { color: var(--ink); }
       .work h3 { font-size: 1.7rem; }

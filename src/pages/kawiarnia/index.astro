@@ -99,7 +99,7 @@ const opinie = [
     <section class="hero" id="gora">
       <div class="hero__tekst">
         <p class="hero__kicker">Kawiarnia speciality · {biz.city}</p>
-        <h1>Dzień dobry<br /><em>zaczyna się tutaj.</em></h1>
+        <h1>Dzień dobry<br /><em>zaczyna się tutaj</em></h1>
         <p class="hero__lede">
           Przelewy z ziaren palonych dwa tygodnie przed zaparzeniem, matcha
           ceremonialna z Uji i wypieki, które wyjmujemy z pieca o siódmej rano.
@@ -122,7 +122,7 @@ const opinie = [
     <section id="menu" class="band">
       <div class="wrap--srodek">
         <p class="label reveal">Menu</p>
-        <h2 class="h2 reveal">Krótka karta, wszystko na miejscu.</h2>
+        <h2 class="h2 reveal">Krótka karta, wszystko na miejscu</h2>
 
         <div class="menu__filtry reveal" role="tablist" aria-label="Kategorie menu">
           <button class="menu__filtr is-active" data-kat="wszystko" role="tab" aria-selected="true">Wszystko</button>
@@ -149,7 +149,7 @@ const opinie = [
             </div>
           ))}
         </div>
-        <p class="drobne">Ceny w złotych. Mleko roślinne do każdej kawy bez dopłaty. Skład i alergeny — pytaj przy barze.</p>
+        <p class="drobne">Ceny w złotych. Mleko roślinne do każdej kawy bez dopłaty. Skład i alergeny podamy przy barze.</p>
       </div>
     </section>
 
@@ -163,10 +163,10 @@ const opinie = [
       <div class="wrap karta">
         <div class="reveal">
           <p class="label">Karta stałego gościa</p>
-          <h2 class="h2">Ósma kawa jest od nas.</h2>
+          <h2 class="h2">Ósma kawa jest od nas</h2>
           <p class="lede">
-            Bez aplikacji i bez konta. Karta zapisuje się w Twoim telefonie —
-            przy kasie pokazujesz ekran, my przybijamy pieczątkę.
+            Bez aplikacji i bez konta. Karta zapisuje się w Twoim telefonie,
+            przy kasie pokazujesz ekran, a my przybijamy pieczątkę.
           </p>
           <p class="karta__nota">
             Wersja pokazowa: pieczątkę „przybijasz" sam przyciskiem, żeby zobaczyć,
@@ -180,7 +180,7 @@ const opinie = [
             <span class="karta__licznik" id="kartaLicznik">0 / 8</span>
           </div>
           <div class="karta__pola" id="kartaPola" aria-live="polite"></div>
-          <p class="karta__stan" id="kartaStan">Zbierz osiem pieczątek — ósma kawa dowolna, na nasz koszt.</p>
+          <p class="karta__stan" id="kartaStan">Zbierz osiem pieczątek, ósma kawa dowolna, na nasz koszt.</p>
           <div class="karta__akcje">
             <button class="btn btn--pelny-jasny" id="kartaDodaj" type="button">Przybij pieczątkę</button>
             <button class="karta__reset" id="kartaReset" type="button">Wyczyść kartę</button>
@@ -193,7 +193,7 @@ const opinie = [
     <section class="band">
       <div class="wrap--srodek reveal" style="margin-bottom:2.5rem">
         <p class="label">Z naszego baru</p>
-        <h2 class="h2">Codziennie świeżo.</h2>
+        <h2 class="h2">Codziennie świeżo</h2>
       </div>
       <div class="wrap galeria">
         <div class="galeria__kadr reveal">
@@ -225,7 +225,7 @@ const opinie = [
       <div class="wrap miejsce">
         <div class="reveal">
           <p class="label">Miejsce</p>
-          <h2 class="h2">Sto metrów od rynku.</h2>
+          <h2 class="h2">Sto metrów od rynku</h2>
           <address class="miejsce__adres">
             {biz.street}<br />{biz.zip} {biz.city}
           </address>
@@ -241,7 +241,7 @@ const opinie = [
 
         <div class="mapa reveal" id="mapa" data-src={mapEmbed}>
           <div class="mapa__zaslepka" id="mapaZaslepka">
-            <p>Mapa Google ładuje się po kliknięciu —<br />dzięki temu strona nie zapisuje cookies bez Twojej decyzji.</p>
+            <p>Mapa Google ładuje się po kliknięciu.<br />Dzięki temu strona nie zapisuje cookies bez Twojej decyzji.</p>
             <button class="btn btn--pelny" id="mapaPokaz" type="button">Pokaż mapę</button>
           </div>
         </div>
@@ -323,12 +323,10 @@ const opinie = [
   .band--papier { background: var(--papier-2); }
 
   .label {
-    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--zielen); margin-bottom: 1.6rem; display: flex; align-items: center; gap: 0.85rem;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--zielen); margin-bottom: 1.6rem; display: inline-block;
   }
-  .label::before { content: ''; width: 2rem; height: 1px; background: var(--zielen); flex: none; }
   .band--ciemny .label { color: var(--papier); opacity: 0.85; }
-  .band--ciemny .label::before { background: var(--papier); }
 
   .h2 { font-size: clamp(2rem, 5vw, 3.4rem); }
   .lede { font-size: clamp(1rem, 1.6vw, 1.14rem); color: var(--dym); max-width: 50ch; margin-top: 1.5rem; }
@@ -337,7 +335,7 @@ const opinie = [
 
   .btn {
     display: inline-flex; align-items: center; gap: 0.7rem; padding: 1rem 1.9rem;
-    font-size: 0.76rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    font-size: 0.76rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
     border-radius: 999px; border: 1px solid transparent;
     transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease);
   }
@@ -359,7 +357,7 @@ const opinie = [
     display: grid; place-items: center; text-align: center; padding: 1.5rem;
     background: linear-gradient(140deg, rgba(70,84,58,0.08), transparent 55%), var(--papier-2);
     border: 1px solid var(--linia); color: var(--dym);
-    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+    font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
   }
   .band--ciemny .ph { background: var(--espresso-2); border-color: var(--linia-jasna); color: var(--dym-jasny); }
 
@@ -376,7 +374,7 @@ const opinie = [
   .hdr__mark { font-family: var(--serif); font-size: 1.5rem; line-height: 1; }
   .hdr__mark span, .karta__logo span, .stopka__mark span { color: var(--zielen); }
   .hdr__nav { display: none; gap: 2.2rem; }
-  .hdr__nav a { font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dym); transition: color 0.3s var(--ease); }
+  .hdr__nav a { font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dym); transition: color 0.3s var(--ease); }
   .hdr__nav a:hover { color: var(--espresso); }
   .hdr__social { display: flex; align-items: center; gap: 1rem; }
   .hdr__social a { display: grid; place-items: center; }
@@ -387,7 +385,7 @@ const opinie = [
   .hero { min-height: 100svh; display: grid; align-items: stretch; }
   @media (min-width: 940px) { .hero { grid-template-columns: 1.05fr 0.95fr; } }
   .hero__tekst { display: flex; flex-direction: column; justify-content: center; padding: clamp(7rem, 14vh, 10rem) clamp(1.5rem, 5vw, 5rem) clamp(3rem, 6vh, 5rem); }
-  .hero__kicker { font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--zielen); margin-bottom: 1.5rem; font-weight: 600; }
+  .hero__kicker { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--zielen); margin-bottom: 1.5rem; font-weight: 600; }
   .hero h1 { font-size: clamp(2.9rem, 7.5vw, 5.6rem); }
   .hero h1 em { font-style: italic; color: var(--zielen); }
   .hero__lede { margin-top: 1.6rem; max-width: 44ch; color: var(--dym); font-size: clamp(1rem, 1.7vw, 1.15rem); }
@@ -447,7 +445,7 @@ const opinie = [
   .opinie figure { margin: 0; border-top: 1px solid var(--linia); padding-top: 1.6rem; }
   .opinie blockquote { margin: 0; }
   .opinie blockquote p { font-family: var(--serif); font-size: 1.25rem; line-height: 1.4; font-style: italic; }
-  .opinie figcaption { margin-top: 1rem; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dym); }
+  .opinie figcaption { margin-top: 1rem; font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--dym); }
 
   /* ---------- miejsce + mapa ---------- */
   .miejsce { display: grid; gap: 3rem; align-items: start; }
@@ -470,13 +468,13 @@ const opinie = [
   @media (min-width: 820px) { .stopka__gora { grid-template-columns: 1.4fr 1fr 1fr; } }
   .stopka__mark { font-family: var(--serif); font-size: 1.7rem; }
   .stopka__tag { color: var(--dym-jasny); font-size: 0.9rem; margin-top: 0.5rem; max-width: 32ch; }
-  .stopka__kol h3 { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dym-jasny); margin-bottom: 1rem; }
+  .stopka__kol h3 { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dym-jasny); margin-bottom: 1rem; }
   .stopka__kol a { display: block; padding: 0.25rem 0; font-size: 0.92rem; }
   .stopka__kol a:hover { text-decoration: underline; }
   .stopka__dol { border-top: 1px solid var(--linia-jasna); padding-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.6rem 2rem; justify-content: space-between; font-size: 0.74rem; color: var(--dym-jasny); }
 
   .pasek { position: fixed; inset: auto 0 0 0; z-index: 70; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--linia); background: rgba(248,245,238,0.95); backdrop-filter: blur(10px); }
-  .pasek a { padding: 1rem 0.5rem; text-align: center; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+  .pasek a { padding: 1rem 0.5rem; text-align: center; font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase; }
   .pasek a:first-child { background: var(--espresso); color: var(--papier); }
   body { padding-bottom: 3.4rem; }
   @media (min-width: 1000px) { .pasek { display: none; } body { padding-bottom: 0; } }
@@ -569,9 +567,9 @@ const opinie = [
     panel?.classList.toggle('is-gotowe', n >= LIMIT);
     stan.textContent =
       n >= LIMIT
-        ? 'Karta pełna — pokaż ten ekran przy barze, ósma kawa jest od nas. ☕'
+        ? 'Karta pełna! Pokaż ten ekran przy barze, ósma kawa jest od nas. ☕'
         : n === 0
-          ? 'Zbierz osiem pieczątek — ósma kawa dowolna, na nasz koszt.'
+          ? 'Zbierz osiem pieczątek, ósma kawa dowolna, na nasz koszt.'
           : `Jeszcze ${LIMIT - n} ${LIMIT - n === 1 ? 'pieczątka' : LIMIT - n < 5 ? 'pieczątki' : 'pieczątek'} do darmowej kawy.`;
   }
 
