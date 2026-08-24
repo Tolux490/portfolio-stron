@@ -5,8 +5,12 @@
 
 const CONFIG = {
   /* --- CMS smaków przez Arkusz Google ---
-     1. Zrób arkusz z kolumnami: lokal | smak | opis | tag | widoczny
-        (lokal = id lokalu np. "kobylka" albo "wszystkie"; widoczny = tak/nie)
+     1. Zrób arkusz z kolumnami: smak | opis | tag | widoczny | + kolumna na KAŻDY lokal
+        Nagłówki lokali: Kobyłka | Zielonka | Marki | Radzymin | Wołomin Piłsudskiego |
+        Wołomin Kościelna | Białołęka | Targówek  (opcjonalnie kolumna "Wszystkie").
+        W kolumnie lokalu wstaw "x" lub checkbox = smak jest dziś w tym lokalu.
+        Pusto we wszystkich lokalach = smak wszędzie. "widoczny" = tak/nie (ukrycie smaku).
+        (Zgodność wstecz: działa też stara kolumna "lokal" z jedną wartością lub listą po przecinku.)
      2. Plik → Udostępnij → Opublikuj w internecie → wybierz arkusz, format CSV.
      3. Wklej tutaj otrzymany link CSV.
      Puste = tryb pokazowy (strona używa smaków z listy FLAVORS poniżej). */
