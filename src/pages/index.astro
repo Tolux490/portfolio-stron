@@ -91,7 +91,7 @@ const schema = {
     <meta name="twitter:image" content={og('vervo.png')} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
 
@@ -340,7 +340,7 @@ const schema = {
         --ink: #17191d; --ink-2: #3a3d44; --muted: #6c7075; --line: #e3e1da; --line-2: #d3d0c7;
         /* monochrom: „gold" = ciemny atrament (akcent na jasnym), „gold-2" = krem (akcent na ciemnym) */
         --gold: #17191d; --gold-2: #efede7; --dark: #17191d;
-        --font-d: 'Public Sans', system-ui, sans-serif; --font-b: 'Public Sans', system-ui, sans-serif;
+        --font-d: 'Manrope', system-ui, -apple-system, sans-serif; --font-b: 'Manrope', system-ui, -apple-system, sans-serif;
         --ease: cubic-bezier(0.22, 0.61, 0.36, 1); --maxw: 1180px;
       }
       * { box-sizing: border-box; }
@@ -351,7 +351,7 @@ const schema = {
       a { color: inherit; text-decoration: none; }
       button { font: inherit; cursor: pointer; }
       :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
-      h1, h2, h3 { font-family: var(--font-d); font-weight: 800; line-height: 1.04; letter-spacing: -0.02em; margin: 0; }
+      h1, h2, h3 { font-family: var(--font-d); font-weight: 700; line-height: 1.08; letter-spacing: -0.025em; margin: 0; }
       p { margin: 0; }
       .wrap { width: min(100% - 2.5rem, var(--maxw)); margin-inline: auto; }
       .band { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
@@ -359,7 +359,7 @@ const schema = {
       .label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
       .h2 { font-size: clamp(1.9rem, 4.4vw, 3rem); }
       .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem; }
-      .u { background: linear-gradient(transparent 62%, rgba(23,25,29,0.12) 0); }
+      .u { background: linear-gradient(transparent 87%, rgba(23,25,29,0.32) 0); padding-bottom: 0.02em; }
       .fineprint { font-size: 0.82rem; color: var(--muted); margin-top: 1.75rem; max-width: 62ch; }
 
       .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.95rem 1.7rem; font-weight: 700; font-size: 0.9rem; border-radius: 3px; border: 2px solid transparent; transition: all 0.25s var(--ease); }
@@ -394,8 +394,8 @@ const schema = {
 
       /* hero */
       .hero { padding-top: clamp(8rem, 18vh, 12rem); padding-bottom: clamp(3rem, 8vw, 5rem); }
-      .hero h1 { font-size: clamp(2.6rem, 7vw, 5.2rem); }
-      .hero__lede { font-size: clamp(1.05rem, 1.8vw, 1.3rem); color: var(--ink-2); max-width: 52ch; margin-top: 1.6rem; }
+      .hero h1 { font-size: clamp(2.5rem, 6.6vw, 4.9rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1.08; }
+      .hero__lede { font-size: clamp(1.05rem, 1.7vw, 1.28rem); font-weight: 400; color: var(--ink-2); max-width: 50ch; margin-top: 1.7rem; line-height: 1.6; }
       .hero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
       .hero__facts { list-style: none; margin: 3rem 0 0; padding: 2rem 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
       @media (min-width: 720px) { .hero__facts { grid-template-columns: repeat(4, 1fr); } }
