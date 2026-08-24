@@ -1,0 +1,155 @@
+---
+// Kosmiczne tło: pole gwiazd + proceduralna asteroida, która dryfuje wraz ze scrollem.
+// Three.js jest wbudowany w projekt (bez CDN). Na telefonie lżejsze, przy reduced-motion bez auto-obrotu.
+---
+<div class="cosmos" id="cosmos" aria-hidden="true"></div>
+
+<script>
+  import * as THREE from 'three';
+
+  const host = document.getElementById('cosmos');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mobile = window.matchMedia('(max-width: 820px)').matches;
+
+  if (host) {
+    try {
+      const W = () => host.clientWidth || innerWidth || document.documentElement.clientWidth || 1;
+      const H = () => host.clientHeight || innerHeight || document.documentElement.clientHeight || 1;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(55, W() / H(), 0.1, 400);
+      camera.position.set(0, 0, 6);
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !mobile, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 2));
+      renderer.setSize(W(), H());
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      host.appendChild(renderer.domElement);
+
+      // ——— światła ———
+      scene.add(new THREE.AmbientLight(0x2a3550, 0.6));
+      const sun = new THREE.DirectionalLight(0xfff1dc, 3.2); sun.position.set(6, 3.5, 4); scene.add(sun);
+      const rim = new THREE.DirectionalLight(0x3f6bd6, 1.1); rim.position.set(-6, -2, -4); scene.add(rim);
+
+      // ——— pole gwiazd (dwie warstwy dla parallaxu) ———
+      function stars(count, spread, size, opacity) {
+        const g = new THREE.BufferGeometry();
+        const pos = new Float32Array(count * 3);
+        const col = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+          pos[i * 3] = (Math.random() - 0.5) * spread;
+          pos[i * 3 + 1] = (Math.random() - 0.5) * spread;
+          pos[i * 3 + 2] = (Math.random() - 0.5) * spread;
+          const w = 0.75 + Math.random() * 0.25;
+          const t = Math.random();
+          col[i * 3] = w * (0.9 + t * 0.1);
+          col[i * 3 + 1] = w * (0.92 + (1 - t) * 0.06);
+          col[i * 3 + 2] = w;
+        }
+        g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        const m = new THREE.PointsMaterial({ size, sizeAttenuation: true, vertexColors: true, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending });
+        return new THREE.Points(g, m);
+      }
+      const starFar = stars(mobile ? 1600 : 3600, 140, 0.28, 0.75);
+      const starNear = stars(mobile ? 600 : 1300, 70, 0.5, 0.95);
+      scene.add(starFar, starNear);
+
+      // ——— proceduralna asteroida ———
+      const hash = (x, y, z) => { const s = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453; return s - Math.floor(s); };
+      const sm = (t) => t * t * (3 - 2 * t);
+      const lp = (a, b, t) => a + (b - a) * t;
+      function vnoise(x, y, z) {
+        const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+        const u = sm(x - xi), v = sm(y - yi), w = sm(z - zi);
+        const c000 = hash(xi, yi, zi), c100 = hash(xi + 1, yi, zi), c010 = hash(xi, yi + 1, zi), c110 = hash(xi + 1, yi + 1, zi);
+        const c001 = hash(xi, yi, zi + 1), c101 = hash(xi + 1, yi, zi + 1), c011 = hash(xi, yi + 1, zi + 1), c111 = hash(xi + 1, yi + 1, zi + 1);
+        return lp(lp(lp(c000, c100, u), lp(c010, c110, u), v), lp(lp(c001, c101, u), lp(c011, c111, u), v), w);
+      }
+      const fbm = (x, y, z) => { let a = 0, amp = 0.5, f = 1; for (let i = 0; i < 4; i++) { a += amp * vnoise(x * f, y * f, z * f); f *= 2; amp *= 0.5; } return a; };
+
+      // kratery
+      const craters = [];
+      for (let i = 0; i < 10; i++) {
+        const d = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+        craters.push({ d, r: 0.28 + Math.random() * 0.34, depth: 0.1 + Math.random() * 0.16 });
+      }
+
+      const R = 1.6;
+      const geo = new THREE.IcosahedronGeometry(R, mobile ? 4 : 5);
+      const p = geo.attributes.position;
+      const v = new THREE.Vector3();
+      for (let i = 0; i < p.count; i++) {
+        v.fromBufferAttribute(p, i).normalize();
+        let disp = 0.26 * (fbm(v.x * 2.1 + 10, v.y * 2.1, v.z * 2.1) - 0.5) * 2;
+        disp += 0.09 * (fbm(v.x * 5 + 3, v.y * 5, v.z * 5) - 0.5) * 2;
+        let crater = 0;
+        for (const c of craters) {
+          const ang = Math.acos(Math.min(1, Math.max(-1, v.dot(c.d))));
+          if (ang < c.r) { const t = ang / c.r; crater += c.depth * (Math.cos(t * Math.PI) * 0.5 + 0.5); }
+        }
+        const rr = R * (1 + disp) - crater;
+        p.setXYZ(i, v.x * rr, v.y * rr, v.z * rr);
+      }
+      geo.computeVertexNormals();
+      const rock = new THREE.MeshStandardMaterial({ color: 0x8f857a, roughness: 0.96, metalness: 0.18, flatShading: true });
+      const asteroid = new THREE.Mesh(geo, rock);
+      asteroid.position.set(2.4, 0.9, 0);
+      asteroid.rotation.set(0.4, 0.6, 0.1);
+      scene.add(asteroid);
+
+      // ——— responsywność + pointer ———
+      function resize() { camera.aspect = W() / H(); camera.updateProjectionMatrix(); renderer.setSize(W(), H()); }
+      addEventListener('resize', resize, { passive: true });
+      let px = 0, py = 0;
+      if (!mobile) addEventListener('pointermove', (e) => { px = e.clientX / innerWidth - 0.5; py = e.clientY / innerHeight - 0.5; }, { passive: true });
+
+      // ——— animacja ———
+      const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+      const start = performance.now();
+      function frame(now) {
+        requestAnimationFrame(frame);
+        const t = (now - start) / 1000;
+        const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+        const prog = clamp(scrollY / max, 0, 1);
+
+        // asteroida dryfuje przez stronę i oddala się w głąb
+        asteroid.position.x = 2.4 - prog * 6.4;
+        asteroid.position.y = 0.9 - prog * 3.0;
+        asteroid.position.z = -prog * 5.0;
+        const s = 1 - prog * 0.4; asteroid.scale.set(s, s, s);
+        if (!reduce) { asteroid.rotation.y += 0.0016; asteroid.rotation.x += 0.0006; }
+        asteroid.rotation.z = 0.1 + prog * 0.5;
+
+        starNear.rotation.y = t * 0.005 + px * 0.1;
+        starFar.rotation.y = t * 0.002;
+        starNear.position.y = prog * 3;
+
+        camera.position.x += ((px * 0.5) - camera.position.x) * 0.05;
+        camera.position.y += ((-py * 0.35) - camera.position.y) * 0.05;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+      renderer.render(scene, camera); // pierwsza klatka od razu
+      requestAnimationFrame(frame);
+
+      host.style.opacity = '1';
+    } catch (err) {
+      console.warn('Cosmos wyłączony:', err);
+      host.style.display = 'none';
+    }
+  }
+</script>
+
+<style>
+  .cosmos {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    opacity: 0; transition: opacity 1.2s ease;
+    background:
+      radial-gradient(130% 90% at 72% 18%, #141a2b 0%, #0a0c16 45%, #05060b 72%, #030308 100%);
+  }
+  .cosmos canvas { width: 100% !important; height: 100% !important; display: block; }
+</style>
