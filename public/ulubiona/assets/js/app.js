@@ -148,8 +148,7 @@
         <h3 class="prod__name">${c.name}</h3>
         <p class="prod__meta">${c.variant} · ${c.weight}</p>
         <p class="prod__desc">${c.desc}</p>
-        <div class="prod__foot"><span class="prod__price">${c.price}</span>
-          <a class="btn btn--sm" href="#kontakt" data-prefill="Chcę zamówić kawę: ${c.name} (${c.variant}, ${c.weight}).">Zamów</a></div>
+        <div class="prod__foot"><span class="prod__price">${c.price}</span><span class="prod__note">Do kupienia w lokalu</span></div>
       </article>`).join("");
 
     /* --- OPINIE --- */
@@ -185,14 +184,6 @@
         btn.closest(".faq").classList.toggle("is-open", !open);
       }));
     }
-
-    /* --- prefill formularza z przycisków "Zamów" --- */
-    $$("[data-prefill]").forEach((a) => a.addEventListener("click", () => {
-      const msg = $("#contactForm [name=message]");
-      if (msg) { msg.value = a.dataset.prefill; }
-      const type = $("#contactForm [name=temat]");
-      if (type) type.value = "Zamówienie kawy";
-    }));
   }
 
   /* =====================================================================

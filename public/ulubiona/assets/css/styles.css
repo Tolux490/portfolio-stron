@@ -247,6 +247,7 @@ p { text-wrap: pretty; }
 .prod__desc { margin-top: 0.7rem; font-size: 0.9rem; color: var(--ink-2); }
 .prod__foot { margin-top: 1.2rem; display: flex; align-items: center; justify-content: space-between; }
 .prod__price { font-family: var(--display); font-size: 1.35rem; }
+.prod__note { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
 
 /* =====================================================================
    OPINIE
