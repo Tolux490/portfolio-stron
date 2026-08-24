@@ -13,6 +13,7 @@ const nav = [
   { href: '#oferta', label: 'Oferta' },
   { href: '#cennik', label: 'Cennik' },
   { href: '#proces', label: 'Proces' },
+  { href: '#faq', label: 'FAQ' },
   { href: '#kontakt', label: 'Kontakt' },
 ];
 
@@ -34,9 +35,9 @@ const oferta = [
 ];
 
 const pakiety = [
-  { t: 'Wizytówka', cena: '1 500', gdy: 'od', opis: 'Jednostronicowa strona-wizytówka.', co: ['Jedna dopracowana strona', 'Formularz kontaktowy', 'Mapa i godziny', 'Podstawowe SEO', 'Gotowa w ~3 dni'], wyroz: false },
-  { t: 'Strona firmowa', cena: '3 000', gdy: 'od', opis: 'Kilka sekcji lub podstron pod Twoją branżę.', co: ['Do kilku podstron', 'Galeria / cennik / oferta', 'Rezerwacje lub umawianie', 'Pełne SEO + dane strukturalne', 'Hosting i domena w cenie', 'Gotowa w 1–2 tygodnie'], wyroz: true },
-  { t: 'Na miarę', cena: 'wycena', gdy: '', opis: 'Większe projekty i integracje.', co: ['Sklep / rezerwacje / panel', 'Integracje i płatności', 'Wielojęzyczność', 'Indywidualny projekt', 'Wycena po rozmowie'], wyroz: false },
+  { t: 'Wizytówka', cena: '800', gdy: '', opis: 'Jednostronicowa strona-wizytówka. Idealna na start.', co: ['Jedna dopracowana strona', 'Formularz kontaktowy', 'Mapa, godziny, dojazd', 'Podstawowe SEO', 'Hosting i domena: 1. rok gratis', 'Gotowa w ~7 dni'], wyroz: true, badge: 'Promocja startowa' },
+  { t: 'Strona firmowa', cena: '1 900', gdy: 'od', opis: 'Kilka sekcji lub podstron pod Twoją branżę.', co: ['Do kilku podstron', 'Galeria, cennik lub oferta', 'Rezerwacje lub umawianie', 'Pełne SEO + dane strukturalne', 'Hosting i domena w cenie', 'Gotowa w 1–2 tygodnie'], wyroz: false },
+  { t: 'Sklep / na miarę', cena: 'wycena', gdy: '', opis: 'Większe projekty i integracje.', co: ['Sklep, rezerwacje lub panel', 'Integracje i płatności', 'Wielojęzyczność', 'Indywidualny projekt', 'Wycena po rozmowie'], wyroz: false },
 ];
 
 const proces = [
@@ -52,19 +53,38 @@ const opinie = [
   { a: 'Kawiarnia', t: 'Ogarnął wszystko: projekt, teksty, wdrożenie i domenę. Ja tylko przysłałam zdjęcia. Polecam.' },
 ];
 
-const budzety = ['do 2 000 zł', '2 000 – 4 000 zł', '4 000 – 8 000 zł', 'powyżej 8 000 zł', 'jeszcze nie wiem'];
+const budzety = ['do 1 000 zł (wizytówka)', '1 000 – 2 500 zł', '2 500 – 5 000 zł', 'powyżej 5 000 zł', 'jeszcze nie wiem'];
+
+const faq = [
+  { q: 'Ile kosztuje strona internetowa dla firmy?', a: 'Prosta strona-wizytówka to 800 zł w promocji startowej, a rozbudowana strona firmowa od 1 900 zł. Dokładną cenę podaję po krótkiej, darmowej rozmowie, bez ukrytych kosztów.' },
+  { q: 'Jak długo trwa zrobienie strony?', a: 'Stronę-wizytówkę robię zwykle w około 7 dni, a większą stronę firmową w 1 do 2 tygodni. Wszystko zależy od tego, ile treści i zdjęć trzeba przygotować.' },
+  { q: 'Czy dostanę własną domenę i hosting?', a: 'Tak. Ogarniam całość: domenę, hosting i wdrożenie. Przy stronie-wizytówce pierwszy rok domeny i hostingu masz w cenie.' },
+  { q: 'Czy strona będzie widoczna w Google?', a: 'Tak. Każdą stronę przygotowuję pod SEO: poprawne tytuły, opisy, dane strukturalne i mapę strony, żeby Google od początku widział Twoją firmę. Pomagam też założyć wizytówkę Google.' },
+  { q: 'Czy mogę później coś zmienić na stronie?', a: 'Jasne. Drobne zmiany wprowadzam w ramach utrzymania: przy stronie-wizytówce 100 zł miesięcznie, przy większych stronach ustalamy indywidualnie. Po wdrożeniu nie zostajesz sam.' },
+  { q: 'Dlaczego strony bez WordPressa?', a: 'Bo własny kod jest szybszy, lżejszy i bezpieczniejszy. Nic się nie zawiesza, nie ma wtyczek do aktualizowania ani podatności, a strona ładuje się poniżej sekundy.' },
+];
 
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
   name: 'Vervo Studio',
-  description: 'Projektowanie i tworzenie stron internetowych dla lokalnych firm.',
+  description: 'Projektowanie i tworzenie stron internetowych dla lokalnych firm. Strona-wizytówka od 800 zł.',
   url: site + '/',
   email: email,
-  areaServed: 'Polska',
+  areaServed: ['Warszawa', 'Wołomin', 'Polska'],
   serviceType: 'Projektowanie stron internetowych',
-  priceRange: 'od 1500 zł',
+  priceRange: 'od 800 zł',
   image: og('vervo.png'),
+  offers: [
+    { '@type': 'Offer', name: 'Strona-wizytówka', price: '800', priceCurrency: 'PLN' },
+    { '@type': 'Offer', name: 'Strona firmowa', price: '1900', priceCurrency: 'PLN' },
+  ],
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 };
 ---
 <!doctype html>
@@ -72,27 +92,29 @@ const schema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Vervo Studio — strony internetowe dla lokalnych firm</title>
-    <meta name="description" content="Projektuję i buduję szybkie, responsywne strony internetowe dla lokalnych firm. Bez WordPressa, bez cookies, gotowe w kilka dni. Zobacz realizacje i napisz po wycenę." />
+    <title>Strony internetowe dla firm od 800 zł | Vervo Studio</title>
+    <meta name="description" content="Tania i szybka strona internetowa dla Twojej firmy. Strona-wizytówka od 800 zł, firmowa od 1900 zł. Bez WordPressa, gotowa w tydzień, widoczna w Google. Warszawa i okolice." />
+    <meta name="keywords" content="strona internetowa dla firmy, tania strona internetowa, strona wizytówka, projektowanie stron, strony dla firm Warszawa, twórca stron internetowych" />
     <link rel="canonical" href={site + '/'} />
     <meta name="theme-color" content="#f7f6f2" />
     <link rel="icon" href={`${b}/favicon.svg`} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
     <meta property="og:site_name" content="Vervo Studio" />
-    <meta property="og:title" content="Vervo Studio — strony internetowe dla lokalnych firm" />
-    <meta property="og:description" content="Szybkie, responsywne strony dla lokalnych firm. Bez WordPressa, bez cookies. Zobacz realizacje." />
+    <meta property="og:title" content="Strony internetowe dla firm od 800 zł | Vervo Studio" />
+    <meta property="og:description" content="Tania, szybka strona dla Twojej firmy. Wizytówka od 800 zł, firmowa od 1900 zł. Bez WordPressa, gotowa w tydzień, widoczna w Google." />
     <meta property="og:image" content={og('vervo.png')} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Vervo Studio — strony internetowe dla lokalnych firm" />
-    <meta name="twitter:description" content="Szybkie, responsywne strony dla lokalnych firm. Zobacz realizacje." />
+    <meta name="twitter:title" content="Strony internetowe dla firm od 800 zł | Vervo Studio" />
+    <meta name="twitter:description" content="Tania, szybka strona dla Twojej firmy. Wizytówka od 800 zł. Zobacz realizacje." />
     <meta name="twitter:image" content={og('vervo.png')} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
   </head>
 
   <body>
@@ -118,10 +140,11 @@ const schema = {
       <section class="hero">
         <div class="wrap">
           <p class="eyebrow">Vervo Studio · strony dla firm</p>
+          <a class="promo" href="#cennik">Promocja startowa: strona-wizytówka za <b>800 zł</b> →</a>
           <h1>Strony internetowe,<br />które <span class="u">przynoszą klientów</span></h1>
           <p class="hero__lede">
             Projektuję i koduję strony dla lokalnych firm: restauracji, warsztatów, kawiarni, biur.
-            Szybkie, ładne na telefonie, bez WordPressa i bez cookies. Gotowe w kilka dni.
+            Szybkie, ładne na telefonie, bez WordPressa i bez cookies. Gotowe w tydzień.
           </p>
           <div class="hero__cta">
             <a class="btn btn--dark" href="#kontakt">Zamów stronę</a>
@@ -130,7 +153,7 @@ const schema = {
           <ul class="hero__facts">
             <li><b>&lt;1 s</b> czas ładowania</li>
             <li><b>100%</b> na telefonie</li>
-            <li><b>~3 dni</b> na prostą stronę</li>
+            <li><b>~7 dni</b> na prostą stronę</li>
             <li><b>Bez</b> WordPressa i wtyczek</li>
           </ul>
         </div>
@@ -189,7 +212,7 @@ const schema = {
           <div class="plans">
             {pakiety.map((p) => (
               <div class={`plan${p.wyroz ? ' plan--hot' : ''}`}>
-                {p.wyroz && <span class="plan__badge">Najczęściej wybierany</span>}
+                {p.badge && <span class="plan__badge">{p.badge}</span>}
                 <h3>{p.t}</h3>
                 <p class="plan__desc">{p.opis}</p>
                 <p class="plan__price">{p.gdy && <span>{p.gdy} </span>}{p.cena}{p.cena !== 'wycena' && <small> zł</small>}</p>
@@ -198,7 +221,7 @@ const schema = {
               </div>
             ))}
           </div>
-          <p class="fineprint">Ceny orientacyjne, netto. Dokładną wycenę podaję po krótkiej rozmowie o Twojej firmie. Opieka po wdrożeniu od 60 zł/mies.</p>
+          <p class="fineprint">Ceny netto. <strong>Utrzymanie strony-wizytówki: 100 zł/mies (hosting, domena, drobne poprawki), pierwszy miesiąc gratis. Przy większych stronach ustalamy indywidualnie.</strong> Dokładną wycenę podaję po krótkiej, darmowej rozmowie o Twojej firmie.</p>
         </div>
       </section>
 
@@ -232,7 +255,7 @@ const schema = {
           <div class="why">
             <div class="why__i"><b>Własny kod</b><span>Bez WordPressa i wtyczek. Nic się nie zawiesza.</span></div>
             <div class="why__i"><b>Szybkość</b><span>Strony ładują się poniżej sekundy.</span></div>
-            <div class="why__i"><b>Terminy</b><span>Prosta strona w kilka dni, nie tygodni.</span></div>
+            <div class="why__i"><b>Terminy</b><span>Prosta strona w tydzień, nie w miesiąc.</span></div>
             <div class="why__i"><b>Opieka</b><span>Po wdrożeniu nie zostajesz sam.</span></div>
           </div>
         </div>
@@ -251,8 +274,23 @@ const schema = {
         </div>
       </section>
 
+      <!-- FAQ -->
+      <section class="band" id="faq">
+        <div class="wrap wrap--narrow">
+          <div class="sec__head"><div><p class="label">FAQ</p><h2 class="h2">Częste pytania</h2></div></div>
+          <div class="faq">
+            {faq.map((f) => (
+              <details>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <!-- KONTAKT -->
-      <section class="band" id="kontakt">
+      <section class="band band--alt" id="kontakt">
         <div class="wrap contact">
           <div>
             <p class="label">Kontakt</p>
@@ -361,6 +399,18 @@ const schema = {
       .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem; }
       .u { background: linear-gradient(transparent 87%, rgba(23,25,29,0.32) 0); padding-bottom: 0.02em; }
       .fineprint { font-size: 0.82rem; color: var(--muted); margin-top: 1.75rem; max-width: 62ch; }
+      .fineprint strong { color: var(--ink); font-weight: 700; }
+      .promo { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; padding: 0.5rem 1rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 0.85rem; font-weight: 600; letter-spacing: -0.01em; transition: opacity 0.2s, transform 0.2s; }
+      .promo b { font-weight: 800; }
+      .promo:hover { opacity: 0.88; transform: translateY(-1px); }
+      .wrap--narrow { max-width: 780px; }
+      .faq { border-top: 1px solid var(--line); }
+      .faq details { border-bottom: 1px solid var(--line); }
+      .faq summary { list-style: none; cursor: pointer; padding: 1.25rem 0; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; font-family: var(--font-d); font-weight: 700; font-size: clamp(1.02rem, 2vw, 1.15rem); letter-spacing: -0.015em; color: var(--ink); }
+      .faq summary::-webkit-details-marker { display: none; }
+      .faq summary::after { content: '+'; font-size: 1.5rem; font-weight: 400; color: var(--muted); flex: none; transition: transform 0.25s var(--ease); }
+      .faq details[open] summary::after { transform: rotate(45deg); }
+      .faq details p { color: var(--ink-2); padding: 0 0 1.35rem; max-width: 68ch; }
 
       .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.95rem 1.7rem; font-weight: 700; font-size: 0.9rem; border-radius: 3px; border: 2px solid transparent; transition: all 0.25s var(--ease); }
       .btn--dark { background: var(--dark); color: var(--paper); border-color: var(--dark); }
