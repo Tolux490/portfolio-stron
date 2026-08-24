@@ -83,7 +83,7 @@ const schema = {
     <meta name="twitter:image" content={og('vervo.png')} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Public+Sans:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&display=swap" />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
 
@@ -304,7 +304,7 @@ const schema = {
       :root {
         --ink: #eef0f6; --ink-2: #b9bece; --muted: #7f8496; --line: rgba(255,255,255,0.1); --line-2: rgba(255,255,255,0.18);
         --panel: rgba(7, 8, 14, 0.66); --panel-2: rgba(16, 18, 28, 0.6);
-        --serif: 'Instrument Serif', Georgia, serif; --sans: 'Public Sans', system-ui, -apple-system, sans-serif;
+        --serif: 'Public Sans', system-ui, -apple-system, sans-serif; --sans: 'Public Sans', system-ui, -apple-system, sans-serif;
         --e-in: cubic-bezier(0.16, 1, 0.3, 1); --e-menu: cubic-bezier(0.76, 0, 0.24, 1); --maxw: 1180px;
       }
       * { box-sizing: border-box; }
@@ -362,7 +362,7 @@ const schema = {
       .overlay { position: fixed; inset: 0; z-index: 40; background: rgba(5,6,11,0.96); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; opacity: 0; visibility: hidden; transition: opacity 0.7s var(--e-menu), visibility 0.7s; }
       body.menu-open .overlay { opacity: 1; visibility: visible; }
       .overlay__nav { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
-      .ol { font-family: var(--serif); font-size: clamp(2.4rem, 8vw, 4.5rem); line-height: 1; color: #fff; opacity: 0; transform: translateY(24px); transition: opacity 0.6s var(--e-menu), transform 0.6s var(--e-menu); }
+      .ol { font-family: var(--serif); font-weight: 700; letter-spacing: -0.02em; font-size: clamp(2.1rem, 7vw, 3.8rem); line-height: 1; color: #fff; opacity: 0; transform: translateY(24px); transition: opacity 0.6s var(--e-menu), transform 0.6s var(--e-menu); }
       .ol:hover { opacity: 0.6; }
       body.menu-open .ol { opacity: 1; transform: none; transition-delay: calc(0.15s + var(--i) * 0.08s); }
       .overlay__mail { color: var(--muted); font-size: 0.95rem; opacity: 0; transition: opacity 0.5s ease 0.5s; }
@@ -372,7 +372,7 @@ const schema = {
       .hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; justify-content: center; text-align: center; padding: 8rem 1.25rem clamp(4rem, 10vh, 7rem); }
       .hero__in { position: relative; z-index: 2; max-width: 60rem; }
       .hero__kicker { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 1.4rem; }
-      .hero__h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.9rem, 8vw, 6.4rem); line-height: 1.0; letter-spacing: 0.005em; color: #fff; text-shadow: 0 2px 40px rgba(0,0,0,0.5); }
+      .hero__h1 { font-family: var(--serif); font-weight: 800; font-size: clamp(2.7rem, 7.5vw, 6rem); line-height: 1.02; letter-spacing: -0.03em; color: #fff; text-shadow: 0 2px 40px rgba(0,0,0,0.5); }
       .hero__sub { margin: 1.5rem auto 0; max-width: 40ch; color: var(--ink-2); font-size: clamp(1.02rem, 1.7vw, 1.25rem); }
       .hero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2.2rem; }
       .scrollhint { position: absolute; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 2; font-size: 0.6rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
@@ -382,7 +382,7 @@ const schema = {
       .sec { position: relative; padding-block: clamp(3.5rem, 8vw, 6.5rem); background: var(--panel); backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
       .sec:first-of-type { border-top: 0; }
       .label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 1rem; }
-      .h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.02; letter-spacing: 0.005em; color: #fff; }
+      .h2 { font-family: var(--serif); font-weight: 800; font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1.05; letter-spacing: -0.025em; color: #fff; }
       .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 2.5rem; }
       .head__note { color: var(--muted); font-size: 0.9rem; max-width: 42ch; }
       .fine { font-size: 0.82rem; color: var(--muted); margin-top: 1.75rem; max-width: 64ch; }
@@ -396,7 +396,7 @@ const schema = {
       .work__bran { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
       .work__go { font-size: 0.8rem; color: var(--muted); transition: color 0.2s; }
       .work:hover .work__go { color: #fff; }
-      .work h3 { font-family: var(--serif); font-weight: 400; font-size: 1.8rem; color: #fff; }
+      .work h3 { font-family: var(--serif); font-weight: 700; letter-spacing: -0.015em; font-size: 1.5rem; color: #fff; }
       .work p { color: var(--ink-2); font-size: 0.92rem; flex: 1; }
       .tags { list-style: none; margin: 0.3rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
       .tags li { font-size: 0.72rem; color: var(--ink-2); background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 999px; padding: 0.25rem 0.7rem; }
@@ -418,10 +418,10 @@ const schema = {
       .plan { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 2rem 1.8rem; position: relative; display: flex; flex-direction: column; }
       .plan--hot { border-color: rgba(255,255,255,0.5); }
       .plan__badge { position: absolute; top: -0.7rem; left: 1.8rem; background: #fff; color: #0a0b10; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 999px; }
-      .plan h3 { font-family: var(--serif); font-weight: 400; font-size: 1.7rem; color: #fff; }
+      .plan h3 { font-family: var(--serif); font-weight: 700; letter-spacing: -0.015em; font-size: 1.45rem; color: #fff; }
       .plan__desc { color: var(--muted); font-size: 0.9rem; margin: 0.3rem 0 1.1rem; }
-      .plan__price { font-family: var(--serif); font-size: 2.6rem; color: #fff; margin-bottom: 1.2rem; line-height: 1; }
-      .plan__price span { font-family: var(--sans); font-size: 0.85rem; color: var(--muted); }
+      .plan__price { font-family: var(--serif); font-weight: 800; letter-spacing: -0.03em; font-size: 2.4rem; color: #fff; margin-bottom: 1.2rem; line-height: 1; }
+      .plan__price span { font-weight: 600; font-size: 0.85rem; color: var(--muted); letter-spacing: 0; }
       .plan__price small { font-size: 1.1rem; color: var(--muted); }
       .plan__co { list-style: none; margin: 0 0 1.5rem; padding: 0; display: grid; gap: 0.6rem; flex: 1; }
       .plan__co li { position: relative; padding-left: 1.4rem; font-size: 0.9rem; color: var(--ink-2); }
@@ -432,7 +432,7 @@ const schema = {
       .steps { display: grid; gap: 1.1rem; }
       @media (min-width: 720px) { .steps { grid-template-columns: repeat(4, 1fr); } }
       .step { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 1.7rem 1.5rem; }
-      .step__n { font-family: var(--serif); font-size: 1.6rem; color: var(--ink-2); }
+      .step__n { font-family: var(--serif); font-weight: 800; font-size: 1.5rem; color: var(--ink-2); }
       .step h3 { font-size: 1.2rem; margin: 0.4rem 0 0.4rem; color: #fff; }
       .step p { color: var(--ink-2); font-size: 0.9rem; }
       .about { display: grid; gap: 2.5rem; margin-top: 3rem; padding-top: 3rem; border-top: 1px solid var(--line); }
@@ -455,7 +455,7 @@ const schema = {
       .contact { display: grid; gap: 2.5rem; }
       @media (min-width: 900px) { .contact { grid-template-columns: 0.9fr 1.1fr; gap: 4rem; align-items: start; } }
       .contact__links { margin-top: 1.5rem; }
-      .contact__links a { font-family: var(--serif); font-size: 1.4rem; color: #fff; }
+      .contact__links a { font-family: var(--serif); font-weight: 700; letter-spacing: -0.01em; font-size: 1.3rem; color: #fff; }
       .contact__links a:hover { color: var(--ink-2); }
       #kForm { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: clamp(1.5rem, 3vw, 2.25rem); }
       .frow { display: grid; gap: 1rem; margin-bottom: 1rem; }
