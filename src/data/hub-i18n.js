@@ -64,8 +64,8 @@ export const T = {
       planBtn: 'Wybieram',
       fineprint: 'Ceny netto. <strong>Utrzymanie strony-wizytówki: 100 zł/mies (hosting, domena, drobne poprawki), pierwszy miesiąc gratis. Przy większych stronach ustalamy indywidualnie.</strong> Dokładną wycenę podajemy po krótkiej, darmowej rozmowie o Twojej firmie.',
       plans: [
-        { t: 'Wizytówka', cena: 'wycena', gdy: '', opis: 'Jednostronicowa strona-wizytówka. Idealna na start.', co: ['Jedna dopracowana strona', 'Formularz kontaktowy', 'Mapa, godziny, dojazd', 'Podstawowe SEO', 'Hosting i domena: 1. rok gratis', 'Gotowa w ~7 dni'], wyroz: true, badge: 'Promocja startowa' },
-        { t: 'Strona firmowa', cena: 'wycena', gdy: '', opis: 'Kilka sekcji lub podstron pod Twoją branżę.', co: ['Do kilku podstron', 'Galeria, cennik lub oferta', 'Rezerwacje lub umawianie', 'Pełne SEO + dane strukturalne', 'Hosting i domena w cenie', 'Gotowa w 1–2 tygodnie'], wyroz: false, badge: '' },
+        { t: 'Wizytówka', cena: '800', gdy: '', opis: 'Jednostronicowa strona-wizytówka. Idealna na start.', co: ['Jedna dopracowana strona', 'Formularz kontaktowy', 'Mapa, godziny, dojazd', 'Podstawowe SEO', 'Hosting i domena: 1. rok gratis', 'Gotowa w ~7 dni'], wyroz: true, badge: 'Promocja startowa' },
+        { t: 'Strona firmowa', cena: '1 900', gdy: 'od', opis: 'Kilka sekcji lub podstron pod Twoją branżę.', co: ['Do kilku podstron', 'Galeria, cennik lub oferta', 'Rezerwacje lub umawianie', 'Pełne SEO + dane strukturalne', 'Hosting i domena w cenie', 'Gotowa w 1–2 tygodnie'], wyroz: false, badge: '' },
         { t: 'Sklep / na miarę', cena: 'wycena', gdy: '', opis: 'Większe projekty i integracje.', co: ['Sklep, rezerwacje lub panel', 'Integracje i płatności', 'Wielojęzyczność', 'Indywidualny projekt', 'Wycena po rozmowie'], wyroz: false, badge: '' },
       ],
     },
@@ -195,8 +195,8 @@ export const T = {
       planBtn: 'Choose this',
       fineprint: 'Prices net. <strong>Care for a one-page site: 100 zł/month (hosting, domain, small edits), first month free. For larger sites we agree individually.</strong> We give an exact quote after a short, free chat about your business.',
       plans: [
-        { t: 'One-page site', cena: 'quote', gdy: '', opis: 'A one-page business-card website. Perfect to start.', co: ['One polished page', 'Contact form', 'Map, hours, directions', 'Basic SEO', 'Hosting and domain: first year free', 'Ready in ~7 days'], wyroz: true, badge: 'Launch offer' },
-        { t: 'Business site', cena: 'quote', gdy: '', opis: 'A few sections or subpages tailored to your field.', co: ['Up to several subpages', 'Gallery, price list or offer', 'Bookings or appointments', 'Full SEO + structured data', 'Hosting and domain included', 'Ready in 1–2 weeks'], wyroz: false, badge: '' },
+        { t: 'One-page site', cena: '800', gdy: '', opis: 'A one-page business-card website. Perfect to start.', co: ['One polished page', 'Contact form', 'Map, hours, directions', 'Basic SEO', 'Hosting and domain: first year free', 'Ready in ~7 days'], wyroz: true, badge: 'Launch offer' },
+        { t: 'Business site', cena: '1 900', gdy: 'from', opis: 'A few sections or subpages tailored to your field.', co: ['Up to several subpages', 'Gallery, price list or offer', 'Bookings or appointments', 'Full SEO + structured data', 'Hosting and domain included', 'Ready in 1–2 weeks'], wyroz: false, badge: '' },
         { t: 'Shop / custom', cena: 'quote', gdy: '', opis: 'Larger projects and integrations.', co: ['Shop, bookings or panel', 'Integrations and payments', 'Multiple languages', 'Bespoke design', 'Quote after a talk'], wyroz: false, badge: '' },
       ],
     },
@@ -326,8 +326,8 @@ export const T = {
       planBtn: 'Ik kies dit',
       fineprint: 'Prijzen excl. btw. <strong>Onderhoud van een onepager: 100 zł/maand (hosting, domein, kleine aanpassingen), eerste maand gratis. Voor grotere sites spreken we het samen af.</strong> Een exacte prijs geven we na een kort, gratis gesprek over je bedrijf.',
       plans: [
-        { t: 'Onepager', cena: 'op maat', gdy: '', opis: 'Een website van één pagina. Ideaal om te starten.', co: ['Eén verzorgde pagina', 'Contactformulier', 'Kaart, openingstijden, route', 'Basis-SEO', 'Hosting en domein: eerste jaar gratis', 'Klaar in ~7 dagen'], wyroz: true, badge: 'Startaanbieding' },
-        { t: 'Bedrijfssite', cena: 'op maat', gdy: '', opis: 'Enkele secties of subpagina’s op maat van je branche.', co: ['Tot enkele subpagina’s', 'Galerij, prijslijst of aanbod', 'Reserveren of afspraken', 'Volledige SEO + gestructureerde data', 'Hosting en domein inbegrepen', 'Klaar in 1–2 weken'], wyroz: false, badge: '' },
+        { t: 'Onepager', cena: '800', gdy: '', opis: 'Een website van één pagina. Ideaal om te starten.', co: ['Eén verzorgde pagina', 'Contactformulier', 'Kaart, openingstijden, route', 'Basis-SEO', 'Hosting en domein: eerste jaar gratis', 'Klaar in ~7 dagen'], wyroz: true, badge: 'Startaanbieding' },
+        { t: 'Bedrijfssite', cena: '1 900', gdy: 'vanaf', opis: 'Enkele secties of subpagina’s op maat van je branche.', co: ['Tot enkele subpagina’s', 'Galerij, prijslijst of aanbod', 'Reserveren of afspraken', 'Volledige SEO + gestructureerde data', 'Hosting en domein inbegrepen', 'Klaar in 1–2 weken'], wyroz: false, badge: '' },
         { t: 'Webshop / op maat', cena: 'op maat', gdy: '', opis: 'Grotere projecten en integraties.', co: ['Webshop, reserveren of paneel', 'Integraties en betalingen', 'Meerdere talen', 'Ontwerp op maat', 'Prijs na een gesprek'], wyroz: false, badge: '' },
       ],
     },
