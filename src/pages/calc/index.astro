@@ -210,10 +210,11 @@ const email = 'antoni.antczak05@gmail.com';
             const nEl = row.querySelector('.step__n');
             if (included) {
               nEl.textContent = '0'; buttons.forEach((b) => b.disabled = true);
-              priceEl.textContent = 'w pakiecie';
+              priceEl.textContent = 'w pakiecie'; row.classList.remove('has-qty');
             } else {
               buttons.forEach((b) => b.disabled = false);
               const q = Number(nEl.textContent);
+              row.classList.toggle('has-qty', q > 0);
               if (q > 0) { const sub = cena * q; add += sub; chosen.push(row.dataset.nazwa + ' ×' + q); priceEl.textContent = q + ' × ' + fmt(cena) + ' = ' + fmt(sub) + ' zł'; }
               else priceEl.textContent = '+' + fmt(cena) + ' zł/szt';
             }
@@ -328,11 +329,13 @@ const email = 'antoni.antczak05@gmail.com';
       .frow input:disabled { opacity: 0.55; cursor: not-allowed; }
       .frow--qty { cursor: default; }
       .frow--qty:hover { background: transparent; }
-      .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line-2); border-radius: 5px; overflow: hidden; flex: none; }
-      .step { width: 1.9rem; height: 1.9rem; display: grid; place-items: center; font-size: 1.15rem; font-weight: 700; color: var(--ink); background: var(--card); line-height: 1; }
-      .step:hover:not(:disabled) { background: var(--paper-2); }
-      .step:disabled { color: var(--line-2); cursor: not-allowed; }
-      .step__n { min-width: 1.7rem; text-align: center; font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+      .stepper { display: inline-flex; align-items: center; gap: 0.5rem; flex: none; }
+      .step { width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid var(--line-2); background: var(--card); color: var(--ink-2); font-size: 1.05rem; font-weight: 600; line-height: 0; transition: border-color 0.15s, color 0.15s, background 0.15s, transform 0.1s; }
+      .step:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); background: var(--paper-2); }
+      .step:active:not(:disabled) { transform: scale(0.92); }
+      .step:disabled { color: var(--line-2); border-color: var(--line); cursor: not-allowed; }
+      .step__n { min-width: 1.3rem; text-align: center; font-weight: 700; font-size: 1rem; font-variant-numeric: tabular-nums; color: var(--muted); transition: color 0.15s; }
+      .frow--qty.has-qty .step__n { color: var(--ink); }
 
       .sum { position: sticky; top: 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 1.6rem 1.5rem; }
       .sum__lab { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
