@@ -1,0 +1,290 @@
+---
+const b = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Ceny spójne z dokumentem oferty (orientacyjne, PLN netto).
+const pakiety = [
+  { id: 'wizytowka', t: 'Wizytówka', o: 'Jedna dopracowana strona', cena: 800 },
+  { id: 'firmowa', t: 'Strona firmowa', o: 'Kilka podstron pod branżę', cena: 1900 },
+  { id: 'rozbudowana', t: 'Strona rozbudowana', o: 'Wiele podstron i funkcji', cena: 3500 },
+];
+
+const grupy = [
+  {
+    t: 'Treść i prezentacja',
+    f: [
+      { id: 'podstrona', t: 'Dodatkowa podstrona', cena: 200 },
+      { id: 'galeria', t: 'Galeria zdjęć z powiększaniem', cena: 200 },
+      { id: 'cms', t: 'Cennik lub menu edytowalne (Arkusz Google)', cena: 400 },
+      { id: 'opinie', t: 'Sekcja opinii i referencji', cena: 150 },
+      { id: 'faq', t: 'FAQ (rozwijane pytania)', cena: 150 },
+      { id: 'blog', t: 'Aktualności lub blog', cena: 600 },
+    ],
+  },
+  {
+    t: 'Rezerwacje i kontakt',
+    f: [
+      { id: 'rezerwacja', t: 'Formularz rezerwacji lub umawiania wizyt', cena: 250 },
+      { id: 'newsletter', t: 'Newsletter (zapis adresów e-mail)', cena: 300 },
+    ],
+  },
+  {
+    t: 'Lokalizacja i godziny',
+    f: [
+      { id: 'status', t: 'Status „otwarte teraz" z godzin', cena: 150 },
+      { id: 'multiloc', t: 'Wiele lokalizacji, wybór lokalu', cena: 350 },
+    ],
+  },
+  {
+    t: 'Interakcje i narzędzia',
+    f: [
+      { id: 'filtry', t: 'Filtrowanie i sortowanie', cena: 450 },
+      { id: 'kalkulator', t: 'Kalkulator (raty, wycena usługi)', cena: 450 },
+      { id: 'lojalnosc', t: 'Karta lojalnościowa lub pieczątki', cena: 400 },
+      { id: 'menucyfrowe', t: 'Menu cyfrowe z kategoriami i filtrami', cena: 350 },
+    ],
+  },
+  {
+    t: 'Wyróżniki wizualne',
+    f: [
+      { id: 'model3d', t: 'Element 3D (np. obracany model)', cena: 800 },
+      { id: 'animacje', t: 'Animacje przy przewijaniu', cena: 350 },
+      { id: 'logo', t: 'Prosty logotyp lub znak', cena: 450 },
+    ],
+  },
+  {
+    t: 'Wielojęzyczność',
+    f: [
+      { id: 'jezyk2', t: 'Druga wersja językowa', cena: 600 },
+      { id: 'jezyk3', t: 'Każdy kolejny język', cena: 400 },
+    ],
+  },
+  {
+    t: 'SEO i widoczność',
+    f: [
+      { id: 'seo', t: 'Rozszerzone SEO (frazy, treści)', cena: 500 },
+      { id: 'gbp', t: 'Wizytówka Google', cena: 200 },
+      { id: 'gsc', t: 'Google Search Console + zgłoszenie', cena: 150 },
+    ],
+  },
+];
+
+const opieka = [
+  { id: 'brak', t: 'Bez utrzymania', cena: 0 },
+  { id: 'podstawowy', t: 'Podstawowy: hosting, domena, drobne poprawki', cena: 120 },
+  { id: 'standard', t: 'Standard: powyższe + zmiany treści, 2h/mies', cena: 300 },
+  { id: 'rozszerzony', t: 'Rozszerzony: powyższe + SEO, 5h/mies', cena: 600 },
+];
+
+const email = 'antoni.antczak05@gmail.com';
+---
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kalkulator wyceny | Vervo Studio</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#f7f6f2" />
+    <link rel="icon" href={`${b}/favicon.svg`} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" />
+  </head>
+  <body>
+    <main class="calc">
+      <header class="calc__top">
+        <a class="brand" href={`${b}/`} aria-label="Vervo Studio">
+          <svg class="brand__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="brand__tx">Vervo <em>Studio</em></span>
+        </a>
+        <h1>Kalkulator wyceny</h1>
+        <p class="calc__lede">Zaznacz rodzaj strony i funkcje, a od razu zobaczysz orientacyjną cenę. To wstępny szacunek, dokładną wycenę podajemy po krótkiej rozmowie.</p>
+      </header>
+
+      <div class="calc__grid">
+        <div class="calc__opts">
+          <section class="block">
+            <h2 class="block__h">1. Rodzaj strony</h2>
+            <div class="cards">
+              {pakiety.map((p, i) => (
+                <label class="card">
+                  <input type="radio" name="pakiet" value={p.id} data-cena={p.cena} data-nazwa={p.t} checked={i === 0} />
+                  <span class="card__in">
+                    <span class="card__t">{p.t}</span>
+                    <span class="card__o">{p.o}</span>
+                    <span class="card__c">od {p.cena.toLocaleString('pl-PL')} zł</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            <p class="hint">Większe projekty (sklep z płatnościami, aplikacja) wyceniamy indywidualnie po rozmowie.</p>
+          </section>
+
+          <section class="block">
+            <h2 class="block__h">2. Funkcje i moduły</h2>
+            {grupy.map((g) => (
+              <div class="fgroup">
+                <p class="fgroup__t">{g.t}</p>
+                {g.f.map((f) => (
+                  <label class="frow">
+                    <input type="checkbox" data-cena={f.cena} data-nazwa={f.t} />
+                    <span class="frow__t">{f.t}</span>
+                    <span class="frow__c">+{f.cena.toLocaleString('pl-PL')} zł</span>
+                  </label>
+                ))}
+              </div>
+            ))}
+          </section>
+
+          <section class="block">
+            <h2 class="block__h">3. Utrzymanie miesięczne</h2>
+            <div class="fgroup">
+              {opieka.map((o, i) => (
+                <label class="frow">
+                  <input type="radio" name="opieka" value={o.id} data-cena={o.cena} data-nazwa={o.t} checked={i === 0} />
+                  <span class="frow__t">{o.t}</span>
+                  <span class="frow__c">{o.cena ? o.cena.toLocaleString('pl-PL') + ' zł/mies' : '—'}</span>
+                </label>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <aside class="calc__sum">
+          <div class="sum">
+            <p class="sum__lab">Szacunkowa wycena</p>
+            <p class="sum__pkg" id="sumPkg">Wizytówka</p>
+            <p class="sum__total"><span id="sumTotal">800</span> <small>zł</small></p>
+            <p class="sum__meta" id="sumAddons">bez dodatków</p>
+            <p class="sum__mo" id="sumMo" hidden>+ <b>0 zł/mies</b> utrzymanie</p>
+            <a class="btn btn--dark" id="sumCta" href="#">Napisz do nas z tą wyceną</a>
+            <p class="sum__note">Cena orientacyjna, netto. Ostateczną wycenę podajemy po krótkiej, darmowej rozmowie o Twojej firmie.</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="mbar" aria-hidden="false">
+        <div>
+          <span class="mbar__lab">Szacunkowo</span>
+          <span class="mbar__val"><b id="mbarTotal">800</b> zł</span>
+        </div>
+        <a class="btn btn--dark" id="mbarCta" href="#">Napisz do nas</a>
+      </div>
+    </main>
+
+    <script define:vars={{ email }}>
+      const fmt = (n) => n.toLocaleString('pl-PL');
+      const $ = (s) => document.querySelector(s);
+      const pkgInputs = document.querySelectorAll('input[name="pakiet"]');
+      const feats = document.querySelectorAll('.frow input[type="checkbox"]');
+      const careInputs = document.querySelectorAll('input[name="opieka"]');
+
+      function recompute() {
+        const pkg = document.querySelector('input[name="pakiet"]:checked');
+        const base = pkg ? Number(pkg.dataset.cena) : 0;
+        const pkgName = pkg ? pkg.dataset.nazwa : '';
+        let add = 0; const chosen = [];
+        feats.forEach((f) => { if (f.checked) { add += Number(f.dataset.cena); chosen.push(f.dataset.nazwa); } });
+        const total = base + add;
+        const care = document.querySelector('input[name="opieka"]:checked');
+        const careVal = care ? Number(care.dataset.cena) : 0;
+
+        $('#sumPkg').textContent = pkgName;
+        $('#sumTotal').textContent = fmt(total);
+        $('#mbarTotal').textContent = fmt(total);
+        $('#sumAddons').textContent = chosen.length
+          ? chosen.length + (chosen.length === 1 ? ' dodatek' : (chosen.length < 5 ? ' dodatki' : ' dodatków')) + ' za ' + fmt(add) + ' zł'
+          : 'bez dodatków';
+        const moEl = $('#sumMo');
+        if (careVal > 0) { moEl.hidden = false; moEl.innerHTML = '+ <b>' + fmt(careVal) + ' zł/mies</b> utrzymanie'; }
+        else { moEl.hidden = true; }
+
+        // link "napisz do nas" z podsumowaniem konfiguracji
+        const lines = [];
+        lines.push('Rodzaj strony: ' + pkgName + ' (od ' + fmt(base) + ' zł)');
+        if (chosen.length) lines.push('Dodatki: ' + chosen.join(', '));
+        lines.push('Szacunkowo jednorazowo: ' + fmt(total) + ' zł');
+        if (careVal > 0) lines.push('Utrzymanie: ' + care.dataset.nazwa + ' (' + fmt(careVal) + ' zł/mies)');
+        const body = encodeURIComponent('Cześć, wstępnie interesuje mnie:\n\n' + lines.join('\n') + '\n\nProszę o kontakt w sprawie dokładnej wyceny.');
+        const href = 'mailto:' + email + '?subject=' + encodeURIComponent('Wycena z kalkulatora') + '&body=' + body;
+        $('#sumCta').href = href;
+        $('#mbarCta').href = href;
+      }
+
+      [...pkgInputs, ...feats, ...careInputs].forEach((el) => el.addEventListener('change', recompute));
+      recompute();
+    </script>
+
+    <style is:global>
+      :root {
+        --paper: #f7f6f2; --paper-2: #efede7; --card: #ffffff;
+        --ink: #17191d; --ink-2: #3a3d44; --muted: #6c7075; --line: #e3e1da; --line-2: #d3d0c7;
+        --dark: #17191d;
+        --font: 'Manrope', system-ui, -apple-system, sans-serif;
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      *, *::before, *::after { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+      body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+      h1, h2 { font-family: var(--font); font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; margin: 0; }
+      p { margin: 0; }
+      a { color: inherit; text-decoration: none; }
+      input { accent-color: var(--ink); }
+
+      .calc { width: 100%; max-width: 1120px; margin-inline: auto; padding-inline: clamp(1.4rem, 5vw, 2.75rem); padding-bottom: 6rem; }
+      .calc__top { padding-top: clamp(2rem, 5vw, 3.5rem); padding-bottom: 1.5rem; }
+      .brand { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--ink); margin-bottom: 2rem; }
+      .brand__mk { width: 28px; height: 25px; color: var(--ink); }
+      .brand__tx { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; }
+      .brand__tx em { font-style: normal; color: var(--muted); }
+      .calc__top h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; letter-spacing: -0.035em; }
+      .calc__lede { color: var(--ink-2); max-width: 56ch; margin-top: 0.9rem; }
+
+      .calc__grid { display: grid; gap: 2rem; align-items: start; }
+      @media (min-width: 900px) { .calc__grid { grid-template-columns: 1fr 340px; gap: 2.5rem; } }
+
+      .block { margin-top: 2.25rem; }
+      .block__h { font-size: 1.15rem; margin-bottom: 1.1rem; }
+
+      .cards { display: grid; gap: 0.75rem; }
+      @media (min-width: 560px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+      .card { position: relative; display: block; cursor: pointer; }
+      .card input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+      .card__in { display: flex; flex-direction: column; gap: 0.15rem; padding: 1.1rem 1.15rem; background: var(--card); border: 2px solid var(--line); border-radius: 6px; height: 100%; transition: border-color 0.2s, box-shadow 0.2s; }
+      .card input:checked + .card__in { border-color: var(--ink); box-shadow: 0 6px 20px -12px rgba(0,0,0,0.4); }
+      .card input:focus-visible + .card__in { outline: 2px solid var(--ink); outline-offset: 2px; }
+      .card__t { font-weight: 700; font-size: 1.02rem; }
+      .card__o { font-size: 0.82rem; color: var(--muted); }
+      .card__c { margin-top: 0.4rem; font-weight: 800; letter-spacing: -0.02em; }
+
+      .hint { font-size: 0.82rem; color: var(--muted); margin-top: 0.9rem; }
+
+      .fgroup { border: 1px solid var(--line); border-radius: 6px; background: var(--card); margin-bottom: 1rem; overflow: hidden; }
+      .fgroup__t { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.85rem 1.1rem 0.4rem; }
+      .frow { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.1rem; border-top: 1px solid var(--line); cursor: pointer; transition: background 0.15s; }
+      .frow:hover { background: var(--paper-2); }
+      .frow input { width: 1.1rem; height: 1.1rem; flex: none; cursor: pointer; }
+      .frow__t { flex: 1; font-size: 0.92rem; }
+      .frow__c { font-weight: 700; font-size: 0.88rem; color: var(--ink-2); white-space: nowrap; }
+
+      .sum { position: sticky; top: 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 1.6rem 1.5rem; }
+      .sum__lab { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+      .sum__pkg { font-weight: 700; font-size: 1.05rem; margin-top: 0.3rem; }
+      .sum__total { font-weight: 800; font-size: 2.8rem; letter-spacing: -0.04em; line-height: 1.05; margin-top: 0.4rem; }
+      .sum__total small { font-size: 1.1rem; color: var(--muted); font-weight: 700; }
+      .sum__meta { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
+      .sum__mo { font-size: 0.9rem; color: var(--ink-2); margin-top: 0.5rem; }
+      .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.9rem 1.4rem; font-weight: 700; font-size: 0.92rem; border-radius: 4px; border: 2px solid transparent; transition: all 0.2s var(--ease); width: 100%; }
+      .btn--dark { background: var(--dark); color: var(--paper); border-color: var(--dark); margin-top: 1.2rem; }
+      .btn--dark:hover { background: transparent; color: var(--dark); }
+      .sum__note { font-size: 0.78rem; color: var(--muted); margin-top: 1rem; line-height: 1.5; }
+
+      /* pasek mobilny */
+      .mbar { position: fixed; inset: auto 0 0 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.7rem clamp(1rem, 5vw, 1.5rem); background: rgba(247,246,242,0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--line); }
+      .mbar .btn { width: auto; margin-top: 0; padding: 0.7rem 1.2rem; }
+      .mbar__lab { display: block; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+      .mbar__val { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
+      @media (min-width: 900px) { .mbar { display: none; } .calc { padding-bottom: 3rem; } }
+    </style>
+  </body>
+</html>
