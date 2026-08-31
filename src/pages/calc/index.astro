@@ -2,17 +2,18 @@
 const b = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 // Ceny spójne z dokumentem oferty (orientacyjne, PLN netto).
+// incl = funkcje już zawarte w danym pakiecie (pokazane gwiazdką, bez dopłaty).
 const pakiety = [
-  { id: 'wizytowka', t: 'Wizytówka', o: 'Jedna dopracowana strona', cena: 800 },
-  { id: 'firmowa', t: 'Strona firmowa', o: 'Kilka podstron pod branżę', cena: 1900 },
-  { id: 'rozbudowana', t: 'Strona rozbudowana', o: 'Wiele podstron i funkcji', cena: 3500 },
+  { id: 'wizytowka', t: 'Wizytówka', o: 'Jedna dopracowana strona', cena: 800, incl: ['gsc'] },
+  { id: 'firmowa', t: 'Strona firmowa', o: 'Kilka podstron pod branżę', cena: 1900, incl: ['faq', 'opinie', 'gbp', 'gsc'] },
+  { id: 'rozbudowana', t: 'Strona rozbudowana', o: 'Wiele podstron i funkcji', cena: 3500, incl: ['faq', 'opinie', 'galeria', 'status', 'seo', 'gbp', 'gsc'] },
 ];
 
 const grupy = [
   {
     t: 'Treść i prezentacja',
     f: [
-      { id: 'podstrona', t: 'Dodatkowa podstrona', cena: 200 },
+      { id: 'podstrona', t: 'Dodatkowa podstrona', cena: 200, qty: true },
       { id: 'galeria', t: 'Galeria zdjęć z powiększaniem', cena: 200 },
       { id: 'cms', t: 'Cennik lub menu edytowalne (Arkusz Google)', cena: 400 },
       { id: 'opinie', t: 'Sekcja opinii i referencji', cena: 150 },
@@ -55,7 +56,7 @@ const grupy = [
     t: 'Wielojęzyczność',
     f: [
       { id: 'jezyk2', t: 'Druga wersja językowa', cena: 600 },
-      { id: 'jezyk3', t: 'Każdy kolejny język', cena: 400 },
+      { id: 'jezyk3', t: 'Każdy kolejny język', cena: 400, qty: true },
     ],
   },
   {
@@ -108,7 +109,7 @@ const email = 'antoni.antczak05@gmail.com';
             <div class="cards">
               {pakiety.map((p, i) => (
                 <label class="card">
-                  <input type="radio" name="pakiet" value={p.id} data-cena={p.cena} data-nazwa={p.t} checked={i === 0} />
+                  <input type="radio" name="pakiet" value={p.id} data-cena={p.cena} data-nazwa={p.t} data-incl={p.incl.join(',')} checked={i === 0} />
                   <span class="card__in">
                     <span class="card__t">{p.t}</span>
                     <span class="card__o">{p.o}</span>
@@ -122,16 +123,27 @@ const email = 'antoni.antczak05@gmail.com';
 
           <section class="block">
             <h2 class="block__h">2. Funkcje i moduły</h2>
+            <p class="legend"><span class="star star--legend">★</span> funkcje już zawarte w wybranym pakiecie (w cenie, bez dopłaty). Przy pozycjach, których możesz mieć więcej niż jedną, użyj plus i minus.</p>
             {grupy.map((g) => (
               <div class="fgroup">
                 <p class="fgroup__t">{g.t}</p>
-                {g.f.map((f) => (
-                  <label class="frow">
-                    <input type="checkbox" data-cena={f.cena} data-nazwa={f.t} />
-                    <span class="frow__t">{f.t}</span>
+                {g.f.map((f) => (f.qty ? (
+                  <div class="frow frow--qty" data-id={f.id} data-cena={f.cena} data-nazwa={f.t} data-qty="1">
+                    <div class="stepper">
+                      <button type="button" class="step step--minus" aria-label={`Mniej: ${f.t}`}>−</button>
+                      <span class="step__n">0</span>
+                      <button type="button" class="step step--plus" aria-label={`Więcej: ${f.t}`}>+</button>
+                    </div>
+                    <span class="frow__t">{f.t}<span class="star" hidden>★</span></span>
+                    <span class="frow__c">+{f.cena.toLocaleString('pl-PL')} zł/szt</span>
+                  </div>
+                ) : (
+                  <label class="frow" data-id={f.id} data-cena={f.cena} data-nazwa={f.t} data-qty="0">
+                    <input type="checkbox" />
+                    <span class="frow__t">{f.t}<span class="star" hidden>★</span></span>
                     <span class="frow__c">+{f.cena.toLocaleString('pl-PL')} zł</span>
                   </label>
-                ))}
+                )))}
               </div>
             ))}
           </section>
@@ -175,33 +187,66 @@ const email = 'antoni.antczak05@gmail.com';
     <script define:vars={{ email }}>
       const fmt = (n) => n.toLocaleString('pl-PL');
       const $ = (s) => document.querySelector(s);
+      const rows = [...document.querySelectorAll('.frow[data-id]')];
       const pkgInputs = document.querySelectorAll('input[name="pakiet"]');
-      const feats = document.querySelectorAll('.frow input[type="checkbox"]');
       const careInputs = document.querySelectorAll('input[name="opieka"]');
 
       function recompute() {
         const pkg = document.querySelector('input[name="pakiet"]:checked');
         const base = pkg ? Number(pkg.dataset.cena) : 0;
-        const pkgName = pkg ? pkg.dataset.nazwa : '';
+        const incl = new Set((pkg && pkg.dataset.incl ? pkg.dataset.incl.split(',') : []).filter(Boolean));
+
         let add = 0; const chosen = [];
-        feats.forEach((f) => { if (f.checked) { add += Number(f.dataset.cena); chosen.push(f.dataset.nazwa); } });
+        rows.forEach((row) => {
+          const id = row.dataset.id, cena = Number(row.dataset.cena), isQty = row.dataset.qty === '1';
+          const included = incl.has(id);
+          const star = row.querySelector('.star');
+          const priceEl = row.querySelector('.frow__c');
+          row.classList.toggle('is-included', included);
+          if (star) star.hidden = !included;
+
+          if (isQty) {
+            const buttons = row.querySelectorAll('.step');
+            const nEl = row.querySelector('.step__n');
+            if (included) {
+              nEl.textContent = '0'; buttons.forEach((b) => b.disabled = true);
+              priceEl.textContent = 'w pakiecie';
+            } else {
+              buttons.forEach((b) => b.disabled = false);
+              const q = Number(nEl.textContent);
+              if (q > 0) { const sub = cena * q; add += sub; chosen.push(row.dataset.nazwa + ' ×' + q); priceEl.textContent = q + ' × ' + fmt(cena) + ' = ' + fmt(sub) + ' zł'; }
+              else priceEl.textContent = '+' + fmt(cena) + ' zł/szt';
+            }
+          } else {
+            const cb = row.querySelector('input[type="checkbox"]');
+            if (included) {
+              cb.disabled = true; cb.checked = true;
+              priceEl.textContent = 'w pakiecie';
+            } else {
+              if (cb.disabled) { cb.disabled = false; cb.checked = false; }
+              if (cb.checked) { add += cena; chosen.push(row.dataset.nazwa); }
+              priceEl.textContent = '+' + fmt(cena) + ' zł';
+            }
+          }
+        });
+
         const total = base + add;
         const care = document.querySelector('input[name="opieka"]:checked');
         const careVal = care ? Number(care.dataset.cena) : 0;
+        const n = chosen.length;
 
-        $('#sumPkg').textContent = pkgName;
+        $('#sumPkg').textContent = pkg ? pkg.dataset.nazwa : '';
         $('#sumTotal').textContent = fmt(total);
         $('#mbarTotal').textContent = fmt(total);
-        $('#sumAddons').textContent = chosen.length
-          ? chosen.length + (chosen.length === 1 ? ' dodatek' : (chosen.length < 5 ? ' dodatki' : ' dodatków')) + ' za ' + fmt(add) + ' zł'
+        $('#sumAddons').textContent = n
+          ? (n === 1 ? '1 dodatek' : (n < 5 ? n + ' dodatki' : n + ' dodatków')) + ' za ' + fmt(add) + ' zł'
           : 'bez dodatków';
         const moEl = $('#sumMo');
         if (careVal > 0) { moEl.hidden = false; moEl.innerHTML = '+ <b>' + fmt(careVal) + ' zł/mies</b> utrzymanie'; }
         else { moEl.hidden = true; }
 
-        // link "napisz do nas" z podsumowaniem konfiguracji
         const lines = [];
-        lines.push('Rodzaj strony: ' + pkgName + ' (od ' + fmt(base) + ' zł)');
+        lines.push('Rodzaj strony: ' + (pkg ? pkg.dataset.nazwa : '') + ' (od ' + fmt(base) + ' zł)');
         if (chosen.length) lines.push('Dodatki: ' + chosen.join(', '));
         lines.push('Szacunkowo jednorazowo: ' + fmt(total) + ' zł');
         if (careVal > 0) lines.push('Utrzymanie: ' + care.dataset.nazwa + ' (' + fmt(careVal) + ' zł/mies)');
@@ -211,7 +256,15 @@ const email = 'antoni.antczak05@gmail.com';
         $('#mbarCta').href = href;
       }
 
-      [...pkgInputs, ...feats, ...careInputs].forEach((el) => el.addEventListener('change', recompute));
+      document.querySelectorAll('.step').forEach((btn) => btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        const nEl = btn.closest('.frow').querySelector('.step__n');
+        let q = Number(nEl.textContent) + (btn.classList.contains('step--plus') ? 1 : -1);
+        nEl.textContent = String(Math.max(0, Math.min(20, q)));
+        recompute();
+      }));
+
+      [...pkgInputs, ...document.querySelectorAll('.frow input[type="checkbox"]'), ...careInputs].forEach((el) => el.addEventListener('change', recompute));
       recompute();
     </script>
 
@@ -266,6 +319,20 @@ const email = 'antoni.antczak05@gmail.com';
       .frow input { width: 1.1rem; height: 1.1rem; flex: none; cursor: pointer; }
       .frow__t { flex: 1; font-size: 0.92rem; }
       .frow__c { font-weight: 700; font-size: 0.88rem; color: var(--ink-2); white-space: nowrap; }
+      .legend { font-size: 0.82rem; color: var(--muted); margin: -0.3rem 0 1rem; line-height: 1.5; }
+      .star { color: #2563eb; margin-left: 0.35rem; font-size: 0.9em; }
+      .star--legend { margin-left: 0; margin-right: 0.15rem; }
+      .frow.is-included { color: var(--muted); }
+      .frow.is-included .frow__t { color: var(--ink-2); }
+      .frow.is-included .frow__c { color: #2563eb; }
+      .frow input:disabled { opacity: 0.55; cursor: not-allowed; }
+      .frow--qty { cursor: default; }
+      .frow--qty:hover { background: transparent; }
+      .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line-2); border-radius: 5px; overflow: hidden; flex: none; }
+      .step { width: 1.9rem; height: 1.9rem; display: grid; place-items: center; font-size: 1.15rem; font-weight: 700; color: var(--ink); background: var(--card); line-height: 1; }
+      .step:hover:not(:disabled) { background: var(--paper-2); }
+      .step:disabled { color: var(--line-2); cursor: not-allowed; }
+      .step__n { min-width: 1.7rem; text-align: center; font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
 
       .sum { position: sticky; top: 1.5rem; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 1.6rem 1.5rem; }
       .sum__lab { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
