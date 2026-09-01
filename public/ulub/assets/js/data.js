@@ -14,7 +14,7 @@ const CONFIG = {
      2. Plik → Udostępnij → Opublikuj w internecie → wybierz arkusz, format CSV.
      3. Wklej tutaj otrzymany link CSV.
      Puste = tryb pokazowy (strona używa smaków z listy FLAVORS poniżej). */
-  flavorsSheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQuHQfuGrSyY5rvrr_XSq8vm_mAgRq73LqK3KyOyrxFosJm9_Il_RLjp9QYl93PP0BlmQMJu-A0Vuij/pub?output=csv",
+  flavorsSheetCsvUrl: "",
 
   /* --- Formularze (kontakt / rezerwacja / newsletter) przez web3forms.com ---
      Załóż darmowy klucz na web3forms.com i wklej tutaj.
@@ -23,13 +23,13 @@ const CONFIG = {
 };
 
 const SITE = {
-  name: "Ulubiona Lody",
-  tagline: "Lody rzemieślnicze od 2003 roku",
-  phone: "+48 500 000 000",           // podmień na prawdziwy
-  email: "biuro@lodziarniaulubiona.pl",
-  instagram: "https://www.instagram.com/lodziarnia_ulubiona/",
-  facebook: "https://www.facebook.com/Lodziarniaulubiona/",
-  wwwLabel: "lodziarniaulubiona.pl"
+  name: "Nazwa lodziarni",
+  tagline: "Krótki podtytuł marki",
+  phone: "+48 000 000 000",
+  email: "kontakt@twojadomena.pl",
+  instagram: "",
+  facebook: "",
+  wwwLabel: "twojadomena.pl"
 };
 
 /* Godziny: [openH, openM, closeH, closeM] dla dni powszednich i weekendu. */
@@ -46,85 +46,31 @@ function makeHours(weekday, weekend) {
 /* --------  LOKALE (8)  -------- */
 const LOCATIONS = [
   {
-    id: "kobylka", name: "Kobyłka", city: "Kobyłka", flagship: true,
-    address: "ul. Ks. Marmo 31, 05-230 Kobyłka",
-    mapsQuery: "Lodziarnia Ulubiona, ul. Ks. Marmo 31, Kobyłka",
-    intro: "Lokal flagowy i serce marki. To tutaj, w pracowni na zapleczu, powstają lody dla całej sieci. Przestronny plac i betonowe siedziska zapraszają na dłużej.",
-    hero: "assets/img/kobylka-1.webp",
-    gallery: ["kobylka7.webp", "kobylka8.webp", "kobylka9.webp", "kobylka6.webp", "kobylka-3.webp", "kobylka10.webp"],
+    id: "lokal-1", name: "Lokal 1", city: "Miasto", flagship: true,
+    address: "ul. Przykładowa 1, 00-000 Miasto",
+    mapsQuery: "",
+    intro: "Krótki opis lokalu. Wpisz tu kilka zdań o tym miejscu i jego atmosferze.",
+    hero: "", gallery: [],
     hours: makeHours([11, 0, 20, 0], [11, 0, 20, 0]),
-    instagram: SITE.instagram, facebook: SITE.facebook
+    instagram: "", facebook: ""
   },
   {
-    id: "zielonka", name: "Zielonka", city: "Zielonka",
-    address: "ul. Wolności 2, 05-220 Zielonka",
-    mapsQuery: "Lodziarnia Ulubiona, ul. Wolności 2, Zielonka",
-    intro: "Kolorowy pawilon w samym centrum Zielonki. Kolejka po naszą gałkę to tutaj codzienny widok, zwłaszcza w ciepłe popołudnia.",
-    hero: "assets/img/zielonka.webp",
-    gallery: ["zielonka1.webp", "zielonka2.webp", "zielonka3.webp", "zielonka4.webp", "zielonka5.webp", "zielonka6.webp"],
+    id: "lokal-2", name: "Lokal 2", city: "Miasto",
+    address: "ul. Przykładowa 2, 00-000 Miasto",
+    mapsQuery: "",
+    intro: "Krótki opis lokalu. Wpisz tu kilka zdań o tym miejscu.",
+    hero: "", gallery: [],
     hours: makeHours([12, 0, 19, 0], [11, 0, 19, 0]),
-    instagram: SITE.instagram, facebook: SITE.facebook
+    instagram: "", facebook: ""
   },
   {
-    id: "marki", name: "Marki", city: "Marki",
-    address: "ul. Gen. Józefa Zajączka 7, 05-270 Marki",
-    mapsQuery: "Lodziarnia Ulubiona, ul. Zajączka 7, Marki",
-    intro: "Barwna, komiksowa elewacja, której nie da się przeoczyć. Świeże lody, autorskie desery i kawa z własnej palarni.",
-    hero: "assets/img/marki.webp",
-    gallery: ["marki1.webp", "marki5.webp", "marki7.webp", "marki9.webp", "marki10.webp", "marki3.webp"],
+    id: "lokal-3", name: "Lokal 3", city: "Miasto",
+    address: "ul. Przykładowa 3, 00-000 Miasto",
+    mapsQuery: "",
+    intro: "Krótki opis lokalu. Wpisz tu kilka zdań o tym miejscu.",
+    hero: "", gallery: [],
     hours: makeHours([12, 0, 19, 0], [11, 0, 19, 30]),
-    instagram: SITE.instagram, facebook: SITE.facebook
-  },
-  {
-    id: "radzymin", name: "Radzymin", city: "Radzymin",
-    address: "ul. Gen. Lucjana Żeligowskiego 2/4, 05-250 Radzymin",
-    mapsQuery: "Lodziarnia Ulubiona, ul. Żeligowskiego 2, Radzymin",
-    intro: "Radzymiński punkt na mapie Ulubionej, z własnym profilem na Instagramie. Wejście od al. Jana Pawła II.",
-    hero: "assets/img/razdymin1.webp",
-    gallery: ["razdymin2.webp", "razdymin3.webp", "razdymin4.webp", "razdymin5.webp", "razymin.webp", "razymin3.webp"],
-    hours: makeHours([11, 0, 19, 30], [11, 0, 19, 30]),
-    instagram: "https://www.instagram.com/lodziarnia_ulubiona_radzymin/",
-    facebook: "https://www.facebook.com/p/Lodziarnia-Ulubiona-Radzymin-100066869043938/"
-  },
-  {
-    id: "wolomin-pilsudskiego", name: "Wołomin, Piłsudskiego", city: "Wołomin",
-    address: "ul. Piłsudskiego 18, Wołomin (wejście od Armii Krajowej)",
-    mapsQuery: "Lodziarnia Ulubiona, ul. Piłsudskiego 18, Wołomin",
-    intro: "Wołomiński lokal przy Piłsudskiego. Te same przepisy i codziennie świeża partia lodów, prosto z pracowni w Kobyłce.",
-    hero: "assets/img/wolomin.webp",
-    gallery: ["wolomin1.webp", "wolomin2.webp", "wolomin3.webp", "wolomin5.webp", "wolomin6.webp", "wolomin7.webp"],
-    hours: makeHours([11, 0, 19, 0], [11, 0, 19, 30]),
-    instagram: SITE.instagram, facebook: SITE.facebook
-  },
-  {
-    id: "wolomin-koscielna", name: "Wołomin, Kościelna", city: "Wołomin",
-    address: "ul. Kościelna 63a, Wołomin",
-    mapsQuery: "Lodziarnia Ulubiona, ul. Kościelna 63, Wołomin",
-    intro: "Drugi wołomiński punkt Ulubionej, przy Kościelnej. Lody rzemieślnicze, desery i kawa z palarni, codziennie.",
-    hero: "assets/img/wolominkoscielna1.webp",
-    gallery: ["wolominkoscielna2.webp", "wolomin-koscielna3.webp", "wolomin8.webp", "wolomin6.webp", "wolomin2.webp", "wolomin3.webp"],
-    hours: makeHours([11, 0, 19, 0], [11, 0, 19, 0]),
-    instagram: SITE.instagram, facebook: SITE.facebook
-  },
-  {
-    id: "warszawa-czarodzieja", name: "Warszawa, Białołęka", city: "Warszawa",
-    address: "ul. Czarodzieja 2, Warszawa (Białołęka)",
-    mapsQuery: "Lodziarnia Ulubiona, ul. Czarodzieja 2, Warszawa",
-    intro: "Białołęcki punkt Ulubionej. Lody włoskie, gałkowe i owocowe sorbety w drodze do parku.",
-    hero: "assets/img/warszawa-czarodzieja1.webp",
-    gallery: ["warszawa-czarodziej2.webp", "warszawa-czarodziej3.webp", "warszawaczarodziej4.webp"],
-    hours: makeHours([12, 0, 19, 0], [11, 0, 19, 0]),
-    instagram: SITE.instagram, facebook: SITE.facebook
-  },
-  {
-    id: "warszawa-chodecka", name: "Warszawa, Targówek", city: "Warszawa",
-    address: "ul. Chodecka 6a, Warszawa (Targówek)",
-    mapsQuery: "Lodziarnia Ulubiona, ul. Chodecka 6a, Warszawa",
-    intro: "Zielony pawilon przy alei kasztanowców. Pełna tablica smaków, desery i kawa 100% arabica z naszej palarni.",
-    hero: "assets/img/warszawachodeck1.webp",
-    gallery: ["warszawachodecka2.webp", "warszawachodeck5.webp", "warszawachodeck6.webp", "warszawachodeck7.webp", "warszawachodecka3.webp", "warszawachodecka4.webp"],
-    hours: makeHours([12, 0, 19, 30], [11, 0, 19, 30]),
-    instagram: SITE.instagram, facebook: SITE.facebook
+    instagram: "", facebook: ""
   }
 ];
 
@@ -194,7 +140,7 @@ const COFFEE = [
 ];
 
 /* --------  OPINIE (podsumowanie z wizytówki Google — do podmiany)  -------- */
-const REVIEWS_SUMMARY = { rating: 4.8, count: 1240, url: "https://maps.google.com/?q=Lodziarnia+Ulubiona" };
+const REVIEWS_SUMMARY = { rating: 4.8, count: 1240, url: "" };
 const REVIEWS = [
   { author: "Magda K.", text: "Najlepsze lody w okolicy. Pistacja smakuje jak we Włoszech, a porcje są ogromne.", stars: 5 },
   { author: "Piotr W.", text: "Przyjeżdżamy całą rodziną z Warszawy specjalnie po te lody. Zawsze świeże i naturalne.", stars: 5 },
