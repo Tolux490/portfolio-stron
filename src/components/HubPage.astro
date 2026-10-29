@@ -36,7 +36,7 @@ const schema = {
   areaServed: 'Worldwide',
   founder: {
     '@type': 'Person',
-    name: 'Antoni Antczak',
+    name: 'Anthony A.',
     image: new URL(`${b}/img/antoni.webp`, Astro.site || 'https://vervostudio.com/').href,
     jobTitle: t.jobTitle,
     knowsAbout: SKILLS,
@@ -126,7 +126,7 @@ const serviceIcons = [
             <p class="avail"><span class="avail__dot" aria-hidden="true"></span>{t.hero.available}</p>
             <p class="who">
               <img class="mono" src={asset('img/antoni-avatar.webp')} width="240" height="240" alt="" />
-              <span><b>Antoni Antczak</b><span>{t.jobTitle}</span></span>
+              <span><b>Anthony A.</b><span>{t.jobTitle}</span></span>
             </p>
             <h1 set:html={t.hero.h1}></h1>
             <p class="hero__lede">{t.hero.lede}</p>
@@ -326,8 +326,8 @@ const serviceIcons = [
       <section class="band" id="about">
         <div class="wrap about">
           <div class="about__card rv">
-            <img class="portrait" src={asset('img/antoni.webp')} width="533" height="647" alt="Antoni Antczak" loading="lazy" decoding="async" />
-            <p class="about__name">Antoni Antczak</p>
+            <img class="portrait" src={asset('img/antoni.webp')} width="533" height="647" alt="Anthony A." loading="lazy" decoding="async" />
+            <p class="about__name">Anthony A.</p>
             <p class="about__role">Vervo Studio</p>
             <dl class="facts">
               {t.about.facts.map((f) => <div><dt>{f.k}</dt><dd>{f.v}</dd></div>)}
@@ -414,7 +414,7 @@ const serviceIcons = [
           <span class="brand__tx">Vervo <em>Studio</em></span>
         </a>
         <p class="foot__tx">{t.footer.tx}</p>
-        <p class="foot__legal">© {new Date().getFullYear()} Antoni Antczak · <a href={GITHUB_URL} {...extLink}>GitHub</a></p>
+        <p class="foot__legal">© {new Date().getFullYear()} Anthony A. · <a href={GITHUB_URL} {...extLink}>GitHub</a></p>
       </div>
     </footer>
 
