@@ -11,7 +11,7 @@ export const GITHUB_URL = 'https://github.com/Tolux490';
 // - EMAIL_PARTS: zapasowo, gdy FORM_ID jest puste. Adres składa się dopiero w przeglądarce przy wysyłce.
 // Profile w stopce i w sekcji kontaktu. Puste = link się nie pokazuje (wystarczy wkleić adres).
 export const LINKEDIN_URL = '';
-export const UPWORK_URL = '';
+export const UPWORK_URL = 'https://www.upwork.com/freelancers/~01eb955b99956e8023';
 export const FORM_ID = '';
 export const EMAIL_PARTS = ['antoni.antczak05', 'gmail', 'com'];
 
@@ -248,7 +248,7 @@ export const T = {
       h2: 'Common questions',
       items: [
         { q: 'How do we get started?', a: 'Send the file, or a sample of it, with a few lines on what you need. Within 24 hours you get a short plan with the scope, a fixed price and a delivery date.' },
-        { q: 'Where can I hire you?', a: 'On Fiverr, where your payment is held until delivery, or directly through the contact form below. The process and the quality are the same either way.' },
+        { q: 'Where can I hire you?', a: 'On Fiverr or Upwork, where your payment is held until delivery, or directly through the contact form below. The process and the quality are the same either way.' },
         { q: 'How do you handle confidential data?', a: 'Your data is used for your project only and is never shared. On request I delete my copy after delivery, and I am happy to sign an NDA. For sensitive files, an anonymised sample is often enough to start.' },
         { q: 'Excel or Google Sheets?', a: 'Both. I build in whatever your team already uses, so nobody has to learn a new tool. If you are undecided, I recommend the option that fits how you work.' },
         { q: 'Will I be able to maintain it myself?', a: 'Yes. Every delivery includes short documentation: what was changed, how the formulas or scripts work and how to add new data. There is no lock-in.' },
@@ -469,7 +469,7 @@ export const T = {
       h2: 'Częste pytania',
       items: [
         { q: 'Jak zaczynamy?', a: 'Wyślij plik albo jego fragment i kilka zdań o tym, czego potrzebujesz. W ciągu 24 godzin dostaniesz krótki plan z zakresem, stałą ceną i terminem oddania.' },
-        { q: 'Gdzie mogę zamówić?', a: 'Na Fiverr, gdzie płatność jest zabezpieczona do momentu oddania pracy, albo bezpośrednio przez formularz poniżej. Proces i jakość są w obu przypadkach takie same.' },
+        { q: 'Gdzie mogę zamówić?', a: 'Na Fiverr lub Upwork, gdzie płatność jest zabezpieczona do momentu oddania pracy, albo bezpośrednio przez formularz poniżej. Proces i jakość są w obu przypadkach takie same.' },
         { q: 'Jak traktujesz poufne dane?', a: 'Dane służą wyłącznie do Twojego projektu i nie są nikomu udostępniane. Na prośbę usuwam swoją kopię po oddaniu pracy i chętnie podpiszę NDA. Przy wrażliwych plikach na start często wystarcza zanonimizowana próbka.' },
         { q: 'Excel czy Arkusze Google?', a: 'Jedno i drugie. Pracuję w narzędziu, którego Twój zespół już używa, więc nikt nie musi uczyć się nowego. Jeśli nie wiesz, co wybrać, podpowiem rozwiązanie dopasowane do Waszej pracy.' },
         { q: 'Czy poradzę sobie z tym sam po oddaniu?', a: 'Tak. Każda praca ma krótką dokumentację: co zostało zmienione, jak działają formuły lub skrypty i jak dodawać nowe dane. Nie jesteś ode mnie uzależniony.' },
@@ -690,7 +690,7 @@ export const T = {
       h2: 'Veelgestelde vragen',
       items: [
         { q: 'Hoe beginnen we?', a: 'Stuur het bestand, of een deel ervan, met een paar regels over wat je nodig hebt. Binnen 24 uur krijg je een kort plan met de afbakening, een vaste prijs en een opleverdatum.' },
-        { q: 'Waar kan ik je inhuren?', a: 'Via Fiverr, waar je betaling tot de oplevering veilig wordt bewaard, of rechtstreeks via het contactformulier hieronder. Werkwijze en kwaliteit zijn in beide gevallen hetzelfde.' },
+        { q: 'Waar kan ik je inhuren?', a: 'Via Fiverr of Upwork, waar je betaling tot de oplevering veilig wordt bewaard, of rechtstreeks via het contactformulier hieronder. Werkwijze en kwaliteit zijn in beide gevallen hetzelfde.' },
         { q: 'Hoe ga je om met vertrouwelijke data?', a: 'Je data wordt alleen voor jouw project gebruikt en nooit gedeeld. Op verzoek verwijder ik mijn kopie na oplevering, en een NDA tekenen is geen probleem. Bij gevoelige bestanden is een geanonimiseerd voorbeeld vaak genoeg om te beginnen.' },
         { q: 'Excel of Google Sheets?', a: 'Allebei. Ik bouw in wat je team al gebruikt, zodat niemand een nieuw programma hoeft te leren. Twijfel je, dan adviseer ik de optie die past bij hoe jullie werken.' },
         { q: 'Kan ik het daarna zelf onderhouden?', a: 'Ja. Elke oplevering bevat korte documentatie: wat er is veranderd, hoe de formules of scripts werken en hoe je nieuwe data toevoegt. Je zit nergens aan vast.' },
