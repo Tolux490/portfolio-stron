@@ -4,7 +4,7 @@ import Polityka from '../../../components/Polityka.astro';
 import { mechanik as biz } from '../../../data/firmy.js';
 const fonts = 'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap';
 ---
-<Site title={`Polityka prywatności — ${biz.name}`} description="Zasady przetwarzania danych osobowych." fonts={fonts} biz={biz}>
+<Site title={`Polityka prywatności — ${biz.name}`} description="Zasady przetwarzania danych osobowych." fonts={fonts} biz={biz} path="polityka-prywatnosci/">
   <Polityka biz={biz} />
 </Site>
 <style is:global>

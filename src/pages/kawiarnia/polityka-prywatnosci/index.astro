@@ -4,7 +4,7 @@ import Polityka from '../../../components/Polityka.astro';
 import { kawiarnia as biz } from '../../../data/firmy.js';
 const fonts = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,420&family=Albert+Sans:wght@400;500;600&display=swap';
 ---
-<Site title={`Polityka prywatności — ${biz.name}`} description="Zasady przetwarzania danych osobowych." fonts={fonts} biz={biz}>
+<Site title={`Polityka prywatności — ${biz.name}`} description="Zasady przetwarzania danych osobowych." fonts={fonts} biz={biz} path="polityka-prywatnosci/">
   <Polityka biz={biz} />
   <section class="band" style="padding-top:0">
     <div class="wrap prose">

@@ -1,0 +1,162 @@
+---
+// Ogrodowa 3 — kuchnia i ludzie (PL: /restauracja/o-nas/, EN: /restauracja/en/o-nas/).
+import Restauracja from '../../layouts/Restauracja.astro';
+import Foto from '../../components/Foto.astro';
+import * as PL from '../../data/restauracja.js';
+import * as EN from '../../data/restauracja-en.js';
+
+const { lang = 'pl' } = Astro.props;
+const en = lang === 'en';
+const { zespol, faq } = en ? EN : PL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja${en ? '/en' : ''}`;
+const inicjaly = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+
+const t = en ? {
+  title: 'Kitchen and people · Ogrodowa 3, Wołomin',
+  desc: 'Who we are: a small restaurant on Ogrodowa Street in Wołomin. Seasonal cooking, local suppliers and a team that knows guests by name.',
+  kicker: 'Kitchen and people', h1: ['We cook with', 'what grows nearby'],
+  lede: 'Ogrodowa 3 started from a simple idea: a small dining room, a short menu and produce from the neighbourhood. Instead of chain-restaurant sameness, we focus on people you will remember.',
+  histKicker: 'Where we started', histH2: 'Back to Wołomin',
+  hist1: 'Our head chef cooked in Warsaw and Copenhagen, then came back to where he grew up. He opened the kind of place he would want to eat in himself: intimate, warm, with a menu short enough for every dish to be just right.',
+  hist2: 'We started with fourteen tables and an open kitchen. Not much has changed since, except that we now have guests who come back every week.',
+  roomAlt: 'The Ogrodowa 3 dining room',
+  howKicker: 'How we work', howH2: 'Three rules we stick to',
+  rules: [
+    ['The season sets the menu', 'We write the menu every week from whatever our suppliers bring. If something is out of season, it is not on the menu.'],
+    ['Short and to the point', 'We would rather do a few dishes perfectly than have a long menu of everything. Fewer dishes, more attention on the plate.'],
+    ['No rush', 'We book a table for the whole evening and never turn it twice. You come in and stay as long as you like.'],
+  ],
+  kitchenAlt: 'Finishing a dish in the kitchen',
+  prodKicker: 'Produce', prodH2: ['We know our suppliers', 'by name'],
+  prodLede: 'Vegetables from a farm in Kobyłka, bread from the bakery on Legionów Street, fish twice a week, cheese from a small farm dairy. It is not a slogan from a leaflet, just real people we call every morning.',
+  facts: ['local suppliers', 'km · sourcing radius', 'a week, fresh fish'],
+  teamKicker: 'Team', teamH2: 'People you will meet',
+  faqKicker: 'Good to know', faqH2: 'Frequently asked questions', book: 'Book a table',
+} : {
+  title: 'Kuchnia i ludzie · Ogrodowa 3, Wołomin',
+  desc: 'Kim jesteśmy: mała restauracja przy Ogrodowej w Wołominie. Kuchnia sezonowa, dostawcy z okolicy, zespół, który zna gości po imieniu.',
+  kicker: 'Kuchnia i ludzie', h1: ['Gotujemy z tego,', 'co rośnie obok'],
+  lede: 'Ogrodowa 3 powstała z prostego pomysłu: mała sala, krótka karta i produkty z sąsiedztwa. Zamiast sieciowej powtarzalności stawiamy na ludzi, których zapamiętasz.',
+  histKicker: 'Skąd się wzięliśmy', histH2: 'Powrót do Wołomina',
+  hist1: 'Nasz szef kuchni gotował w Warszawie i Kopenhadze, a potem wrócił tam, gdzie dorastał. Otworzył miejsce, w którym sam chciałby jeść: kameralne, ciepłe, z kartą krótką na tyle, żeby każde danie było dopięte.',
+  hist2: 'Zaczynaliśmy od czternastu stolików i jednej kuchni na widoku. Do dziś niewiele się zmieniło, poza tym, że dołączyli goście, którzy wracają co tydzień.',
+  roomAlt: 'Wnętrze sali Ogrodowej 3',
+  howKicker: 'Jak pracujemy', howH2: 'Trzy zasady, których się trzymamy',
+  rules: [
+    ['Sezon dyktuje kartę', 'Kartę piszemy co tydzień, z tego, co akurat przywiozą dostawcy. Czegoś nie ma w sezonie? Nie ma tego w karcie.'],
+    ['Krótko i konkretnie', 'Wolimy kilka dań zrobionych perfekcyjnie niż długie menu na wszystko. Mniej pozycji, więcej uwagi na talerzu.'],
+    ['Bez pośpiechu', 'Rezerwujemy stolik na cały wieczór. Nie obracamy nim dwa razy. Przychodzisz i zostajesz tak długo, jak chcesz.'],
+  ],
+  kitchenAlt: 'Wykończenie dania w kuchni',
+  prodKicker: 'Produkt', prodH2: ['Znamy nazwiska', 'naszych dostawców'],
+  prodLede: 'Warzywa z gospodarstwa w Kobyłce, pieczywo z piekarni na Legionów, ryby dwa razy w tygodniu, sery od zagrodowej mleczarni. To nie hasło z ulotki, tylko konkretni ludzie, do których dzwonimy rano.',
+  facts: ['lokalnych dostawców', 'km · promień zakupów', 'w tygodniu świeże ryby'],
+  teamKicker: 'Zespół', teamH2: 'Ludzie, których poznasz',
+  faqKicker: 'Dobrze wiedzieć', faqH2: 'Najczęstsze pytania', book: 'Zarezerwuj stolik',
+};
+---
+<Restauracja title={t.title} description={t.desc} current="o-nas" ogImage="restauracja/szef-kuchni.webp" lang={lang} path="o-nas/">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">{t.kicker}</p>
+      <h1 class="reveal">{t.h1[0]}<br />{t.h1[1]}</h1>
+      <p class="lede reveal">{t.lede}</p>
+    </div>
+  </section>
+
+  <!-- historia -->
+  <section class="band band--tight">
+    <div class="wrap split split--wide-l">
+      <div class="reveal">
+        <p class="eyebrow">{t.histKicker}</p>
+        <h2 class="h2">{t.histH2}</h2>
+        <p class="lede">{t.hist1}</p>
+        <p class="lede">{t.hist2}</p>
+      </div>
+      <div class="split__media figure reveal">
+        <Foto src="restauracja/wnetrze-fotele.webp" alt={t.roomAlt} ratio="3/4" label="Sala" />
+      </div>
+    </div>
+  </section>
+
+  <!-- filozofia -->
+  <section class="band band--krem">
+    <div class="wrap">
+      <div class="reveal" style="max-width:52ch">
+        <p class="eyebrow">{t.howKicker}</p>
+        <h2 class="h2">{t.howH2}</h2>
+      </div>
+      <div class="cards cards--3" style="margin-top:2.5rem">
+        {t.rules.map(([h, p], i) => (
+          <article class="card reveal">
+            <span class="card__k">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{h}</h3>
+            <p>{p}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- dostawcy / kuchnia -->
+  <section class="band">
+    <div class="wrap split split--wide-r">
+      <div class="split__media figure reveal">
+        <Foto src="restauracja/kuchnia-pinceta.webp" alt={t.kitchenAlt} ratio="3/4" label="Kuchnia" />
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">{t.prodKicker}</p>
+        <h2 class="h2">{t.prodH2[0]}<br />{t.prodH2[1]}</h2>
+        <p class="lede">{t.prodLede}</p>
+        <dl class="facts">
+          <div><dt>12</dt><dd>{t.facts[0]}</dd></div>
+          <div><dt>40</dt><dd>{t.facts[1]}</dd></div>
+          <div><dt>2×</dt><dd>{t.facts[2]}</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- zespół -->
+  <section class="band band--zielen">
+    <div class="wrap">
+      <div class="reveal" style="max-width:48ch">
+        <p class="eyebrow">{t.teamKicker}</p>
+        <h2 class="h2">{t.teamH2}</h2>
+      </div>
+      <div class="cards cards--3" style="margin-top:2.5rem">
+        {zespol.map((o) => (
+          <article class="card reveal">
+            <span class="review__ava" aria-hidden="true" style="width:3rem;height:3rem">{inicjaly(o.imie)}</span>
+            <h3>{o.imie}</h3>
+            <span class="card__k">{o.rola}</span>
+            <p>{o.o}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="band">
+    <div class="wrap--w">
+      <div class="reveal center">
+        <p class="eyebrow eyebrow--center">{t.faqKicker}</p>
+        <h2 class="h2">{t.faqH2}</h2>
+      </div>
+      <div class="faq reveal">
+        {faq.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+      <div class="center mt-l">
+        <a class="btn btn--gold reveal" href={`${root}/rezerwacja/`}>{t.book}</a>
+      </div>
+    </div>
+  </section>
+</Restauracja>

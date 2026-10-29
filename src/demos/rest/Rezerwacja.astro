@@ -1,0 +1,303 @@
+---
+// Ogrodowa 3 — rezerwacja stolika (PL: /restauracja/rezerwacja/, EN: /restauracja/en/rezerwacja/).
+import Restauracja from '../../layouts/Restauracja.astro';
+import MapaRest from '../../components/rest/MapaRest.astro';
+import { restauracja as bizPl, inLang } from '../../data/firmy.js';
+
+const { lang = 'pl' } = Astro.props;
+const en = lang === 'en';
+const biz = inLang(bizPl, lang);
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja${en ? '/en' : ''}`;
+
+const godziny = ['16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
+
+const t = en ? {
+  title: 'Book a table · Ogrodowa 3, Wołomin',
+  desc: 'Book a table at Ogrodowa 3 in Wołomin. By phone from 15:00 or through the form; we confirm the same day.',
+  kicker: 'Reservations', h1: 'Book your evening',
+  lede: 'With just over a dozen tables, calling is quickest. We answer from 15:00. Prefer to book online? Fill in the form and we will confirm by phone the same working day.',
+  osoby: ['1 person', '2 people', '3 people', '4 people', '5 people', '6 people', '7 people', '8 people', 'more than 8'],
+  guests: 'Guests', choose: 'Choose', date: 'Date', time: 'Time', phone: 'Phone', name: 'Full name',
+  email: 'Email', optional: '(optional)', notes: 'Notes',
+  notesPh: 'E.g. a table by the window, nut allergy, a birthday, vegetarian',
+  more: 'Show full information', privacy: 'privacy policy',
+  consent: 'I have read the information on data processing and want to send a booking request.',
+  submit: 'Send booking request',
+  callH: 'Rather call?', callP: 'We answer every day from 15:00.', hoursH: 'Opening hours',
+  goodH: 'Good to know', good: ['We hold the table for 15 minutes after the booking time.', 'Last orders 45 minutes before the kitchen closes.', 'Groups of more than 8 by email:'],
+  dirKicker: 'Getting here',
+  dirLede: 'Entrance from Ogrodowa Street, with parking along the street. A ten-minute walk from Wołomin train station.',
+  openMaps: 'Open in Google Maps →',
+  js: {
+    required: 'This field is required', badPhone: 'Enter a valid phone number',
+    consent: 'Please tick the consent to data processing.', fix: 'Please complete the highlighted fields.',
+    demo: 'Thank you! (demo mode, the request was not sent anywhere). Add a web3forms key to the business data to enable real sending.',
+    sending: 'Sending…', ok: 'Thank you! Your request has arrived; we will confirm by phone the same working day.',
+    fail: 'Sending failed. Call {tel} or write to {mail}.', submit: 'Send booking request',
+    subject: 'Booking',
+  },
+} : {
+  title: 'Rezerwacja stolika · Ogrodowa 3, Wołomin',
+  desc: 'Zarezerwuj stolik w restauracji Ogrodowa 3 w Wołominie. Telefonicznie od 15:00 lub przez formularz, potwierdzamy tego samego dnia.',
+  kicker: 'Rezerwacja', h1: 'Zarezerwuj wieczór',
+  lede: 'Przy kilkunastu stolikach najszybszy jest telefon. Odbieramy od 15:00. Wolisz online? Wypełnij formularz, a potwierdzimy termin telefonicznie tego samego dnia roboczego.',
+  osoby: ['1 osoba', '2 osoby', '3 osoby', '4 osoby', '5 osób', '6 osób', '7 osób', '8 osób', 'więcej niż 8'],
+  guests: 'Liczba osób', choose: 'Wybierz', date: 'Data', time: 'Godzina', phone: 'Telefon', name: 'Imię i nazwisko',
+  email: 'E-mail', optional: '(opcjonalnie)', notes: 'Uwagi',
+  notesPh: 'Np. stolik przy oknie, alergia na orzechy, urodziny, wersja wege',
+  more: 'Rozwiń pełną informację', privacy: 'polityka prywatności',
+  consent: 'Zapoznałem/am się z informacją o przetwarzaniu danych i chcę wysłać prośbę o rezerwację.',
+  submit: 'Wyślij prośbę o rezerwację',
+  callH: 'Wolisz zadzwonić?', callP: 'Odbieramy codziennie od 15:00.', hoursH: 'Godziny otwarcia',
+  goodH: 'Dobrze wiedzieć', good: ['Stolik trzymamy 15 minut po godzinie rezerwacji.', 'Ostatnie zamówienie 45 minut przed zamknięciem kuchni.', 'Grupy powyżej 8 osób ustalamy mailowo:'],
+  dirKicker: 'Dojazd',
+  dirLede: 'Wejście od Ogrodowej, parking wzdłuż ulicy. Z dworca PKP Wołomin dziesięć minut spacerem.',
+  openMaps: 'Otwórz w Google Maps →',
+  js: {
+    required: 'To pole jest wymagane', badPhone: 'Podaj poprawny numer telefonu',
+    consent: 'Zaznacz zgodę na przetwarzanie danych.', fix: 'Uzupełnij zaznaczone pola.',
+    demo: 'Dziękujemy! (tryb demo, prośba nie została nigdzie wysłana). Wpisz klucz web3forms w danych firmy, aby uruchomić realną wysyłkę.',
+    sending: 'Wysyłanie…', ok: 'Dziękujemy! Prośba dotarła, potwierdzimy telefonicznie tego samego dnia roboczego.',
+    fail: 'Nie udało się wysłać. Zadzwoń: {tel} albo napisz na {mail}.', submit: 'Wyślij prośbę o rezerwację',
+    subject: 'Rezerwacja',
+  },
+};
+---
+<Restauracja title={t.title} description={t.desc} current="rezerwacja" ogImage="restauracja/stol-nakrycie.webp" lang={lang} path="rezerwacja/">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">{t.kicker}</p>
+      <h1 class="reveal">{t.h1}</h1>
+      <p class="lede reveal">{t.lede}</p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap rez-grid">
+      <!-- FORMULARZ -->
+      <form class="reveal" id="rezForm" novalidate>
+        <div class="form__row form__row--2">
+          <label class="field">
+            <span>{t.guests}</span>
+            <select name="osoby" required>
+              <option value="">{t.choose}</option>
+              {t.osoby.map((o) => <option value={o}>{o}</option>)}
+            </select>
+          </label>
+          <label class="field">
+            <span>{t.date}</span>
+            <input type="date" name="data" required />
+          </label>
+        </div>
+
+        <div class="form__row form__row--2">
+          <label class="field">
+            <span>{t.time}</span>
+            <select name="godzina" required>
+              <option value="">{t.choose}</option>
+              {godziny.map((g) => <option value={g}>{g}</option>)}
+            </select>
+          </label>
+          <label class="field">
+            <span>{t.phone}</span>
+            <input type="tel" name="telefon" autocomplete="tel" inputmode="tel" required />
+          </label>
+        </div>
+
+        <div class="form__row form__row--2">
+          <label class="field">
+            <span>{t.name}</span>
+            <input type="text" name="imie" autocomplete="name" required />
+          </label>
+          <label class="field">
+            <span>{t.email} <em>{t.optional}</em></span>
+            <input type="email" name="email" autocomplete="email" />
+          </label>
+        </div>
+
+        <div class="form__row">
+          <label class="field">
+            <span>{t.notes} <em>{t.optional}</em></span>
+            <textarea name="uwagi" rows="3" placeholder={t.notesPh}></textarea>
+          </label>
+        </div>
+
+        <!-- Klauzula informacyjna (art. 13 RODO) -->
+        <div class="klauzula">
+          {en ? (
+            <p>
+              The controller of your data is {biz.legalName}, {biz.street}, {biz.zip} {biz.city}, Poland,
+              tax ID (NIP) {biz.nip}. We process the data from this form only to accept and confirm your
+              booking. The legal basis is taking steps at your request before entering into a contract
+              (Article 6(1)(b) GDPR) and our legitimate interest in contacting you (Article 6(1)(f) GDPR).
+            </p>
+          ) : (
+            <p>
+              Administratorem Twoich danych jest {biz.legalName}, {biz.street}, {biz.zip} {biz.city},
+              NIP {biz.nip}. Dane z formularza przetwarzamy wyłącznie po to, żeby przyjąć i potwierdzić
+              rezerwację. Podstawą są działania na Twoje żądanie przed zawarciem umowy
+              (art. 6 ust. 1 lit. b RODO) oraz nasz uzasadniony interes w kontakcie (art. 6 ust. 1 lit. f RODO).
+            </p>
+          )}
+          <details>
+            <summary>{t.more}</summary>
+            {en ? (
+              <p>
+                Providing your data is voluntary, but without a name and phone number we cannot confirm the booking.
+                We keep the data for up to 12 months from the last contact. Recipients may include the hosting
+                provider and the form-handling provider, acting under a data processing agreement. You have the
+                right to access, correct, delete, restrict, port and object, and to lodge a complaint with the
+                Polish supervisory authority (UODO). Details:
+                <a href={`${root}/polityka-prywatnosci/`}>{t.privacy}</a>.
+              </p>
+            ) : (
+              <p>
+                Podanie danych jest dobrowolne, ale bez imienia i telefonu nie potwierdzimy rezerwacji.
+                Dane przechowujemy do 12 miesięcy od ostatniego kontaktu. Odbiorcami mogą być dostawca
+                hostingu i usługi obsługi formularza, działający na podstawie umowy powierzenia.
+                Masz prawo dostępu, sprostowania, usunięcia, ograniczenia, przenoszenia i sprzeciwu
+                oraz skargi do Prezesa UODO. Szczegóły:
+                <a href={`${root}/polityka-prywatnosci/`}>{t.privacy}</a>.
+              </p>
+            )}
+          </details>
+          <label class="consent">
+            <input type="checkbox" name="zgoda" value="tak" required />
+            <span>{t.consent}</span>
+          </label>
+        </div>
+
+        <button class="btn btn--gold form__submit" type="submit" id="rezSubmit">{t.submit}</button>
+        <p class="form__status" id="rezStatus" role="status" aria-live="polite"></p>
+      </form>
+
+      <!-- INFO -->
+      <aside class="reveal" style="display:grid;gap:1.25rem">
+        <div class="infocard">
+          <div>
+            <h3>{t.callH}</h3>
+            <p style="margin-top:.6rem"><a class="ulink" href={`tel:${tel}`} style="font-size:1.3rem;color:var(--zloto-jasne)">{biz.phone}</a></p>
+            <p style="margin-top:.4rem;color:var(--cichy);font-size:.85rem">{t.callP}</p>
+          </div>
+          <div>
+            <h3>{t.hoursH}</h3>
+            {biz.hours.map((h) => <p style="margin-top:.3rem">{h}</p>)}
+          </div>
+          <div>
+            <h3>{t.goodH}</h3>
+            <p style="margin-top:.5rem;color:var(--cichy);font-size:.88rem">{t.good[0]}</p>
+            <p style="color:var(--cichy);font-size:.88rem">{t.good[1]}</p>
+            <p style="color:var(--cichy);font-size:.88rem">{t.good[2]} <a class="ulink" href={`mailto:${biz.email}`} style="color:var(--zloto-jasne)">{biz.email}</a></p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- MAPA -->
+  <section class="band band--tight">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="eyebrow">{t.dirKicker}</p>
+        <h2 class="h2">{biz.street}<br />{biz.zip} {biz.city}</h2>
+        <p class="lede">{t.dirLede}</p>
+        <a class="btn btn--outline mt-m" href={biz.mapUrl} target="_blank" rel="noopener">{t.openMaps}</a>
+      </div>
+      <div class="reveal"><MapaRest lang={lang} /></div>
+    </div>
+  </section>
+
+  <script define:vars={{ formKey: biz.formKey, mailKontakt: biz.email, nazwa: biz.name, L: t.js }}>
+    const form = document.getElementById('rezForm');
+    const status = document.getElementById('rezStatus');
+    const submit = document.getElementById('rezSubmit');
+
+    const pokazBlad = (pole, tekst) => {
+      const field = pole.closest('.field');
+      field?.classList.add('is-err');
+      if (!field?.querySelector('.field__err')) {
+        const s = document.createElement('span');
+        s.className = 'field__err';
+        s.textContent = tekst;
+        field?.appendChild(s);
+      }
+    };
+    const czyscBledy = () => {
+      form.querySelectorAll('.field.is-err').forEach((f) => f.classList.remove('is-err'));
+      form.querySelectorAll('.field__err').forEach((e) => e.remove());
+    };
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      czyscBledy();
+      status.textContent = '';
+      status.className = 'form__status';
+
+      let ok = true;
+      const wymagane = form.querySelectorAll('[required]');
+      wymagane.forEach((pole) => {
+        if (pole.type === 'checkbox') {
+          if (!pole.checked) { ok = false; }
+          return;
+        }
+        if (!pole.value.trim()) { pokazBlad(pole, L.required); ok = false; }
+      });
+      const tel = form.querySelector('[name="telefon"]');
+      if (tel?.value && tel.value.replace(/[^\d]/g, '').length < 9) { pokazBlad(tel, L.badPhone); ok = false; }
+      const zgoda = form.querySelector('[name="zgoda"]');
+      if (zgoda && !zgoda.checked) { status.textContent = L.consent; status.classList.add('is-err'); }
+
+      if (!ok) {
+        if (!status.textContent) { status.textContent = L.fix; status.classList.add('is-err'); }
+        form.querySelector('.field.is-err input, .field.is-err select')?.focus();
+        return;
+      }
+
+      const dane = Object.fromEntries(new FormData(form).entries());
+
+      // Tryb pokazowy — bez klucza web3forms nic nie wychodzi na zewnątrz.
+      if (!formKey) {
+        submit.disabled = true;
+        status.textContent = L.demo;
+        status.classList.add('is-ok');
+        form.reset();
+        setTimeout(() => { submit.disabled = false; }, 400);
+        return;
+      }
+
+      try {
+        submit.disabled = true;
+        submit.textContent = L.sending;
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: formKey,
+            subject: `${L.subject} ${nazwa}: ${dane.osoby}, ${dane.data} ${dane.godzina}`,
+            from_name: dane.imie,
+            ...dane,
+          }),
+        });
+        const wynik = await res.json();
+        if (wynik.success) {
+          status.textContent = L.ok;
+          status.classList.add('is-ok');
+          form.reset();
+        } else {
+          throw new Error(wynik.message || 'błąd');
+        }
+      } catch (err) {
+        status.textContent = L.fail
+          .replace('{tel}', document.querySelector('.infocard a')?.textContent || '')
+          .replace('{mail}', mailKontakt);
+        status.classList.add('is-err');
+      } finally {
+        submit.disabled = false;
+        submit.textContent = L.submit;
+      }
+    });
+  </script>
+</Restauracja>

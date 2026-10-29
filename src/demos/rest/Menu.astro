@@ -1,0 +1,117 @@
+---
+// Ogrodowa 3 — karta (PL: /restauracja/menu/, EN: /restauracja/en/menu/).
+import Restauracja from '../../layouts/Restauracja.astro';
+import * as PL from '../../data/restauracja.js';
+import * as EN from '../../data/restauracja-en.js';
+
+const { lang = 'pl' } = Astro.props;
+const en = lang === 'en';
+const { menu, degustacja } = en ? EN : PL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja${en ? '/en' : ''}`;
+
+const t = en ? {
+  title: 'Menu · Ogrodowa 3, Wołomin',
+  desc: 'The seasonal menu at Ogrodowa 3: starters, mains, desserts and a tasting menu with wine pairing. It changes with the seasons.',
+  kicker: 'Menu', h1: 'This season\'s menu',
+  lede: 'We write it with the seasons and with whatever our suppliers bring. Below is the full à la carte menu and the tasting menu led by the kitchen. We sort out allergens and vegetarian versions at the table.',
+  badge: ['A new menu every Wednesday', ', with the first evening hosted by the head chef'],
+  signature: 'Signature', veg: 'Veg',
+  note: 'Prices in PLN. We discuss allergens when you order, and the kitchen will suggest substitutes. We can prepare a vegetarian version of most dishes if you mention it when booking. No service charge is added to the bill.',
+  tastingKicker: 'Tasting menu', cur: 'PLN', perPerson: 'per person, seven courses', pairing: 'wine pairing (optional)',
+  bookTasting: 'Book the tasting menu',
+  ctaKicker: 'Join us', ctaH2: ['The menu reads best', 'at the table'], ctaLede: 'Book the evening and leave the rest to us.', book: 'Book a table',
+} : {
+  title: 'Karta · Ogrodowa 3, Wołomin',
+  desc: 'Karta sezonowa restauracji Ogrodowa 3: przystawki, dania główne, desery i menu degustacyjne z parowaniem win. Zmieniamy ją wraz z sezonem.',
+  kicker: 'Karta', h1: 'Karta sezonu',
+  lede: 'Piszemy ją wraz z sezonem i tym, co przywiozą dostawcy. Poniżej pełna karta à la carte oraz menu degustacyjne prowadzone przez kuchnię. Alergeny i wersje wege ustalimy przy stole.',
+  badge: ['Nowa karta w każdą środę', ', pierwszy wieczór prowadzi szef kuchni'],
+  signature: 'Sygnatura', veg: 'Wege',
+  note: 'Ceny w złotych. Alergeny omawiamy przy zamówieniu, a kuchnia dobierze zamienniki. Wersję wegetariańską większości dań przygotujemy, jeśli wspomnisz o tym przy rezerwacji. Do rachunku nie doliczamy opłaty serwisowej.',
+  tastingKicker: 'Menu degustacyjne', cur: 'zł', perPerson: 'za osobę, siedem serwisów', pairing: 'parowanie win (opcja)',
+  bookTasting: 'Zarezerwuj degustację',
+  ctaKicker: 'Zapraszamy', ctaH2: ['Kartę najlepiej czytać', 'przy stoliku'], ctaLede: 'Zarezerwuj wieczór, resztą zajmiemy się my.', book: 'Rezerwuj stolik',
+};
+---
+<Restauracja title={t.title} description={t.desc} current="menu" ogImage="restauracja/danie-sygnatura.webp" lang={lang} path="menu/">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">{t.kicker}</p>
+      <h1 class="reveal">{t.h1}</h1>
+      <p class="lede reveal">{t.lede}</p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap">
+      <div class="badge reveal" style="display:inline-block;margin-bottom:2.5rem">
+        <strong>{t.badge[0]}</strong>{t.badge[1]}
+      </div>
+
+      {menu.map((g) => (
+        <div class="course reveal">
+          <div class="course__top">
+            <span class="course__name">{g.grupa}</span>
+            <p class="course__desc">{g.opis}</p>
+          </div>
+          <ul class="dish">
+            {g.dania.map((d) => (
+              <li>
+                <div class="dish__main">
+                  <span class="dish__n">
+                    {d.n}
+                    {d.tag === 'sygnatura' && <span class="tag">{t.signature}</span>}
+                    {d.tag === 'wege' && <span class="tag tag--wege">{t.veg}</span>}
+                  </span>
+                  <span class="dish__o">{d.o}</span>
+                </div>
+                <span class="dish__leader" aria-hidden="true"></span>
+                <span class="dish__c">{d.c}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <p class="mono-note reveal maxw-prose">{t.note}</p>
+    </div>
+  </section>
+
+  <!-- ===================== MENU DEGUSTACYJNE ===================== -->
+  <section class="band band--zielen">
+    <div class="wrap split split--wide-l">
+      <div class="reveal">
+        <p class="eyebrow">{t.tastingKicker}</p>
+        <h2 class="h2">{degustacja.nazwa}</h2>
+        <p class="lede">{degustacja.opis}</p>
+        <div class="facts" style="margin-top:2.5rem">
+          <div><dt>{degustacja.cena}<span style="font-size:.4em"> {t.cur}</span></dt><dd>{t.perPerson}</dd></div>
+          <div><dt>{degustacja.paira}<span style="font-size:.4em"> {t.cur}</span></dt><dd>{t.pairing}</dd></div>
+        </div>
+        <a class="btn btn--gold mt-l" href={`${root}/rezerwacja/`}>{t.bookTasting}</a>
+      </div>
+      <div class="reveal">
+        <ol class="divlist" style="counter-reset:s;list-style:none;padding:0;margin:0">
+          {degustacja.serwisy.map((s, i) => (
+            <div style="display:flex;gap:1.25rem;align-items:baseline">
+              <span style="font-family:var(--serif);font-size:1.4rem;color:var(--zloto);min-width:2rem">{String(i + 1).padStart(2, '0')}</span>
+              <span style="font-family:var(--serif);font-size:1.35rem">{s}</span>
+            </div>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="band cta">
+    <div class="cta__in wrap--w">
+      <p class="eyebrow eyebrow--center reveal">{t.ctaKicker}</p>
+      <h2 class="reveal">{t.ctaH2[0]}<br />{t.ctaH2[1]}</h2>
+      <p class="lede reveal">{t.ctaLede}</p>
+      <a class="btn btn--gold reveal" href={`${root}/rezerwacja/`}>{t.book}</a>
+    </div>
+  </section>
+</Restauracja>

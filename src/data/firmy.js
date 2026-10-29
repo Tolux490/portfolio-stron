@@ -16,6 +16,8 @@ export const mechanik = {
   schemaType: 'AutoRepair',
   openingHours: ['Mo-Fr 08:00-18:00', 'Sa 08:00-13:00'],
   hours: ['pon.–pt. 8:00–18:00', 'sob. 8:00–13:00', 'niedz. nieczynne'],
+  // Wersja angielska (podstrony /en/)
+  en: { tagline: 'Diagnostics and mechanical repair for passenger cars. Wołomin, since 2011.', hours: ['Mon–Fri 8:00–18:00', 'Sat 8:00–13:00', 'Sun closed'] },
 };
 
 export const restauracja = {
@@ -44,6 +46,8 @@ export const restauracja = {
   googleUrl: 'https://maps.google.com/?q=Wołomin+Ogrodowa+3',
   openingHours: ['We-Sa 16:00-22:00', 'Su 12:00-18:00'],
   hours: ['śr.–sob. 16:00–22:00', 'niedz. 12:00–18:00', 'pon.–wt. nieczynne'],
+  // Wersja angielska (podstrony /en/)
+  en: { tagline: 'Seasonal cooking and natural wines. Wołomin, after dark.', hours: ['Wed–Sat 16:00–22:00', 'Sun 12:00–18:00', 'Mon–Tue closed'] },
 };
 
 export const nieruchomosci = {
@@ -66,6 +70,8 @@ export const nieruchomosci = {
   schemaType: 'RealEstateAgent',
   openingHours: ['Mo-Fr 09:00-17:00'],
   hours: ['pon.–pt. 9:00–17:00', 'sob. po umówieniu', 'niedz. nieczynne'],
+  // Wersja angielska (podstrony /en/)
+  en: { tagline: 'Apartments and houses for sale in the Wołomin area.', hours: ['Mon–Fri 9:00–17:00', 'Sat by appointment', 'Sun closed'] },
 };
 
 export const kawiarnia = {
@@ -86,6 +92,8 @@ export const kawiarnia = {
   schemaType: 'CafeOrCoffeeShop',
   openingHours: ['Mo-Fr 07:30-18:00', 'Sa-Su 09:00-17:00'],
   hours: ['pon.–pt. 7:30–18:00', 'sob.–niedz. 9:00–17:00'],
+  // Wersja angielska (podstrony /en/)
+  en: { tagline: 'Specialty coffee, matcha and our own baking. Wołomin.', hours: ['Mon–Fri 7:30–18:00', 'Sat–Sun 9:00–17:00'] },
 };
 
 export const oktan = {
@@ -112,5 +120,10 @@ export const oktan = {
   googleUrl: 'https://maps.google.com/?q=Warszawa+Grochowska+210',
   openingHours: ['Mo-Fr 08:00-18:00', 'Sa 08:00-14:00'],
   hours: ['pon.–pt. 8:00–18:00', 'sob. 8:00–14:00', 'niedz. nieczynne'],
+  // Wersja angielska (podstrony /en/)
+  en: { tagline: 'Car service in Warsaw. All makes, honest quotes up front.', hours: ['Mon–Fri 8:00–18:00', 'Sat 8:00–14:00', 'Sun closed'] },
 };
 
+
+// Dane firmy w wybranym języku: pola z `en` nadpisują polskie.
+export const inLang = (biz, lang) => (lang === 'en' ? { ...biz, ...biz.en } : biz);

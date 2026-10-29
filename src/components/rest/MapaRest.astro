@@ -1,11 +1,15 @@
 ---
 // Mapa Google ładowana dopiero po kliknięciu — bez cookies do czasu zgody.
 const src = 'https://maps.google.com/maps?q=Wo%C5%82omin%20Ogrodowa%203&z=16&output=embed';
+const { lang = 'pl' } = Astro.props;
+const en = lang === 'en';
 ---
 <div class="mapa" data-src={src}>
   <div class="mapa__ph">
-    <p>Mapa Google wczyta się dopiero po kliknięciu.<br />Do tego czasu strona nie zapisuje żadnych plików cookies.</p>
-    <button class="btn btn--gold mapa-load" type="button">Pokaż mapę dojazdu</button>
+    {en
+      ? <p>The Google map loads only after you click.<br />Until then the page sets no cookies at all.</p>
+      : <p>Mapa Google wczyta się dopiero po kliknięciu.<br />Do tego czasu strona nie zapisuje żadnych plików cookies.</p>}
+    <button class="btn btn--gold mapa-load" type="button">{en ? 'Show the map' : 'Pokaż mapę dojazdu'}</button>
   </div>
 </div>
 
@@ -17,7 +21,9 @@ const src = 'https://maps.google.com/maps?q=Wo%C5%82omin%20Ogrodowa%203&z=16&out
       const iframe = document.createElement('iframe');
       iframe.src = mapa.getAttribute('data-src') || '';
       iframe.loading = 'lazy';
-      iframe.title = 'Mapa dojazdu do restauracji Ogrodowa 3, Wołomin';
+      iframe.title = document.documentElement.lang === 'en'
+        ? 'Map to the Ogrodowa 3 restaurant, Wołomin'
+        : 'Mapa dojazdu do restauracji Ogrodowa 3, Wołomin';
       iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
       mapa.appendChild(iframe);
       mapa.querySelector('.mapa__ph')?.remove();

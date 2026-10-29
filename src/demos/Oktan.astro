@@ -1,0 +1,748 @@
+---
+// OKTAN (demo) w dwóch językach. Strony: src/pages/oktan/index.astro (PL) i src/pages/oktan/en/index.astro (EN).
+import '../styles/oktan.css';
+import Foto from '../components/Foto.astro';
+import DemoLang from '../components/DemoLang.astro';
+import { oktan as bizPl, inLang } from '../data/firmy.js';
+
+const { lang = 'pl' } = Astro.props;
+const en = lang === 'en';
+const biz = inLang(bizPl, lang);
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const plRoot = `${base}/oktan`;
+const root = en ? `${plRoot}/en` : plRoot;
+const img = (p) => `${base}/img/${p}`;
+const mapSrc = 'https://maps.google.com/maps?q=Warszawa%20Grochowska%20210&z=15&output=embed';
+
+// ikony (proste, techniczne)
+const ico = {
+  wrench: 'M14.6 6.4a3.6 3.6 0 0 0-4.7 4.7L3.8 17.2 6.8 20.2l6.1-6.1a3.6 3.6 0 0 0 4.7-4.7l-2.3 2.3-2.1-.5-.5-2.1z',
+  scan: 'M3 5h18v11H3z M3 12h4l2-4 3 8 2-4h4 M9 20h6 M12 16v4',
+  disc: 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  drop: 'M12 3c3.4 3.9 5.8 7 5.8 9.8a5.8 5.8 0 0 1-11.6 0C6.2 10 8.6 6.9 12 3z',
+  snow: 'M12 2v20 M4.2 7l15.6 10 M19.8 7 4.2 17 M9.5 4.5 12 6l2.5-1.5 M9.5 19.5 12 18l2.5 1.5 M4.7 9.7 5 12l-2.3 1M19.3 9.7 19 12l2.3 1',
+  shock: 'M12 3v18 M8 7l4-4 4 4 M8 17l4 4 4-4',
+  gear: 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z M12 3v2.2 M12 18.8V21 M4.2 7.5l1.9 1.1 M17.9 15.4l1.9 1.1 M4.2 16.5l1.9-1.1 M17.9 8.6l1.9-1.1',
+  tire: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+  bolt: 'M13 2 5 13h6l-1 9 9-12h-6z',
+  clip: 'M9 4h6v3H9z M8.5 4H6a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2.5 M8.5 13l2 2 4-4',
+  gate: 'M6 4v16 M12 4v16 M18 4v16 M6 5h12 M6 19h12',
+  turbo: 'M12 12V5 M12 12l6.1 3.5 M12 12l-6.1 3.5 M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0',
+};
+const ICONS = ['wrench', 'scan', 'disc', 'drop', 'snow', 'shock', 'gear', 'gate', 'turbo', 'tire', 'bolt', 'clip'];
+const PRICES_A = ['149', '289', '349', '690', '189', '149'];
+const PRICES_B = ['259', '1290', '149', '120', '120', '160'];
+const STARS = [5, 5, 5, 5, 4, 5];
+const NAMES = ['Michał R.', 'Katarzyna W.', 'Grzegorz P.', 'Anna S.', 'Tomasz L.', 'Paweł N.'];
+const GALLERY = ['warsztat-hero.webp', 'warsztat-galeria-2.webp', 'warsztat-detal.webp', 'warsztat-galeria-4.webp', 'warsztat-galeria-5.webp', 'warsztat-galeria-1.webp'];
+
+const T = {
+  pl: {
+    title: 'OKTAN — serwis samochodowy w Warszawie | wszystkie marki, uczciwa wycena',
+    desc: 'OKTAN — serwis samochodowy na warszawskiej Pradze. Mechanika, diagnostyka, hamulce, klimatyzacja, rozrząd. Wycena z góry, gwarancja 24 miesiące, terminy 24–48 h. Umów wizytę online.',
+    ogTitle: 'OKTAN — serwis samochodowy w Warszawie', ogDesc: 'Wszystkie marki, wycena z góry, gwarancja 24 miesiące. Umów wizytę online.',
+    nav: ['Usługi', 'Cennik', 'Proces', 'O nas', 'Realizacje', 'Opinie', 'Kontakt'],
+    logoSub: 'Serwis · Warszawa', logoTop: 'OKTAN — góra strony', navLabel: 'Nawigacja', book: 'Umów wizytę',
+    hoursShort: 'pon.–pt. 8:00–18:00 · sob. 8:00–14:00',
+    heroAlt: 'Sportowe auto na podnośniku w hali serwisu OKTAN', heroTag: 'Serwis samochodowy · Warszawa-Praga',
+    h1: 'Serwis samochodowy', h1mark: 'bez ściemy',
+    lede: 'Mechanika, diagnostyka i naprawy wszystkich marek. Wycenę podajemy z góry, dajemy 24 miesiące gwarancji na robociznę, a większość aut wraca do Ciebie w 24–48 godzin.',
+    call: 'Zadzwoń', rating: '4,9', chips: ['512 opinii Google', 'lat w Warszawie', 'mies. gwarancji'],
+    trust: ['lat na rynku', 'naprawionych aut', 'ocena Google', 'mies. gwarancji'],
+    svcKicker: 'Zakres', svcH: 'Co dla Ciebie zrobimy', seePrices: 'Zobacz cennik',
+    uslugi: [
+      ['Mechanika ogólna', 'Naprawy bieżące i awarie — od wymiany filtra po remont zawieszenia.'],
+      ['Diagnostyka komputerowa', 'Odczyt błędów, żywe parametry, kasowanie kontrolek. Wiemy, co jest, zanim ruszymy.'],
+      ['Układ hamulcowy', 'Klocki, tarcze, płyn, przewody. Bezpieczeństwo bez kompromisów.'],
+      ['Oleje i płyny', 'Wymiana oleju, filtrów, płynów. Oryginalne oleje w cenie usługi.'],
+      ['Klimatyzacja', 'Odgrzybianie, nabicie czynnika R134a i R1234yf, kontrola szczelności.'],
+      ['Zawieszenie i geometria', 'Amortyzatory, wahacze, łożyska, geometria kół 3D.'],
+      ['Rozrząd i silnik', 'Wymiana rozrządu, uszczelek, naprawy osprzętu silnika.'],
+      ['Sprzęgło i skrzynia', 'Wymiana sprzęgła i dwumasy, serwis i naprawa skrzyni biegów.'],
+      ['Turbo i filtr DPF', 'Regeneracja turbosprężarki, czyszczenie i naprawa filtra cząstek DPF/FAP.'],
+      ['Opony i wymiana sezonowa', 'Wymiana, wyważanie, przechowanie opon. Komplet w kilkanaście minut.'],
+      ['Elektryka i elektronika', 'Rozruszniki, alternatory, akumulatory, czujniki, instalacja.'],
+      ['Przygotowanie do przeglądu', 'Sprawdzimy auto przed badaniem technicznym i usuniemy usterki.'],
+    ],
+    other: 'Inne / nie wiem — doradźcie',
+    priceKicker: 'Cennik', priceH: 'Ceny, które nie zaskakują', priceCta: 'Umów i poznaj dokładną cenę',
+    cennikA: [['Przegląd + diagnostyka komputerowa'], ['Wymiana oleju i filtra', 'olej syntetyczny w cenie'], ['Klocki hamulcowe — oś', 'robocizna + typowe klocki'], ['Tarcze + klocki — oś'], ['Geometria kół 3D'], ['Klimatyzacja — odgrzybianie', 'ozonowanie kabiny']],
+    cennikB: [['Klimatyzacja — nabicie czynnika', 'R134a / R1234yf'], ['Rozrząd — pasek, komplet'], ['Amortyzator — szt.', 'robocizna'], ['Wymiana opon — komplet 4 szt.'], ['Diagnostyka usterki', 'odliczana od naprawy'], ['Roboczogodzina']],
+    cur: ' zł', from: 'od', perHour: 'za godzinę',
+    priceNote: 'Ceny orientacyjne (od) i typowe dla Warszawy. Dokładną wycenę podajemy po bezpłatnych oględzinach, zawsze przed rozpoczęciem naprawy. Części oryginalne lub porównywalne — wybierasz sam.',
+    procKicker: 'Jak to działa', procH: 'Cztery kroki i po sprawie',
+    proces: [['Umów', 'Online w minutę albo telefonicznie. Wybierasz usługę i pasujący termin.'], ['Diagnoza i wycena', 'Sprawdzamy auto i podajemy cenę z góry, zanim cokolwiek ruszymy.'], ['Naprawa', 'Oryginalne lub porównywalne części, robota zrobiona na czas.'], ['Odbiór', 'Faktura, protokół i 24 miesiące gwarancji na robociznę. Gotowe.']],
+    whyKicker: 'Dlaczego OKTAN', whyH: 'Serwis, do którego wracasz', whyLede: 'Nie musisz znać się na autach, żeby czuć, że nikt Cię tu nie robi w konia.',
+    checks: [['Wycena z góry', 'Poznajesz cenę przed naprawą i płacisz dokładnie tyle. Zero dopisywania na fakturze.'], ['Gwarancja 24 miesiące', 'Na każdą robociznę. Coś nie tak po naprawie? Poprawiamy na nasz koszt.'], ['Wszystkie marki', 'Osobowe i dostawcze, benzyna, diesel, hybrydy. Jeden serwis do wszystkiego.'], ['Terminy 24–48 h', 'Nie oddajesz auta na tydzień. Większość napraw tego samego lub następnego dnia.']],
+    mechAlt: 'Mechanik OKTAN przy pracy w komorze silnika', tagbox: 'Realny warsztat, realni ludzie',
+    galKicker: 'Realizacje', galH: 'Zajrzyj do warsztatu', zoom: 'Powiększ',
+    galeria: ['Auto na podnośniku w hali serwisu', 'Diagnostyka komputerowa tabletem', 'Zestaw kluczy i nasadek', 'Praca w komorze silnika', 'Wymiana płynów', 'Hala serwisu — auta na stanowiskach'],
+    revKicker: 'Opinie', revH: 'Co mówią kierowcy', outOf: 'na 5', reviewsN: '· 512 opinii', seeGoogle: 'Zobacz na Google',
+    opinie: [
+      ['2 tygodnie temu', 'Zawiozłem z błędem silnika, w innym miejscu chcieli wymieniać pół auta. Tu zdiagnozowali czujnik za 200 zł i tyle. Uczciwie i konkretnie.'],
+      ['miesiąc temu', 'Wycena podana z góry i ani grosza więcej. Auto zastępcze na czas, bo czekali na część. Wreszcie serwis, do którego się nie boję przyjechać.'],
+      ['miesiąc temu', 'Wymiana rozrządu w jeden dzień, bez niespodzianek na fakturze. Mechanik wytłumaczył wszystko po ludzku, pokazał stare części.'],
+      ['2 miesiące temu', 'Klocki i tarcze zrobione w godzinę, umówione online poprzedniego wieczoru. Szybko, czysto, profesjonalnie.'],
+      ['3 miesiące temu', 'Konkretnie i rzetelnie. Gwiazdka mniej, bo trzeba się umawiać z wyprzedzeniem — ale widać, że mają pełne ręce roboty.'],
+      ['4 miesiące temu', 'Robią wszystkie marki. Mam starego passata i hybrydę żony, oba ogarnięte w jednym miejscu. Ceny warszawskie, ale uczciwe.'],
+    ],
+    bookKicker: 'Umów wizytę', bookH: 'Zarezerwuj termin online', bookLede: 'Wypełnij formularz — oddzwonimy, żeby potwierdzić godzinę i wstępny zakres. Zwykle jeszcze tego samego dnia.',
+    f: { service: 'Usługa', choose: 'Wybierz', car: 'Marka i model', carPh: 'np. Skoda Octavia', year: 'Rok produkcji', optional: '(opcjonalnie)', yearPh: 'np. 2016', day: 'Preferowany dzień', hour: 'Godzina', phone: 'Telefon', name: 'Imię', issue: 'Opis problemu', issuePh: 'Np. stukanie z przodu przy hamowaniu, zapaliła się kontrolka silnika', submit: 'Wyślij prośbę o termin' },
+    gdpr: (b) => `Administratorem danych jest ${b.legalName}, ${b.street}, ${b.zip} ${b.city}, NIP ${b.nip}. Dane z formularza służą wyłącznie do umówienia i potwierdzenia wizyty (art. 6 ust. 1 lit. b i f RODO).`,
+    gdprMore: 'Rozwiń pełną informację',
+    gdprFull: 'Podanie danych jest dobrowolne, ale bez imienia i telefonu nie potwierdzimy terminu. Dane przechowujemy do 12 miesięcy od ostatniego kontaktu. Masz prawo dostępu, sprostowania, usunięcia, ograniczenia i sprzeciwu oraz skargi do Prezesa UODO. Szczegóły:',
+    privacyLow: 'polityka prywatności',
+    consent: 'Zapoznałem/am się z informacją o przetwarzaniu danych i chcę wysłać prośbę o wizytę.',
+    sideCall: 'Wolisz zadzwonić?', sideCallNote: 'Odbieramy w godzinach otwarcia.', hours: 'Godziny', good: 'Dobrze wiedzieć',
+    good1: 'Auto zastępcze przy większych naprawach (po ustaleniu).', good2: 'Płatność: gotówka, karta, BLIK, przelew. Faktury dla firm.',
+    contactKicker: 'Kontakt', contactLede: 'Warszawa-Praga, przy Grochowskiej. Dojazd i parking dla klientów przed warsztatem.', openMaps: 'Otwórz w Google Maps →',
+    week: [['Poniedziałek – piątek', '8:00 – 18:00'], ['Sobota', '8:00 – 14:00'], ['Niedziela', 'nieczynne']],
+    mapNote: ['Mapa Google wczyta się po kliknięciu —', 'do tego czasu strona nie zapisuje żadnych cookies.'], showMap: 'Pokaż mapę dojazdu',
+    faqH: 'Częste pytania',
+    faq: [
+      ['Czy trzeba się umawiać?', 'Najlepiej tak — online lub telefonicznie. Dzięki temu masz konkretną godzinę i nie czekasz. Na drobne sprawy, jak zapalona kontrolka czy szybka diagnoza, często przyjmiemy od ręki.'],
+      ['Ile kosztuje naprawa?', 'Cennik podaje ceny orientacyjne „od”. Dokładną kwotę podajemy po bezpłatnych oględzinach, zawsze przed rozpoczęciem pracy. U nas nie ma niespodzianek na fakturze.'],
+      ['Części oryginalne czy zamienniki?', 'Wybór należy do Ciebie. Doradzamy uczciwie: gdzie warto dopłacić za oryginał (OEM), a gdzie dobry zamiennik da to samo taniej.'],
+      ['Czy dostanę gwarancję?', 'Tak. 24 miesiące na robociznę oraz gwarancja producenta na części. Fakturę i protokół naprawy dostajesz na maila.'],
+      ['Czy jest auto zastępcze?', 'Przy większych naprawach udostępniamy auto zastępcze po wcześniejszym ustaleniu. Wystarczy zapytać przy umawianiu wizyty.'],
+      ['Jak można zapłacić?', 'Gotówka, karta, BLIK i przelew. Dla firm wystawiamy fakturę z odroczonym terminem płatności.'],
+    ],
+    ctaKicker: 'Gotowy?', ctaH: 'Umów wizytę i miej to z głowy', ctaP: 'Podjedź, gdy Ci pasuje. Wycena z góry, gwarancja 24 miesiące i auto gotowe na czas.',
+    footService: 'Serwis', footMenu: 'Menu', footLinks: ['Usługi', 'Cennik', 'Umów wizytę'],
+    credit: 'Realizacja · Vervo Studio ↗', privacy: 'Polityka prywatności',
+    lbLabel: 'Powiększone zdjęcie', close: 'Zamknij', prev: 'Poprzednie', next: 'Następne',
+    js: {
+      open: 'Otwarte teraz', until: ' · dziś do ', closed: 'Teraz zamknięte · umów wizytę online o dowolnej porze', mapTitle: 'Mapa dojazdu do OKTAN, Warszawa',
+      fill: 'Uzupełnij to pole', badPhone: 'Podaj poprawny numer', consent: 'Zaznacz zgodę na przetwarzanie danych.', fields: 'Uzupełnij zaznaczone pola.',
+      demo: 'Dziękujemy! (tryb demo — prośba nie została nigdzie wysłana). Wpisz klucz web3forms w danych firmy, aby uruchomić realną wysyłkę.',
+      sending: 'Wysyłanie…', ok: 'Dziękujemy! Prośba dotarła — oddzwonimy, żeby potwierdzić termin.', fail: 'Nie udało się wysłać. Zadzwoń: {phone} albo napisz na {mail}.',
+      submit: 'Wyślij prośbę o termin', subject: 'Wizyta',
+    },
+  },
+  en: {
+    title: 'OKTAN — car service in Warsaw | all makes, honest quotes',
+    desc: 'OKTAN — car service in Praga, Warsaw. Mechanical repairs, diagnostics, brakes, air-con and timing belts. A quote up front, 24-month warranty, most cars back in 24–48 hours. Book online.',
+    ogTitle: 'OKTAN — car service in Warsaw', ogDesc: 'All makes, a quote up front, 24-month warranty. Book online.',
+    nav: ['Services', 'Prices', 'Process', 'About us', 'Workshop', 'Reviews', 'Contact'],
+    logoSub: 'Car service · Warsaw', logoTop: 'OKTAN — back to top', navLabel: 'Navigation', book: 'Book a visit',
+    hoursShort: 'Mon–Fri 8:00–18:00 · Sat 8:00–14:00',
+    heroAlt: 'A sports car on a lift in the OKTAN service hall', heroTag: 'Car service · Warsaw-Praga',
+    h1: 'Car servicing', h1mark: 'without the runaround',
+    lede: 'Mechanical work, diagnostics and repairs for every make. You get the price up front, a 24-month warranty on labour, and most cars are back with you in 24–48 hours.',
+    call: 'Call', rating: '4.9', chips: ['512 Google reviews', 'years in Warsaw', 'months warranty'],
+    trust: ['years in business', 'cars repaired', 'Google rating', 'months warranty'],
+    svcKicker: 'Services', svcH: 'What we can do for you', seePrices: 'See prices',
+    uslugi: [
+      ['General repairs', 'Everyday repairs and breakdowns, from a filter change to a suspension rebuild.'],
+      ['Computer diagnostics', 'Fault codes, live data and warning-light resets. We know what’s wrong before we start.'],
+      ['Brakes', 'Pads, discs, fluid and lines. Safety without compromise.'],
+      ['Oil and fluids', 'Oil, filter and fluid changes. Quality oil included in the price.'],
+      ['Air conditioning', 'Disinfection, R134a and R1234yf regas, and leak testing.'],
+      ['Suspension and alignment', 'Shock absorbers, control arms, bearings and 3D wheel alignment.'],
+      ['Timing and engine', 'Timing belt and chain, gaskets and engine ancillaries.'],
+      ['Clutch and gearbox', 'Clutch and dual-mass flywheel replacement, gearbox service and repair.'],
+      ['Turbo and DPF', 'Turbocharger reconditioning, DPF/FAP cleaning and repair.'],
+      ['Tyres and seasonal swaps', 'Fitting, balancing and tyre storage. A full set in minutes.'],
+      ['Electrics and electronics', 'Starters, alternators, batteries, sensors and wiring.'],
+      ['Pre-MOT check', 'We check your car before its roadworthiness test and fix any faults.'],
+    ],
+    other: 'Something else / not sure — advise me',
+    priceKicker: 'Prices', priceH: 'Prices without surprises', priceCta: 'Book and get the exact price',
+    cennikA: [['Inspection + computer diagnostics'], ['Oil and filter change', 'synthetic oil included'], ['Brake pads — one axle', 'labour + standard pads'], ['Discs + pads — one axle'], ['3D wheel alignment'], ['Air-con disinfection', 'cabin ozone treatment']],
+    cennikB: [['Air-con regas', 'R134a / R1234yf'], ['Timing belt kit'], ['Shock absorber — each', 'labour'], ['Tyre change — set of 4'], ['Fault diagnostics', 'deducted from the repair'], ['Labour rate']],
+    cur: ' PLN', from: 'from', perHour: 'per hour',
+    priceNote: 'Indicative “from” prices, typical for Warsaw. We give the exact price after a free inspection and always before starting any repair. Original or equivalent parts: your choice.',
+    procKicker: 'How it works', procH: 'Four steps and you’re done',
+    proces: [['Book', 'Online in a minute or by phone. Choose the service and a time that suits you.'], ['Diagnosis and quote', 'We check the car and give you the price before we touch anything.'], ['Repair', 'Original or equivalent parts, and the job done on time.'], ['Collection', 'Invoice, repair report and a 24-month warranty on labour. Done.']],
+    whyKicker: 'Why OKTAN', whyH: 'A garage you’ll come back to', whyLede: 'You don’t need to know about cars to feel that nobody here is taking you for a ride.',
+    checks: [['Price up front', 'You know the price before the repair and pay exactly that. Nothing added to the invoice.'], ['24-month warranty', 'On all labour. Something not right after a repair? We fix it at our cost.'], ['All makes', 'Cars and vans, petrol, diesel and hybrid. One garage for everything.'], ['Turnaround in 24–48 h', 'You won’t be without your car for a week. Most repairs are done the same or next day.']],
+    mechAlt: 'An OKTAN mechanic working in an engine bay', tagbox: 'A real workshop, real people',
+    galKicker: 'Workshop', galH: 'Take a look inside', zoom: 'Enlarge',
+    galeria: ['Car on a lift in the service hall', 'Computer diagnostics on a tablet', 'Set of spanners and sockets', 'Working in the engine bay', 'Fluid change', 'Service hall with cars in the bays'],
+    revKicker: 'Reviews', revH: 'What drivers say', outOf: 'out of 5', reviewsN: '· 512 reviews', seeGoogle: 'See on Google',
+    opinie: [
+      ['2 weeks ago', 'I came in with an engine fault and another garage wanted to replace half the car. Here they found a PLN 200 sensor and that was it. Honest and to the point.'],
+      ['a month ago', 'The quote came up front and not a penny more. They gave me a courtesy car while waiting for a part. Finally a garage I’m not nervous about visiting.'],
+      ['a month ago', 'Timing belt done in one day with no surprises on the invoice. The mechanic explained everything in plain words and showed me the old parts.'],
+      ['2 months ago', 'Pads and discs done in an hour, booked online the evening before. Fast, clean and professional.'],
+      ['3 months ago', 'Straightforward and reliable. One star less because you have to book ahead, but you can tell they’re busy.'],
+      ['4 months ago', 'They do every make. My old Passat and my wife’s hybrid, both sorted in one place. Warsaw prices, but fair.'],
+    ],
+    bookKicker: 'Book a visit', bookH: 'Book a slot online', bookLede: 'Fill in the form and we’ll call you back to confirm the time and the initial scope, usually the same day.',
+    f: { service: 'Service', choose: 'Choose', car: 'Make and model', carPh: 'e.g. Skoda Octavia', year: 'Year', optional: '(optional)', yearPh: 'e.g. 2016', day: 'Preferred day', hour: 'Time', phone: 'Phone', name: 'Name', issue: 'Describe the problem', issuePh: 'E.g. knocking from the front when braking, engine warning light is on', submit: 'Request a slot' },
+    gdpr: (b) => `The data controller is ${b.legalName}, ${b.street}, ${b.zip} ${b.city}, tax ID (NIP) ${b.nip}. Form data is used only to arrange and confirm your visit (Art. 6(1)(b) and (f) GDPR).`,
+    gdprMore: 'Show full information',
+    gdprFull: 'Providing your data is voluntary, but without your name and phone number we cannot confirm the slot. We keep the data for up to 12 months after our last contact. You have the right to access, correct, delete and restrict your data, to object, and to complain to the Polish data protection authority (UODO). Details:',
+    privacyLow: 'privacy policy',
+    consent: 'I have read the information on data processing and want to send a visit request.',
+    sideCall: 'Prefer to call?', sideCallNote: 'We answer during opening hours.', hours: 'Opening hours', good: 'Good to know',
+    good1: 'Courtesy car for bigger repairs (by arrangement).', good2: 'Payment: cash, card, BLIK, bank transfer. Invoices for companies.',
+    contactKicker: 'Contact', contactLede: 'Warsaw-Praga, just off Grochowska. Customer parking in front of the workshop.', openMaps: 'Open in Google Maps →',
+    week: [['Monday – Friday', '8:00 – 18:00'], ['Saturday', '8:00 – 14:00'], ['Sunday', 'closed']],
+    mapNote: ['The Google map loads when you click.', 'Until then the site sets no cookies.'], showMap: 'Show the map',
+    faqH: 'Common questions',
+    faq: [
+      ['Do I need to book?', 'Ideally yes, online or by phone, so you get a fixed time and don’t wait. For small things like a warning light or a quick check, we can often see you straight away.'],
+      ['How much will the repair cost?', 'Our price list shows indicative “from” prices. We give the exact amount after a free inspection, always before work starts. No surprises on the invoice.'],
+      ['Original parts or equivalents?', 'It’s your choice. We advise honestly: where an original (OEM) part is worth paying for, and where a good equivalent does the same job for less.'],
+      ['Is the work guaranteed?', 'Yes. 24 months on labour plus the manufacturer’s warranty on parts. You receive the invoice and the repair report by email.'],
+      ['Is there a courtesy car?', 'For bigger repairs we can provide a courtesy car by arrangement. Just ask when you book.'],
+      ['How can I pay?', 'Cash, card, BLIK or bank transfer. Companies can get an invoice with deferred payment.'],
+    ],
+    ctaKicker: 'Ready?', ctaH: 'Book a visit and stop worrying about it', ctaP: 'Drop in when it suits you. A quote up front, a 24-month warranty and your car ready on time.',
+    footService: 'Workshop', footMenu: 'Menu', footLinks: ['Services', 'Prices', 'Book a visit'],
+    credit: 'Built by Vervo Studio ↗', privacy: 'Privacy policy',
+    lbLabel: 'Enlarged photo', close: 'Close', prev: 'Previous', next: 'Next',
+    js: {
+      open: 'Open now', until: ' · today until ', closed: 'Closed now · book online any time', mapTitle: 'Map to OKTAN, Warsaw',
+      fill: 'Please fill in this field', badPhone: 'Enter a valid number', consent: 'Please tick the data processing consent.', fields: 'Please complete the highlighted fields.',
+      demo: 'Thank you! (demo mode: the request was not sent anywhere). Add a web3forms key to the business data to enable real sending.',
+      sending: 'Sending…', ok: 'Thank you! Your request arrived. We’ll call you back to confirm the slot.', fail: 'Could not send. Call {phone} or email {mail}.',
+      submit: 'Request a slot', subject: 'Visit',
+    },
+  },
+};
+const t = T[lang];
+const nav = ['#uslugi', '#cennik', '#proces', `${root}/o-nas/`, '#galeria', '#opinie', '#kontakt'].map((href, i) => ({ href, label: t.nav[i] }));
+const uslugi = t.uslugi.map(([tt, o], i) => ({ i: ICONS[i], t: tt, o }));
+const cennikA = t.cennikA.map(([n, d], i) => ({ n, d, v: PRICES_A[i] }));
+const cennikB = t.cennikB.map(([n, d], i) => ({ n, d, v: PRICES_B[i], flat: i === 5 }));
+const galeria = GALLERY.map((s, i) => ({ s, a: t.galeria[i], big: i === 0 }));
+const opinie = t.opinie.map(([k, tx], i) => ({ a: NAMES[i], g: STARS[i], k, t: tx }));
+const uslugiForm = uslugi.map((u) => u.t).concat([t.other]);
+const godziny = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+const star = 'M8 1.3l1.9 3.8 4.2.6-3 3 .7 4.2L8 12l-3.7 1.9.7-4.2-3-3 4.2-.6z';
+
+const schema = {
+  '@context': 'https://schema.org', '@type': 'AutoRepair', name: biz.name, telephone: biz.phone, email: biz.email,
+  priceRange: biz.priceRange, url: Astro.url.origin + root + '/',
+  image: new URL(img('warsztat-hero.webp'), Astro.url).href,
+  address: { '@type': 'PostalAddress', streetAddress: biz.street, addressLocality: biz.city, postalCode: biz.zip, addressCountry: 'PL' },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:00', closes: '18:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '08:00', closes: '14:00' },
+  ],
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: biz.googleRating, reviewCount: biz.googleCount, bestRating: 5 },
+};
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="pl" href={new URL(`${plRoot}/`, Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(`${plRoot}/en/`, Astro.url).href} />
+    <meta name="theme-color" content="#0e1013" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={t.ogTitle} />
+    <meta property="og:description" content={t.ogDesc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={en ? 'en_GB' : 'pl_PL'} />
+    <meta property="og:image" content={new URL('/og/oktan.png', Astro.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+
+  <body>
+    <!-- ===================== NAGŁÓWEK ===================== -->
+    <header class="top" id="top">
+      <div class="wrap top__in">
+        <a class="logo" href="#gora" aria-label={t.logoTop}>
+          <span class="logo__dot"></span>
+          <span>OKTAN<small>{t.logoSub}</small></span>
+        </a>
+        <nav class="nav" aria-label={t.navLabel}>
+          {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+        <div class="top__cta">
+          <a class="top__tel" href={`tel:${tel}`}>{biz.phone}</a>
+          <a class="btn btn--red" href="#umow">{t.book}</a>
+        </div>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span></button>
+      </div>
+    </header>
+
+    <div class="drawer" id="drawer">
+      {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href="#umow">{t.book}</a>
+      <div class="drawer__foot">
+        <a href={`tel:${tel}`}>{biz.phone}</a>
+        <span>{biz.street}, {biz.city}</span>
+        <span>{t.hoursShort}</span>
+      </div>
+    </div>
+
+    <main id="gora">
+      <!-- ===================== HERO ===================== -->
+      <section class="hero">
+        <div class="hero__media">
+          <Foto src="warsztat-hero.webp" alt={t.heroAlt} ratio="16/9" label="Hala serwisu" eager={true} />
+        </div>
+        <div class="wrap hero__in">
+          <p class="hero__tag">{t.heroTag}</p>
+          <h1>{t.h1} <span class="mark">{t.h1mark}</span></h1>
+          <p class="hero__lede">{t.lede}</p>
+          <div class="hero__cta">
+            <a class="btn btn--red" href="#umow">{t.book}</a>
+            <a class="btn btn--ghost" href={`tel:${tel}`}>{t.call}: {biz.phone}</a>
+          </div>
+          <div class="hero__chips">
+            <span class="hero__chip"><b>{t.rating}<span class="mark">★</span></b> {t.chips[0]}</span>
+            <span class="hero__chip"><b>18</b> {t.chips[1]}</span>
+            <span class="hero__chip"><b>24</b> {t.chips[2]}</span>
+          </div>
+          <p class="hero__status" id="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- ===================== PASEK ZAUFANIA ===================== -->
+      <section class="trust">
+        <div class="wrap trust__in">
+          <div class="trust__cell"><span class="trust__num">18</span><span class="trust__lab">{t.trust[0]}</span></div>
+          <div class="trust__cell"><span class="trust__num">40<span class="mark">k+</span></span><span class="trust__lab">{t.trust[1]}</span></div>
+          <div class="trust__cell"><span class="trust__num">{t.rating}<span class="mark">★</span></span><span class="trust__lab">{t.trust[2]}</span></div>
+          <div class="trust__cell"><span class="trust__num">24</span><span class="trust__lab">{t.trust[3]}</span></div>
+        </div>
+      </section>
+
+      <!-- ===================== USŁUGI ===================== -->
+      <section class="section" id="uslugi">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">{t.svcKicker}</p>
+              <h2 class="h2">{t.svcH}</h2>
+            </div>
+            <a class="btn btn--ghost" href="#cennik">{t.seePrices}</a>
+          </div>
+          <div class="services">
+            {uslugi.map((u) => (
+              <article class="svc reveal">
+                <span class="svc__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={`<path d="${ico[u.i]}"/>`}></svg></span>
+                <h3>{u.t}</h3>
+                <p>{u.o}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CENNIK ===================== -->
+      <section class="section section--alt" id="cennik">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">{t.priceKicker}</p>
+              <h2 class="h2">{t.priceH}</h2>
+            </div>
+            <a class="btn btn--red" href="#umow">{t.priceCta}</a>
+          </div>
+          <div class="price-grid">
+            {[cennikA, cennikB].map((col) => (
+              <div class="price reveal">
+                {col.map((p) => (
+                  <div class="price__row">
+                    <span class="price__name">{p.n}</span>
+                    {p.d && <span class="price__desc">{p.d}</span>}
+                    <span class="price__val">{en ? Number(p.v).toLocaleString('en-GB') : p.v}<span style="font-size:.6em">{t.cur}</span><small>{p.flat ? t.perHour : t.from}</small></span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          <p class="note reveal mt-m">{t.priceNote}</p>
+        </div>
+      </section>
+
+      <!-- ===================== PROCES ===================== -->
+      <section class="section" id="proces">
+        <div class="wrap">
+          <div class="reveal" style="max-width:52ch">
+            <p class="kicker">{t.procKicker}</p>
+            <h2 class="h2">{t.procH}</h2>
+          </div>
+          <div class="steps mt-l">
+            {t.proces.map(([tt, o], i) => (
+              <div class="step reveal">
+                <span class="step__n">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{tt}</h3>
+                <p>{o}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== DLACZEGO MY ===================== -->
+      <section class="section section--alt">
+        <div class="wrap split split--rev">
+          <div class="reveal">
+            <p class="kicker">{t.whyKicker}</p>
+            <h2 class="h2">{t.whyH}</h2>
+            <p class="lede">{t.whyLede}</p>
+            <ul class="checks">
+              {t.checks.map(([bb, ss]) => (
+                <li>
+                  <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg></span>
+                  <span><b>{bb}</b><span>{ss}</span></span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="split__media reveal">
+            <Foto src="warsztat-galeria-6.webp" alt={t.mechAlt} ratio="4/3" label="Mechanik" />
+            <span class="tagbox">{t.tagbox}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== GALERIA ===================== -->
+      <section class="section" id="galeria">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">{t.galKicker}</p>
+              <h2 class="h2">{t.galH}</h2>
+            </div>
+          </div>
+          <div class="gallery">
+            {galeria.map((g, i) => (
+              <button class={`reveal${g.big ? ' big' : ''}`} type="button" data-lb={i} data-full={img(g.s)} data-alt={g.a} aria-label={`${t.zoom}: ${g.a}`}>
+                <Foto src={g.s} alt={g.a} ratio={g.big ? '1/1' : '3/2'} label="Warsztat" />
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== OPINIE ===================== -->
+      <section class="section section--alt" id="opinie">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">{t.revKicker}</p>
+              <h2 class="h2">{t.revH}</h2>
+            </div>
+          </div>
+          <div class="gsum reveal">
+            <div class="gsum__score">{t.rating}</div>
+            <div>
+              <span class="stars" role="img" aria-label={`${t.rating} ${t.outOf}`}>
+                {Array.from({ length: 5 }).map(() => <svg viewBox="0 0 16 16" aria-hidden="true"><path d={star} fill="currentColor"/></svg>)}
+              </span>
+              <div class="gsum__meta"><span class="glogo"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span><span>{t.reviewsN}</span></div>
+            </div>
+            <a class="btn btn--ghost" href={biz.googleUrl} target="_blank" rel="noopener" style="margin-left:auto">{t.seeGoogle}</a>
+          </div>
+          <div class="reviews">
+            {opinie.map((o) => (
+              <figure class="rev reveal">
+                <div class="rev__top">
+                  <span class="rev__ava" aria-hidden="true">{o.a.charAt(0)}</span>
+                  <figcaption class="rev__who"><b>{o.a}</b><div>{o.k}</div></figcaption>
+                </div>
+                <span class="stars" role="img" aria-label={`${o.g} ${t.outOf}`}>
+                  {Array.from({ length: 5 }).map((_, s) => <svg viewBox="0 0 16 16" class={s < o.g ? '' : 'off'} aria-hidden="true"><path d={star} fill="currentColor"/></svg>)}
+                </span>
+                <blockquote class="rev__t">{o.t}</blockquote>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== UMÓW WIZYTĘ ===================== -->
+      <section class="section" id="umow">
+        <div class="wrap">
+          <div class="reveal" style="max-width:56ch">
+            <p class="kicker">{t.bookKicker}</p>
+            <h2 class="h2">{t.bookH}</h2>
+            <p class="lede">{t.bookLede}</p>
+          </div>
+          <div class="book mt-l">
+            <form class="reveal" id="bookForm" novalidate>
+              <div class="row2">
+                <label class="field"><span>{t.f.service}</span>
+                  <select name="usluga" required>
+                    <option value="">{t.f.choose}</option>
+                    {uslugiForm.map((u) => <option value={u}>{u}</option>)}
+                  </select>
+                </label>
+                <label class="field"><span>{t.f.car}</span>
+                  <input type="text" name="auto" placeholder={t.f.carPh} required />
+                </label>
+              </div>
+              <div class="row2">
+                <label class="field"><span>{t.f.year} <em>{t.f.optional}</em></span>
+                  <input type="text" name="rok" inputmode="numeric" placeholder={t.f.yearPh} />
+                </label>
+                <label class="field"><span>{t.f.day}</span>
+                  <input type="date" name="data" required />
+                </label>
+              </div>
+              <div class="row2">
+                <label class="field"><span>{t.f.hour}</span>
+                  <select name="godzina" required>
+                    <option value="">{t.f.choose}</option>
+                    {godziny.map((g) => <option value={g}>{g}</option>)}
+                  </select>
+                </label>
+                <label class="field"><span>{t.f.phone}</span>
+                  <input type="tel" name="telefon" autocomplete="tel" inputmode="tel" required />
+                </label>
+              </div>
+              <label class="field"><span>{t.f.name}</span>
+                <input type="text" name="imie" autocomplete="name" required />
+              </label>
+              <label class="field"><span>{t.f.issue} <em>{t.f.optional}</em></span>
+                <textarea name="uwagi" rows="3" placeholder={t.f.issuePh}></textarea>
+              </label>
+
+              <div class="klauzula">
+                <p>{t.gdpr(biz)}</p>
+                <details><summary>{t.gdprMore}</summary>
+                  <p>{t.gdprFull} <a href={`${root}/polityka-prywatnosci/`}>{t.privacyLow}</a>.</p>
+                </details>
+                <label class="consent">
+                  <input type="checkbox" name="zgoda" value="tak" required />
+                  <span>{t.consent}</span>
+                </label>
+              </div>
+
+              <button class="btn btn--red btn--block btn--auto" type="submit" id="bookSubmit">{t.f.submit}</button>
+              <p class="formstat" id="bookStat" role="status" aria-live="polite"></p>
+            </form>
+
+            <aside class="book__side reveal">
+              <div>
+                <h3>{t.sideCall}</h3>
+                <p style="margin-top:.5rem"><a href={`tel:${tel}`} style="font-family:var(--font-display);font-weight:700;font-size:1.6rem">{biz.phone}</a></p>
+                <p style="color:var(--muted);font-size:.85rem;margin-top:.3rem">{t.sideCallNote}</p>
+              </div>
+              <div>
+                <h3>{t.hours}</h3>
+                {biz.hours.map((h) => <p style="margin-top:.25rem">{h}</p>)}
+              </div>
+              <div>
+                <h3>{t.good}</h3>
+                <p style="color:var(--muted);font-size:.88rem">{t.good1}</p>
+                <p style="color:var(--muted);font-size:.88rem">{t.good2}</p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== KONTAKT + MAPA ===================== -->
+      <section class="section section--alt" id="kontakt">
+        <div class="wrap contact">
+          <div class="reveal">
+            <p class="kicker">{t.contactKicker}</p>
+            <h2 class="h2">{biz.street}<br />{biz.zip} {biz.city}</h2>
+            <p class="lede">{t.contactLede}</p>
+            <div class="contact__links">
+              <a href={`tel:${tel}`}>{biz.phone}</a>
+              <a href={`mailto:${biz.email}`}>{biz.email}</a>
+              <a href={biz.mapUrl} target="_blank" rel="noopener">{t.openMaps}</a>
+            </div>
+            <div class="hours">
+              {t.week.map(([d, h]) => <div><span>{d}</span><span>{h}</span></div>)}
+            </div>
+          </div>
+          <div class="reveal">
+            <div class="mapbox" data-src={mapSrc}>
+              <div class="mapbox__ph">
+                <p>{t.mapNote[0]}<br />{t.mapNote[1]}</p>
+                <button class="btn btn--red map-load" type="button">{t.showMap}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== FAQ ===================== -->
+      <section class="section">
+        <div class="wrap" style="max-width:820px">
+          <div class="reveal">
+            <p class="kicker">FAQ</p>
+            <h2 class="h2">{t.faqH}</h2>
+          </div>
+          <div class="faq reveal mt-m">
+            {t.faq.map(([q, a]) => (
+              <details><summary>{q}</summary><p>{a}</p></details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CTA ===================== -->
+      <section class="section band">
+        <div class="wrap">
+          <p class="kicker kicker--center">{t.ctaKicker}</p>
+          <h2>{t.ctaH}</h2>
+          <p>{t.ctaP}</p>
+          <div class="band__cta">
+            <a class="btn btn--light" href="#umow">{t.book}</a>
+            <a class="btn btn--outline-light" href={`tel:${tel}`}>{t.call}: {biz.phone}</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== STOPKA ===================== -->
+    <footer class="foot">
+      <div class="wrap">
+        <div class="foot__grid">
+          <div>
+            <span class="logo"><span class="logo__dot"></span><span>OKTAN<small>{t.logoSub}</small></span></span>
+            <p class="foot__tag">{biz.tagline}</p>
+          </div>
+          <div>
+            <h4>{t.footService}</h4>
+            <ul>
+              <li>{biz.street}</li>
+              <li>{biz.zip} {biz.city}</li>
+              <li><a href={`tel:${tel}`}>{biz.phone}</a></li>
+              <li><a href={`mailto:${biz.email}`}>{biz.email}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>{t.hours}</h4>
+            <ul>{biz.hours.map((h) => <li>{h}</li>)}</ul>
+            <h4 style="margin-top:1.5rem">{t.footMenu}</h4>
+            <ul>
+              <li><a href="#uslugi">{t.footLinks[0]}</a></li>
+              <li><a href="#cennik">{t.footLinks[1]}</a></li>
+              <li><a href="#umow">{t.footLinks[2]}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__legal">
+          <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
+          <span><a href={`${base}/${en ? '' : 'pl/'}`}>{t.credit}</a> &nbsp;·&nbsp; <a href={`${root}/polityka-prywatnosci/`}>{t.privacy}</a></span>
+        </div>
+      </div>
+    </footer>
+
+    <div class="callbar">
+      <a href="#umow">{t.book}</a>
+      <a href={`tel:${tel}`}>{t.call}</a>
+    </div>
+
+    <!-- lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label={t.lbLabel}>
+      <button class="lightbox__x" id="lbX" aria-label={t.close}>✕</button>
+      <button class="lightbox__nav prev" id="lbPrev" aria-label={t.prev}>‹</button>
+      <img id="lbImg" src="" alt="" />
+      <button class="lightbox__nav next" id="lbNext" aria-label={t.next}>›</button>
+    </div>
+
+    <DemoLang lang={lang} pl={`${plRoot}/`} en={`${plRoot}/en/`} />
+
+    <script define:vars={{ formKey: biz.formKey, mail: biz.email, nazwa: biz.name, phone: biz.phone, L: t.js }}>
+      // sticky header
+      const top = document.getElementById('top');
+      const onScroll = () => top?.classList.toggle('stuck', window.scrollY > 30);
+      onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+      // mobilne menu
+      const burger = document.getElementById('burger');
+      const setMenu = (open) => {
+        const o = open ?? !document.body.classList.contains('nav-open');
+        document.body.classList.toggle('nav-open', o);
+        burger?.setAttribute('aria-expanded', String(o));
+      };
+      burger?.addEventListener('click', () => setMenu());
+      document.querySelectorAll('#drawer a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+
+      // reveal
+      const obs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); } }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (Math.min(i % 3, 2) * 70) + 'ms'; obs.observe(el); });
+
+      // status otwarcia (pon-pt 8-18, sob 8-14)
+      const st = document.getElementById('status');
+      if (st) {
+        const d = new Date(); const day = d.getDay(); const min = d.getHours() * 60 + d.getMinutes();
+        let open = false, close = 0;
+        if (day >= 1 && day <= 5) { open = min >= 480 && min < 1080; close = 1080; }
+        else if (day === 6) { open = min >= 480 && min < 840; close = 840; }
+        const fmt = (m) => Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0');
+        st.innerHTML = open
+          ? '<span class="dot dot--on"></span><b>' + L.open + '</b>' + L.until + fmt(close)
+          : '<span class="dot dot--off"></span>' + L.closed;
+      }
+
+      // mapa
+      document.querySelectorAll('.map-load').forEach((b) => b.addEventListener('click', () => {
+        const box = b.closest('.mapbox'); if (!box) return;
+        const f = document.createElement('iframe');
+        f.src = box.getAttribute('data-src'); f.loading = 'lazy'; f.title = L.mapTitle;
+        f.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        box.appendChild(f); box.querySelector('.mapbox__ph')?.remove();
+      }));
+
+      // galeria / lightbox
+      const btns = Array.from(document.querySelectorAll('[data-lb]'));
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lbImg');
+      let idx = 0;
+      const show = (i) => { idx = (i + btns.length) % btns.length; const b = btns[idx]; lbImg.src = b.dataset.full; lbImg.alt = b.dataset.alt; };
+      const openLb = (i) => { show(i); lb.classList.add('open'); document.body.style.overflow = 'hidden'; };
+      const closeLb = () => { lb.classList.remove('open'); document.body.style.overflow = ''; };
+      btns.forEach((b, i) => b.addEventListener('click', () => openLb(i)));
+      document.getElementById('lbX')?.addEventListener('click', closeLb);
+      document.getElementById('lbPrev')?.addEventListener('click', () => show(idx - 1));
+      document.getElementById('lbNext')?.addEventListener('click', () => show(idx + 1));
+      lb?.addEventListener('click', (e) => { if (e.target === lb) closeLb(); });
+      window.addEventListener('keydown', (e) => { if (!lb.classList.contains('open')) return; if (e.key === 'Escape') closeLb(); if (e.key === 'ArrowLeft') show(idx - 1); if (e.key === 'ArrowRight') show(idx + 1); });
+
+      // formularz
+      const form = document.getElementById('bookForm');
+      const stat = document.getElementById('bookStat');
+      const submit = document.getElementById('bookSubmit');
+      const err = (pole, txt) => { const f = pole.closest('.field'); f?.classList.add('err'); if (!f?.querySelector('.msg')) { const s = document.createElement('span'); s.className = 'msg'; s.textContent = txt; f?.appendChild(s); } };
+      const clear = () => { form.querySelectorAll('.field.err').forEach((f) => f.classList.remove('err')); form.querySelectorAll('.msg').forEach((m) => m.remove()); };
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault(); clear(); stat.textContent = ''; stat.className = 'formstat';
+        let ok = true;
+        form.querySelectorAll('[required]').forEach((p) => {
+          if (p.type === 'checkbox') { if (!p.checked) ok = false; return; }
+          if (!p.value.trim()) { err(p, L.fill); ok = false; }
+        });
+        const t = form.querySelector('[name="telefon"]');
+        if (t?.value && t.value.replace(/[^\d]/g, '').length < 9) { err(t, L.badPhone); ok = false; }
+        const zg = form.querySelector('[name="zgoda"]');
+        if (zg && !zg.checked) { stat.textContent = L.consent; stat.classList.add('bad'); }
+        if (!ok) { if (!stat.textContent) { stat.textContent = L.fields; stat.classList.add('bad'); } form.querySelector('.field.err input, .field.err select')?.focus(); return; }
+
+        const dane = Object.fromEntries(new FormData(form).entries());
+        if (!formKey) {
+          submit.disabled = true;
+          stat.textContent = L.demo;
+          stat.classList.add('ok'); form.reset(); setTimeout(() => { submit.disabled = false; }, 400); return;
+        }
+        try {
+          submit.disabled = true; submit.textContent = L.sending;
+          const res = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ access_key: formKey, subject: `${L.subject} ${nazwa}: ${dane.usluga} — ${dane.auto} (${dane.data} ${dane.godzina})`, from_name: dane.imie, ...dane }),
+          });
+          const r = await res.json();
+          if (r.success) { stat.textContent = L.ok; stat.classList.add('ok'); form.reset(); }
+          else throw new Error(r.message || 'error');
+        } catch (e2) {
+          stat.textContent = L.fail.replace('{phone}', phone).replace('{mail}', mail); stat.classList.add('bad');
+        } finally { submit.disabled = false; submit.textContent = L.submit; }
+      });
+    </script>
+  </body>
+</html>

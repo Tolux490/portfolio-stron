@@ -38,6 +38,8 @@ export const CASE_MEDIA = [
   },
 ];
 export const SITE_HREFS = ['/restauracja/', '/oktan/', '/nieruchomosci/', '/kawiarnia/', '/mechanik/'];
+// Wersja angielska każdego demo leży pod <adres>/en/ — strona EN i NL linkuje do niej, PL do polskiej.
+export const siteHref = (i, lang) => (lang === 'pl' ? SITE_HREFS[i] : `${SITE_HREFS[i]}en/`);
 export const SITE_THUMBS = ['img/sites/restauracja.webp', 'img/sites/oktan.webp', 'img/sites/nieruchomosci.webp', 'img/sites/kawiarnia.webp', 'img/sites/mechanik.webp'];
 export const FICHES_URL = 'https://tolux490.github.io/Fiches/';
 export const LAB = [
@@ -177,7 +179,7 @@ export const T = {
     sites: {
       label: 'Websites',
       h2: 'Websites I’ve built',
-      note: 'Working demos for local businesses, written in Polish for the Polish market. Click any of them to open it live.',
+      note: 'Working demos for local businesses, each one in Polish and English. Click any of them to open it live, and use the PL / EN switch to change language.',
       goLive: 'See it live ↗',
       items: [
         { nazwa: 'Ogrodowa 3', bran: 'Restaurant', opis: 'An elegant, multi-page site: à la carte and tasting menus, a wine list, online booking and a rotating 3D wine bottle.', tagi: ['Multiple pages', 'Booking', '3D model'] },
@@ -379,7 +381,7 @@ export const T = {
     sites: {
       label: 'Strony www',
       h2: 'Strony, które zbudowałem',
-      note: 'Działające dema dla lokalnych firm. Kliknij, żeby otworzyć każde na żywo. Treści są przykładowe.',
+      note: 'Działające dema dla lokalnych firm, każde po polsku i po angielsku. Kliknij, żeby otworzyć na żywo, a przełącznikiem PL / EN zmienisz język. Treści są przykładowe.',
       goLive: 'Zobacz na żywo ↗',
       items: [
         { nazwa: 'Ogrodowa 3', bran: 'Restauracja', opis: 'Wielostronicowa, elegancka witryna: karta i menu degustacyjne, karta win, rezerwacja online i obracany model 3D butelki wina.', tagi: ['Wiele podstron', 'Rezerwacje', 'Model 3D'] },
@@ -581,7 +583,7 @@ export const T = {
     sites: {
       label: 'Websites',
       h2: 'Websites die ik heb gebouwd',
-      note: 'Werkende demo’s voor lokale bedrijven, in het Pools voor de Poolse markt. Klik om ze live te bekijken.',
+      note: 'Werkende demo’s voor lokale bedrijven, elk in het Pools en het Engels. Klik om ze live te bekijken en wissel van taal met de PL / EN-knop.',
       goLive: 'Bekijk live ↗',
       items: [
         { nazwa: 'Ogrodowa 3', bran: 'Restaurant', opis: 'Een elegante site met meerdere pagina’s: à la carte en degustatiemenu, wijnkaart, online reserveren en een draaiende 3D-wijnfles.', tagi: ['Meerdere pagina’s', 'Reserveren', '3D-model'] },

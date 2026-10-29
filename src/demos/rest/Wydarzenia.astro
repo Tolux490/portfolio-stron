@@ -1,0 +1,102 @@
+---
+// Ogrodowa 3 — wieczory i wydarzenia (PL: /restauracja/wydarzenia/, EN: /restauracja/en/wydarzenia/).
+import Restauracja from '../../layouts/Restauracja.astro';
+import Foto from '../../components/Foto.astro';
+import { restauracja as biz } from '../../data/firmy.js';
+import * as PL from '../../data/restauracja.js';
+import * as EN from '../../data/restauracja-en.js';
+
+const { lang = 'pl' } = Astro.props;
+const en = lang === 'en';
+const { wydarzenia, prywatne } = en ? EN : PL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja${en ? '/en' : ''}`;
+
+const t = en ? {
+  title: 'Evenings and events · Ogrodowa 3, Wołomin',
+  desc: 'Tasting dinners, natural wine evenings, a chef\'s table and private events. The whole dining room for up to 50 guests in Wołomin.',
+  kicker: 'Evenings', h1: 'More than dinner',
+  lede: 'Alongside the everyday menu we host themed evenings and private occasions. A few reasons to come by for more than just a meal.',
+  privKicker: 'Private hire', privH2: ['Private occasions', 'and the whole room for you'],
+  privLede: 'Birthdays, anniversaries, company dinners or christenings. We close the dining room for you and build the menu around your evening. Up to 34 seated guests, up to 50 for a standing reception.',
+  mailSubject: 'Private%20hire%20enquiry', write: 'Email us',
+  ctaKicker: 'Let\'s plan it together', ctaH2: ['You have the occasion,', 'we have the room'],
+  ctaLede: 'Write or call and we will agree the date, the menu and every detail.', form: 'Booking form →',
+} : {
+  title: 'Wieczory i wydarzenia · Ogrodowa 3, Wołomin',
+  desc: 'Kolacje degustacyjne, wieczory z winami naturalnymi, stół szefa kuchni i imprezy prywatne. Sala na wyłączność do 50 osób w Wołominie.',
+  kicker: 'Wieczory', h1: 'Coś więcej niż kolacja',
+  lede: 'Poza codzienną kartą prowadzimy wieczory tematyczne i organizujemy prywatne okazje. Kilka powodów, żeby przyjść nie tylko na obiad.',
+  privKicker: 'Na wyłączność', privH2: ['Prywatne okazje', 'i cała sala dla Was'],
+  privLede: 'Urodziny, rocznica, kolacja firmowa albo chrzciny. Bierzemy salę na wyłączność i układamy menu pod Wasz wieczór. Do 34 osób przy stołach, do 50 w formule koktajlowej.',
+  mailSubject: 'Rezerwacja%20na%20wy%C5%82%C4%85czno%C5%9B%C4%87', write: 'Napisz do nas',
+  ctaKicker: 'Zaplanujmy to razem', ctaH2: ['Wy macie okazję,', 'my mamy salę'],
+  ctaLede: 'Napisz albo zadzwoń, ustalimy termin, menu i wszystkie szczegóły.', form: 'Formularz →',
+};
+---
+<Restauracja title={t.title} description={t.desc} current="wydarzenia" ogImage="restauracja/danie-sygnatura.webp" lang={lang} path="wydarzenia/">
+
+  <section class="pagehead">
+    <div class="wrap">
+      <p class="eyebrow reveal">{t.kicker}</p>
+      <h1 class="reveal">{t.h1}</h1>
+      <p class="lede reveal">{t.lede}</p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap">
+      <div class="cards cards--2">
+        {wydarzenia.map((w) => (
+          <article class="card card--foto reveal">
+            <div class="card__media">
+              <Foto src={`restauracja/${w.foto}.webp`} alt={w.t} ratio="3/2" label={w.t} />
+            </div>
+            <div class="card__body">
+              <span class="card__k">{w.kiedy}</span>
+              <h3>{w.t}</h3>
+              <p>{w.d}</p>
+              <span class="card__m">{w.m}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- prywatne okazje -->
+  <section class="band band--zielen">
+    <div class="wrap split split--wide-l">
+      <div class="reveal">
+        <p class="eyebrow">{t.privKicker}</p>
+        <h2 class="h2">{t.privH2[0]}<br />{t.privH2[1]}</h2>
+        <p class="lede">{t.privLede}</p>
+        <a class="btn btn--gold mt-m" href={`mailto:${biz.email}?subject=${t.mailSubject}`}>{t.write}</a>
+      </div>
+      <div class="reveal">
+        <div class="divlist">
+          {prywatne.map((p) => (
+            <div>
+              <h3 class="h3" style="font-size:1.35rem;margin-bottom:.4rem">{p.t}</h3>
+              <p style="color:var(--cichy)">{p.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="band cta">
+    <div class="cta__bg"><Foto src="restauracja/wnetrze-kominek.webp" alt="" ratio="16/9" label="" /></div>
+    <div class="cta__in wrap--w">
+      <p class="eyebrow eyebrow--center reveal">{t.ctaKicker}</p>
+      <h2 class="reveal">{t.ctaH2[0]}<br />{t.ctaH2[1]}</h2>
+      <p class="lede reveal">{t.ctaLede}</p>
+      <div class="hero__cta reveal" style="justify-content:center">
+        <a class="btn btn--gold" href={`tel:${biz.phone.replace(/[^+\d]/g, '')}`}>{biz.phone}</a>
+        <a class="btn btn--outline" href={`${root}/rezerwacja/`}>{t.form}</a>
+      </div>
+    </div>
+  </section>
+</Restauracja>

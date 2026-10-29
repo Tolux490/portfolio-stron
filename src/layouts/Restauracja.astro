@@ -1,28 +1,39 @@
 ---
 import '../styles/restauracja.css';
-import { restauracja as biz } from '../data/firmy.js';
+import DemoLang from '../components/DemoLang.astro';
+import { restauracja as bizPl, inLang } from '../data/firmy.js';
 
 const {
   title,
   description,
   current = '',          // slug aktywnej podstrony: menu, wina, o-nas, wydarzenia, galeria, opinie, rezerwacja
   ogImage = 'restauracja/wnetrze-kominek.webp',
+  lang = 'pl',           // 'pl' albo 'en'
+  path = '',             // ścieżka podstrony względem /restauracja/, np. 'menu/' (do przełącznika języka)
 } = Astro.props;
+const en = lang === 'en';
+const biz = inLang(bizPl, lang);
 
 const tel = biz.phone.replace(/[^+\d]/g, '');
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const root = `${base}/restauracja`;
+const plRoot = `${base}/restauracja`;
+const root = en ? `${plRoot}/en` : plRoot;
 const img = (p) => `${base}/img/${p}`;
 
-const nav = [
-  { id: 'home',       href: `${root}/`,             label: 'Start' },
-  { id: 'menu',       href: `${root}/menu/`,        label: 'Karta' },
-  { id: 'wina',       href: `${root}/wina/`,        label: 'Wina' },
-  { id: 'o-nas',      href: `${root}/o-nas/`,       label: 'Kuchnia' },
-  { id: 'wydarzenia', href: `${root}/wydarzenia/`,  label: 'Wieczory' },
-  { id: 'galeria',    href: `${root}/galeria/`,     label: 'Galeria' },
-  { id: 'opinie',     href: `${root}/opinie/`,      label: 'Opinie' },
-];
+const t = en ? {
+  nav: ['Home', 'Menu', 'Wine', 'Kitchen', 'Evenings', 'Gallery', 'Reviews'],
+  home: 'homepage', sub: 'Seasonal kitchen · Wołomin', navLabel: 'Main navigation',
+  book: 'Book a table', reservation: 'Reservations', visit: 'Visit us', hours: 'Opening hours', navFoot: 'Navigation',
+  credit: 'Website · Vervo Studio ↗', privacy: 'Privacy policy', bookShort: 'Book', call: 'Call',
+} : {
+  nav: ['Start', 'Karta', 'Wina', 'Kuchnia', 'Wieczory', 'Galeria', 'Opinie'],
+  home: 'strona główna', sub: 'Kuchnia sezonowa · Wołomin', navLabel: 'Główna nawigacja',
+  book: 'Rezerwuj stolik', reservation: 'Rezerwacja', visit: 'Odwiedź nas', hours: 'Godziny', navFoot: 'Nawigacja',
+  credit: 'Realizacja · Vervo Studio ↗', privacy: 'Polityka prywatności', bookShort: 'Rezerwuj', call: 'Zadzwoń',
+};
+const nav = ['home', 'menu', 'wina', 'o-nas', 'wydarzenia', 'galeria', 'opinie'].map((id, i) => ({
+  id, href: id === 'home' ? `${root}/` : `${root}/${id}/`, label: t.nav[i],
+}));
 
 const schema = {
   '@context': 'https://schema.org',
@@ -33,9 +44,9 @@ const schema = {
   email: biz.email,
   servesCuisine: biz.cuisine,
   priceRange: biz.priceRange,
-  url: Astro.url.origin + root + '/',
+  url: Astro.url.origin + plRoot + '/',
   acceptsReservations: 'True',
-  menu: Astro.url.origin + root + '/menu/',
+  menu: Astro.url.origin + plRoot + '/menu/',
   address: { '@type': 'PostalAddress', streetAddress: biz.street, addressLocality: biz.city, postalCode: biz.zip, addressCountry: 'PL' },
   openingHoursSpecification: [
     { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '16:00', closes: '22:00' },
@@ -45,20 +56,22 @@ const schema = {
 };
 ---
 <!doctype html>
-<html lang="pl">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="pl" href={new URL(`${plRoot}/${path}`, Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(`${plRoot}/en/${path}`, Astro.url).href} />
     <meta name="theme-color" content="#0e0c0a" />
     <meta name="robots" content="noindex" />
     <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:locale" content={en ? 'en_GB' : 'pl_PL'} />
     <meta property="og:image" content={new URL(`${base}/og/restauracja.png`, Astro.url).href} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL(`${base}/og/restauracja.png`, Astro.url).href} />
@@ -71,16 +84,16 @@ const schema = {
   <body>
     <header class="site" id="site">
       <div class="wrap site__in">
-        <a class="brand" href={`${root}/`} aria-label={`${biz.name}, strona główna`}>
+        <a class="brand" href={`${root}/`} aria-label={`${biz.name}, ${t.home}`}>
           <span class="brand__name">Ogrodowa <em>3</em></span>
-          <span class="brand__sub">Kuchnia sezonowa · Wołomin</span>
+          <span class="brand__sub">{t.sub}</span>
         </a>
 
-        <nav class="nav" aria-label="Główna nawigacja">
+        <nav class="nav" aria-label={t.navLabel}>
           {nav.map((l) => <a href={l.href} aria-current={current === l.id ? 'page' : undefined}>{l.label}</a>)}
         </nav>
 
-        <a class="btn btn--gold site__cta" href={`${root}/rezerwacja/`}>Rezerwuj stolik</a>
+        <a class="btn btn--gold site__cta" href={`${root}/rezerwacja/`}>{t.book}</a>
 
         <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer">
           <span></span>
@@ -90,7 +103,7 @@ const schema = {
 
     <div class="drawer" id="drawer">
       {nav.map((l) => <a href={l.href} aria-current={current === l.id ? 'page' : undefined}>{l.label}</a>)}
-      <a href={`${root}/rezerwacja/`} aria-current={current === 'rezerwacja' ? 'page' : undefined}>Rezerwacja</a>
+      <a href={`${root}/rezerwacja/`} aria-current={current === 'rezerwacja' ? 'page' : undefined}>{t.reservation}</a>
       <div class="drawer__foot">
         <a href={`tel:${tel}`}>{biz.phone}</a>
         <span>{biz.hours[0]}</span>
@@ -115,7 +128,7 @@ const schema = {
             </div>
           </div>
           <div>
-            <h4>Odwiedź nas</h4>
+            <h4>{t.visit}</h4>
             <ul>
               <li>{biz.street}</li>
               <li>{biz.zip} {biz.city}</li>
@@ -124,29 +137,31 @@ const schema = {
             </ul>
           </div>
           <div>
-            <h4>Godziny</h4>
+            <h4>{t.hours}</h4>
             <ul>
               {biz.hours.map((h) => <li>{h}</li>)}
             </ul>
-            <h4 style="margin-top:1.6rem">Nawigacja</h4>
+            <h4 style="margin-top:1.6rem">{t.navFoot}</h4>
             <ul>
-              <li><a class="ulink" href={`${root}/menu/`}>Karta</a></li>
-              <li><a class="ulink" href={`${root}/rezerwacja/`}>Rezerwacja</a></li>
+              <li><a class="ulink" href={`${root}/menu/`}>{t.nav[1]}</a></li>
+              <li><a class="ulink" href={`${root}/rezerwacja/`}>{t.reservation}</a></li>
             </ul>
           </div>
         </div>
 
         <div class="foot__legal">
           <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
-          <span><a href={`${base}/`}>Realizacja · Vervo Studio ↗</a> &nbsp;·&nbsp; <a href={`${root}/polityka-prywatnosci/`}>Polityka prywatności</a></span>
+          <span><a href={`${base}/${en ? '' : 'pl/'}`}>{t.credit}</a> &nbsp;·&nbsp; <a href={`${root}/polityka-prywatnosci/`}>{t.privacy}</a></span>
         </div>
       </div>
     </footer>
 
     <div class="callbar">
-      <a href={`${root}/rezerwacja/`}>Rezerwuj</a>
-      <a href={`tel:${tel}`}>Zadzwoń</a>
+      <a href={`${root}/rezerwacja/`}>{t.bookShort}</a>
+      <a href={`tel:${tel}`}>{t.call}</a>
     </div>
+
+    <DemoLang lang={lang} pl={`${plRoot}/${path}`} en={`${plRoot}/en/${path}`} />
 
     <script>
       // sticky header
