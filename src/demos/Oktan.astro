@@ -1,4 +1,5 @@
 ---
+import Curtain from '../components/Curtain.astro';
 // OKTAN (demo) w dwóch językach. Strony: src/pages/oktan/index.astro (PL) i src/pages/oktan/en/index.astro (EN).
 import '../styles/oktan.css';
 import Foto from '../components/Foto.astro';
@@ -252,6 +253,7 @@ const schema = {
   </head>
 
   <body>
+    <Curtain />
     <!-- ===================== NAGŁÓWEK ===================== -->
     <header class="top" id="top">
       <div class="wrap top__in">

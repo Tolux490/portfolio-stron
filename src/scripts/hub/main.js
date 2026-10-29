@@ -16,6 +16,9 @@ const isDesktop = () => window.matchMedia('(min-width: 900px)').matches;
 
 export function initHub() {
   const cfg = JSON.parse($('#hubConfig')?.textContent || '{}');
+  // stare linki do sekcji jednej długiej strony (np. /#work) prowadzą teraz na podstrony
+  const MOVED = { '#work': 'work/', '#lab': 'lab/', '#websites': 'websites/', '#about': 'about/', '#certificates': 'about/#certificates', '#process': 'about/#process', '#faq': 'about/#faq' };
+  if (cfg.page === 'home' && MOVED[location.hash]) { location.replace(location.pathname.replace(/\/?$/, '/') + MOVED[location.hash]); return; }
   let lenis = null;
   let world = null;
 
@@ -73,6 +76,7 @@ export function initHub() {
     requestAnimationFrame(() => {
       themeColor?.setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim());
       world?.readTheme();
+      pongAttract?.readColors(); pongGame?.readColors();
     });
   };
   $$('[data-set-theme]').forEach((b) => b.addEventListener('click', () => setTheme(b.dataset.setTheme)));
@@ -89,9 +93,11 @@ export function initHub() {
   const buildMenuTl = () => gsap.timeline({ paused: true })
     .to('.menu__bg', { clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'expo.inOut' })
     .from('.menu__w', { yPercent: 110, duration: 0.8, stagger: 0.05, ease: 'expo.out' }, '-=0.35')
-    .from('.menu__n, .menu__side > *', { opacity: 0, y: 12, duration: 0.5, stagger: 0.02 }, '-=0.6');
+    .from('.menu__n, .menu__side .menu__grp', { opacity: 0, y: 14, duration: 0.6, stagger: 0.04 }, '-=0.6');
   function openMenu() {
     root.classList.add('menu-open'); menu.removeAttribute('inert'); menuBtn.setAttribute('aria-expanded', 'true');
+    hdr?.classList.remove('is-hidden');
+    menu.querySelector('.menu__in').scrollTop = 0;
     lenis?.stop();
     if (reduced) { gsap.set('.menu__bg', { clipPath: 'inset(0 0 0% 0)' }); return; }
     (menuTl ||= buildMenuTl()).timeScale(1).play();
@@ -104,6 +110,10 @@ export function initHub() {
     menuTl.timeScale(1.8).reverse();
   }
   menuBtn?.addEventListener('click', () => (root.classList.contains('menu-open') ? closeMenu() : openMenu()));
+  // link do strony, na której już jesteśmy: po prostu zamknij menu
+  $$('.menu__a, .hnav__a').forEach((a) => a.addEventListener('click', (e) => {
+    if (new URL(a.href, location.href).pathname === location.pathname && !a.hash) { e.preventDefault(); closeMenu(); scrollTo('#top'); }
+  }));
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 
   // ---------- nagłówek: chowa się przy przewijaniu w dół ----------
@@ -121,16 +131,20 @@ export function initHub() {
   // ---------- preloader + wejście hero ----------
   const seen = root.classList.contains('seen');
   try { sessionStorage.setItem('vervo-seen', '1'); } catch {}
-  const intro = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } })
-    .to('.hdr', { opacity: 1, duration: 1 }, 0)
+  const hasHero = !!$('.hero'), hasHead = !!$('.phead');
+  const intro = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } }).to('.hdr', { opacity: 1, duration: 1 }, 0);
+  if (hasHero) intro
     .to('.hero .hl__in', { yPercent: 0, y: 0, duration: 1.4, stagger: 0.12 }, 0.05)
     .to('.hero .avail, .hero__row, .hero__cta, .badge', { opacity: 1, duration: 1.2, stagger: 0.1 }, 0.5)
     .from('.hero__row, .hero__cta', { y: 24, duration: 1.2, stagger: 0.1 }, 0.5);
+  if (hasHead) intro
+    .fromTo('.phead .hl__in', { yPercent: 110 }, { yPercent: 0, duration: 1.4 }, 0.05)
+    .from('.phead .lab, .phead__lede, .phead .sites__hint', { opacity: 0, y: 24, duration: 1.2, stagger: 0.08 }, 0.35);
   function startIntro() {
     heroReady = true;
     heroAssembleStart();
     if (reduced) return;
-    gsap.set('.hero .hl__in', { yPercent: 110 });
+    if (hasHero) gsap.set('.hero .hl__in', { yPercent: 110 });
     intro.play();
   }
   if (reduced) startIntro();
@@ -199,17 +213,17 @@ export function initHub() {
   }
 
   // ---------- hero: postęp przewijania → scena ----------
-  ScrollTrigger.create({
+  if (hasHero) ScrollTrigger.create({
     trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true,
     onUpdate: (st) => world?.setScroll(st.progress),
   });
-  if (!reduced) {
+  if (!reduced && hasHero) {
     gsap.to('.hero__in', { yPercent: -18, opacity: 0.2, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
   }
 
   // ---------- sceny świata 3D ----------
   const stagesInView = new Set();
-  let activeStage = 'chart';
+  let activeStage = null, activeEl = null;
   $$('[data-stage]').forEach((el) => {
     const name = el.dataset.stage;
     ScrollTrigger.create({
@@ -223,7 +237,7 @@ export function initHub() {
     });
     ScrollTrigger.create({
       trigger: el, start: 'top 80%', end: 'bottom 35%', refreshPriority: -1,
-      onToggle: (st) => { if (st.isActive) { activeStage = name; world?.morphTo(name); } },
+      onToggle: (st) => { if (st.isActive) { activeStage = name; activeEl = el; world?.morphTo(name); } },
     });
   });
 
@@ -233,16 +247,39 @@ export function initHub() {
   const ANCHORS = {
     chart: () => { const r = $('.hero').getBoundingClientRect(); return { x: wide() ? window.innerWidth * 0.68 : window.innerWidth / 2, y: r.top + (wide() ? 0.52 : 0.78) * window.innerHeight }; },
     // na telefonie kształt stoi nad tekstem (sekcje mają na to miejsce u góry)
-    globe: () => (wide() ? centerOf('.mani', 0.72) : { x: window.innerWidth / 2, y: $('.mani').getBoundingClientRect().top + window.innerHeight * 0.26 }),
-    donut: () => (wide() ? centerOf('.labsec__head', 0.72) : { x: window.innerWidth / 2, y: $('.labsec__head').getBoundingClientRect().top + 175 }),
-    sheet: () => ({ x: wide() ? window.innerWidth * 0.66 : window.innerWidth / 2, y: window.innerHeight * (wide() ? 0.56 : 0.72) }),
+    globe: () => (wide() ? centerOf('.mani', 0.76) : { x: window.innerWidth / 2, y: $('.mani').getBoundingClientRect().top + window.innerHeight * 0.26 }),
+    sheet: () => ({ x: window.innerWidth * 0.66, y: window.innerHeight * 0.56 }),
     logo: () => { const e = $('.logo-space'); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; },
   };
+  // scena z zarezerwowanym miejscem ([data-space]): kształt stoi w nim i jest dopasowany do jego rozmiaru
+  const spaceAnchor = () => {
+    const sp = activeEl?.querySelector('[data-space]'), r = sp?.getBoundingClientRect();
+    if (!r || !r.height) return null;
+    world.setFit(r.height / window.innerHeight, r.width / window.innerWidth);
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  };
   gsap.ticker.add(() => {
-    if (!world || !stagesInView.size) return;
-    const a = ANCHORS[activeStage]?.();
+    if (!world || !stagesInView.size || !activeStage) return;
+    let a = spaceAnchor();
+    if (!a) { world.setFit(0, 0); a = ANCHORS[activeStage]?.(); }
     if (a) world.setAnchor(a.x, a.y);
   });
+
+  // nagłówek „Projekty”: arkusz 3D sam się brudzi i czyści w pętli
+  if ($('[data-autoclean]')) {
+    const o = { v: 0 };
+    const loop = () => { if (world && activeStage === 'sheet' && activeEl?.hasAttribute('data-autoclean')) world.setClean(o.v); };
+    if (reduced) { o.v = 1; gsap.ticker.add(loop); }
+    else { gsap.timeline({ repeat: -1, repeatDelay: 1.2, delay: 1.6 }).to(o, { v: 1, duration: 4.5, ease: 'power1.inOut', onUpdate: loop }).to(o, { v: 0, duration: 0.01, onUpdate: loop }, '+=1.8'); }
+  }
+
+  // ---------- kliknięcie w pustą część sceny 3D rozrzuca kostki ----------
+  window.addEventListener('pointerdown', (e) => {
+    if (!world || !stagesInView.size || e.button > 0) return;
+    if (e.target.closest('a, button, input, select, textarea, summary, label, .term, .proof, .pstep, .faq, .form, .contact__side, .menu')) return;
+    if (!e.target.closest('.stage')) return;
+    world.burst((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+  }, { passive: true });
 
   // ---------- proces: arkusz czyści się w rytm przewijania ----------
   const steps = $$('.pstep__i'), cleanBar = $('#cleanBar'), cleanPct = $('#cleanPct');
@@ -253,14 +290,16 @@ export function initHub() {
     if (cleanBar) cleanBar.style.transform = `scaleX(${p})`;
     if (cleanPct) cleanPct.textContent = `${Math.round((1 - p) * 20)}%`;
   };
-  setClean(0);
+  if ($('.process')) setClean(0);
   const mmP = gsap.matchMedia();
   mmP.add('(min-width: 900px) and (min-height: 620px)', () => {
+    if (!$('.process__pin')) return;
     if (reduced) { setClean(1); return; }
     const st = ScrollTrigger.create({ trigger: '.process__pin', start: 'top top', end: '+=160%', pin: true, scrub: true, onUpdate: (s) => setClean(s.progress) });
     return () => st.kill();
   });
   mmP.add('(max-width: 899px), (max-height: 619px)', () => {
+    if (!$('.process')) return;
     if (reduced) { setClean(1); return; }
     const st = ScrollTrigger.create({ trigger: '.process', start: 'top 70%', end: 'bottom 40%', scrub: true, onUpdate: (s) => setClean(s.progress) });
     return () => st.kill();
@@ -291,28 +330,12 @@ export function initHub() {
       el.classList.add('rv');
       gsap.to(el, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', ...opts, scrollTrigger: { trigger: el, start: 'top 88%' } });
     });
-    reveal('.shead__lede, .lab, .case, .svc__row, .cert, .why__i, .faq details, .proof li, .contact__p, .soc li, .form, .cta-bar, .about__p, .sites__meta, .labc, .pjson');
-    gsap.from('.kit__i', { opacity: 0, y: 30, duration: 1, stagger: 0.06, ease: 'expo.out', scrollTrigger: { trigger: '.kit', start: 'top 85%' } });
+    reveal('.shead__lede, .case, .svc__row, .cert, .why__i, .faq details, .proof li, .contact__p, .soc li, .form, .cta-bar, .about__p, .labc, .pjson, .chap__list li, .nextp__a');
+    if ($('.kit')) gsap.from('.kit__i', { opacity: 0, y: 30, duration: 1, stagger: 0.06, ease: 'expo.out', scrollTrigger: { trigger: '.kit', start: 'top 85%' } });
 
-    // 2D #1: etykiety „odszyfrowują się” znak po znaku
-    const GLYPHS = '01#%/_=+<>[]{}ABCDEFXYZ';
-    const scramble = (el) => {
-      const final = el.textContent;
-      const o = { p: 0 };
-      gsap.to(o, {
-        p: 1, duration: Math.min(1.2, 0.35 + final.length * 0.03), ease: 'none',
-        onUpdate: () => {
-          const n = Math.floor(o.p * final.length);
-          let out = final.slice(0, n);
-          for (let i = n; i < final.length; i++) out += final[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
-          el.textContent = out;
-        },
-        onComplete: () => { el.textContent = final; },
-      });
-    };
-    $$('.lab.mono, .labc__k, .case__bar span:first-child, .site__n').forEach((el) => {
-      if (!el.firstChild || el.children.length) return;
-      ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => scramble(el) });
+    // 2D #1: etykiety sekcji i kart wsuwają się spokojnie, kropka „zapala się” chwilę później
+    $$('.lab, .labc__k, .case__bar span:first-child, .site__n').filter((el) => !el.closest('.phead')).forEach((el) => {
+      gsap.from(el, { opacity: 0, x: -14, duration: 0.9, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
     });
 
     // 2D #2: zrzuty i okna odsłaniają się „kurtyną” z lekkim zoomem
@@ -334,6 +357,21 @@ export function initHub() {
   }), { rootMargin: '0px 0px -10% 0px' });
   $$('.draw').forEach((el, i) => { el.style.setProperty('--d', `${(i % 8) * 0.08}s`); dio.observe(el); });
 
+  // ---------- FAQ: płynne rozwijanie odpowiedzi ----------
+  $$('.faq details').forEach((d) => {
+    const sum = d.querySelector('summary'), body = d.querySelector('p');
+    if (!sum || !body || reduced) return;
+    sum.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (d.open) {
+        gsap.to(body, { height: 0, opacity: 0, duration: 0.45, ease: 'expo.inOut', onComplete: () => { d.open = false; gsap.set(body, { clearProps: 'height,opacity' }); ScrollTrigger.refresh(); } });
+      } else {
+        d.open = true;
+        gsap.fromTo(body, { height: 0, opacity: 0 }, { height: 'auto', opacity: 1, duration: 0.6, ease: 'expo.out', onComplete: () => { gsap.set(body, { clearProps: 'height' }); ScrollTrigger.refresh(); } });
+      }
+    });
+  });
+
   // ---------- liczniki ----------
   $$('[data-count]').forEach((el) => {
     const end = parseInt(el.dataset.count, 10);
@@ -350,7 +388,7 @@ export function initHub() {
   const sitesTrack = $('#sitesTrack'), sitesProg = $('#sitesProg'), view = $('.sites__view');
   const mm = gsap.matchMedia();
   mm.add('(min-width: 900px)', () => {
-    if (reduced || !sitesTrack) return;
+    if (reduced || !sitesTrack || !$('.sites__pin')) return;
     const dist = () => Math.max(0, sitesTrack.scrollWidth - window.innerWidth);
     const tween = gsap.to(sitesTrack, {
       x: () => -dist(), ease: 'none',
@@ -363,9 +401,87 @@ export function initHub() {
   });
   mm.add('(max-width: 899px)', () => {
     const onS = () => { const m = view.scrollWidth - view.clientWidth; if (sitesProg) sitesProg.style.transform = `scaleX(${m ? view.scrollLeft / m : 0})`; };
-    view?.addEventListener('scroll', onS, { passive: true });
+    if (!view) return;
+    view.addEventListener('scroll', onS, { passive: true });
     return () => view?.removeEventListener('scroll', onS);
   });
+
+  // ---------- spis rozdziałów: podgląd strony jedzie za kursorem ----------
+  const chapFloat = $('.chap__float'), chapImg = $('#chapImg');
+  if (chapFloat && finePointer && !reduced) {
+    const fx = gsap.quickTo(chapFloat, 'x', { duration: 0.6, ease: 'power3.out' });
+    const fy = gsap.quickTo(chapFloat, 'y', { duration: 0.6, ease: 'power3.out' });
+    $$('.chap__a').forEach((a) => {
+      a.addEventListener('pointerenter', () => { chapImg.src = a.dataset.img; chapFloat.classList.add('on'); });
+      a.addEventListener('pointerleave', () => chapFloat.classList.remove('on'));
+      a.addEventListener('pointermove', (e) => { fx(e.clientX + 40); fy(e.clientY); });
+    });
+  }
+
+  // ---------- Pong: tło sekcji „Nudzisz się?” gra samo, przycisk otwiera grę ----------
+  const B = cfg.bored || {};
+  let pongGame = null, pongAttract = null;
+  const attractCv = $('#pongAttract');
+  if (attractCv) {
+    new IntersectionObserver(([en]) => {
+      if (en.isIntersecting) {
+        if (!pongAttract) import('./pong.js').then(({ createPong }) => { pongAttract = createPong(attractCv, { mode: 'attract' }); if (!reduced) pongAttract.start(); });
+        else if (!reduced) pongAttract.start();
+      } else pongAttract?.stop();
+    }, { rootMargin: '80px' }).observe(attractCv);
+  }
+  const dlg = $('#pongDlg'), pMsg = $('#pongMsg'), pBig = $('#pongBig'), pSmall = $('#pongSmall');
+  const showMsg = (big, small) => { pBig.textContent = big; pSmall.textContent = small; pMsg.hidden = false; };
+  async function openPong() {
+    if (!dlg) return;
+    closeMenu();
+    dlg.showModal(); lenis?.stop();
+    const { createPong } = await import('./pong.js');
+    if (!pongGame) {
+      pongGame = createPong($('#pongCanvas'), {
+        mode: 'play',
+        onScore: (you, cpu) => { $('#pongYou').textContent = you; $('#pongCpu').textContent = cpu; },
+        onEnd: (won) => showMsg(won ? B.win : B.lose, B.again),
+      });
+    }
+    pongGame.readColors(); pongGame.reset();
+    $('#pongYou').textContent = '0'; $('#pongCpu').textContent = '0';
+    showMsg('', B.start);
+    pongGame.start();
+  }
+  if (dlg) {
+    const field = dlg.querySelector('.pong__field');
+    const hide = () => { pMsg.hidden = true; };
+    field.addEventListener('pointerdown', hide);
+    dlg.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') hide(); });
+    $('#pongClose').addEventListener('click', () => dlg.close());
+    $('#pongSound').addEventListener('click', (e) => {
+      const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+      e.currentTarget.setAttribute('aria-pressed', String(on)); pongGame?.setMuted(!on);
+    });
+    dlg.addEventListener('close', () => { pongGame?.stop(); lenis?.start(); });
+  }
+  $$('[data-pong]').forEach((b) => b.addEventListener('click', openPong));
+
+  // ---------- kostka-nawigacja ----------
+  const cubeCv = $('#navCube');
+  if (cubeCv && webgl) {
+    let made = false;
+    new IntersectionObserver(([en], obs) => {
+      if (!en.isIntersecting || made) return;
+      made = true; obs.disconnect();
+      const faces = JSON.parse(cubeCv.dataset.faces || '[]');
+      import('./navcube.js').then(({ createNavCube }) => createNavCube(cubeCv, faces, {
+        onPick: (f) => {
+          if (f.k === 'pong') { openPong(); return; }
+          if (f.href.startsWith('#')) { scrollTo(f.href); return; }
+          const a = document.createElement('a');
+          a.href = f.href; a.dataset.curtain = f.t; a.hidden = true;
+          document.body.appendChild(a); a.click(); a.remove();
+        },
+      }));
+    }, { rootMargin: '300px' }).observe(cubeCv);
+  } else if (cubeCv) cubeCv.closest('.chap__cube')?.remove();
 
   // ---------- filmy: grają tylko w kadrze ----------
   const vids = $$('.screen__vid');
@@ -500,5 +616,12 @@ export function initHub() {
   // przypięcia i sceny liczone od góry strony do dołu (kolejność ma znaczenie przy pin)
   ScrollTrigger.sort();
   ScrollTrigger.refresh();
-  window.addEventListener('load', () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); });
+  window.addEventListener('load', () => {
+    ScrollTrigger.sort(); ScrollTrigger.refresh();
+    // wejście z innej strony na kotwicę (np. /#contact): przewiń po ułożeniu przypięć
+    if (location.hash.length > 1 && $(location.hash)) {
+      if (lenis) lenis.scrollTo($(location.hash), { immediate: true, force: true });
+      else $(location.hash).scrollIntoView();
+    }
+  });
 }

@@ -1,4 +1,5 @@
 ---
+import Curtain from '../components/Curtain.astro';
 // Serwis Kołodziej (demo) w dwóch językach. Strony: src/pages/mechanik/index.astro (PL) i src/pages/mechanik/en/index.astro (EN).
 import '../styles/premium.css';
 import { mechanik as bizPl, inLang } from '../data/firmy.js';
@@ -165,6 +166,7 @@ const nav = ['#zakres', '#wycena', '#cennik', '#realizacje', '#kontakt'].map((hr
   </head>
 
   <body>
+    <Curtain />
     <!-- ============ NAWIGACJA: przezroczysta nad hero, po scrollu zbita ============ -->
     <header class="hdr" id="hdr">
       <div class="wrap hdr__in">
