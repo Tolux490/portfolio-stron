@@ -1,0 +1,108 @@
+---
+import LabLayout from '../../../components/LabLayout.astro';
+---
+<LabLayout
+  title="Invoice generator (concept)"
+  description="A small web app for freelancers and small businesses: fill in client and line items, VAT and discount are calculated automatically, and the A4 invoice is ready to print or save as PDF. Data stays in your browser."
+  crumb="Invoice generator"
+  path="/lab/invoice/"
+>
+  <section class="lab-head">
+    <p class="lab mono">[ Lab 05 ] Web app · JavaScript · Print CSS</p>
+    <h1>Invoice<br /><em>generator</em></h1>
+    <p>Many of the businesses I work with still write invoices by hand in a text editor. This small app does the arithmetic, numbering and layout for them. Everything is saved in your own browser, and “Print / save PDF” produces a clean A4 page.</p>
+  </section>
+
+  <div class="invw">
+    <form class="panel invf" id="invForm" autocomplete="off">
+      <fieldset>
+        <legend class="mono">From</legend>
+        <label class="fld"><span class="mono">Business name</span><input name="fromName" /></label>
+        <label class="fld"><span class="mono">Address</span><textarea name="fromAddr" rows="2"></textarea></label>
+        <div class="frow">
+          <label class="fld"><span class="mono">VAT / tax number</span><input name="fromVat" /></label>
+          <label class="fld"><span class="mono">IBAN</span><input name="fromIban" /></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend class="mono">Bill to</legend>
+        <label class="fld"><span class="mono">Client</span><input name="toName" /></label>
+        <label class="fld"><span class="mono">Address</span><textarea name="toAddr" rows="2"></textarea></label>
+      </fieldset>
+      <fieldset>
+        <legend class="mono">Invoice</legend>
+        <div class="frow">
+          <label class="fld"><span class="mono">Number</span><input name="num" /></label>
+          <label class="fld"><span class="mono">Currency</span><select name="cur"><option>EUR</option><option>PLN</option><option>USD</option><option>GBP</option></select></label>
+        </div>
+        <div class="frow">
+          <label class="fld"><span class="mono">Issue date</span><input type="date" name="date" /></label>
+          <label class="fld"><span class="mono">Payment term (days)</span><input type="number" name="terms" min="0" max="120" /></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend class="mono">Line items</legend>
+        <div id="items" class="items"></div>
+        <button type="button" class="btn btn--line btn--sm" id="addItem"><span>+ Add line</span></button>
+        <div class="frow" style="margin-top:1rem">
+          <label class="fld"><span class="mono">VAT %</span><input type="number" name="vat" min="0" max="30" step="0.5" /></label>
+          <label class="fld"><span class="mono">Discount %</span><input type="number" name="disc" min="0" max="100" step="1" /></label>
+        </div>
+        <label class="fld"><span class="mono">Note on invoice</span><textarea name="note" rows="2"></textarea></label>
+      </fieldset>
+      <div class="invf__bar">
+        <button type="button" class="btn btn--acc" id="print"><span>Print / save PDF</span><span aria-hidden="true">↓</span></button>
+        <button type="button" class="btn btn--line" id="resetInv"><span>Reset example</span></button>
+      </div>
+    </form>
+
+    <div class="paperw">
+      <article class="paper" id="paper" aria-label="Invoice preview"></article>
+    </div>
+  </div>
+
+  <style is:global>
+    .invw { display: grid; gap: 1.2rem; }
+    @media (min-width: 1100px) { .invw { grid-template-columns: 420px minmax(0, 1fr); align-items: start; } .paperw { position: sticky; top: 4.6rem; } }
+    .invf fieldset { border: 0; padding: 0; margin: 0 0 1.4rem; }
+    .invf legend { color: var(--acc); margin-bottom: 0.8rem; }
+    .invf .fld input, .invf .fld textarea, .invf .fld select { font-size: 0.92rem; }
+    .items { display: grid; gap: 0.5rem; margin-bottom: 0.8rem; }
+    .item { display: grid; grid-template-columns: 1fr 64px 90px 28px; gap: 0.5rem; align-items: end; }
+    .item input { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--line-2); color: var(--fg); padding: 0.5rem 0; font: inherit; font-size: 0.9rem; }
+    .item input:focus { outline: none; border-color: var(--acc); }
+    .item button { color: var(--muted); font-size: 1.1rem; padding-bottom: 0.4rem; }
+    .item button:hover { color: #ff5a4d; }
+    .invf__bar { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .paperw { min-width: 0; }
+    .paper { background: #fff; color: #17181b; width: 100%; max-width: 820px; aspect-ratio: 210 / 297; margin-inline: auto; padding: clamp(1.4rem, 5%, 3.2rem); border-radius: 6px; box-shadow: 0 40px 90px -40px rgba(0,0,0,0.75); font-family: var(--font-b); font-size: clamp(0.6rem, 1.15vw, 0.86rem); display: flex; flex-direction: column; overflow: hidden; }
+    .paper .inv-h { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+    .paper h2 { font-family: var(--font-d); font-stretch: 62%; font-weight: 800; text-transform: uppercase; font-size: 3.4em; line-height: 0.85; letter-spacing: -0.01em; }
+    .paper .mk { width: 3.4em; height: 3em; color: var(--acc); }
+    .paper .meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1em; margin-top: 2.2em; padding-top: 1.2em; border-top: 1px solid #ddd; }
+    .paper .meta b { display: block; font-family: var(--font-m); font-weight: 450; font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin-bottom: 0.3em; }
+    .paper .addr { white-space: pre-line; }
+    .paper table { width: 100%; border-collapse: collapse; margin-top: 2.4em; }
+    .paper th { font-family: var(--font-m); font-weight: 450; font-size: 0.76em; text-transform: uppercase; letter-spacing: 0.06em; color: #888; text-align: right; padding: 0.6em 0; border-bottom: 1px solid #17181b; }
+    .paper th:first-child, .paper td:first-child { text-align: left; }
+    .paper td { text-align: right; padding: 0.75em 0; border-bottom: 1px solid #eee; font-variant-numeric: tabular-nums; }
+    .paper .tot { margin-left: auto; width: 46%; margin-top: 1.2em; display: grid; gap: 0.4em; }
+    .paper .tot div { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+    .paper .tot .grand { border-top: 2px solid #17181b; padding-top: 0.6em; margin-top: 0.3em; font-weight: 700; font-size: 1.25em; }
+    .paper .inv-foot { margin-top: auto; padding-top: 1.4em; border-top: 1px solid #ddd; display: flex; justify-content: space-between; gap: 1em; color: #666; font-size: 0.9em; }
+    @media print {
+      @page { size: A4; margin: 0; }
+      body.lab-page { background: #fff !important; }
+      body.lab-page > *:not(main), .lab-head, .invf, .lab-foot, .grain { display: none !important; }
+      main.wrap { width: auto; margin: 0; }
+      .invw { display: block; }
+      .paperw { position: static; }
+      .paper { box-shadow: none; border-radius: 0; max-width: none; width: 210mm; height: 297mm; aspect-ratio: auto; padding: 18mm; font-size: 10pt; }
+    }
+  </style>
+
+  <script>
+    import { initInvoice } from '../../../scripts/lab/invoice.js';
+    initInvoice();
+  </script>
+</LabLayout>

@@ -1,0 +1,88 @@
+---
+import LabLayout from '../../../components/LabLayout.astro';
+---
+<LabLayout
+  title="SQL playground (concept)"
+  description="Query a bike-share database in your browser. Eight analysis questions with the SQL that answers them, plus an editor to run your own queries. Concept project with generated sample data."
+  crumb="SQL playground"
+  path="/lab/sql/"
+>
+  <section class="lab-head">
+    <p class="lab mono">[ Lab 02 ] SQL · SQLite in the browser</p>
+    <h1>Spoke &amp; Co.<br /><em>bike share 2025</em></h1>
+    <p>A fictional city bike-share scheme with a year of rides, 22 stations and daily weather. The database runs entirely in your browser. Pick a question to see the query behind the answer, or write your own and run it against the same tables.</p>
+    <div class="lab-meta mono" id="dbMeta"><span>Starting the database…</span></div>
+  </section>
+
+  <div class="sqlw">
+    <aside class="sqlq">
+      <p class="lab mono">Questions</p>
+      <ol id="qList" class="sqlq__list"></ol>
+      <p class="lab mono sqlq__schema-l">Schema</p>
+      <div id="schema" class="sqlq__schema mono"></div>
+    </aside>
+
+    <section class="sqlm">
+      <div class="panel sqlm__q">
+        <p class="mono sqlm__n" id="qNum">01</p>
+        <h2 id="qTitle" class="sqlm__t">Loading…</h2>
+        <p id="qFinding" class="sqlm__f"></p>
+      </div>
+
+      <div class="panel sqlm__ed">
+        <div class="panel__h"><h2>query.sql</h2><span class="mono">Ctrl / ⌘ + Enter to run</span></div>
+        <div class="ed">
+          <pre class="ed__nums mono" id="edNums" aria-hidden="true">1</pre>
+          <textarea id="editor" class="ed__ta mono" spellcheck="false" aria-label="SQL query" autocapitalize="off" autocomplete="off"></textarea>
+        </div>
+        <div class="ed__bar">
+          <button type="button" class="btn btn--acc btn--sm" id="run" disabled><span>Run query</span><span aria-hidden="true">▶</span></button>
+          <button type="button" class="btn btn--line btn--sm" id="reset"><span>Reset</span></button>
+          <span class="mono ed__stat" id="runStat"></span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__h"><h2>Result</h2><span class="mono" id="resInfo"></span></div>
+        <div class="chart" id="resChart"></div>
+        <div class="tbl-wrap sqlm__res"><table class="tbl" id="resTable"></table></div>
+      </div>
+    </section>
+  </div>
+
+  <style is:global>
+    .sqlw { display: grid; gap: 1rem; }
+    @media (min-width: 1000px) { .sqlw { grid-template-columns: 300px minmax(0, 1fr); align-items: start; } .sqlq { position: sticky; top: 4.6rem; } }
+    .sqlq__list { display: grid; border-top: 1px solid var(--line); counter-reset: q; }
+    .sqlq__list button { width: 100%; text-align: left; display: grid; grid-template-columns: 2rem 1fr; gap: 0.4rem; padding: 0.75rem 0.2rem; border-bottom: 1px solid var(--line); color: var(--fg-2); font-size: 0.92rem; transition: color 0.2s, background 0.2s; }
+    .sqlq__list button span:first-child { font-family: var(--font-m); font-size: 0.7rem; color: var(--muted); padding-top: 0.15rem; }
+    .sqlq__list button:hover { color: var(--fg); }
+    .sqlq__list button[aria-current='true'] { color: var(--fg); background: color-mix(in srgb, var(--acc) 8%, transparent); }
+    .sqlq__list button[aria-current='true'] span:first-child { color: var(--acc); }
+    .sqlq__schema-l { margin-top: 1.6rem; }
+    .sqlq__schema { display: grid; gap: 0.9rem; text-transform: none; letter-spacing: 0; font-size: 0.74rem; }
+    .sqlq__schema b { color: var(--acc); font-weight: 500; display: block; margin-bottom: 0.25rem; }
+    .sqlq__schema button { color: var(--fg-2); margin-right: 0.5rem; }
+    .sqlq__schema button:hover { color: var(--fg); text-decoration: underline; }
+    .sqlq__schema em { font-style: normal; color: var(--muted); }
+    .sqlm { display: grid; gap: 1rem; min-width: 0; }
+    .sqlm__n { color: var(--acc); }
+    .sqlm__t { font-family: var(--font-d); font-stretch: 62%; font-weight: 800; text-transform: uppercase; font-size: clamp(1.9rem, 3.4vw, 2.8rem); line-height: 0.95; margin: 0.4rem 0 0.8rem; }
+    .sqlm__f { color: var(--fg-2); max-width: 70ch; }
+    .sqlm__f b { color: var(--fg); font-weight: 600; }
+    .ed { display: grid; grid-template-columns: auto 1fr; border: 1px solid var(--line-2); border-radius: 10px; background: var(--bg); overflow: hidden; }
+    .ed__nums { margin: 0; padding: 0.9rem 0.7rem; color: var(--muted); text-align: right; user-select: none; border-right: 1px solid var(--line); font-size: 0.8rem; line-height: 1.6; text-transform: none; }
+    .ed__ta { width: 100%; min-height: 15rem; resize: vertical; border: 0; outline: none; background: transparent; color: var(--fg); padding: 0.9rem 1rem; font-size: 0.8rem; line-height: 1.6; text-transform: none; letter-spacing: 0; white-space: pre; overflow: auto; tab-size: 2; }
+    .ed__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; margin-top: 0.9rem; }
+    .ed__stat { color: var(--muted); text-transform: none; }
+    .ed__stat.err { color: #ff5a4d; }
+    .sqlm__res { max-height: 460px; overflow: auto; margin-top: 0.8rem; }
+    .sqlm__res .tbl th { position: sticky; top: 0; background: var(--bg-2); }
+    #resChart:empty { display: none; }
+  </style>
+
+  <script>
+    import { initSql } from '../../../scripts/lab/sql.js';
+    initSql();
+  </script>
+</LabLayout>

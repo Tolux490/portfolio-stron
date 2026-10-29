@@ -1,0 +1,54 @@
+---
+// Wspólny szkielet podstron Lab: nagłówek z powrotem na stronę główną, oznaczenie „koncept”, stopka.
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/geist-mono';
+import '../styles/hub.css';
+import '../styles/lab.css';
+
+const { title, description, crumb, path } = Astro.props;
+const b = import.meta.env.BASE_URL.replace(/\/$/, '');
+const site = Astro.site ? Astro.site.origin : 'https://vervostudio.com';
+const og = new URL(`${b}/og/vervo.jpg`, Astro.site || 'https://vervostudio.com/').href;
+---
+<!doctype html>
+<html lang="en" data-theme="amber">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | Vervo Studio</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={`${site}${path}`} />
+    <meta name="theme-color" content="#0c0d10" />
+    <link rel="icon" href={`${b}/favicon.svg`} type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Vervo Studio" />
+    <meta property="og:title" content={`${title} | Vervo Studio`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      try { var th = localStorage.getItem('vervo-theme'); if (th === 'amber' || th === 'lime' || th === 'paper') document.documentElement.setAttribute('data-theme', th); } catch (e) {}
+    </script>
+  </head>
+  <body class="lab-page">
+    <div class="grain" aria-hidden="true"></div>
+    <header class="lab-top mono">
+      <div class="lab-top__l">
+        <a class="lab-top__back" href={`${b}/#lab`}>
+          <svg viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>← Vervo Studio</span>
+        </a>
+        <span class="lab-top__sep" aria-hidden="true"></span>
+        <span class="lab-top__t">Lab / {crumb}</span>
+      </div>
+      <span class="lab-tag">Concept · sample data</span>
+    </header>
+    <main class="wrap">
+      <slot />
+      <footer class="lab-foot mono">
+        <span>Concept project by Anthony A. · Vervo Studio. All data is generated and fictional.</span>
+        <a href={`${b}/#contact`}>Need something like this? Get in touch →</a>
+      </footer>
+    </main>
+  </body>
+</html>

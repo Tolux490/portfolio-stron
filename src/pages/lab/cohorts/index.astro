@@ -1,0 +1,67 @@
+---
+import LabLayout from '../../../components/LabLayout.astro';
+---
+<LabLayout
+  title="Cohort retention analysis (concept)"
+  description="Customer retention for a fictional meal-kit subscription: monthly cohort heatmap, retention curves, revenue retention and lifetime value. Concept analysis on generated sample data."
+  crumb="Cohort analysis"
+  path="/lab/cohorts/"
+>
+  <section class="lab-head">
+    <p class="lab mono">[ Lab 04 ] Analysis · Cohorts · Retention</p>
+    <h1>Greenbox meals<br /><em>who stays, who leaves</em></h1>
+    <p>A fictional meal-kit subscription with eighteen months of customers. Each row is the group that signed up in one month; each column is how many of them were still paying a month later, two months later, and so on. This is the analysis behind most subscription and repeat-purchase decisions.</p>
+    <div class="lab-meta mono" id="coMeta"></div>
+  </section>
+
+  <div class="filters" role="group" aria-label="Options">
+    <div><span class="flab mono">Measure</span>
+      <span class="seg" id="fMetric">
+        <button type="button" data-v="users" aria-pressed="true">Customers</button>
+        <button type="button" data-v="rev" aria-pressed="false">Revenue</button>
+      </span>
+    </div>
+    <div><span class="flab mono">Signed up via</span>
+      <span class="seg" id="fSrc">
+        <button type="button" data-v="" aria-pressed="true">All</button>
+        <button type="button" data-v="discount" aria-pressed="false">50% first box</button>
+        <button type="button" data-v="organic" aria-pressed="false">Full price</button>
+      </span>
+    </div>
+  </div>
+
+  <div class="kpis" id="coKpis"></div>
+
+  <section class="panel" style="margin-top:1rem">
+    <div class="panel__h"><h2>Retention by signup month</h2><span class="mono">Hover a cell</span></div>
+    <div class="tbl-wrap"><div id="heat" class="coh"></div></div>
+  </section>
+
+  <div class="grid-b">
+    <section class="panel">
+      <div class="panel__h"><h2>Retention curves</h2><div class="legend" id="lgCurve"></div></div>
+      <div class="chart" id="curve"></div>
+    </section>
+    <section class="panel">
+      <div class="panel__h"><h2>Findings</h2><span class="mono">Computed from the table</span></div>
+      <div class="insights" id="coIns"></div>
+    </section>
+  </div>
+
+  <style is:global>
+    .coh { display: grid; gap: 2px; min-width: 760px; font-family: var(--font-m); font-size: 0.68rem; }
+    .coh__r { display: grid; grid-template-columns: 74px 58px repeat(13, minmax(0, 1fr)); gap: 2px; }
+    .coh__h { color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; padding: 0.3rem 0.2rem; text-align: center; }
+    .coh__h:first-child, .coh__l { text-align: left; }
+    .coh__l { color: var(--fg-2); padding: 0.45rem 0.2rem; }
+    .coh__n { color: var(--muted); padding: 0.45rem 0.2rem; text-align: right; }
+    .coh__c { border-radius: 3px; padding: 0.45rem 0.2rem; text-align: center; color: var(--fg); position: relative; transition: transform 0.15s, outline-color 0.15s; outline: 1px solid transparent; }
+    .coh__c:hover { outline-color: var(--fg); transform: scale(1.06); z-index: 2; }
+    .coh__c.dark { color: var(--on-acc); }
+  </style>
+
+  <script>
+    import { initCohorts } from '../../../scripts/lab/cohorts.js';
+    initCohorts();
+  </script>
+</LabLayout>
