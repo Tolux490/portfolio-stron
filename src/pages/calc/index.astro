@@ -76,7 +76,8 @@ const opieka = [
   { id: 'rozszerzony', t: 'Rozszerzony: powyższe + SEO, 5h/mies', cena: 600 },
 ];
 
-const email = 'antoni.antczak05@gmail.com';
+// Adres składa się dopiero w przeglądarce, żeby boty nie wyciągnęły go z HTML.
+const parts = ['antoni.antczak05', 'gmail', 'com'];
 ---
 <!doctype html>
 <html lang="pl">
@@ -184,7 +185,7 @@ const email = 'antoni.antczak05@gmail.com';
       </div>
     </main>
 
-    <script define:vars={{ email }}>
+    <script define:vars={{ parts }}>
       const fmt = (n) => n.toLocaleString('pl-PL');
       const $ = (s) => document.querySelector(s);
       const rows = [...document.querySelectorAll('.frow[data-id]')];
@@ -252,6 +253,7 @@ const email = 'antoni.antczak05@gmail.com';
         lines.push('Szacunkowo jednorazowo: ' + fmt(total) + ' zł');
         if (careVal > 0) lines.push('Utrzymanie: ' + care.dataset.nazwa + ' (' + fmt(careVal) + ' zł/mies)');
         const body = encodeURIComponent('Cześć, wstępnie interesuje mnie:\n\n' + lines.join('\n') + '\n\nProszę o kontakt w sprawie dokładnej wyceny.');
+        const email = parts[0] + String.fromCharCode(64) + parts.slice(1).join('.');
         const href = 'mailto:' + email + '?subject=' + encodeURIComponent('Wycena z kalkulatora') + '&body=' + body;
         $('#sumCta').href = href;
         $('#mbarCta').href = href;

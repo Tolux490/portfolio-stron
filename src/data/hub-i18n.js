@@ -6,7 +6,11 @@ export const DEFAULT_LANG = 'en';
 // Link do profilu na Fiverr. Puste = przyciski „Fiverr” znikają, a CTA prowadzą do formularza.
 export const FIVERR_URL = 'https://www.fiverr.com/anthony_antc';
 export const GITHUB_URL = 'https://github.com/Tolux490';
-export const EMAIL = 'antoni.antczak05@gmail.com';
+// Adresu e-mail nie ma nigdzie w HTML (ochrona przed spamem). Formularz wysyła przez FormSubmit:
+// - FORM_ID: losowy kod z maila aktywacyjnego FormSubmit (zastępuje adres w zapytaniu). Najlepsza opcja.
+// - EMAIL_PARTS: zapasowo, gdy FORM_ID jest puste. Adres składa się dopiero w przeglądarce przy wysyłce.
+export const FORM_ID = '';
+export const EMAIL_PARTS = ['antoni.antczak05', 'gmail', 'com'];
 
 export const NAV_HREFS = ['#work', '#services', '#about', '#faq', '#contact'];
 export const SKILLS = ['Excel', 'Google Sheets', 'Google Forms', 'Apps Script', 'SQL', 'Python', 'HTML · CSS · JS', 'Astro'];
@@ -192,7 +196,7 @@ export const T = {
       incomplete: 'Please complete the required fields and consent.',
       sending: 'Sending…',
       ok: 'Thanks! Your message is on its way. I usually reply within 24 hours.',
-      fail: 'Could not send. Please write directly to ',
+      fail: 'Could not send. Please try again in a moment, or message me on Fiverr.',
     },
   },
 
@@ -348,7 +352,7 @@ export const T = {
       incomplete: 'Uzupełnij wymagane pola i zgodę.',
       sending: 'Wysyłanie…',
       ok: 'Dzięki! Wiadomość wysłana, zwykle odpisuję w ciągu 24 godzin.',
-      fail: 'Nie udało się wysłać. Napisz bezpośrednio na ',
+      fail: 'Nie udało się wysłać. Spróbuj za chwilę albo napisz do mnie na Fiverr.',
     },
   },
 
@@ -504,7 +508,7 @@ export const T = {
       incomplete: 'Vul de verplichte velden en toestemming in.',
       sending: 'Versturen…',
       ok: 'Bedankt! Je bericht is verstuurd, ik reageer meestal binnen 24 uur.',
-      fail: 'Versturen mislukt. Schrijf rechtstreeks naar ',
+      fail: 'Versturen mislukt. Probeer het zo nog eens, of stuur me een bericht op Fiverr.',
     },
   },
 };

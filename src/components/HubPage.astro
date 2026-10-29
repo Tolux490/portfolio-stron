@@ -1,7 +1,7 @@
 ---
 import {
   T, LANGS, DEFAULT_LANG, NAV_HREFS, SKILLS, CASE_MEDIA, SITE_HREFS, SITE_THUMBS, CERTS,
-  FIVERR_URL, GITHUB_URL, FICHES_URL, EMAIL,
+  FIVERR_URL, GITHUB_URL, FICHES_URL, FORM_ID, EMAIL_PARTS,
 } from '../data/hub-i18n.js';
 
 const { lang = DEFAULT_LANG } = Astro.props;
@@ -12,9 +12,7 @@ const site = Astro.site ? Astro.site.origin : 'https://vervostudio.com';
 const og = (p) => new URL(`${b}/og/${p}`, Astro.site || 'https://vervostudio.com/').href;
 const asset = (p) => `${b}/${p}`;
 
-// Formularz kontaktowy trafia na ten adres przez FormSubmit (bez konta i bez klucza).
-// Przy pierwszym wysłaniu FormSubmit przyśle na tę skrzynkę mail z linkiem aktywacyjnym.
-const email = EMAIL;
+// Formularz kontaktowy idzie przez FormSubmit. Adres e-mail nie trafia do HTML (patrz FORM_ID w hub-i18n.js).
 
 const langPath = (l) => (l === DEFAULT_LANG ? '/' : `/${l}/`);
 const urls = Object.fromEntries(LANGS.map((l) => [l, `${site}${langPath(l)}`]));
@@ -33,7 +31,6 @@ const schema = {
   name: 'Vervo Studio',
   description: t.schemaDesc,
   url: canonical,
-  email: email,
   image: og('vervo.png'),
   inLanguage: lang,
   areaServed: 'Worldwide',
@@ -336,7 +333,6 @@ const serviceIcons = [
               {t.about.facts.map((f) => <div><dt>{f.k}</dt><dd>{f.v}</dd></div>)}
             </dl>
             <div class="about__links">
-              <a href={`mailto:${email}`}>{email}</a>
               <a href={GITHUB_URL} {...extLink}>{t.cta.github} ↗</a>
               {fiverr && <a href={fiverr} {...extLink}>Fiverr ↗</a>}
             </div>
@@ -386,7 +382,6 @@ const serviceIcons = [
             <p class="label">{t.kontakt.label}</p>
             <h2 class="h2">{t.kontakt.h2}</h2>
             <p class="contact__p">{t.kontakt.p}</p>
-            <a class="contact__mail" href={`mailto:${email}`}>{email}</a>
             {fiverr && (
               <div class="contact__fiverr">
                 <p>{t.kontakt.fiverrNote}</p>
@@ -419,7 +414,7 @@ const serviceIcons = [
           <span class="brand__tx">Vervo <em>Studio</em></span>
         </a>
         <p class="foot__tx">{t.footer.tx}</p>
-        <p class="foot__legal">© {new Date().getFullYear()} Antoni Antczak · <a href={`mailto:${email}`}>{email}</a> · <a href={GITHUB_URL} {...extLink}>GitHub</a></p>
+        <p class="foot__legal">© {new Date().getFullYear()} Antoni Antczak · <a href={GITHUB_URL} {...extLink}>GitHub</a></p>
       </div>
     </footer>
 
@@ -429,7 +424,7 @@ const serviceIcons = [
       <p id="lbCap"></p>
     </dialog>
 
-    <script define:vars={{ email, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit }}>
+    <script define:vars={{ formId: FORM_ID, parts: EMAIL_PARTS, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit }}>
       const hdr = document.getElementById('hdr');
       const onScroll = () => hdr?.classList.toggle('stuck', window.scrollY > 20);
       onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
@@ -467,7 +462,8 @@ const serviceIcons = [
         if (d._honey) return; // pułapka na boty
         try {
           btn.disabled = true; btn.textContent = msgs.sending;
-          const res = await fetch('https://formsubmit.co/ajax/' + email, {
+          const to = formId || parts[0] + String.fromCharCode(64) + parts.slice(1).join('.');
+          const res = await fetch('https://formsubmit.co/ajax/' + to, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
             body: JSON.stringify({
@@ -480,7 +476,7 @@ const serviceIcons = [
           const r = await res.json();
           if (r.success === true || r.success === 'true') { stat.textContent = msgs.ok; stat.classList.add('ok'); form.reset(); }
           else throw 0;
-        } catch { stat.textContent = msgs.fail + email; stat.classList.add('err'); }
+        } catch { stat.textContent = msgs.fail; stat.classList.add('err'); }
         finally { btn.disabled = false; btn.textContent = submitLabel; }
       });
     </script>
@@ -754,8 +750,6 @@ const serviceIcons = [
       .contact { display: grid; gap: 2.5rem; }
       @media (min-width: 900px) { .contact { grid-template-columns: 0.9fr 1.1fr; gap: 4rem; align-items: start; } }
       .contact__p { color: rgba(246,244,239,0.75); margin-top: 1.1rem; max-width: 46ch; font-size: 1.05rem; }
-      .contact__mail { display: inline-block; margin-top: 1.6rem; font-weight: 800; font-size: clamp(1.05rem, 2.4vw, 1.35rem); border-bottom: 2px solid rgba(246,244,239,0.25); padding-bottom: 0.15rem; word-break: break-all; transition: border-color 0.2s; }
-      .contact__mail:hover { border-color: var(--acc); }
       .contact__fiverr { margin-top: 2rem; display: grid; gap: 0.75rem; justify-items: start; }
       .contact__fiverr p { color: rgba(246,244,239,0.65); font-size: 0.9rem; }
       #kForm { background: var(--card); color: var(--ink); border-radius: calc(var(--r) + 4px); padding: clamp(1.4rem, 3vw, 2.25rem); }
