@@ -1,15 +1,19 @@
 ---
-import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
 import '../styles/hub.css';
+import Curtain from './Curtain.astro';
 import {
   T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, siteHref, siteThumb, CERTS,
   FIVERR_URL, GITHUB_URL, LINKEDIN_URL, UPWORK_URL, FICHES_URL, FORM_ID, EMAIL_PARTS, LAB,
 } from '../data/hub-i18n.js';
 
-const { lang = DEFAULT_LANG } = Astro.props;
+// page: 'home' | 'work' | 'lab' | 'websites' | 'about' — strona główna i cztery podstrony (każda w 3 językach)
+const { lang = DEFAULT_LANG, page = 'home' } = Astro.props;
 const t = T[lang] || T[DEFAULT_LANG];
 const ui = t.ui;
+const home = page === 'home';
 
 const b = import.meta.env.BASE_URL.replace(/\/$/, '');
 const site = Astro.site ? Astro.site.origin : 'https://vervostudio.com';
@@ -17,20 +21,37 @@ const abs = (p) => new URL(`${b}/${p}`, Astro.site || 'https://vervostudio.com/'
 const asset = (p) => `${b}/${p}`;
 
 const langPath = (l) => (l === DEFAULT_LANG ? '/' : `/${l}/`);
-const urls = Object.fromEntries(LANGS.map((l) => [l, `${site}${langPath(l)}`]));
+const slug = (p) => (p === 'home' ? '' : `${p}/`);
+const pageUrl = (p, l = lang) => `${b}${langPath(l)}${slug(p)}`;
+const urls = Object.fromEntries(LANGS.map((l) => [l, `${site}${langPath(l)}${slug(page)}`]));
 const canonical = urls[lang];
-const langUrl = (l) => `${b}${langPath(l)}`;
+const contactUrl = home ? '#contact' : `${pageUrl('home')}#contact`;
+
+const meta = home
+  ? { title: t.meta.title, description: t.meta.description, ogTitle: t.meta.ogTitle, ogDescription: t.meta.ogDescription }
+  : { title: ui.pageMeta[page].title, description: ui.pageMeta[page].description, ogTitle: ui.pageMeta[page].title, ogDescription: ui.pageMeta[page].description };
 
 // Bez linku do Fiverr główne CTA prowadzą do formularza kontaktowego.
 const fiverr = FIVERR_URL || '';
 const extLink = { target: '_blank', rel: 'noopener' };
-const hire = fiverr ? { href: fiverr, ...extLink } : { href: '#contact' };
+const hire = fiverr ? { href: fiverr, ...extLink } : { href: contactUrl };
 const fmtDate = (d) => new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(d));
 const pad = (n) => String(n).padStart(2, '0');
 
-// Menu i boczny wskaźnik sekcji: [kotwica, indeks etykiety w ui.sections]
-const NAV = [['#work', 1], ['#lab', 2], ['#websites', 3], ['#services', 4], ['#about', 6], ['#faq', 8], ['#contact', 9]];
-const RAIL = ['#top', '#work', '#lab', '#websites', '#services', '#certificates', '#about', '#process', '#faq', '#contact'];
+// Menu: strony + kontakt (sekcja na stronie głównej)
+const NAV = [
+  ['home', pageUrl('home')], ['work', pageUrl('work')], ['lab', pageUrl('lab')],
+  ['websites', pageUrl('websites')], ['about', pageUrl('about')], ['contact', contactUrl],
+];
+// Kolejność podstron: każda kończy się dużym linkiem do następnej
+const ORDER = ['work', 'lab', 'websites', 'about'];
+const nextOf = { work: 'lab', lab: 'websites', websites: 'about' };
+const CHAPTER_IMG = {
+  work: CASE_MEDIA[0].poster,
+  lab: LAB[0].img,
+  websites: siteThumb(0, lang),
+  about: CERTS[0].img,
+};
 
 // Profile: puste adresy w hub-i18n.js po prostu się nie pokazują.
 const socials = [
@@ -40,12 +61,12 @@ const socials = [
   { k: 'upwork', label: 'Upwork', href: UPWORK_URL },
 ].filter((s) => s.href);
 
-const THEMES = ['amber', 'lime', 'paper'];
+const THEMES = ['coral', 'mono', 'paper'];
 
 // Konfiguracja dla skryptu w przeglądarce (bez pełnego adresu e-mail w HTML).
 const config = {
-  lang, formId: FORM_ID, parts: EMAIL_PARTS, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit,
-  copied: ui.copied, copyEmail: ui.copyEmail, loading: ui.loading, cursor: ui.cursor,
+  lang, page, formId: FORM_ID, parts: EMAIL_PARTS, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit,
+  copied: ui.copied, copyEmail: ui.copyEmail, loading: ui.loading, cursor: ui.cursor, bored: ui.bored,
 };
 
 const schema = {
@@ -53,7 +74,7 @@ const schema = {
   '@type': 'ProfessionalService',
   name: 'Vervo Studio',
   description: t.schemaDesc,
-  url: canonical,
+  url: `${site}${langPath(lang)}`,
   image: abs('og/vervo.jpg'),
   inLanguage: lang,
   areaServed: 'Worldwide',
@@ -99,41 +120,60 @@ const pj = [
   ['certified', `[${CERTS.map((c) => `"${c.org} ${c.t}"`).join(', ')}]`],
   ['status', `"${t.profile.status}"`, true],
 ];
-const wordmark = 'VERVO'.split('');
+const wordmark = 'Vervo.'.split('');
+
+// nagłówek podstrony: etykieta, tytuł, opis i scena 3D obok
+const HEADS = {
+  work: { n: '01', label: t.work.label, h: t.work.h2, lede: t.work.lede, stage: 'sheet' },
+  lab: { n: '02', label: t.lab.label, h: t.lab.h2, lede: t.lab.lede, stage: 'donut' },
+  websites: { n: '03', label: t.sites.label, h: t.sites.h2, lede: t.sites.note, stage: 'wave' },
+  about: { n: '04', label: t.about.label, h: t.about.h2, lede: t.about.p[0], stage: 'helix' },
+};
+const head = HEADS[page];
+// ściany kostki-nawigacji w kolejności materiałów BoxGeometry: +x, -x, +y, -y, +z, -z
+const CUBE = [
+  { k: 'lab', n: '02', t: ui.pages.lab, s: ui.chapters.items.lab.n, href: pageUrl('lab') },
+  { k: 'contact', n: '05', t: ui.pages.contact, s: ui.cube.contactSub, href: '#contact' },
+  { k: 'websites', n: '03', t: ui.pages.websites, s: ui.chapters.items.websites.n, href: pageUrl('websites') },
+  { k: 'pong', n: '06', t: ui.cube.pongTop, s: ui.cube.pongSub, href: '#bored' },
+  { k: 'work', n: '01', t: ui.pages.work, s: ui.chapters.items.work.n, href: pageUrl('work') },
+  { k: 'about', n: '04', t: ui.pages.about, s: ui.chapters.items.about.n, href: pageUrl('about') },
+];
+const nextKey = nextOf[page];
 ---
 <!doctype html>
-<html lang={lang} data-theme="amber" class="no-js">
+<html lang={lang} data-theme="coral" data-page={page} class="no-js">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{t.meta.title}</title>
-    <meta name="description" content={t.meta.description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
     <link rel="canonical" href={canonical} />
     {LANGS.map((l) => <link rel="alternate" hreflang={l} href={urls[l]} />)}
     <link rel="alternate" hreflang="x-default" href={urls[DEFAULT_LANG]} />
-    <meta name="theme-color" content="#0c0d10" />
+    <meta name="theme-color" content="#0e1116" />
     <link rel="icon" href={`${b}/favicon.svg`} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={t.meta.ogLocale} />
     <meta property="og:site_name" content="Vervo Studio" />
-    <meta property="og:title" content={t.meta.ogTitle} />
-    <meta property="og:description" content={t.meta.ogDescription} />
+    <meta property="og:title" content={meta.ogTitle} />
+    <meta property="og:description" content={meta.ogDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={abs('og/vervo.jpg')} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={t.meta.ogTitle} />
-    <meta name="twitter:description" content={t.meta.ogDescription} />
+    <meta name="twitter:title" content={meta.ogTitle} />
+    <meta name="twitter:description" content={meta.ogDescription} />
     <meta name="twitter:image" content={abs('og/vervo.jpg')} />
-    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
-    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+    {home && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    {page === 'about' && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
     <script is:inline>
       // Motyw i preloader ustawiamy przed pierwszym malowaniem, żeby nic nie mrugało.
       (function () {
         var d = document.documentElement, th = null, seen = null;
         try { th = localStorage.getItem('vervo-theme'); seen = sessionStorage.getItem('vervo-seen'); } catch (e) {}
-        if (th === 'amber' || th === 'lime' || th === 'paper') d.setAttribute('data-theme', th);
+        if (th === 'coral' || th === 'mono' || th === 'paper') d.setAttribute('data-theme', th);
         d.classList.remove('no-js'); d.classList.add('js');
         if (seen) d.classList.add('seen');
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('reduced');
@@ -142,13 +182,14 @@ const wordmark = 'VERVO'.split('');
   </head>
 
   <body>
+    <Curtain />
     <a class="skip" href="#main">{ui.skip}</a>
     <div class="grain" aria-hidden="true"></div>
     <canvas class="world" id="world" aria-hidden="true"></canvas>
 
-    <!-- PRELOADER -->
+    <!-- PRELOADER (tylko pierwsza wizyta w sesji) -->
     <div class="pre" id="pre" aria-hidden="true">
-      <div class="pre__row mono"><span>Vervo_Studio</span><span id="preStage">01 / {ui.loading[0]}</span></div>
+      <div class="pre__row mono"><span>Vervo Studio</span><span id="preStage">01 / {ui.loading[0]}</span></div>
       <div class="pre__num"><span id="preNum">0</span><span class="pre__pct">%</span></div>
       <div class="pre__bar"><i id="preBar"></i></div>
       <div class="pre__row mono"><span>{t.jobTitle}</span><span>©{new Date().getFullYear()}</span></div>
@@ -159,17 +200,19 @@ const wordmark = 'VERVO'.split('');
 
     <!-- NAGŁÓWEK -->
     <header class="hdr" id="hdr">
-      <a class="brand" href="#top" aria-label="Vervo Studio" data-cursor="hover">
+      <a class="brand" href={home ? '#top' : pageUrl('home')} aria-label="Vervo Studio" data-cursor="hover">
         <svg class="brand__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="brand__tx">Vervo<span class="blink">_</span></span>
+        <span class="brand__tx">Vervo<i>.</i></span>
       </a>
-      <p class="hdr__time mono"><span class="live"></span>{ui.localTime} <time id="clock">--:--</time> CET</p>
+      <nav class="hnav" aria-label={ui.menu}>
+        {ORDER.map((k) => <a href={pageUrl(k)} class:list={['hnav__a', { on: page === k }]} aria-current={page === k ? 'page' : undefined} data-cursor="hover">{ui.pages[k]}</a>)}
+      </nav>
       <div class="hdr__right">
         <div class="themes" role="group" aria-label={ui.theme}>
           {THEMES.map((th) => <button type="button" class={`sw sw--${th}`} data-set-theme={th} aria-label={`${ui.theme}: ${ui.themes[th]}`} title={ui.themes[th]}></button>)}
         </div>
         <div class="lang mono" role="group" aria-label="Language">
-          {LANGS.map((l) => <a class:list={['lang__a', { on: l === lang }]} href={langUrl(l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>)}
+          {LANGS.map((l) => <a class:list={['lang__a', { on: l === lang }]} href={pageUrl(page, l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>)}
         </div>
         <button class="menubtn mono" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu" data-cursor="hover">
           <span class="menubtn__tx"><span class="scr">{ui.menu}</span><span class="scr">{ui.close}</span></span>
@@ -179,394 +222,455 @@ const wordmark = 'VERVO'.split('');
     </header>
 
     <!-- MENU PEŁNOEKRANOWE -->
-    <nav class="menu" id="menu" aria-label="Menu" inert>
+    <nav class="menu" id="menu" aria-label="Menu" inert data-lenis-prevent>
       <div class="menu__bg"></div>
       <div class="menu__in">
         <ol class="menu__list">
-          {NAV.map(([href, i], k) => (
-            <li><a href={href} class="menu__a" data-cursor="hover"><span class="mono menu__n">{pad(k + 1)}</span><span class="menu__w">{ui.sections[i]}</span></a></li>
+          {NAV.map(([k, href], i) => (
+            <li><a href={href} class:list={['menu__a', { on: page === k }]} aria-current={page === k ? 'page' : undefined} data-cursor="hover"><span class="mono menu__n">{pad(i + 1)}</span><span class="menu__w">{ui.pages[k]}</span></a></li>
           ))}
         </ol>
-        <div class="menu__side mono">
-          <p class="menu__lab">{ui.elsewhere}</p>
-          {socials.map((s) => <a href={s.href} {...extLink}>{s.label} ↗</a>)}
-          <button type="button" class="linkbtn" data-copy-email>{ui.copyEmail}</button>
-          <p class="menu__lab">Language</p>
-          <div class="lang lang--menu">
-            {LANGS.map((l) => <a class:list={['lang__a', { on: l === lang }]} href={langUrl(l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>)}
+        <div class="menu__side">
+          <div class="menu__grp">
+            <p class="menu__lab">{ui.elsewhere}</p>
+            <div class="menu__chips">
+              {socials.map((s) => <a href={s.href} {...extLink}>{s.label} <span aria-hidden="true">↗</span></a>)}
+              <button type="button" data-copy-email><span>{ui.copyEmail}</span></button>
+            </div>
           </div>
-          <p class="menu__lab">{ui.theme}</p>
-          <div class="themes themes--lg">
-            {THEMES.map((th) => <button type="button" class={`sw sw--${th}`} data-set-theme={th} aria-label={`${ui.theme}: ${ui.themes[th]}`}><span>{ui.themes[th]}</span></button>)}
+          <div class="menu__row">
+            <div class="menu__grp">
+              <p class="menu__lab">Language</p>
+              <div class="lang lang--menu">
+                {LANGS.map((l) => <a class:list={['lang__a', { on: l === lang }]} href={pageUrl(page, l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>)}
+              </div>
+            </div>
+            <div class="menu__grp">
+              <p class="menu__lab">{ui.theme}</p>
+              <div class="themes themes--lg">
+                {THEMES.map((th) => <button type="button" class={`sw sw--${th}`} data-set-theme={th} aria-label={`${ui.theme}: ${ui.themes[th]}`}><span>{ui.themes[th]}</span></button>)}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </nav>
 
-    <!-- WSKAŹNIK SEKCJI -->
-    <ol class="rail mono" aria-hidden="true">
-      {RAIL.map((href, i) => <li><a href={href} tabindex="-1" data-rail={i}><span>{pad(i)}</span><em>{ui.sections[i]}</em></a></li>)}
-    </ol>
-
     <main id="main">
-      <!-- HERO -->
-      <section class="hero stage" id="top" data-sec="0" data-stage="chart">
-        <div class="hero__veil" aria-hidden="true"></div>
-        <div class="wrap hero__in">
-          <p class="avail mono"><span class="live"></span>{t.hero.available}</p>
-          <h1 class="hero__h" aria-label={ui.heroLines.join(' ')}>
-            {ui.heroLines.map((l, i) => <span class={`hl hl--${i}`} aria-hidden="true"><span class="hl__in">{l}</span></span>)}
-          </h1>
-          <div class="hero__row">
-            <p class="hero__lede">{t.hero.lede}</p>
-            <dl class="hfacts mono">
-              {ui.heroFacts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
-            </dl>
-          </div>
-          <div class="hero__cta">
-            {fiverr
-              ? <a class="btn btn--acc magnetic" href={fiverr} {...extLink} data-cursor="hover"><span>{t.cta.fiverr}</span><span aria-hidden="true">↗</span></a>
-              : <a class="btn btn--acc magnetic" href="#contact" data-cursor="hover"><span>{t.cta.quote}</span></a>}
-            <a class="btn btn--line magnetic" href="#work" data-cursor="hover"><span>{t.cta.seeWork}</span><span aria-hidden="true">↓</span></a>
-          </div>
-        </div>
-        <a class="badge" href="#about" aria-label={t.about.h2} data-cursor="hover">
-          <svg viewBox="0 0 200 200" aria-hidden="true">
-            <defs><path id="badgeCirc" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>
-            <text><textPath href="#badgeCirc" textLength="502">{ui.badge}{ui.badge}</textPath></text>
-          </svg>
-          <svg class="badge__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <div class="term mono" aria-hidden="true">
-          <div class="term__bar"><span>little_kettle / cleaning_log.sql</span><span class="live"></span></div>
-          <ol class="term__out" id="term"></ol>
-        </div>
-        <p class="cue mono" aria-hidden="true"><span>{ui.scroll}</span><i></i></p>
-      </section>
-
-      <!-- NARZĘDZIA -->
-      <section class="kit" aria-label={t.skillsLabel}>
-        <div class="wrap">
-          <p class="lab mono">{t.skillsLabel}</p>
-          <ol class="kit__grid">
-            {SKILLS.map((k, i) => (
-              <li class="kit__i">
-                <span class="kit__top"><span class="mono kit__n">{pad(i + 1)}</span><svg class="kit__ic draw" viewBox="0 0 24 24" aria-hidden="true" set:html={KIT_ICONS[i].replace(/<(path|rect|ellipse)/g, '<$1 pathLength="1"')}></svg></span>
-                <span class="kit__h">{k}</span>
-                <span class="kit__p">{t.toolkit[i]}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <!-- MANIFEST -->
-      <section class="mani band stage" aria-label="Vervo Studio" data-stage="globe">
-        <div class="wrap">
-          <p class="lab mono">[ 00 ] Vervo Studio</p>
-          <p class="mani__txt" data-words>{ui.manifesto}</p>
-          <ul class="proof">
-            {t.hero.proof.map((f) => (
-              <li><b data-count={isNum(f.b) ? f.b : undefined}>{f.b}</b><span>{f.t}</span></li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <!-- PROJEKTY -->
-      <section class="band" id="work" data-sec="1">
-        <div class="wrap">
-          <header class="shead">
-            <p class="lab mono">[ 01 ] {t.work.label}</p>
-            <h2 class="h2 split">{t.work.h2}</h2>
-            <p class="shead__lede">{t.work.lede}</p>
-          </header>
-
-          <div class="cases">
-            {t.work.cases.map((c, i) => {
-              const m = CASE_MEDIA[i];
-              return (
-                <article class="case">
-                  <div class="case__bar mono">
-                    <span>{ui.chapter} {pad(i + 1)} — {c.kicker}</span>
-                    <span class="case__sample">{t.work.sample}</span>
-                  </div>
-                  <div class="case__grid">
-                    <div class="case__text">
-                      <h3 class="case__h">{c.title}</h3>
-                      <p class="lab mono">{t.work.problem}</p>
-                      <p class="case__intro">{c.intro}</p>
-                      <p class="lab mono">{t.work.did}</p>
-                      <ol class="did">{c.did.map((d) => <li>{d}</li>)}</ol>
-                    </div>
-                    <div class="case__side">
-                      <figure class="screen" data-cursor="play">
-                        <div class="screen__bar mono"><span><i></i><i></i><i></i></span><span>{t.work.video}</span><span>REC ●</span></div>
-                        <video class="screen__vid" muted loop playsinline preload="none" poster={asset(m.poster)} width={m.vw} height={m.vh}>
-                          <source src={asset(m.video)} type="video/mp4" />
-                        </video>
-                        <span class="screen__scan" aria-hidden="true"></span>
-                      </figure>
-                      <ul class="stats">{c.stats.map((s) => <li><b data-count={isNum(s.b) ? s.b : undefined}>{s.b}</b><span>{s.t}</span></li>)}</ul>
-                      <div class="result">
-                        <p class="lab mono">{t.work.result}</p>
-                        <p>{c.result}</p>
-                      </div>
-                      {m.download && (
-                        <a class="btn btn--line btn--sm" href={asset(m.download)} download data-cursor="hover">
-                          <span>↓ {t.work.download}</span>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  <div class:list={['shots', `shots--${m.shots.length}`]}>
-                    {m.shots.map((s, k) => (
-                      <button class="shot" type="button" data-zoom={asset(s.src)} data-cap={c.caps[k]} aria-label={`${c.caps[k]}. ${t.work.zoom}`} data-cursor="view">
-                        <span class="shot__img"><img src={asset(s.src)} width={s.w} height={s.h} alt={c.caps[k]} loading="lazy" decoding="async" /></span>
-                        <span class="shot__cap mono"><em>{pad(k + 1)}</em> {c.caps[k]}</span>
-                      </button>
-                    ))}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <!-- LAB: projekty koncepcyjne -->
-      <section class="band labsec stage" id="lab" data-sec="2">
-        <div class="wrap">
-          <header class="shead labsec__head" data-stage="donut">
-            <p class="lab mono">[ 02 ] {t.lab.label}</p>
-            <h2 class="h2 split">{t.lab.h2}</h2>
-            <p class="shead__lede">{t.lab.lede}</p>
-          </header>
-          <div class="labs">
-            {t.lab.items.map((it, i) => (
-              <a class="labc" href={`${b}${LAB[i].href}`} data-cursor="open">
-                <span class="labc__win">
-                  <span class="site__bar mono"><span><i></i><i></i><i></i></span><span>vervostudio.com{LAB[i].href}</span></span>
-                  <span class="labc__img"><img src={asset(LAB[i].img)} width="1280" height="800" alt={it.t} loading="lazy" decoding="async" /></span>
-                </span>
-                <span class="labc__meta">
-                  <span class="mono labc__k">{pad(i + 1)} — {it.k}</span>
-                  <span class="mono labc__tag">{t.lab.tag}</span>
-                  <span class="labc__h">{it.t}</span>
-                  <span class="labc__p">{it.o}</span>
-                  <span class="tags mono">{it.tags.map((x) => <span>{x}</span>)}</span>
-                  <span class="mono labc__go">{t.lab.open}</span>
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <!-- STRONY WWW: przewijanie w bok -->
-      <section class="sites" id="websites" data-sec="3">
-        <div class="sites__pin">
-          <div class="wrap sites__head">
-            <div>
-              <p class="lab mono">[ 03 ] {t.sites.label}</p>
-              <h2 class="h2 split">{t.sites.h2}</h2>
+      {home && (
+        <section class="hero stage" id="top" data-stage="chart">
+          <div class="hero__veil" aria-hidden="true"></div>
+          <div class="wrap hero__in">
+            <p class="avail mono"><span class="live"></span>{t.hero.available}</p>
+            <h1 class="hero__h" aria-label={ui.heroLines.join(' ')}>
+              {ui.heroLines.map((l, i) => <span class={`hl hl--${i}`} aria-hidden="true"><span class="hl__in">{l}</span></span>)}
+            </h1>
+            <div class="hero__row">
+              <p class="hero__lede">{t.hero.lede}</p>
+              <dl class="hfacts">
+                {ui.heroFacts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+              </dl>
             </div>
-            <div class="sites__meta">
-              <p class="shead__lede">{t.sites.note}</p>
-              <p class="mono sites__hint">{ui.sideways} <span aria-hidden="true">→</span></p>
+            <div class="hero__cta">
+              {fiverr
+                ? <a class="btn btn--acc magnetic" href={fiverr} {...extLink} data-cursor="hover"><span>{t.cta.fiverr}</span><span aria-hidden="true">↗</span></a>
+                : <a class="btn btn--acc magnetic" href="#contact" data-cursor="hover"><span>{t.cta.quote}</span></a>}
+              <a class="btn btn--line magnetic" href={pageUrl('work')} data-cursor="hover"><span>{t.cta.seeWork}</span><span aria-hidden="true">→</span></a>
             </div>
           </div>
-          <div class="sites__view">
-            <div class="sites__track" id="sitesTrack">
-              {t.sites.items.map((r, i) => (
-                <a class="site" href={`${b}${siteHref(i, lang)}`} data-cursor="open">
-                  <span class="site__win">
-                    <span class="site__bar mono"><span><i></i><i></i><i></i></span><span>vervostudio.com{siteHref(i, lang)}</span></span>
-                    <span class="site__img"><img src={asset(siteThumb(i, lang))} width="960" height="600" alt={`${r.nazwa}, ${r.bran}`} loading="lazy" decoding="async" /></span>
-                  </span>
-                  <span class="site__meta">
-                    <span class="mono site__n">{pad(i + 1)} / {pad(t.sites.items.length + 1)}</span>
-                    <span class="site__h">{r.nazwa}</span>
-                    <span class="mono site__bran">{r.bran}</span>
-                    <span class="site__p">{r.opis}</span>
-                    <span class="tags mono">{r.tagi.map((x) => <span>{x}</span>)}</span>
-                  </span>
-                </a>
-              ))}
-              <a class="site site--app" href={FICHES_URL} {...extLink} data-cursor="open">
-                <span class="site__win fiche" aria-hidden="true">
-                  <span class="fiche__card fiche__card--back">bread</span>
-                  <span class="fiche__card">le pain</span>
-                </span>
-                <span class="site__meta">
-                  <span class="mono site__n">{pad(t.sites.items.length + 1)} / {pad(t.sites.items.length + 1)}</span>
-                  <span class="site__h">{t.sites.project.nazwa}</span>
-                  <span class="mono site__bran">{t.sites.project.bran}</span>
-                  <span class="site__p">{t.sites.project.opis}</span>
-                  <span class="tags mono">{t.sites.project.tagi.map((x) => <span>{x}</span>)}</span>
-                </span>
-              </a>
+          <a class="badge" href={pageUrl('about')} aria-label={t.about.h2} data-cursor="hover">
+            <svg viewBox="0 0 200 200" aria-hidden="true">
+              <defs><path id="badgeCirc" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>
+              <text><textPath href="#badgeCirc" textLength="502">{ui.badge}{ui.badge}</textPath></text>
+            </svg>
+            <svg class="badge__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <div class="term" aria-hidden="true">
+            <div class="term__bar"><span>little_kettle / cleaning_log.sql</span><span class="live"></span></div>
+            <ol class="term__out" id="term"></ol>
+          </div>
+        </section>
+      )}
+
+      {head && (
+        <section class="phead stage" id="top" data-stage={head.stage} data-autoclean={page === 'work' ? '' : undefined}>
+          <div class="wrap phead__in">
+            <div class="phead__txt">
+              <p class="lab mono"><span class="lab__n">{head.n}</span>{head.label}</p>
+              <h1 class="phead__h"><span class="hl"><span class="hl__in">{head.h}</span></span></h1>
+              <p class="phead__lede">{head.lede}</p>
+              {page === 'websites' && <p class="mono sites__hint">{ui.sideways} <span aria-hidden="true">→</span></p>}
             </div>
+            <div class="phead__space" data-space aria-hidden="true"></div>
           </div>
-          <div class="wrap"><div class="sites__prog" aria-hidden="true"><i id="sitesProg"></i></div></div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <!-- USŁUGI -->
-      <section class="band" id="services" data-sec="4">
-        <div class="wrap">
-          <header class="shead">
-            <p class="lab mono">[ 04 ] {t.services.label}</p>
-            <h2 class="h2 split">{t.services.h2}</h2>
-            <p class="shead__lede">{t.services.lede}</p>
-          </header>
-          <ol class="svc">
-            {t.services.items.map((s, i) => (
-              <li class="svc__row">
-                <span class="svc__n mono">{pad(i + 1)}</span>
-                <span class="svc__ic" aria-hidden="true"><svg class="draw" viewBox="0 0 24 24" set:html={serviceIcons[i].replace(/<(path|rect|ellipse)/g, '<$1 pathLength="1"')}></svg></span>
-                <div class="svc__main">
-                  <h3 class="svc__h">{s.t}</h3>
-                  <p class="svc__p">{s.o}</p>
-                </div>
-                <ul class="svc__co mono">{s.co.map((c) => <li>{c}</li>)}</ul>
-                <a class="svc__go mono" {...hire} data-cursor="hover">{fiverr ? t.cta.fiverr : t.cta.ask} ↗</a>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <!-- CERTYFIKATY -->
-      <section class="band band--alt" id="certificates" data-sec="5">
-        <div class="wrap">
-          <header class="shead">
-            <p class="lab mono">[ 05 ] {t.certs.label}</p>
-            <h2 class="h2 split">{t.certs.h2}</h2>
-            <p class="shead__lede">{t.certs.lede}</p>
-          </header>
-          <div class="certs">
-            {CERTS.map((c, i) => (
-              <div class="cert tilt">
-                <button class="cert__img" type="button" data-zoom={asset(c.img)} data-cap={`${c.org} · ${c.t}`} aria-label={`${c.org} ${c.t}. ${t.work.zoom}`} data-cursor="view">
-                  <img src={asset(c.img)} width={c.w} height={c.h} alt={`${c.org} ${c.t}`} loading="lazy" decoding="async" />
-                  <span class="cert__glare" aria-hidden="true"></span>
-                </button>
-                <div class="cert__body">
-                  <p class="mono cert__org">{pad(i + 1)} — {c.org}</p>
-                  <h3 class="cert__h">{c.t}</h3>
-                  <p class="mono cert__date">{t.certs.earned} {fmtDate(c.date)}</p>
-                  {c.verify && <a class="mono cert__a" href={c.verify} {...extLink} data-cursor="hover">{t.certs.verify}</a>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <!-- O MNIE -->
-      <section class="band" id="about" data-sec="6">
-        <div class="wrap about">
-          <div class="about__pic">
-            <figure class="pjson mono" aria-label={t.about.h2}>
-              <div class="pjson__bar"><span><i></i><i></i><i></i></span><span>profile.json</span><span class="live"></span></div>
-              <pre class="pjson__code"><code>{'{'}{pj.map(([k, v, ok], i) => <span>{'\n  '}<b>"{k}"</b>: {ok ? <strong>{v}</strong> : <em>{v}</em>}{i === pj.length - 1 ? '' : ','}</span>)}{'\n}'}</code></pre>
-            </figure>
-          </div>
-          <div class="about__txt">
-            <p class="lab mono">[ 06 ] {t.about.label}</p>
-            <h2 class="h2 split">{t.about.h2}</h2>
-            {t.about.p.map((p) => <p class="about__p">{p}</p>)}
-            <div class="why">
-              {t.about.why.map((w, i) => <div class="why__i"><span class="mono">{pad(i + 1)}</span><b>{w.b}</b><span>{w.s}</span></div>)}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PROCES: arkusz w 3D czyści się w rytm przewijania -->
-      <section class="process stage" id="process" data-sec="7" data-stage="sheet">
-        <div class="process__pin">
-          <div class="wrap process__in">
-            <header class="shead">
-              <p class="lab mono">[ 07 ] {t.proces.label}</p>
-              <h2 class="h2 split">{t.proces.h2}</h2>
-            </header>
-            <ol class="pstep">
-              {t.proces.steps.map((s, i) => (
-                <li class="pstep__i" data-step={i}>
-                  <span class="pstep__n">{pad(i + 1)}</span>
-                  <div><h3>{s.t}</h3><p>{s.o}</p></div>
+      {home && (
+        <section class="kit" aria-label={t.skillsLabel}>
+          <div class="wrap">
+            <p class="lab mono">{t.skillsLabel}</p>
+            <ol class="kit__grid">
+              {SKILLS.map((k, i) => (
+                <li class="kit__i">
+                  <span class="kit__top"><span class="mono kit__n">{pad(i + 1)}</span><svg class="kit__ic draw" viewBox="0 0 24 24" aria-hidden="true" set:html={KIT_ICONS[i].replace(/<(path|rect|ellipse)/g, '<$1 pathLength="1"')}></svg></span>
+                  <span class="kit__h">{k}</span>
+                  <span class="kit__p">{t.toolkit[i]}</span>
                 </li>
               ))}
             </ol>
-            <div class="process__bar mono" aria-hidden="true"><span>rows_flagged</span><i><b id="cleanBar"></b></i><span id="cleanPct">0%</span></div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <!-- FAQ -->
-      <section class="band" id="faq" data-sec="8">
-        <div class="wrap faqw">
-          <header class="shead">
-            <p class="lab mono">[ 08 ] {t.faq.label}</p>
-            <h2 class="h2 split">{t.faq.h2}</h2>
-          </header>
-          <div class="faq">
-            {t.faq.items.map((f, i) => (
-              <details>
-                <summary data-cursor="hover"><span class="mono">{pad(i + 1)}</span><span>{f.q}</span></summary>
-                <p>{f.a}</p>
-              </details>
-            ))}
+      {home && (
+        <section class="mani band stage" aria-label="Vervo Studio" data-stage="globe">
+          <div class="wrap">
+            <p class="lab mono">Vervo Studio</p>
+            <p class="mani__txt" data-words>{ui.manifesto}</p>
+            <ul class="proof">
+              {t.hero.proof.map((f) => (
+                <li><b data-count={isNum(f.b) ? f.b : undefined}>{f.b}</b><span>{f.t}</span></li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <!-- KONTAKT -->
-      <section class="contact stage" id="contact" data-sec="9">
-        <div class="wrap">
-          <div class="contact__top" data-stage="logo">
-            <div>
-              <p class="lab mono">[ 09 ] {t.kontakt.label}</p>
-              <h2 class="contact__big" aria-label={ui.contactBig.join(' ')}>
-                {ui.contactBig.map((l, i) => <span class={`hl hl--${i === 1 ? 2 : 0}`} aria-hidden="true"><span class="hl__in">{l}</span></span>)}
-              </h2>
+      {home && (
+        <section class="band chap" id="index">
+          <div class="wrap">
+            <header class="shead">
+              <p class="lab mono">{ui.chapters.label}</p>
+              <h2 class="h2 split">{ui.chapters.h2}</h2>
+            </header>
+            <div class="chap__grid">
+            <div class="chap__cube">
+              <canvas id="navCube" data-faces={JSON.stringify(CUBE)} data-cursor="drag" aria-hidden="true"></canvas>
+              <p class="chap__hint mono">{ui.cube.hint}</p>
             </div>
-            <div class="logo-space" aria-hidden="true"></div>
-          </div>
-
-          <a class="cta-bar mono" {...hire} data-cursor="hover">
-            <span>[ {ui.startProject} ]</span><span>{fiverr ? 'Fiverr' : t.cta.quote} ↗</span>
-          </a>
-
-          <div class="contact__grid">
-            <div class="contact__side">
-              <p class="contact__p">{t.kontakt.p}</p>
-              <p class="lab mono">{ui.elsewhere}</p>
-              <ul class="soc mono">
-                {socials.map((s) => <li><a href={s.href} {...extLink} data-cursor="hover"><span>{s.label}</span><span>↗</span></a></li>)}
-                <li><button type="button" data-copy-email data-cursor="copy"><span>{ui.copyEmail}</span><span>⧉</span></button></li>
-                <li><a href="#contact" data-mailto data-cursor="hover"><span>{ui.emailMe}</span><span>→</span></a></li>
-              </ul>
+            <ol class="chap__list">
+              {ORDER.map((k, i) => (
+                <li>
+                  <a class="chap__a" href={pageUrl(k)} data-img={asset(CHAPTER_IMG[k])} data-cursor="open">
+                    <span class="chap__n mono">{pad(i + 1)}</span>
+                    <span class="chap__t">{ui.pages[k]}</span>
+                    <span class="chap__d">{ui.chapters.items[k].d}</span>
+                    <span class="chap__c mono">{ui.chapters.items[k].n}</span>
+                    <span class="chap__arr" aria-hidden="true">→</span>
+                    <span class="chap__thumb" aria-hidden="true"><img src={asset(CHAPTER_IMG[k])} alt="" loading="lazy" decoding="async" /></span>
+                  </a>
+                </li>
+              ))}
+            </ol>
             </div>
-            <form id="kForm" class="form" novalidate>
-              <div class="frow">
-                <label class="fld"><span class="mono">01 · {t.kontakt.form.imie}</span><input type="text" name="imie" autocomplete="name" required /></label>
-                <label class="fld"><span class="mono">02 · {t.kontakt.form.email}</span><input type="email" name="email" autocomplete="email" required /></label>
+          </div>
+          <div class="chap__float" aria-hidden="true"><img id="chapImg" alt="" /></div>
+        </section>
+      )}
+
+      {home && (
+        <section class="bored" id="bored">
+          <canvas class="bored__bg" id="pongAttract" aria-hidden="true"></canvas>
+          <div class="wrap bored__in">
+            <h2 class="bored__q">{ui.bored.q}</h2>
+            <p class="bored__p">{ui.bored.p}</p>
+            <button class="btn btn--acc magnetic" type="button" data-pong data-cursor="hover"><span>{ui.bored.play}</span><span aria-hidden="true">▶</span></button>
+          </div>
+        </section>
+      )}
+
+      {page === 'work' && (
+        <section class="band band--first" id="work">
+          <div class="wrap">
+            <div class="cases">
+              {t.work.cases.map((c, i) => {
+                const m = CASE_MEDIA[i];
+                return (
+                  <article class="case">
+                    <div class="case__bar mono">
+                      <span>{ui.chapter} {pad(i + 1)} — {c.kicker}</span>
+                      <span class="case__sample">{t.work.sample}</span>
+                    </div>
+                    <div class="case__grid">
+                      <div class="case__text">
+                        <h2 class="case__h">{c.title}</h2>
+                        <p class="lab mono">{t.work.problem}</p>
+                        <p class="case__intro">{c.intro}</p>
+                        <p class="lab mono">{t.work.did}</p>
+                        <ol class="did">{c.did.map((d) => <li>{d}</li>)}</ol>
+                      </div>
+                      <div class="case__side">
+                        <figure class="screen" data-cursor="play">
+                          <div class="screen__bar"><span><i></i><i></i><i></i></span><span>{t.work.video}</span><span>REC ●</span></div>
+                          <video class="screen__vid" muted loop playsinline preload="none" poster={asset(m.poster)} width={m.vw} height={m.vh}>
+                            <source src={asset(m.video)} type="video/mp4" />
+                          </video>
+                          <span class="screen__scan" aria-hidden="true"></span>
+                        </figure>
+                        <ul class="stats">{c.stats.map((s) => <li><b data-count={isNum(s.b) ? s.b : undefined}>{s.b}</b><span>{s.t}</span></li>)}</ul>
+                        <div class="result">
+                          <p class="lab mono">{t.work.result}</p>
+                          <p>{c.result}</p>
+                        </div>
+                        {m.download && (
+                          <a class="btn btn--line btn--sm" href={asset(m.download)} download data-cursor="hover">
+                            <span>↓ {t.work.download}</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    <div class:list={['shots', `shots--${m.shots.length}`]}>
+                      {m.shots.map((s, k) => (
+                        <button class="shot" type="button" data-zoom={asset(s.src)} data-cap={c.caps[k]} aria-label={`${c.caps[k]}. ${t.work.zoom}`} data-cursor="view">
+                          <span class="shot__img"><img src={asset(s.src)} width={s.w} height={s.h} alt={c.caps[k]} loading="lazy" decoding="async" /></span>
+                          <span class="shot__cap mono"><em>{pad(k + 1)}</em> {c.caps[k]}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {page === 'lab' && (
+        <section class="band band--first labsec" id="lab">
+          <div class="wrap">
+            <div class="labs">
+              {t.lab.items.map((it, i) => (
+                <a class="labc" href={`${b}${LAB[i].href}`} data-cursor="open" data-curtain={it.t}>
+                  <span class="labc__win">
+                    <span class="site__bar"><span><i></i><i></i><i></i></span><span>vervostudio.com{LAB[i].href}</span></span>
+                    <span class="labc__img"><img src={asset(LAB[i].img)} width="1280" height="800" alt={it.t} loading="lazy" decoding="async" /></span>
+                  </span>
+                  <span class="labc__meta">
+                    <span class="mono labc__k">{pad(i + 1)} — {it.k}</span>
+                    <span class="mono labc__tag">{t.lab.tag}</span>
+                    <span class="labc__h">{it.t}</span>
+                    <span class="labc__p">{it.o}</span>
+                    <span class="tags mono">{it.tags.map((x) => <span>{x}</span>)}</span>
+                    <span class="mono labc__go">{t.lab.open}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {page === 'websites' && (
+        <section class="sites" id="websites">
+          <div class="sites__pin">
+            <div class="sites__view">
+              <div class="sites__track" id="sitesTrack">
+                {t.sites.items.map((r, i) => (
+                  <a class="site" href={`${b}${siteHref(i, lang)}`} data-cursor="open" data-curtain={r.nazwa}>
+                    <span class="site__win">
+                      <span class="site__bar"><span><i></i><i></i><i></i></span><span>vervostudio.com{siteHref(i, lang)}</span></span>
+                      <span class="site__img"><img src={asset(siteThumb(i, lang))} width="960" height="600" alt={`${r.nazwa}, ${r.bran}`} loading="lazy" decoding="async" /></span>
+                    </span>
+                    <span class="site__meta">
+                      <span class="mono site__n">{pad(i + 1)} / {pad(t.sites.items.length + 1)}</span>
+                      <span class="site__h">{r.nazwa}</span>
+                      <span class="mono site__bran">{r.bran}</span>
+                      <span class="site__p">{r.opis}</span>
+                      <span class="tags mono">{r.tagi.map((x) => <span>{x}</span>)}</span>
+                    </span>
+                  </a>
+                ))}
+                <a class="site site--app" href={FICHES_URL} {...extLink} data-cursor="open">
+                  <span class="site__win fiche" aria-hidden="true">
+                    <span class="fiche__card fiche__card--back">bread</span>
+                    <span class="fiche__card">le pain</span>
+                  </span>
+                  <span class="site__meta">
+                    <span class="mono site__n">{pad(t.sites.items.length + 1)} / {pad(t.sites.items.length + 1)}</span>
+                    <span class="site__h">{t.sites.project.nazwa}</span>
+                    <span class="mono site__bran">{t.sites.project.bran}</span>
+                    <span class="site__p">{t.sites.project.opis}</span>
+                    <span class="tags mono">{t.sites.project.tagi.map((x) => <span>{x}</span>)}</span>
+                  </span>
+                </a>
               </div>
-              <label class="fld"><span class="mono">03 · {t.kontakt.form.need}</span>
-                <select name="potrzeba" required><option value="">{t.kontakt.form.needChoose}</option>{t.kontakt.form.needs.map((x) => <option value={x}>{x}</option>)}</select>
-              </label>
-              <label class="fld"><span class="mono">04 · {t.kontakt.form.wiadomosc}</span><textarea name="wiadomosc" rows="4" placeholder={t.kontakt.form.wiadomoscPlaceholder} required></textarea></label>
-              <label class="consent"><input type="checkbox" name="zgoda" value="tak" required /><span>{t.kontakt.form.consent}</span></label>
-              <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0" />
-              <button class="btn btn--acc btn--full magnetic" type="submit" id="kBtn" data-cursor="hover"><span>{t.kontakt.form.submit}</span><span aria-hidden="true">→</span></button>
-              <p class="kstat mono" id="kStat" role="status" aria-live="polite"></p>
-            </form>
+            </div>
+            <div class="wrap"><div class="sites__prog" aria-hidden="true"><i id="sitesProg"></i></div></div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {home && (
+        <section class="band" id="services">
+          <div class="wrap">
+            <header class="shead">
+              <p class="lab mono">{t.services.label}</p>
+              <h2 class="h2 split">{t.services.h2}</h2>
+              <p class="shead__lede">{t.services.lede}</p>
+            </header>
+            <ol class="svc">
+              {t.services.items.map((s, i) => (
+                <li class="svc__row">
+                  <span class="svc__n mono">{pad(i + 1)}</span>
+                  <span class="svc__ic" aria-hidden="true"><svg class="draw" viewBox="0 0 24 24" set:html={serviceIcons[i].replace(/<(path|rect|ellipse)/g, '<$1 pathLength="1"')}></svg></span>
+                  <div class="svc__main">
+                    <h3 class="svc__h">{s.t}</h3>
+                    <p class="svc__p">{s.o}</p>
+                  </div>
+                  <ul class="svc__co mono">{s.co.map((c) => <li>{c}</li>)}</ul>
+                  <a class="svc__go mono" {...hire} data-cursor="hover">{fiverr ? t.cta.fiverr : t.cta.ask} ↗</a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      )}
+
+      {page === 'about' && (
+        <section class="band band--first" id="about">
+          <div class="wrap about">
+            <div class="about__pic">
+              <figure class="pjson" aria-label={t.about.h2}>
+                <div class="pjson__bar mono"><span><i></i><i></i><i></i></span><span>profile.json</span><span class="live"></span></div>
+                <pre class="pjson__code"><code>{'{'}{pj.map(([k, v, ok], i) => <span>{'\n  '}<b>"{k}"</b>: {ok ? <strong>{v}</strong> : <em>{v}</em>}{i === pj.length - 1 ? '' : ','}</span>)}{'\n}'}</code></pre>
+              </figure>
+            </div>
+            <div class="about__txt">
+              {t.about.p.slice(1).map((p) => <p class="about__p">{p}</p>)}
+              <div class="why">
+                {t.about.why.map((w, i) => <div class="why__i"><span class="mono">{pad(i + 1)}</span><b>{w.b}</b><span>{w.s}</span></div>)}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {page === 'about' && (
+        <section class="band band--alt" id="certificates">
+          <div class="wrap">
+            <header class="shead">
+              <p class="lab mono">{t.certs.label}</p>
+              <h2 class="h2 split">{t.certs.h2}</h2>
+              <p class="shead__lede">{t.certs.lede}</p>
+            </header>
+            <div class="certs">
+              {CERTS.map((c, i) => (
+                <div class="cert tilt">
+                  <button class="cert__img" type="button" data-zoom={asset(c.img)} data-cap={`${c.org} · ${c.t}`} aria-label={`${c.org} ${c.t}. ${t.work.zoom}`} data-cursor="view">
+                    <img src={asset(c.img)} width={c.w} height={c.h} alt={`${c.org} ${c.t}`} loading="lazy" decoding="async" />
+                    <span class="cert__glare" aria-hidden="true"></span>
+                  </button>
+                  <div class="cert__body">
+                    <p class="mono cert__org">{pad(i + 1)} — {c.org}</p>
+                    <h3 class="cert__h">{c.t}</h3>
+                    <p class="mono cert__date">{t.certs.earned} {fmtDate(c.date)}</p>
+                    {c.verify && <a class="mono cert__a" href={c.verify} {...extLink} data-cursor="hover">{t.certs.verify}</a>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {page === 'about' && (
+        <section class="process stage" id="process" data-stage="sheet">
+          <div class="process__pin">
+            <div class="wrap process__in">
+              <header class="shead">
+                <p class="lab mono">{t.proces.label}</p>
+                <h2 class="h2 split">{t.proces.h2}</h2>
+              </header>
+              <div class="sheet-space" data-space aria-hidden="true"></div>
+              <ol class="pstep">
+                {t.proces.steps.map((s, i) => (
+                  <li class="pstep__i" data-step={i}>
+                    <span class="pstep__n">{pad(i + 1)}</span>
+                    <div><h3>{s.t}</h3><p>{s.o}</p></div>
+                  </li>
+                ))}
+              </ol>
+              <div class="process__bar" aria-hidden="true"><span>rows_flagged</span><i><b id="cleanBar"></b></i><span id="cleanPct">0%</span></div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {page === 'about' && (
+        <section class="band" id="faq">
+          <div class="wrap faqw">
+            <header class="shead">
+              <p class="lab mono">{t.faq.label}</p>
+              <h2 class="h2 split">{t.faq.h2}</h2>
+            </header>
+            <div class="faq">
+              {t.faq.items.map((f, i) => (
+                <details>
+                  <summary data-cursor="hover"><span class="mono">{pad(i + 1)}</span><span>{f.q}</span></summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {home && (
+        <section class="contact stage" id="contact">
+          <div class="wrap">
+            <div class="contact__top" data-stage="logo">
+              <div>
+                <p class="lab mono">{t.kontakt.label}</p>
+                <h2 class="contact__big" aria-label={ui.contactBig.join(' ')}>
+                  {ui.contactBig.map((l, i) => <span class={`hl hl--${i === 1 ? 2 : 0}`} aria-hidden="true"><span class="hl__in">{l}</span></span>)}
+                </h2>
+              </div>
+              <div class="logo-space" data-space aria-hidden="true"></div>
+            </div>
+
+            <a class="cta-bar" {...hire} data-cursor="hover">
+              <span>{ui.startProject}</span><span>{fiverr ? 'Fiverr' : t.cta.quote} ↗</span>
+            </a>
+
+            <div class="contact__grid">
+              <div class="contact__side">
+                <p class="contact__p">{t.kontakt.p}</p>
+                <p class="lab mono">{ui.elsewhere}</p>
+                <ul class="soc">
+                  {socials.map((s) => <li><a href={s.href} {...extLink} data-cursor="hover"><span>{s.label}</span><span>↗</span></a></li>)}
+                  <li><button type="button" data-copy-email data-cursor="copy"><span>{ui.copyEmail}</span><span>⧉</span></button></li>
+                  <li><a href="#contact" data-mailto data-cursor="hover"><span>{ui.emailMe}</span><span>→</span></a></li>
+                </ul>
+              </div>
+              <form id="kForm" class="form" novalidate>
+                <div class="frow">
+                  <label class="fld"><span class="mono">{t.kontakt.form.imie}</span><input type="text" name="imie" autocomplete="name" required /></label>
+                  <label class="fld"><span class="mono">{t.kontakt.form.email}</span><input type="email" name="email" autocomplete="email" required /></label>
+                </div>
+                <label class="fld"><span class="mono">{t.kontakt.form.need}</span>
+                  <select name="potrzeba" required><option value="">{t.kontakt.form.needChoose}</option>{t.kontakt.form.needs.map((x) => <option value={x}>{x}</option>)}</select>
+                </label>
+                <label class="fld"><span class="mono">{t.kontakt.form.wiadomosc}</span><textarea name="wiadomosc" rows="4" placeholder={t.kontakt.form.wiadomoscPlaceholder} required></textarea></label>
+                <label class="consent"><input type="checkbox" name="zgoda" value="tak" required /><span>{t.kontakt.form.consent}</span></label>
+                <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0" />
+                <button class="btn btn--acc btn--full magnetic" type="submit" id="kBtn" data-cursor="hover"><span>{t.kontakt.form.submit}</span><span aria-hidden="true">→</span></button>
+                <p class="kstat mono" id="kStat" role="status" aria-live="polite"></p>
+              </form>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {!home && (
+        <section class="nextp">
+          <a class="nextp__a wrap" href={nextKey ? pageUrl(nextKey) : contactUrl} data-cursor="open">
+            <span class="nextp__k mono">{nextKey ? `${ui.next} · ${pad(ORDER.indexOf(nextKey) + 1)}` : ui.pages.contact}</span>
+            <span class="nextp__t"><span class="nextp__w">{nextKey ? ui.pages[nextKey] : ui.talk}</span><span class="nextp__arr" aria-hidden="true">→</span></span>
+            <span class="nextp__line" aria-hidden="true"></span>
+          </a>
+        </section>
+      )}
     </main>
 
     <footer class="foot">
@@ -584,6 +688,24 @@ const wordmark = 'VERVO'.split('');
       <img id="lbImg" alt="" />
       <p id="lbCap" class="mono"></p>
     </dialog>
+
+    {home && (
+      <dialog class="pong" id="pongDlg" aria-label="Pong">
+        <div class="pong__bar">
+          <span class="pong__t">Pong<i>.</i></span>
+          <span class="pong__score mono"><span>{ui.bored.you} <b id="pongYou">0</b></span><span>{ui.bored.cpu} <b id="pongCpu">0</b></span></span>
+          <span class="pong__btns">
+            <button type="button" class="pong__b mono" id="pongSound" aria-pressed="true">{ui.bored.sound}</button>
+            <button type="button" class="pong__b mono" id="pongClose" aria-label={ui.close}>✕</button>
+          </span>
+        </div>
+        <div class="pong__field">
+          <canvas id="pongCanvas"></canvas>
+          <div class="pong__msg" id="pongMsg"><p class="pong__big" id="pongBig"></p><p class="mono" id="pongSmall">{ui.bored.start}</p></div>
+        </div>
+        <p class="pong__hint mono">{ui.bored.hint}</p>
+      </dialog>
+    )}
 
     <script type="application/json" id="hubConfig" set:html={JSON.stringify(config)}></script>
     <script>

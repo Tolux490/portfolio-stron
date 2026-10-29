@@ -1,4 +1,5 @@
 ---
+import Curtain from '../components/Curtain.astro';
 // OKTAN — podstrona „O nas" w dwóch językach (PL: /oktan/o-nas/, EN: /oktan/en/o-nas/).
 import '../styles/oktan.css';
 import Foto from '../components/Foto.astro';
@@ -117,6 +118,7 @@ const inicjaly = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpp
   </head>
 
   <body>
+    <Curtain />
     <header class="top" id="top">
       <div class="wrap top__in">
         <a class="logo" href={`${root}/`} aria-label={t.logoHome}>

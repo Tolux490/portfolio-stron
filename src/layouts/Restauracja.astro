@@ -1,4 +1,5 @@
 ---
+import Curtain from '../components/Curtain.astro';
 import '../styles/restauracja.css';
 import DemoLang from '../components/DemoLang.astro';
 import { restauracja as bizPl, inLang } from '../data/firmy.js';
@@ -82,6 +83,7 @@ const schema = {
   </head>
 
   <body>
+    <Curtain />
     <header class="site" id="site">
       <div class="wrap site__in">
         <a class="brand" href={`${root}/`} aria-label={`${biz.name}, ${t.home}`}>

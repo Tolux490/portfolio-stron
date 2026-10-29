@@ -1,6 +1,8 @@
 ---
+import Curtain from './Curtain.astro';
 // Wspólny szkielet podstron Lab: nagłówek z powrotem na stronę główną, oznaczenie „koncept”, stopka.
-import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
 import '../styles/hub.css';
 import '../styles/lab.css';
@@ -11,7 +13,7 @@ const site = Astro.site ? Astro.site.origin : 'https://vervostudio.com';
 const og = new URL(`${b}/og/vervo.jpg`, Astro.site || 'https://vervostudio.com/').href;
 ---
 <!doctype html>
-<html lang="en" data-theme="amber">
+<html lang="en" data-theme="coral">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -27,14 +29,15 @@ const og = new URL(`${b}/og/vervo.jpg`, Astro.site || 'https://vervostudio.com/'
     <meta property="og:image" content={og} />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>
-      try { var th = localStorage.getItem('vervo-theme'); if (th === 'amber' || th === 'lime' || th === 'paper') document.documentElement.setAttribute('data-theme', th); } catch (e) {}
+      try { var th = localStorage.getItem('vervo-theme'); if (th === 'coral' || th === 'mono' || th === 'paper') document.documentElement.setAttribute('data-theme', th); } catch (e) {}
     </script>
   </head>
   <body class="lab-page">
+    <Curtain />
     <div class="grain" aria-hidden="true"></div>
     <header class="lab-top mono">
       <div class="lab-top__l">
-        <a class="lab-top__back" href={`${b}/#lab`}>
+        <a class="lab-top__back" href={`${b}/lab/`} data-curtain="Lab">
           <svg viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span>← Vervo Studio</span>
         </a>

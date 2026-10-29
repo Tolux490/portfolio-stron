@@ -1,4 +1,5 @@
 ---
+import Curtain from '../components/Curtain.astro';
 import '../styles/base.css';
 import DemoLang from '../components/DemoLang.astro';
 import { inLang } from '../data/firmy.js';
@@ -59,6 +60,7 @@ const root = en ? `${plRoot}en/` : plRoot;
   </head>
 
   <body>
+    <Curtain />
     <header class="wrap">
       <nav class="nav">
         <a class="nav__brand" href={root}>{biz.name}</a>

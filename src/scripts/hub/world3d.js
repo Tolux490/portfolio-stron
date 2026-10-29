@@ -1,5 +1,6 @@
 // Jeden świat 3D na całą stronę: te same kostki-dane przybierają kolejne kształty, gdy przewijasz.
-// chaos → wykres (hero) → glob (manifest) → arkusz, który sam się czyści (proces) → logo „V” (kontakt).
+// chaos → wykres (hero) → glob (manifest) → pierścień (lab) → arkusz, który sam się czyści (proces)
+// → podwójna helisa (FAQ) → logo „V” (kontakt). Kliknięcie w scenę rozrzuca kostki, a sprężyna je składa.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
@@ -38,6 +39,7 @@ function chevronPoints(count) {
 
 export function createWorld(canvas) {
   const small = window.matchMedia('(max-width: 760px)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const G = small ? 13 : 19;
   const N = G * G;
@@ -77,7 +79,10 @@ export function createWorld(canvas) {
 
   const geo = new RoundedBoxGeometry(1, 1, 1, 3, 0.14);
   geo.translate(0, 0.5, 0);
-  const mat = new THREE.MeshStandardMaterial({ roughness: 0.38, metalness: 0.08, envMapIntensity: 0.9 });
+  // lakierowane kostki; na telefonie lżejszy materiał
+const mat = small
+    ? new THREE.MeshStandardMaterial({ roughness: 0.34, metalness: 0.06, envMapIntensity: 1 })
+    : new THREE.MeshPhysicalMaterial({ roughness: 0.3, metalness: 0.04, clearcoat: 0.55, clearcoatRoughness: 0.3, envMapIntensity: 1 });
   const mesh = new THREE.InstancedMesh(geo, mat, N);
   mesh.castShadow = !small;
   mesh.receiveShadow = !small;
@@ -102,6 +107,7 @@ export function createWorld(canvas) {
       cx: r * Math.sin(ph) * Math.cos(th), cy: Math.abs(r * Math.cos(ph)) * 0.7 + 1 + R() * 5, cz: r * Math.sin(ph) * Math.sin(th),
       rx: (R() - 0.5) * 6, ry: (R() - 0.5) * 6, rz: (R() - 0.5) * 6, cs: 0.35 + R() * 0.55,
       lag: R(), dirty: R() < 0.2, dirtyAt: R(), lift: 0,
+      bx: 0, by: 0, bz: 0, vx: 0, vy: 0, vz: 0, spin: 0, vs: 0, arc: 1.2 + R() * 2.6, twist: (R() - 0.5) * 5,
     });
   }
   const maxH = Math.max(...cells.map((c) => c.h));
@@ -115,7 +121,7 @@ export function createWorld(canvas) {
   });
 
   // arkusz: kolumny x wiersze, wąskie i szerokie komórki
-  const COLS = small ? 8 : 11, ROWS = Math.ceil(N / COLS);
+  const COLS = 11, ROWS = Math.ceil(N / COLS);
   cells.forEach((c, k) => { c.col = k % COLS; c.row = Math.floor(k / COLS); });
 
   // pierścień wykresu kołowego (donut): 3 pierścienie, segmenty o udziałach jak w raporcie
@@ -128,6 +134,14 @@ export function createWorld(canvas) {
     for (let i = 0; i < SHARES.length; i++) { if (f < acc + SHARES[i]) { seg = i; break; } acc += SHARES[i]; seg = i; }
     c.dTheta = f * Math.PI * 2; c.dR = 2.9 + ring * 0.62; c.dSeg = seg;
     c.dEdge = Math.min(f - acc, acc + SHARES[seg] - f) < 0.006; // przerwy między segmentami
+  });
+
+  // podwójna helisa: dwie nici i szczeble między nimi
+  const TURNS = 2.4, HH = 11;
+  cells.forEach((c, k) => {
+    const rung = k % 3 === 2, pair = Math.floor(k / 3), f = pair / Math.ceil(N / 3);
+    c.hA = f * TURNS * Math.PI * 2; c.hY = f * HH;
+    c.hStrand = rung ? -1 : k % 3; c.hRung = rung ? ((k * 7919) % 100) / 100 : 0;
   });
 
   // logo V
@@ -158,7 +172,7 @@ export function createWorld(canvas) {
 
   // ---------- kształty: dla każdej kostki pozycja, obrót, skala, kolor ----------
   const anchor = { x: window.innerWidth * 0.7, y: window.innerHeight * 0.52 }, anchorCur = { ...anchor };
-  const st = { form: 'chaos', from: null, t0: 0, dur: 1.35, assemble: 0, clean: 0, scroll: 0, visible: true, active: true };
+  const st = { form: 'chaos', from: null, t0: 0, dur: 1.5, assemble: 0, clean: 0, scroll: 0, visible: true, active: true, fit: 0, fitW: 0 };
   const out = { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0, sx: 1, sy: 1, sz: 1, c: new THREE.Color() };
 
   const forms = {
@@ -229,6 +243,35 @@ export function createWorld(canvas) {
       if (c.dSeg === 2 || c.dSeg === 4) out.c.lerp(cTop, 0.35);
       if (c.dSeg === 3) out.c.lerp(cBase, 0.45);
     },
+    wave(c, k, t) {
+      const p = reduced ? 0 : t;
+      const h = 0.5 * Math.sin(c.gx * 0.55 + p * 1.3) + 0.42 * Math.cos(c.gz * 0.5 - p * 0.95) + 0.26 * Math.sin((c.gx + c.gz) * 0.33 + p * 0.7);
+      const dm = Math.hypot(c.gx - hitS.x, c.gz - hitS.z);
+      const push = dm < 4.2 ? (1 - dm / 4.2) ** 2 * 2.2 : 0;
+      out.x = c.gx; out.y = h * 1.3 + push + 1.2; out.z = c.gz;
+      out.rx = Math.cos(c.gx * 0.55 + p * 1.3) * 0.22; out.ry = 0; out.rz = -Math.sin(c.gz * 0.5 - p * 0.95) * 0.22;
+      out.sx = out.sz = 0.9; out.sy = 0.32;
+      const hn = clamp01((h + 1.1) / 2.2);
+      out.c.copy(cBase).lerp(cTop, 0.15 + hn * 0.6);
+      if (hn > 0.82 || push > 0.6) out.c.lerp(cAcc, clamp01(Math.max((hn - 0.82) * 5, push / 1.6)));
+    },
+    helix(c, k, t) {
+      const spin = (reduced ? 0 : t * 0.35) + m.sx * 0.7;
+      const a = c.hA + spin, r = small ? 2.3 : 2.5;
+      const pA = [Math.cos(a) * r, Math.sin(a) * r], pB = [Math.cos(a + Math.PI) * r, Math.sin(a + Math.PI) * r];
+      let x, z, s;
+      if (c.hStrand === -1) { x = mix(pA[0], pB[0], c.hRung); z = mix(pA[1], pB[1], c.hRung); s = 0.22; }
+      else { const p = c.hStrand === 0 ? pA : pB; x = p[0]; z = p[1]; s = 0.42; }
+      const breathe = reduced ? 0 : Math.sin(t * 1.4 + c.hY * 0.6) * 0.08;
+      out.x = x; out.y = c.hY + 0.6; out.z = z;
+      out.rx = 0; out.ry = -a; out.rz = 0;
+      out.sx = out.sz = s + breathe; out.sy = s + breathe;
+      if (c.hStrand === 0) out.c.copy(cAcc);
+      else if (c.hStrand === 1) out.c.copy(cTop).lerp(cBase, 0.15);
+      else out.c.copy(cBase).lerp(cTop, 0.35);
+      const depth = (z / r + 1) / 2;
+      out.c.lerp(cBase, (1 - depth) * 0.35);
+    },
     logo(c, k, t) {
       if (!c.v) { out.x = c.cx * 0.4; out.y = -4; out.z = c.cz * 0.4; out.sx = out.sy = out.sz = 0.001; out.rx = out.ry = out.rz = 0; out.c.copy(cBase); return; }
       const ay = m.sx * 0.55 + (reduced ? 0 : Math.sin(t * 0.6) * 0.15), ax = -m.sy * 0.3;
@@ -256,13 +299,28 @@ export function createWorld(canvas) {
     } else if (form === 'globe') {
       wantPos.set(0, 8.2, small ? 34 : 26); wantTarget.set(0, 6.4, 0);
     } else if (form === 'sheet') {
-      wantPos.set(small ? 0 : 3, small ? 26 : 22, small ? 13 : 12); wantTarget.set(0, 0, 0.6);
+      if (st.fit > 0) wantPos.set(0, 26, 13); else wantPos.set(3, 22, 12);
+      wantTarget.set(0, 0, 0.6);
     } else if (form === 'donut') {
       wantPos.set(0, 8.6, small ? 36 : 22); wantTarget.set(0, 6.6, 0);
+    } else if (form === 'helix') {
+      wantPos.set(0, 6.2, 30); wantTarget.set(0, HH / 2 + 0.6, 0);
+    } else if (form === 'wave') {
+      wantPos.set(0, 14, 22); wantTarget.set(0, 1, 0);
     } else if (form === 'logo') {
       wantPos.set(0, 7, small ? 31 : 19); wantTarget.set(0, 6.4, 0);
     }
   }
+
+  // kształt w zarezerwowanym miejscu: kamera odsuwa się tak, by zmieścił się w nim w całości
+  const SIZE = { globe: [11, 11], donut: [10, 7.5], sheet: [21, 11.5], helix: [6.5, 13.5], wave: [24, 10], logo: [9, 7] };
+  const fitCamera = (form) => {
+    const sz = SIZE[form];
+    if (!sz || !(st.fit > 0)) return;
+    const tan = Math.tan((camera.fov * Math.PI) / 360);
+    const d = Math.min(120, Math.max(sz[1] / (2 * tan * st.fit), sz[0] / (2 * tan * camera.aspect * Math.max(0.2, st.fitW))));
+    wantPos.sub(wantTarget).normalize().multiplyScalar(d).add(wantTarget);
+  };
 
   // stan bieżący każdej kostki (do płynnego przejścia)
   const cur = cells.map(() => ({ x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0, sx: 1, sy: 1, sz: 1, c: new THREE.Color() }));
@@ -286,6 +344,25 @@ export function createWorld(canvas) {
   resize();
 
   const dummy = new THREE.Object3D();
+  // „wybuch”: kostki blisko punktu kliknięcia dostają pchnięcie od środka kształtu i w górę
+  let burstLive = false;
+  const pv = new THREE.Vector3();
+  function burst(nx, ny, power = 1) {
+    if (reduced) return;
+    for (let k = 0; k < N; k++) {
+      const c = cells[k], o = cur[k];
+      pv.set(o.x, o.y, o.z).project(camera);
+      const d = Math.hypot(pv.x - nx, (pv.y - ny) * 0.8);
+      const f = Math.max(0, 1 - d / 0.7) ** 1.5 * power;
+      if (f <= 0) continue;
+      const dx = o.x - camTarget.x, dy = o.y - camTarget.y, dz = o.z - camTarget.z;
+      const len = Math.hypot(dx, dy, dz) || 1;
+      const kick = 9 + (k % 7);
+      c.vx += (dx / len) * kick * f; c.vy += ((dy / len) * 0.5 + 0.9) * kick * f; c.vz += (dz / len) * kick * f;
+      c.vs += (k % 2 ? 1 : -1) * 9 * f;
+    }
+    burstLive = true;
+  }
   let raf = 0, last = performance.now();
   function frame(now) {
     raf = requestAnimationFrame(frame);
@@ -295,6 +372,7 @@ export function createWorld(canvas) {
 
     m.sx += (m.x - m.sx) * (1 - Math.pow(0.02, dt)); m.sy += (m.y - m.sy) * (1 - Math.pow(0.02, dt));
     cameraFor(st.form, t);
+    fitCamera(st.form);
     const kc = first ? 1 : 1 - Math.pow(0.08, dt);
     camPos.lerp(wantPos, kc); camTarget.lerp(wantTarget, kc);
     camera.position.copy(camPos); camera.lookAt(camTarget);
@@ -304,15 +382,20 @@ export function createWorld(canvas) {
     const vw = window.innerWidth, vh = window.innerHeight;
     camera.setViewOffset(vw, vh, vw / 2 - anchorCur.x, vh / 2 - anchorCur.y, vw, vh);
 
-    if (st.form === 'chart' && m.in && !reduced) {
-      ray.setFromCamera(mouse, camera);
-      if (!ray.ray.intersectPlane(plane, hit)) hit.set(999, 0, 999);
+    if ((st.form === 'chart' || st.form === 'wave') && !reduced && (m.in || !finePointer)) {
+      if (m.in) {
+        ray.setFromCamera(mouse, camera);
+        if (!ray.ray.intersectPlane(plane, hit)) hit.set(999, 0, 999);
+      } else {
+        // bez myszy (telefon): „podświetlenie” samo wędruje po wykresie
+        hit.set(Math.sin(t * 0.37) * 6.5, 0, Math.sin(t * 0.53 + 1.2) * 6.5);
+      }
     } else hit.set(999, 0, 999);
     hitS.lerp(hit, 1 - Math.pow(0.0015, dt));
 
     const f = forms[st.form];
     const since = t - st.t0;
-    let anyMorph = false;
+    let anyMorph = false, burstAny = false;
     for (let k = 0; k < N; k++) {
       const c = cells[k];
       f(c, k, t);
@@ -325,16 +408,29 @@ export function createWorld(canvas) {
       const fr = from[k];
       o.x = mix(fr.x, out.x, a); o.y = mix(fr.y, out.y, a); o.z = mix(fr.z, out.z, a);
       o.rx = mix(fr.rx, out.rx, a); o.ry = mix(fr.ry, out.ry, a); o.rz = mix(fr.rz, out.rz, a);
+      // w trakcie zmiany kształtu kostki lecą łukiem i obracają się (bez tego tylko „przesuwałyby się”)
+      if (a > 0 && a < 1 && !reduced && !(st.form === 'chart' && st.fromChaos)) {
+        const arcK = Math.sin(a * Math.PI);
+        o.y += arcK * c.arc; o.rx += arcK * c.twist * 0.6; o.rz += arcK * c.twist * 0.4;
+      }
       o.sx = mix(fr.sx, out.sx, a); o.sy = mix(fr.sy, out.sy, a); o.sz = mix(fr.sz, out.sz, a);
       o.c.copy(fr.c).lerp(out.c, a);
-      dummy.position.set(o.x, o.y, o.z);
-      dummy.rotation.set(o.rx, o.ry, o.rz);
+      // sprężyna po „wybuchu” po kliknięciu
+      if (burstLive) {
+        c.vx += (-c.bx * 26 - c.vx * 5.2) * dt; c.vy += (-c.by * 26 - c.vy * 5.2) * dt; c.vz += (-c.bz * 26 - c.vz * 5.2) * dt;
+        c.vs += (-c.spin * 22 - c.vs * 4.5) * dt;
+        c.bx += c.vx * dt; c.by += c.vy * dt; c.bz += c.vz * dt; c.spin += c.vs * dt;
+        if (Math.abs(c.bx) + Math.abs(c.by) + Math.abs(c.bz) + Math.abs(c.vx) + Math.abs(c.vy) + Math.abs(c.vz) > 0.002) burstAny = true;
+      }
+      dummy.position.set(o.x + c.bx, o.y + c.by, o.z + c.bz);
+      dummy.rotation.set(o.rx + c.spin, o.ry + c.spin * 0.7, o.rz);
       dummy.scale.set(o.sx, o.sy, o.sz);
       dummy.updateMatrix();
       mesh.setMatrixAt(k, dummy.matrix);
       mesh.setColorAt(k, o.c);
     }
     if (st.morphing && !anyMorph) st.morphing = false;
+    if (burstLive && !burstAny) burstLive = false;
     first = false;
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -349,6 +445,8 @@ export function createWorld(canvas) {
 
   return {
     morphTo(name) { if (name !== 'chart') st.fromChaos = false; morphTo(name); },
+    burst,
+    setFit(h, w = 1) { st.fit = h; st.fitW = w; },
     setAssemble(v) { st.assemble = v; },
     setScroll(v) { st.scroll = clamp01(v); },
     setClean(v) { st.clean = clamp01(v); },

@@ -1,4 +1,5 @@
 ---
+import Curtain from '../../components/Curtain.astro';
 const b = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 // Ceny spójne z dokumentem oferty (orientacyjne, PLN netto).
@@ -93,6 +94,7 @@ const parts = ['antoni.antczak05', 'gmail', 'com'];
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" />
   </head>
   <body>
+    <Curtain />
     <main class="calc">
       <header class="calc__top">
         <a class="brand" href={`${b}/`} aria-label="Vervo Studio">

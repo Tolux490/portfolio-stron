@@ -1,4 +1,5 @@
 ---
+import Curtain from '../components/Curtain.astro';
 // Kontur — polityka prywatności w dwóch językach (PL: /nieruchomosci/polityka-prywatnosci/, EN: /nieruchomosci/en/polityka-prywatnosci/).
 import DemoLang from '../components/DemoLang.astro';
 import { nieruchomosci as biz } from '../data/firmy.js';
@@ -25,6 +26,7 @@ const tel = biz.phone.replace(/[^+\d]/g, '');
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600&display=swap" />
   </head>
   <body>
+    <Curtain />
     <header class="hdr">
       <div class="wrap hdr__in">
         <a class="hdr__mark" href={`${root}/`}>Kontur</a>

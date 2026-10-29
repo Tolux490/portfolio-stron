@@ -1,0 +1,100 @@
+---
+// Kurtyna między stronami: przy kliknięciu w link panel wjeżdża od dołu z nazwą celu,
+// a na nowej stronie odjeżdża do góry. Bez bibliotek, działa na stronie Vervo, w Labie i w demach.
+// Wewnątrz jednego dema (np. podstrony restauracji) nie gra, żeby demo zachowywało się jak prawdziwa strona.
+---
+<div class="vcur" id="vcur" aria-hidden="true">
+  <div class="vcur__a"></div>
+  <div class="vcur__b">
+    <span class="vcur__k" id="vcurK"></span>
+    <span class="vcur__t" id="vcurT"></span>
+  </div>
+</div>
+<script is:inline>
+  (function () {
+    var el = document.getElementById('vcur');
+    if (!el) return;
+    var KEY = 'vervo-curtain';
+    var PAL = {
+      coral: ['#0e1116', '#f3efe8', '#ff6a4d'],
+      mono: ['#0c0c0c', '#f1eee7', '#f1eee7'],
+      paper: ['#f4f2ee', '#141414', '#3048ff'],
+    };
+    var DEMOS = { restauracja: 'Ogrodowa 3', oktan: 'OKTAN', nieruchomosci: 'Kontur Nieruchomości', kawiarnia: 'Prolog', mechanik: 'Serwis Kołodziej', calc: 'Kalkulator' };
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var demoOf = function (path) { var m = path.match(/^\/([a-z]+)(\/|$)/); return m && DEMOS[m[1]] ? m[1] : null; };
+    var paint = function (d) {
+      el.style.setProperty('--vc-bg', d.bg); el.style.setProperty('--vc-fg', d.fg); el.style.setProperty('--vc-acc', d.acc);
+      document.getElementById('vcurT').textContent = d.label;
+      document.getElementById('vcurK').textContent = d.kicker;
+    };
+
+    // 1) wejście: jeśli poprzednia strona zasłoniła ekran, zaczynamy zasłonięci i odsłaniamy
+    var data = null;
+    try { data = JSON.parse(sessionStorage.getItem(KEY) || 'null'); sessionStorage.removeItem(KEY); } catch (e) {}
+    if (data && Date.now() - data.ts < 6000 && !reduced) {
+      paint(data);
+      el.classList.add('is-cover');
+      var reveal = function () {
+        requestAnimationFrame(function () {
+          el.classList.add('is-leave');
+          setTimeout(function () { el.classList.remove('is-cover', 'is-leave'); }, 1100);
+        });
+      };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(reveal, 140); });
+      else setTimeout(reveal, 140);
+    }
+    // powrót przyciskiem „wstecz” z pamięci przeglądarki: kurtyna nie może zostać na ekranie
+    window.addEventListener('pageshow', function (e) { if (e.persisted) el.classList.remove('is-cover', 'is-leave', 'is-enter'); });
+
+    // 2) wyjście: przechwytujemy zwykłe kliknięcia w linki wewnątrz witryny
+    if (reduced) return;
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a || a.target === '_blank' || a.hasAttribute('download') || a.hasAttribute('data-no-curtain')) return;
+      var url;
+      try { url = new URL(a.href, location.href); } catch (err) { return; }
+      if (url.origin !== location.origin || !/^https?:$/.test(url.protocol)) return;
+      if (url.pathname === location.pathname) return; // kotwice na tej samej stronie
+      var from = demoOf(location.pathname), to = demoOf(url.pathname);
+      if (from && from === to) return; // nawigacja wewnątrz jednego dema
+      var th = 'coral';
+      try { th = localStorage.getItem('vervo-theme') || 'coral'; } catch (err) {}
+      var p = PAL[th] || PAL.coral;
+      var label = a.getAttribute('data-curtain') || (to ? DEMOS[to] : from ? 'Vervo.' : '') || (a.querySelector('.menu__w, .nextp__w, .chap__t, .hnav__a') || a).textContent.trim();
+      if (!label || label.length > 40) label = 'Vervo.';
+      var d = { label: label, kicker: 'vervostudio.com' + url.pathname, bg: p[0], fg: p[1], acc: p[2], ts: Date.now() };
+      e.preventDefault();
+      paint(d);
+      try { sessionStorage.setItem(KEY, JSON.stringify(d)); } catch (err) {}
+      el.classList.remove('is-cover', 'is-leave');
+      void el.offsetWidth;
+      el.classList.add('is-enter');
+      setTimeout(function () { location.href = url.href; }, 720);
+    });
+  })();
+</script>
+<style is:global>
+  .vcur { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; visibility: hidden; --vc-bg: #0e1116; --vc-fg: #f3efe8; --vc-acc: #ff6a4d; }
+  .vcur__a, .vcur__b { position: absolute; inset: 0; transform: translate3d(0, 101%, 0); }
+  .vcur__a { background: var(--vc-acc); }
+  .vcur__b { background: var(--vc-bg); color: var(--vc-fg); display: flex; flex-direction: column; justify-content: flex-end; gap: 0.9rem; padding: clamp(20px, 4vw, 48px) clamp(18px, 3.2vw, 44px) calc(clamp(28px, 6vh, 64px) + env(safe-area-inset-bottom, 0px)); }
+  .vcur__k { font: 500 0.85rem/1.3 'Geist Variable', 'Geist', system-ui, sans-serif; opacity: 0.6; transform: translateY(14px); }
+  .vcur__t { font: 600 clamp(2.8rem, 11vw, 9rem)/0.95 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif; letter-spacing: -0.035em; transform: translateY(40%); opacity: 0; overflow-wrap: anywhere; }
+  .vcur__t::after { content: ''; display: inline-block; width: 0.16em; height: 0.16em; margin-left: 0.08em; background: var(--vc-acc); border-radius: 50%; }
+  /* wjazd przy kliknięciu */
+  .vcur.is-enter { visibility: visible; pointer-events: auto; }
+  .vcur.is-enter .vcur__a { transform: none; transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1); }
+  .vcur.is-enter .vcur__b { transform: none; transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1) 0.08s; }
+  .vcur.is-enter .vcur__t { transform: none; opacity: 1; transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s, opacity 0.4s 0.3s; }
+  .vcur.is-enter .vcur__k { transform: none; transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.36s; }
+  /* nowa strona startuje zasłonięta i odsłania się do góry */
+  .vcur.is-cover { visibility: visible; pointer-events: auto; }
+  .vcur.is-cover .vcur__a, .vcur.is-cover .vcur__b { transform: none; }
+  .vcur.is-cover .vcur__t, .vcur.is-cover .vcur__k { transform: none; opacity: 1; }
+  .vcur.is-cover.is-leave { pointer-events: none; }
+  .vcur.is-cover.is-leave .vcur__b { transform: translate3d(0, -101%, 0); transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1); }
+  .vcur.is-cover.is-leave .vcur__a { transform: translate3d(0, -101%, 0); transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1) 0.1s; }
+  .vcur.is-cover.is-leave .vcur__t { transform: translateY(-30%); opacity: 0; transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.35s; }
+</style>

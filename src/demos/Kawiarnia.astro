@@ -1,4 +1,5 @@
 ---
+import Curtain from '../components/Curtain.astro';
 // Kawiarnia Prolog (demo) w dwóch językach. Strony: src/pages/kawiarnia/index.astro (PL) i /en/ (EN).
 import { kawiarnia as bizPl, inLang } from '../data/firmy.js';
 import Foto from '../components/Foto.astro';
@@ -115,6 +116,7 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
   </head>
 
   <body>
+    <Curtain />
     <header class="hdr" id="hdr">
       <div class="wrap hdr__in">
         <a class="hdr__mark" href="#gora">Prolog<span>.</span></a>

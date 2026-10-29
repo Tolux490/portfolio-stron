@@ -1,4 +1,5 @@
 ---
+import Curtain from '../components/Curtain.astro';
 // Kontur Nieruchomości (demo) w dwóch językach. Strony: src/pages/nieruchomosci/index.astro (PL)
 // i src/pages/nieruchomosci/en/index.astro (EN). Style i skrypt wspólne, różni się tylko tekst.
 import Foto from '../components/Foto.astro';
@@ -306,6 +307,7 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
   </head>
 
   <body>
+    <Curtain />
     <header class="hdr" id="hdr">
       <div class="wrap hdr__in">
         <a class="hdr__mark" href="#gora">Kontur</a>
