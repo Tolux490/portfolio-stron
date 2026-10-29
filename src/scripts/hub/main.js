@@ -32,9 +32,20 @@ export function initHub() {
   const scrollTo = (target) => {
     const el = typeof target === 'string' ? (target === '#top' ? 0 : $(target)) : target;
     if (el === null || el === undefined) return;
-    if (lenis) lenis.scrollTo(el, { offset: 0, duration: 1.4 });
-    else if (el === 0) window.scrollTo({ top: 0, behavior: 'smooth' });
-    else el.scrollIntoView({ behavior: 'smooth' });
+    if (lenis && el === 0) {
+      // „Do góry”: Lenis zatrzymany na czas jazdy, więc ani kółko, ani bezwładność gładzika nie mogą jej przerwać
+      lenis.stop();
+      const o = { y: window.scrollY };
+      gsap.to(o, {
+        y: 0, duration: Math.min(1.6, 0.6 + o.y / 7000), ease: 'power3.inOut', overwrite: true,
+        onUpdate: () => window.scrollTo(0, o.y),
+        onComplete: () => { window.scrollTo(0, 0); lenis.scrollTo(0, { immediate: true, force: true }); lenis.start(); document.getElementById('hdr')?.classList.remove('is-hidden'); },
+      });
+    } else if (lenis) {
+      // lock: resztki bezwładności z gładzika/kółka nie przerywają przewijania do sekcji
+      lenis.scrollTo(el, { offset: 0, duration: 1.4, lock: true, force: true });
+    } else if (el === 0) window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    else el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
   };
   $$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
     const h = a.getAttribute('href');
@@ -89,26 +100,31 @@ export function initHub() {
 
   // ---------- menu ----------
   const menu = $('#menu'), menuBtn = $('#menuBtn');
-  let menuTl = null;
-  const buildMenuTl = () => gsap.timeline({ paused: true })
-    .to('.menu__bg', { clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'expo.inOut' })
-    .from('.menu__w', { yPercent: 110, duration: 0.8, stagger: 0.05, ease: 'expo.out' }, '-=0.35')
-    .from('.menu__n, .menu__side .menu__grp', { opacity: 0, y: 14, duration: 0.6, stagger: 0.04 }, '-=0.6');
+  // Menu: każde otwarcie animuje od jawnego stanu początkowego do jawnego końcowego (fromTo),
+  // więc przerwane otwieranie/zamykanie nie może zostawić nazw stron ukrytych pod wierszami.
+  const MENU_ITEMS = '.menu__w', MENU_REST = '.menu__n, .menu__side .menu__grp';
   function openMenu() {
     root.classList.add('menu-open'); menu.removeAttribute('inert'); menuBtn.setAttribute('aria-expanded', 'true');
     hdr?.classList.remove('is-hidden');
     menu.querySelector('.menu__in').scrollTop = 0;
     lenis?.stop();
-    if (reduced) { gsap.set('.menu__bg', { clipPath: 'inset(0 0 0% 0)' }); return; }
-    (menuTl ||= buildMenuTl()).timeScale(1).play();
+    gsap.killTweensOf(['.menu__bg', MENU_ITEMS, MENU_REST]);
+    if (reduced) { gsap.set('.menu__bg', { clipPath: 'inset(0 0 0% 0)' }); gsap.set([MENU_ITEMS, MENU_REST], { clearProps: 'all' }); return; }
+    gsap.fromTo('.menu__bg', { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'expo.inOut' });
+    gsap.fromTo(MENU_ITEMS, { yPercent: 110 }, { yPercent: 0, duration: 0.8, stagger: 0.05, ease: 'expo.out', delay: 0.45 });
+    gsap.fromTo(MENU_REST, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.04, delay: 0.55 });
   }
-  function closeMenu() {
+  function closeMenu(instant = false) {
     if (!root.classList.contains('menu-open')) return;
     root.classList.remove('menu-open'); menu.setAttribute('inert', ''); menuBtn.setAttribute('aria-expanded', 'false');
     lenis?.start();
-    if (reduced || !menuTl) { gsap.set('.menu__bg', { clipPath: 'inset(0 0 100% 0)' }); return; }
-    menuTl.timeScale(1.8).reverse();
+    gsap.killTweensOf(['.menu__bg', MENU_ITEMS, MENU_REST]);
+    if (reduced || instant === true) { gsap.set('.menu__bg', { clipPath: 'inset(0 0 100% 0)' }); gsap.set([MENU_ITEMS, MENU_REST], { clearProps: 'all' }); return; }
+    gsap.to([MENU_ITEMS, MENU_REST], { opacity: 0, duration: 0.25, onComplete: () => gsap.set([MENU_ITEMS, MENU_REST], { clearProps: 'all' }) });
+    gsap.to('.menu__bg', { clipPath: 'inset(0 0 100% 0)', duration: 0.6, ease: 'expo.inOut', delay: 0.05 });
   }
+  // powrót przyciskiem „wstecz” (strona z pamięci przeglądarki): menu zawsze zamknięte i przewijanie włączone
+  window.addEventListener('pageshow', (e) => { if (e.persisted) { closeMenu(true); lenis?.start(); } });
   menuBtn?.addEventListener('click', () => (root.classList.contains('menu-open') ? closeMenu() : openMenu()));
   // link do strony, na której już jesteśmy: po prostu zamknij menu
   $$('.menu__a, .hnav__a').forEach((a) => a.addEventListener('click', (e) => {
