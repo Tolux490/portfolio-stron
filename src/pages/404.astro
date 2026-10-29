@@ -23,10 +23,11 @@ const b = import.meta.env.BASE_URL.replace(/\/$/, '');
     <Curtain />
     <div class="grain" aria-hidden="true"></div>
     <main class="e404 wrap">
-      <p class="lab mono">[ Error 404 ] · Vervo Studio</p>
+      <p class="lab mono">Error 404 · Vervo Studio</p>
       <h1 class="e404__h"><span>Row</span><span class="o">not</span><span class="a">found.</span></h1>
       <p class="e404__p">The link may be out of date or the address was mistyped. Head back to the homepage, you can reach everything from there.</p>
-      <p class="e404__p e404__pl" lang="pl">Tej strony tu nie ma. <a href={`${b}/pl/`}>Wróć na stronę główną</a>.</p>
+      <p class="e404__p e404__pl" lang="pl">Ta strona nie istnieje. <a href={`${b}/pl/`}>Wróć na stronę główną</a>.</p>
+      <p class="e404__p e404__pl" lang="nl">Deze pagina bestaat niet (meer). <a href={`${b}/nl/`}>Ga naar de homepage</a>.</p>
       <div class="e404__cta">
         <a class="btn btn--acc" href={`${b}/`}><span>Homepage</span><span aria-hidden="true">→</span></a>
         <a class="btn btn--line" href={`${b}/work/`}><span>See my work</span></a>

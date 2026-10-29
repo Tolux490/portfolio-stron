@@ -310,10 +310,11 @@ main > .stage { background: transparent; }
 @media (min-width: 900px) { .mani__txt { max-width: 19ch; } .mani .proof { max-width: 56%; } }
 @media (max-width: 899px) { .mani { padding-top: 52svh; align-items: flex-start; } }
 .mani__txt .w { opacity: 0.16; transition: none; }
-.proof { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: clamp(3rem, 7vw, 5.5rem); background: var(--line); border: 1px solid var(--line); }
+.proof { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: clamp(3rem, 7vw, 5.5rem); background: var(--line); border: 1px solid var(--line); }
 @media (min-width: 820px) { .proof { grid-template-columns: repeat(4, 1fr); } }
-.proof li { background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 1.4rem 1.3rem; display: grid; gap: 0.4rem; }
-.proof b { white-space: nowrap; font-family: var(--font-d); font-weight: 600; letter-spacing: -0.025em; font-size: clamp(2.6rem, 4.6vw, 4.4rem); line-height: 0.9; color: var(--acc); }
+.proof li { background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 1.4rem clamp(0.9rem, 4vw, 1.3rem); display: grid; gap: 0.4rem; }
+.proof b { white-space: nowrap; font-family: var(--font-d); font-weight: 600; letter-spacing: -0.025em; font-size: clamp(2.1rem, 4.6vw, 4.4rem); line-height: 0.9; color: var(--acc); }
+@media (min-width: 400px) { .proof b { font-size: clamp(2.6rem, 4.6vw, 4.4rem); } }
 .proof span { color: var(--fg-2); font-size: 0.92rem; }
 
 /* SPIS ROZDZIAŁÓW na stronie głównej: duże wiersze, podgląd jedzie za kursorem */
