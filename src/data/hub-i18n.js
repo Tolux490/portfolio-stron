@@ -1,5 +1,5 @@
 // Treść strony głównej Vervo Studio w trzech językach (EN domyślny, PL, NL).
-// Ton osobisty: Antoni mówi w pierwszej osobie, Vervo Studio to marka. Bez myślników w roli pauzy.
+// Ton osobisty: Anthony mówi w pierwszej osobie, Vervo Studio to marka. Bez myślników w roli pauzy.
 export const LANGS = ['en', 'pl', 'nl'];
 export const DEFAULT_LANG = 'en';
 
@@ -47,9 +47,9 @@ export const T = {
   en: {
     meta: {
       ogLocale: 'en_US',
-      title: 'Antoni Antczak | Excel, Google Sheets & web freelancer | Vervo Studio',
+      title: 'Anthony A. | Excel, Google Sheets & web freelancer | Vervo Studio',
       description: 'Freelance data cleaning, Excel reports, Google Sheets automation and fast websites for small businesses. Business Analytics student, certified in SQL and Python.',
-      ogTitle: 'Antoni Antczak | Vervo Studio',
+      ogTitle: 'Anthony A. | Vervo Studio',
       ogDescription: 'Clean data, smart spreadsheets and websites that work. See the projects, the videos and the certificates.',
     },
     schemaDesc: 'Freelance data cleaning, spreadsheet automation and websites for small businesses.',
@@ -59,7 +59,7 @@ export const T = {
     hero: {
       available: 'Available for new projects',
       h1: 'Clean data, smart spreadsheets <em>and websites that work.</em>',
-      lede: 'Hi, I’m Antoni, a Business Analytics student who freelances as Vervo Studio. I clean up messy Excel files, build Google Sheets systems that run themselves and code fast websites for small businesses.',
+      lede: 'Hi, I’m Anthony, a Business Analytics student who freelances as Vervo Studio. I clean up messy Excel files, build Google Sheets systems that run themselves and code fast websites for small businesses.',
       proof: [
         { b: '300', t: 'orders cleaned in one project' },
         { b: '2', t: 'certificates in SQL and Python' },
@@ -141,7 +141,7 @@ export const T = {
     },
     about: {
       label: 'About',
-      h2: 'Hi, I’m Antoni',
+      h2: 'Hi, I’m Anthony',
       p: [
         'I study Business Analytics, which means I spend my days between data, numbers and the businesses behind them. Vervo Studio is how I put that to work for real clients.',
         'Most small businesses don’t need a big IT project. They need the spreadsheet to add up, the orders to stop getting lost and a website that brings in customers. That’s exactly the kind of work I enjoy.',
@@ -190,7 +190,7 @@ export const T = {
         consent: 'I agree to be contacted about my request.', submit: 'Send message',
       },
     },
-    footer: { tx: 'Vervo Studio is the freelance studio of Antoni Antczak. Data cleaning, spreadsheet automation and websites for small businesses.' },
+    footer: { tx: 'Vervo Studio is the freelance studio of Anthony A. Data cleaning, spreadsheet automation and websites for small businesses.' },
     formMsgs: {
       subject: 'New message from vervostudio.com',
       incomplete: 'Please complete the required fields and consent.',
@@ -203,9 +203,9 @@ export const T = {
   pl: {
     meta: {
       ogLocale: 'pl_PL',
-      title: 'Antoni Antczak | Excel, Arkusze Google i strony www | Vervo Studio',
+      title: 'Anthony A. | Excel, Arkusze Google i strony www | Vervo Studio',
       description: 'Porządkowanie danych w Excelu, raporty, automatyzacje w Arkuszach Google i szybkie strony dla małych firm. Student Business Analytics z certyfikatami z SQL i Pythona.',
-      ogTitle: 'Antoni Antczak | Vervo Studio',
+      ogTitle: 'Anthony A. | Vervo Studio',
       ogDescription: 'Czyste dane, mądre arkusze i strony, które działają. Zobacz projekty, nagrania i certyfikaty.',
     },
     schemaDesc: 'Porządkowanie danych, automatyzacje arkuszy i strony internetowe dla małych firm.',
@@ -215,7 +215,7 @@ export const T = {
     hero: {
       available: 'Przyjmuję nowe projekty',
       h1: 'Czyste dane, mądre arkusze <em>i strony, które działają.</em>',
-      lede: 'Cześć, jestem Antoni. Studiuję Business Analytics i jako Vervo Studio pomagam małym firmom: porządkuję chaotyczne pliki Excela, buduję w Arkuszach Google systemy, które działają same, i koduję szybkie strony internetowe.',
+      lede: 'Cześć, jestem Anthony. Studiuję Business Analytics i jako Vervo Studio pomagam małym firmom: porządkuję chaotyczne pliki Excela, buduję w Arkuszach Google systemy, które działają same, i koduję szybkie strony internetowe.',
       proof: [
         { b: '300', t: 'zamówień uporządkowanych w jednym projekcie' },
         { b: '2', t: 'certyfikaty z SQL i Pythona' },
@@ -297,7 +297,7 @@ export const T = {
     },
     about: {
       label: 'O mnie',
-      h2: 'Cześć, jestem Antoni',
+      h2: 'Cześć, jestem Anthony',
       p: [
         'Studiuję Business Analytics, czyli na co dzień siedzę między danymi, liczbami i firmami, które za nimi stoją. Vervo Studio to mój sposób, żeby wykorzystać to w pracy dla prawdziwych klientów.',
         'Większość małych firm nie potrzebuje wielkiego projektu IT. Potrzebuje, żeby arkusz się zgadzał, zamówienia przestały ginąć, a strona przyprowadzała klientów. To jest dokładnie ta praca, którą lubię.',
@@ -346,7 +346,7 @@ export const T = {
         consent: 'Zgadzam się na kontakt w sprawie mojego zapytania.', submit: 'Wyślij wiadomość',
       },
     },
-    footer: { tx: 'Vervo Studio to freelance’owe studio Antoniego Antczaka. Porządkowanie danych, automatyzacje arkuszy i strony dla małych firm.' },
+    footer: { tx: 'Vervo Studio to freelance’owe studio, które prowadzi Anthony A. Porządkowanie danych, automatyzacje arkuszy i strony dla małych firm.' },
     formMsgs: {
       subject: 'Nowa wiadomość ze strony vervostudio.com',
       incomplete: 'Uzupełnij wymagane pola i zgodę.',
@@ -359,9 +359,9 @@ export const T = {
   nl: {
     meta: {
       ogLocale: 'nl_NL',
-      title: 'Antoni Antczak | Excel, Google Sheets & websites | Vervo Studio',
+      title: 'Anthony A. | Excel, Google Sheets & websites | Vervo Studio',
       description: 'Freelance data opschonen, Excel-rapporten, automatisering in Google Sheets en snelle websites voor kleine bedrijven. Business Analytics-student met certificaten in SQL en Python.',
-      ogTitle: 'Antoni Antczak | Vervo Studio',
+      ogTitle: 'Anthony A. | Vervo Studio',
       ogDescription: 'Schone data, slimme spreadsheets en websites die werken. Bekijk de projecten, de video’s en de certificaten.',
     },
     schemaDesc: 'Freelance data opschonen, spreadsheet-automatisering en websites voor kleine bedrijven.',
@@ -371,7 +371,7 @@ export const T = {
     hero: {
       available: 'Beschikbaar voor nieuwe projecten',
       h1: 'Schone data, slimme spreadsheets <em>en websites die werken.</em>',
-      lede: 'Hoi, ik ben Antoni. Ik studeer Business Analytics en help als Vervo Studio kleine bedrijven: ik maak rommelige Excel-bestanden schoon, bouw systemen in Google Sheets die vanzelf draaien en programmeer snelle websites.',
+      lede: 'Hoi, ik ben Anthony. Ik studeer Business Analytics en help als Vervo Studio kleine bedrijven: ik maak rommelige Excel-bestanden schoon, bouw systemen in Google Sheets die vanzelf draaien en programmeer snelle websites.',
       proof: [
         { b: '300', t: 'bestellingen opgeschoond in één project' },
         { b: '2', t: 'certificaten in SQL en Python' },
@@ -453,7 +453,7 @@ export const T = {
     },
     about: {
       label: 'Over mij',
-      h2: 'Hoi, ik ben Antoni',
+      h2: 'Hoi, ik ben Anthony',
       p: [
         'Ik studeer Business Analytics, dus ik zit dagelijks tussen data, cijfers en de bedrijven daarachter. Met Vervo Studio zet ik dat in voor echte klanten.',
         'De meeste kleine bedrijven hebben geen groot IT-project nodig. Ze willen dat de spreadsheet klopt, dat bestellingen niet meer zoekraken en dat de website klanten oplevert. Precies dat soort werk vind ik leuk.',
@@ -502,7 +502,7 @@ export const T = {
         consent: 'Ik ga akkoord met contact over mijn aanvraag.', submit: 'Verstuur bericht',
       },
     },
-    footer: { tx: 'Vervo Studio is de freelance studio van Antoni Antczak. Data opschonen, spreadsheet-automatisering en websites voor kleine bedrijven.' },
+    footer: { tx: 'Vervo Studio is de freelance studio van Anthony A. Data opschonen, spreadsheet-automatisering en websites voor kleine bedrijven.' },
     formMsgs: {
       subject: 'Nieuw bericht via vervostudio.com',
       incomplete: 'Vul de verplichte velden en toestemming in.',

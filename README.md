@@ -2,7 +2,7 @@
 
 ## Strona główna (vervostudio.com)
 
-Osobista strona Antoniego / Vervo Studio pod zlecenia z Fiverr. Angielski jest pod `/`,
+Osobista strona Vervo Studio (Anthony A.) pod zlecenia z Fiverr. Angielski jest pod `/`,
 polski pod `/pl/`, niderlandzki pod `/nl/` (stary adres `/en/` przekierowuje na `/`).
 
 - Wszystkie teksty i lista projektów: `src/data/hub-i18n.js`.
