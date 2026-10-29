@@ -4,7 +4,7 @@ export const LANGS = ['en', 'pl', 'nl'];
 export const DEFAULT_LANG = 'en';
 
 // Link do profilu na Fiverr. Puste = przyciski „Fiverr” znikają, a CTA prowadzą do formularza.
-export const FIVERR_URL = '';
+export const FIVERR_URL = 'https://www.fiverr.com/anthony_antc';
 export const GITHUB_URL = 'https://github.com/Tolux490';
 export const EMAIL = 'antoni.antczak05@gmail.com';
 
