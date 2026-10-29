@@ -3,7 +3,7 @@ import '@fontsource-variable/archivo/wdth.css';
 import '@fontsource-variable/geist-mono';
 import '../styles/hub.css';
 import {
-  T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, siteHref, SITE_THUMBS, CERTS,
+  T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, siteHref, siteThumb, CERTS,
   FIVERR_URL, GITHUB_URL, LINKEDIN_URL, UPWORK_URL, FICHES_URL, FORM_ID, EMAIL_PARTS, LAB,
 } from '../data/hub-i18n.js';
 
@@ -382,7 +382,7 @@ const wordmark = 'VERVO'.split('');
                 <a class="site" href={`${b}${siteHref(i, lang)}`} data-cursor="open">
                   <span class="site__win">
                     <span class="site__bar mono"><span><i></i><i></i><i></i></span><span>vervostudio.com{siteHref(i, lang)}</span></span>
-                    <span class="site__img"><img src={asset(SITE_THUMBS[i])} width="960" height="600" alt={`${r.nazwa}, ${r.bran}`} loading="lazy" decoding="async" /></span>
+                    <span class="site__img"><img src={asset(siteThumb(i, lang))} width="960" height="600" alt={`${r.nazwa}, ${r.bran}`} loading="lazy" decoding="async" /></span>
                   </span>
                   <span class="site__meta">
                     <span class="mono site__n">{pad(i + 1)} / {pad(t.sites.items.length + 1)}</span>

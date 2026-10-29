@@ -41,6 +41,8 @@ export const SITE_HREFS = ['/restauracja/', '/oktan/', '/nieruchomosci/', '/kawi
 // Wersja angielska każdego demo leży pod <adres>/en/ — strona EN i NL linkuje do niej, PL do polskiej.
 export const siteHref = (i, lang) => (lang === 'pl' ? SITE_HREFS[i] : `${SITE_HREFS[i]}en/`);
 export const SITE_THUMBS = ['img/sites/restauracja.webp', 'img/sites/oktan.webp', 'img/sites/nieruchomosci.webp', 'img/sites/kawiarnia.webp', 'img/sites/mechanik.webp'];
+// Miniatura w języku strony: EN i NL pokazują zrzut wersji angielskiej (<nazwa>-en.webp).
+export const siteThumb = (i, lang) => (lang === 'pl' ? SITE_THUMBS[i] : SITE_THUMBS[i].replace('.webp', '-en.webp'));
 export const FICHES_URL = 'https://tolux490.github.io/Fiches/';
 export const LAB = [
   { href: '/lab/sales-dashboard/', img: 'img/lab/sales-dashboard.webp' },
