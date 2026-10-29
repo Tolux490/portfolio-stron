@@ -697,7 +697,7 @@ const serviceIcons = [
 
       /* certyfikaty */
       .certs { display: grid; gap: 1.25rem; }
-      @media (min-width: 700px) { .certs { grid-template-columns: repeat(3, 1fr); } }
+      @media (min-width: 700px) { .certs { grid-template-columns: repeat(2, 1fr); max-width: 840px; } }
       .cert { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column; }
       .cert__img { display: block; padding: 1rem; background: var(--paper); border: 0; border-bottom: 1px solid var(--line); }
       .cert__img img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 24px -14px rgba(22,24,29,0.35); transition: transform 0.4s var(--ease); }

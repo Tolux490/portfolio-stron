@@ -36,7 +36,6 @@ export const SITE_THUMBS = ['img/sites/restauracja.webp', 'img/sites/oktan.webp'
 export const FICHES_URL = 'https://tolux490.github.io/Fiches/';
 export const CERTS = [
   { t: 'SQL (Intermediate)', org: 'HackerRank', date: '2026-10-23', img: 'img/certs/hackerrank-sql-intermediate.webp', w: 1200, h: 914, verify: 'https://www.hackerrank.com/certificates/2e0af8f9bf52' },
-  { t: 'SQL (Basic)', org: 'HackerRank', date: '2026-10-23', img: 'img/certs/hackerrank-sql-basic.webp', w: 1200, h: 914, verify: 'https://www.hackerrank.com/certificates/c82d7b5223cf' },
   { t: 'Python', org: 'Kaggle', date: '2026-10-23', img: 'img/certs/kaggle-python.webp', w: 1200, h: 740 },
 ];
 
@@ -59,7 +58,7 @@ export const T = {
       lede: 'Hi, I’m Antoni, a Business Analytics student who freelances as Vervo Studio. I clean up messy Excel files, build Google Sheets systems that run themselves and code fast websites for small businesses.',
       proof: [
         { b: '300', t: 'orders cleaned in one project' },
-        { b: '3', t: 'certificates in SQL and Python' },
+        { b: '2', t: 'certificates in SQL and Python' },
         { b: '5', t: 'live website demos' },
         { b: '< 24 h', t: 'reply time' },
       ],
@@ -215,7 +214,7 @@ export const T = {
       lede: 'Cześć, jestem Antoni. Studiuję Business Analytics i jako Vervo Studio pomagam małym firmom: porządkuję chaotyczne pliki Excela, buduję w Arkuszach Google systemy, które działają same, i koduję szybkie strony internetowe.',
       proof: [
         { b: '300', t: 'zamówień uporządkowanych w jednym projekcie' },
-        { b: '3', t: 'certyfikaty z SQL i Pythona' },
+        { b: '2', t: 'certyfikaty z SQL i Pythona' },
         { b: '5', t: 'działających stron demo' },
         { b: '< 24 h', t: 'czas odpowiedzi' },
       ],
@@ -371,7 +370,7 @@ export const T = {
       lede: 'Hoi, ik ben Antoni. Ik studeer Business Analytics en help als Vervo Studio kleine bedrijven: ik maak rommelige Excel-bestanden schoon, bouw systemen in Google Sheets die vanzelf draaien en programmeer snelle websites.',
       proof: [
         { b: '300', t: 'bestellingen opgeschoond in één project' },
-        { b: '3', t: 'certificaten in SQL en Python' },
+        { b: '2', t: 'certificaten in SQL en Python' },
         { b: '5', t: 'live website-demo’s' },
         { b: '< 24 u', t: 'reactietijd' },
       ],
