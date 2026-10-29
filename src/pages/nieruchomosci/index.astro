@@ -2,6 +2,7 @@
 import { nieruchomosci as biz } from '../../data/firmy.js';
 import Foto from '../../components/Foto.astro';
 
+const zdjecia = (n) => (n === 1 ? 'zdjęcie' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'zdjęcia' : 'zdjęć');
 const tel = biz.phone.replace(/[^+\d]/g, '');
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const mapEmbed = 'https://maps.google.com/maps?q=Wo%C5%82omin%20Legion%C3%B3w%208&z=16&output=embed';
@@ -13,10 +14,11 @@ const nawigacja = [
   { href: '#oglad', label: 'Umów oglądanie' },
 ];
 
+// Zdjęcia: Unsplash (licencja Unsplash, bez obowiązku podawania autora). Pierwsze idzie na kartę oferty.
 const oferty = [
   {
     id: 'kob-48', typ: 'Mieszkanie', gdzie: 'Wołomin, ul. Kobyłkowska', cena: 465000,
-    m: 48, pok: 2, pietro: '3/4', rok: '2018', foto: '', zdjec: 6, rynek: 'wtórny',
+    m: 48, pok: 2, pietro: '3/4', rok: '2018', fotos: ['kontur/m2-salon.webp', 'kontur/m2-kuchnia.webp', 'kontur/m2-pokoj.webp'], rynek: 'wtórny',
     stan: 'do wprowadzenia', ogrzewanie: 'miejskie', dostepne: 'od zaraz',
     opis: 'Dwa pokoje w czteropiętrowym budynku z 2018 roku, na trzecim piętrze z windą. Rozkład bez przechodnich pomieszczeń, kuchnia otwarta na salon, sypialnia od strony podwórza. Mieszkanie po jednym właścicielu, bez konieczności remontu.',
     atuty: ['Balkon 6 m²', 'Miejsce postojowe w hali', 'Winda', 'Komórka lokatorska'],
@@ -25,7 +27,7 @@ const oferty = [
   },
   {
     id: 'duc-142', typ: 'Dom', gdzie: 'Duczki', cena: 1190000,
-    m: 142, pok: 5, pietro: '—', rok: '2009', foto: '', zdjec: 8, rynek: 'wtórny',
+    m: 142, pok: 5, pietro: '—', rok: '2009', fotos: ['kontur/dom-elewacja.webp', 'kontur/dom-salon.webp', 'kontur/dom-jadalnia.webp'], rynek: 'wtórny',
     stan: 'dobry', ogrzewanie: 'gazowe', dostepne: 'od stycznia',
     opis: 'Dom wolnostojący na działce 780 m², parter z salonem i kuchnią, na piętrze cztery sypialnie. Garaż w bryle budynku, taras od południa. Dach kryty blachodachówką, wymieniony w 2019 roku.',
     atuty: ['Działka 780 m²', 'Garaż dwustanowiskowy', 'Taras 24 m²', 'Kominek', 'Ogród urządzony'],
@@ -34,7 +36,7 @@ const oferty = [
   },
   {
     id: 'cen-62', typ: 'Mieszkanie', gdzie: 'Wołomin, centrum', cena: 549000,
-    m: 62, pok: 3, pietro: '1/3', rok: '1998', foto: '', zdjec: 5, rynek: 'wtórny',
+    m: 62, pok: 3, pietro: '1/3', rok: '1998', fotos: ['kontur/m3-salon.webp', 'kontur/m3-pokoj.webp', 'kontur/m3-blok.webp'], rynek: 'wtórny',
     stan: 'do odświeżenia', ogrzewanie: 'miejskie', dostepne: 'od zaraz',
     opis: 'Trzy pokoje w kamienicy z 1998 roku, pierwsze piętro. Wysokie sufity, duże okna od strony ulicy. Mieszkanie wymaga odświeżenia — instalacje sprawne, do wymiany podłogi i kuchnia.',
     atuty: ['Wysokość 2,9 m', 'Piwnica 8 m²', 'Balkon', 'Niski czynsz'],
@@ -43,7 +45,7 @@ const oferty = [
   },
   {
     id: 'zag-1100', typ: 'Działka', gdzie: 'Zagościniec', cena: 289000,
-    m: 1100, pok: 0, pietro: '—', rok: 'MPZP', foto: '', zdjec: 4, rynek: 'wtórny',
+    m: 1100, pok: 0, pietro: '—', rok: 'MPZP', fotos: ['kontur/dzialka.webp', 'kontur/dzialka-okolica.webp'], rynek: 'wtórny',
     stan: 'niezabudowana', ogrzewanie: '—', dostepne: 'od zaraz',
     opis: 'Działka budowlana 1100 m² objęta miejscowym planem zagospodarowania: zabudowa mieszkaniowa jednorodzinna. Kształt prostokątny, wymiary 22 × 50 m, dostęp z drogi asfaltowej.',
     atuty: ['MPZP: zabudowa jednorodzinna', 'Prąd i woda w drodze', 'Gaz w drodze', 'Wymiary 22 × 50 m'],
@@ -52,7 +54,7 @@ const oferty = [
   },
   {
     id: 'kob-31', typ: 'Mieszkanie', gdzie: 'Kobyłka', cena: 339000,
-    m: 31, pok: 1, pietro: '2/5', rok: '2021', foto: '', zdjec: 5, rynek: 'wtórny',
+    m: 31, pok: 1, pietro: '2/5', rok: '2021', fotos: ['kontur/kawalerka.webp', 'kontur/kawalerka-kacik.webp', 'kontur/kawalerka-budynek.webp'], rynek: 'wtórny',
     stan: 'do wprowadzenia', ogrzewanie: 'miejskie', dostepne: 'od zaraz',
     opis: 'Kawalerka 31 m² w budynku z 2021 roku, drugie piętro z windą. Aneks kuchenny, duży balkon, okna na wschód. Idealna pod wynajem — czynsz najmu w okolicy to 1900–2200 zł.',
     atuty: ['Balkon 5 m²', 'Winda', 'Rowerownia w budynku', 'Pod wynajem'],
@@ -61,7 +63,7 @@ const oferty = [
   },
   {
     id: 'mar-118', typ: 'Dom', gdzie: 'Marki', cena: 985000,
-    m: 118, pok: 4, pietro: '—', rok: '2016', foto: '', zdjec: 7, rynek: 'wtórny',
+    m: 118, pok: 4, pietro: '—', rok: '2016', fotos: ['kontur/blizniak.webp', 'kontur/blizniak-salon.webp', 'kontur/blizniak-bryla.webp'], rynek: 'wtórny',
     stan: 'bardzo dobry', ogrzewanie: 'pompa ciepła', dostepne: 'od marca',
     opis: 'Dom w zabudowie bliźniaczej z 2016 roku, działka 320 m². Pompa ciepła i fotowoltaika 6 kWp — rachunki za ogrzewanie poniżej 200 zł miesięcznie. Salon z wyjściem na taras, cztery sypialnie na piętrze.',
     atuty: ['Fotowoltaika 6 kWp', 'Pompa ciepła', 'Działka 320 m²', 'Dwa miejsca postojowe', 'Rekuperacja'],
@@ -199,14 +201,14 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
             <article class="oferta reveal" data-typ={o.typ} data-cena={o.cena} data-m={o.m} data-id={o.id}>
               <div class="oferta__media">
                 <button class="oferta__otworz" type="button" data-otworz={o.id} aria-label={`Zobacz szczegóły: ${o.typ}, ${o.gdzie}`}>
-                  <Foto src={o.foto} alt={`${o.typ} — ${o.gdzie}`} ratio="3/2" label={`${o.typ} · ${o.gdzie}`} />
+                  <Foto src={o.fotos[0]} alt={`${o.typ} — ${o.gdzie}`} ratio="3/2" label={`${o.typ} · ${o.gdzie}`} />
                 </button>
                 <button class="serce" type="button" data-serce={o.id} aria-label="Zapisz ofertę" aria-pressed="false">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6">
                     <path d="M12 20.3 4.6 13a4.6 4.6 0 1 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 1 1 19.4 13z"/>
                   </svg>
                 </button>
-                <span class="oferta__zdjec">{o.zdjec} zdjęć</span>
+                <span class="oferta__zdjec">{o.fotos.length} {zdjecia(o.fotos.length)}</span>
               </div>
 
               <div class="oferta__ciało">
@@ -707,6 +709,7 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
   .pnl__galeria { display: flex; gap: 0.6rem; overflow-x: auto; margin: 1.75rem 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .pnl__galeria::-webkit-scrollbar { display: none; }
   .pnl__galeria > div { flex: 0 0 78%; scroll-snap-align: start; }
+  .pnl__galeria img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
   .pnl__opis { color: var(--szary); margin: 1.5rem 0; }
   .pnl__sekcja { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--linia); }
   .pnl__sekcja h4 { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--szary); font-weight: 400; margin: 0 0 0.9rem; }
@@ -754,7 +757,7 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
   @media (min-width: 980px) { .pasek { display: none; } body { padding-bottom: 0; } }
 </style>
 
-<script define:vars={{ formKey: biz.formKey, mailKontakt: biz.email, dane: oferty }}>
+<script define:vars={{ formKey: biz.formKey, mailKontakt: biz.email, dane: oferty, base }}>
   // ---- nagłówek ----
   const hdr = document.getElementById('hdr');
   const przelaczHdr = () => hdr?.classList.toggle('is-stuck', window.scrollY > 60);
@@ -881,8 +884,8 @@ const godziny = ['9:00', '10:00', '11:00', '12:00', '15:00', '16:00', '17:00'];
       <p class="pnl__mkw">${zl(mkw)} zł/m² · rynek ${o.rynek} · dostępne ${o.dostepne}</p>
 
       <div class="pnl__galeria">
-        ${Array.from({ length: Math.min(o.zdjec, 4) }, (_, i) =>
-          `<div class="ph" style="aspect-ratio:3/2">Zdjęcie ${i + 1} z ${o.zdjec}</div>`).join('')}
+        ${o.fotos.slice(0, 4).map((f, i) =>
+          `<div><img src="${base}/img/${f}" alt="${o.typ}, ${o.gdzie}: zdjęcie ${i + 1} z ${o.fotos.length}" loading="lazy" decoding="async" /></div>`).join('')}
       </div>
 
       <p class="pnl__opis">${o.opis}</p>
