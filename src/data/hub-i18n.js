@@ -15,7 +15,6 @@ export const UPWORK_URL = '';
 export const FORM_ID = '';
 export const EMAIL_PARTS = ['antoni.antczak05', 'gmail', 'com'];
 
-export const NAV_HREFS = ['#work', '#websites', '#services', '#about', '#contact'];
 export const SKILLS = ['Excel', 'Google Sheets', 'Google Forms', 'Apps Script', 'SQL', 'Python', 'HTML · CSS · JS', 'Astro'];
 
 // Media wspólne dla wszystkich języków. Teksty (podpisy, opisy) są w T[lang] pod tym samym indeksem.
@@ -41,6 +40,13 @@ export const CASE_MEDIA = [
 export const SITE_HREFS = ['/restauracja/', '/oktan/', '/nieruchomosci/', '/kawiarnia/', '/mechanik/'];
 export const SITE_THUMBS = ['img/sites/restauracja.webp', 'img/sites/oktan.webp', 'img/sites/nieruchomosci.webp', 'img/sites/kawiarnia.webp', 'img/sites/mechanik.webp'];
 export const FICHES_URL = 'https://tolux490.github.io/Fiches/';
+export const LAB = [
+  { href: '/lab/sales-dashboard/', img: 'img/lab/sales-dashboard.webp' },
+  { href: '/lab/sql/', img: 'img/lab/sql.webp' },
+  { href: '/lab/csv-cleaner/', img: 'img/lab/csv-cleaner.webp' },
+  { href: '/lab/cohorts/', img: 'img/lab/cohorts.webp' },
+  { href: '/lab/invoice/', img: 'img/lab/invoice.webp' },
+];
 export const CERTS = [
   { t: 'SQL (Intermediate)', org: 'HackerRank', date: '2026-10-23', img: 'img/certs/hackerrank-sql-intermediate.webp', w: 1200, h: 914, verify: 'https://www.hackerrank.com/certificates/2e0af8f9bf52' },
   { t: 'Python', org: 'Kaggle', date: '2026-10-23', img: 'img/certs/kaggle-python.webp', w: 1200, h: 740 },
@@ -66,7 +72,7 @@ export const T = {
       startProject: 'Start a project',
       backTop: 'Back to top',
       theme: 'Theme', themes: { amber: 'Amber', lime: 'Lime', paper: 'Paper' },
-      sections: ['Intro', 'Work', 'Websites', 'Services', 'Skills', 'About', 'Process', 'FAQ', 'Contact'],
+      sections: ['Intro', 'Work', 'Lab', 'Websites', 'Services', 'Skills', 'About', 'Process', 'FAQ', 'Contact'],
       handmade: 'Designed & built by hand. No templates.',
     },
     meta: {
@@ -83,16 +89,41 @@ export const T = {
     hero: {
       available: 'Available for new projects',
       h1: 'Clean data, smart spreadsheets <em>and websites that work.</em>',
-      lede: 'Hi, I’m Anthony, a Business Analytics student who freelances as Vervo Studio. I clean up messy Excel files, build Google Sheets systems that run themselves and code fast websites for small businesses.',
+      lede: 'I’m Anthony, a Business Analytics student working independently as Vervo Studio. I turn messy spreadsheets into reports you can trust, automate the admin around them and build fast websites for small businesses.',
       proof: [
         { b: '300', t: 'orders cleaned in one project' },
         { b: '2', t: 'certificates in SQL and Python' },
-        { b: '5', t: 'live website demos' },
+        { b: '10', t: 'live demos and tools to try' },
         { b: '< 24 h', t: 'reply time' },
       ],
       chips: ['18 duplicates removed', 'Updates automatically'],
     },
     skillsLabel: 'Tools I work with',
+    toolkit: [
+      'Formulas, pivot tables, validation and clean reporting',
+      'Shared trackers, dashboards and live summaries',
+      'Order and intake forms that feed straight into a sheet',
+      'Automations between Sheets, Gmail and Calendar',
+      'Querying, joining and aggregating data, HackerRank certified',
+      'Scripting and repeatable analysis on larger files',
+      'Fast, hand-coded websites without page builders',
+      'The framework this site is built with',
+    ],
+    lab: {
+      label: 'Lab',
+      h2: 'Concept work',
+      lede: 'Self-initiated projects that show how I work with data and code, end to end. Each one runs live in your browser on generated sample data.',
+      tag: 'Concept · sample data',
+      open: 'Open live ↗',
+      items: [
+        { t: 'Sales dashboard', k: 'Dashboard · JavaScript · SVG', o: 'A full year of orders for a fictional coffee roaster, turned into an interactive dashboard: revenue trend, channel and region split, product performance and a weekday by hour heatmap. Every chart responds to the filters.', tags: ['KPIs with deltas', 'Filters', 'Heatmap'] },
+        { t: 'SQL playground', k: 'SQL · SQLite in the browser', o: 'A bike-share database you can query yourself. Eight analysis questions come with the SQL that answers them and a short finding; edit any query and run it against the real tables.', tags: ['Live SQL', 'Joins & window functions', 'Auto charts'] },
+        { t: 'CSV cleaner', k: 'Tool · JavaScript', o: 'The cleaning steps I use on client exports, as a small tool: dates, prices, countries, casing and duplicates fixed in one pass, with every change highlighted. Files never leave your computer.', tags: ['Upload your own', 'Change tracking', 'Download clean CSV'] },
+        { t: 'Cohort retention', k: 'Analysis · Cohorts', o: 'Twelve monthly cohorts of a meal-kit subscription: who keeps paying and who leaves, the effect of a discount offer and of a better onboarding, written up as findings.', tags: ['Cohort heatmap', 'Retention curves', 'Findings'] },
+        { t: 'Invoice generator', k: 'Web app · Print CSS', o: 'A small app for freelancers and shops: line items, VAT and discount calculated live, invoice numbering, and a clean A4 page ready to print or save as PDF.', tags: ['Live A4 preview', 'Saves locally', 'Print to PDF'] },
+      ],
+    },
+    profile: { name: 'Anthony A.', status: 'available' },
     services: {
       label: 'Services',
       h2: 'How I can help',
@@ -165,11 +196,11 @@ export const T = {
     },
     about: {
       label: 'About',
-      h2: 'Hi, I’m Anthony',
+      h2: 'The person behind Vervo',
       p: [
-        'I study Business Analytics, which means I spend my days between data, numbers and the businesses behind them. Vervo Studio is how I put that to work for real clients.',
-        'Most small businesses don’t need a big IT project. They need the spreadsheet to add up, the orders to stop getting lost and a website that brings in customers. That’s exactly the kind of work I enjoy.',
-        'I keep things simple: I explain what I’ll do in plain words, agree on the price up front and deliver files you fully own.',
+        'I’m Anthony, a Business Analytics student. Vervo Studio is where that training meets real projects for small businesses and independent sellers.',
+        'Most of my work sits between the numbers and the day to day: a spreadsheet that finally adds up, an order flow that stops losing information, a website that answers the questions customers actually ask.',
+        'Before anything starts you get a clear scope and a fixed price. During the work you get plain-language updates. At the end you get files that are fully yours.',
       ],
       facts: [{ k: 'Studying', v: 'Business Analytics' }, { k: 'Languages', v: 'Polish, English' }, { k: 'Works', v: 'Remotely, worldwide' }],
       why: [
@@ -193,12 +224,12 @@ export const T = {
       label: 'FAQ',
       h2: 'Common questions',
       items: [
-        { q: 'Can I order through Fiverr?', a: 'Yes. Fiverr is the easiest way: your payment is protected and you get a clear delivery date. You can also write to me directly using the form below.' },
-        { q: 'What do you need from me to start?', a: 'The file or a copy of it, and a few sentences about what you want to get out of it. If something is unclear, I ask before I start.' },
-        { q: 'Excel or Google Sheets?', a: 'Both. I work in whatever you already use. If you’re not sure, I’ll suggest what fits your team best.' },
-        { q: 'Is my data safe with you?', a: 'I only use your data for your project, never share it and delete my copy after delivery if you ask. For sensitive files you can send a sample with the private details removed.' },
-        { q: 'How long does it take?', a: 'It depends on the size of the job. You get an exact delivery date in my quote, before you pay anything.' },
-        { q: 'Do you build websites for businesses outside Poland?', a: 'Yes. I build sites in English and Polish and can set up the domain and hosting for you.' },
+        { q: 'How do we get started?', a: 'Send the file, or a sample of it, with a few lines on what you need. Within 24 hours you get a short plan with the scope, a fixed price and a delivery date.' },
+        { q: 'Where can I hire you?', a: 'On Fiverr, where your payment is held until delivery, or directly through the contact form below. The process and the quality are the same either way.' },
+        { q: 'How do you handle confidential data?', a: 'Your data is used for your project only and is never shared. On request I delete my copy after delivery, and I am happy to sign an NDA. For sensitive files, an anonymised sample is often enough to start.' },
+        { q: 'Excel or Google Sheets?', a: 'Both. I build in whatever your team already uses, so nobody has to learn a new tool. If you are undecided, I recommend the option that fits how you work.' },
+        { q: 'Will I be able to maintain it myself?', a: 'Yes. Every delivery includes short documentation: what was changed, how the formulas or scripts work and how to add new data. There is no lock-in.' },
+        { q: 'What if something needs adjusting after delivery?', a: 'Small adjustments within the agreed scope are included. New requirements are quoted separately, so the price you agree to is the price you pay.' },
       ],
     },
     kontakt: {
@@ -243,7 +274,7 @@ export const T = {
       startProject: 'Zacznijmy projekt',
       backTop: 'Na górę',
       theme: 'Motyw', themes: { amber: 'Bursztyn', lime: 'Limonka', paper: 'Papier' },
-      sections: ['Start', 'Projekty', 'Strony', 'Usługi', 'Certyfikaty', 'O mnie', 'Proces', 'FAQ', 'Kontakt'],
+      sections: ['Start', 'Projekty', 'Lab', 'Strony', 'Usługi', 'Certyfikaty', 'O mnie', 'Proces', 'FAQ', 'Kontakt'],
       handmade: 'Zaprojektowane i zakodowane ręcznie. Bez szablonów.',
     },
     meta: {
@@ -260,16 +291,41 @@ export const T = {
     hero: {
       available: 'Przyjmuję nowe projekty',
       h1: 'Czyste dane, mądre arkusze <em>i strony, które działają.</em>',
-      lede: 'Cześć, jestem Anthony. Studiuję Business Analytics i jako Vervo Studio pomagam małym firmom: porządkuję chaotyczne pliki Excela, buduję w Arkuszach Google systemy, które działają same, i koduję szybkie strony internetowe.',
+      lede: 'Nazywam się Anthony, studiuję Business Analytics i pracuję samodzielnie jako Vervo Studio. Zamieniam chaotyczne arkusze w raporty, którym można ufać, automatyzuję pracę wokół nich i buduję szybkie strony dla małych firm.',
       proof: [
         { b: '300', t: 'zamówień uporządkowanych w jednym projekcie' },
         { b: '2', t: 'certyfikaty z SQL i Pythona' },
-        { b: '5', t: 'działających stron demo' },
+        { b: '10', t: 'działających dem i narzędzi' },
         { b: '< 24 h', t: 'czas odpowiedzi' },
       ],
       chips: ['18 duplikatów usuniętych', 'Aktualizuje się samo'],
     },
     skillsLabel: 'Narzędzia, z którymi pracuję',
+    toolkit: [
+      'Formuły, tabele przestawne, walidacja i czytelne raporty',
+      'Wspólne trackery, dashboardy i podsumowania na żywo',
+      'Formularze zamówień i zgłoszeń, które zasilają arkusz',
+      'Automatyzacje między Arkuszami, Gmailem i Kalendarzem',
+      'Zapytania, złączenia i agregacje, certyfikat HackerRank',
+      'Skrypty i powtarzalna analiza większych plików',
+      'Szybkie strony pisane ręcznie, bez kreatorów',
+      'Framework, na którym stoi ta strona',
+    ],
+    lab: {
+      label: 'Lab',
+      h2: 'Projekty koncepcyjne',
+      lede: 'Projekty z własnej inicjatywy, które pokazują, jak pracuję z danymi i kodem od początku do końca. Każdy działa na żywo w przeglądarce, na wygenerowanych danych przykładowych.',
+      tag: 'Koncept · dane przykładowe',
+      open: 'Otwórz na żywo ↗',
+      items: [
+        { t: 'Dashboard sprzedaży', k: 'Dashboard · JavaScript · SVG', o: 'Rok zamówień fikcyjnej palarni kawy zamieniony w interaktywny dashboard: trend przychodu, podział na kanały i regiony, wyniki produktów i mapa cieplna dni i godzin. Każdy wykres reaguje na filtry.', tags: ['KPI ze zmianą', 'Filtry', 'Mapa cieplna'] },
+        { t: 'SQL playground', k: 'SQL · SQLite w przeglądarce', o: 'Baza wypożyczeń rowerów, którą możesz sam odpytywać. Osiem pytań analitycznych z zapytaniem, które na nie odpowiada, i krótkim wnioskiem; każde zapytanie możesz zmienić i uruchomić na prawdziwych tabelach.', tags: ['SQL na żywo', 'Złączenia i funkcje okna', 'Automatyczne wykresy'] },
+        { t: 'Czyszczenie CSV', k: 'Narzędzie · JavaScript', o: 'Kroki czyszczenia, których używam przy eksportach klientów, w formie małego narzędzia: daty, ceny, kraje, wielkość liter i duplikaty poprawione za jednym razem, każda zmiana podświetlona. Pliki nie opuszczają Twojego komputera.', tags: ['Własny plik', 'Śledzenie zmian', 'Pobierz czysty CSV'] },
+        { t: 'Retencja kohort', k: 'Analiza · Kohorty', o: 'Dwanaście miesięcznych kohort subskrypcji zestawów posiłków: kto zostaje, kto odchodzi, jak działa zniżka na start, a jak lepszy onboarding. Wnioski spisane prostym językiem.', tags: ['Mapa kohort', 'Krzywe retencji', 'Wnioski'] },
+        { t: 'Generator faktur', k: 'Aplikacja · Print CSS', o: 'Mała aplikacja dla freelancerów i sklepów: pozycje, VAT i rabat liczone na żywo, numeracja i czysta strona A4 gotowa do druku lub zapisu jako PDF.', tags: ['Podgląd A4', 'Zapis lokalny', 'Druk do PDF'] },
+      ],
+    },
+    profile: { name: 'Anthony A.', status: 'available' },
     services: {
       label: 'Usługi',
       h2: 'W czym mogę pomóc',
@@ -342,11 +398,11 @@ export const T = {
     },
     about: {
       label: 'O mnie',
-      h2: 'Cześć, jestem Anthony',
+      h2: 'Kto stoi za Vervo',
       p: [
-        'Studiuję Business Analytics, czyli na co dzień siedzę między danymi, liczbami i firmami, które za nimi stoją. Vervo Studio to mój sposób, żeby wykorzystać to w pracy dla prawdziwych klientów.',
-        'Większość małych firm nie potrzebuje wielkiego projektu IT. Potrzebuje, żeby arkusz się zgadzał, zamówienia przestały ginąć, a strona przyprowadzała klientów. To jest dokładnie ta praca, którą lubię.',
-        'Stawiam na prostotę: tłumaczę normalnym językiem, co zrobię, ustalam cenę z góry i oddaję pliki, które w całości należą do Ciebie.',
+        'Nazywam się Anthony i studiuję Business Analytics. Vervo Studio to miejsce, w którym ta wiedza trafia do prawdziwych projektów dla małych firm i niezależnych sprzedawców.',
+        'Większość mojej pracy dzieje się między liczbami a codziennością firmy: arkusz, który w końcu się zgadza, obieg zamówień, który przestaje gubić informacje, strona, która odpowiada na pytania, jakie zadają klienci.',
+        'Zanim cokolwiek zacznę, dostajesz jasny zakres i stałą cenę. W trakcie: krótkie informacje bez żargonu. Na koniec: pliki, które w całości należą do Ciebie.',
       ],
       facts: [{ k: 'Studia', v: 'Business Analytics' }, { k: 'Języki', v: 'polski, angielski' }, { k: 'Współpraca', v: 'zdalnie, z całego świata' }],
       why: [
@@ -370,12 +426,12 @@ export const T = {
       label: 'FAQ',
       h2: 'Częste pytania',
       items: [
-        { q: 'Czy mogę zamówić przez Fiverr?', a: 'Tak. Fiverr to najprostsza droga: płatność jest chroniona, a termin oddania jasny. Możesz też napisać do mnie bezpośrednio przez formularz poniżej.' },
-        { q: 'Czego potrzebujesz ode mnie na start?', a: 'Pliku albo jego kopii i kilku zdań o tym, co chcesz z niego wyciągnąć. Jeśli coś jest niejasne, dopytam, zanim zacznę.' },
-        { q: 'Excel czy Arkusze Google?', a: 'Jedno i drugie. Pracuję w tym, czego już używasz. Jeśli nie wiesz, co wybrać, podpowiem, co lepiej pasuje do Twojej firmy.' },
-        { q: 'Czy moje dane są bezpieczne?', a: 'Używam Twoich danych tylko do Twojego projektu, nikomu ich nie udostępniam i na prośbę usuwam swoją kopię po oddaniu pracy. Przy wrażliwych plikach możesz wysłać próbkę bez danych osobowych.' },
-        { q: 'Ile to trwa?', a: 'Zależy od wielkości zlecenia. Dokładny termin oddania dostajesz w wycenie, zanim cokolwiek zapłacisz.' },
-        { q: 'Czy robisz strony dla firm spoza Polski?', a: 'Tak. Robię strony po polsku i po angielsku i mogę ogarnąć domenę oraz hosting.' },
+        { q: 'Jak zaczynamy?', a: 'Wyślij plik albo jego fragment i kilka zdań o tym, czego potrzebujesz. W ciągu 24 godzin dostaniesz krótki plan z zakresem, stałą ceną i terminem oddania.' },
+        { q: 'Gdzie mogę zamówić?', a: 'Na Fiverr, gdzie płatność jest zabezpieczona do momentu oddania pracy, albo bezpośrednio przez formularz poniżej. Proces i jakość są w obu przypadkach takie same.' },
+        { q: 'Jak traktujesz poufne dane?', a: 'Dane służą wyłącznie do Twojego projektu i nie są nikomu udostępniane. Na prośbę usuwam swoją kopię po oddaniu pracy i chętnie podpiszę NDA. Przy wrażliwych plikach na start często wystarcza zanonimizowana próbka.' },
+        { q: 'Excel czy Arkusze Google?', a: 'Jedno i drugie. Pracuję w narzędziu, którego Twój zespół już używa, więc nikt nie musi uczyć się nowego. Jeśli nie wiesz, co wybrać, podpowiem rozwiązanie dopasowane do Waszej pracy.' },
+        { q: 'Czy poradzę sobie z tym sam po oddaniu?', a: 'Tak. Każda praca ma krótką dokumentację: co zostało zmienione, jak działają formuły lub skrypty i jak dodawać nowe dane. Nie jesteś ode mnie uzależniony.' },
+        { q: 'A jeśli po oddaniu coś trzeba poprawić?', a: 'Drobne poprawki w ramach ustalonego zakresu są w cenie. Nowe wymagania wyceniam osobno, więc cena, na którą się umawiamy, jest ceną końcową.' },
       ],
     },
     kontakt: {
@@ -420,7 +476,7 @@ export const T = {
       startProject: 'Start een project',
       backTop: 'Terug naar boven',
       theme: 'Thema', themes: { amber: 'Amber', lime: 'Limoen', paper: 'Papier' },
-      sections: ['Intro', 'Werk', 'Websites', 'Diensten', 'Skills', 'Over mij', 'Werkwijze', 'FAQ', 'Contact'],
+      sections: ['Intro', 'Werk', 'Lab', 'Websites', 'Diensten', 'Skills', 'Over mij', 'Werkwijze', 'FAQ', 'Contact'],
       handmade: 'Met de hand ontworpen en gebouwd. Geen templates.',
     },
     meta: {
@@ -437,16 +493,41 @@ export const T = {
     hero: {
       available: 'Beschikbaar voor nieuwe projecten',
       h1: 'Schone data, slimme spreadsheets <em>en websites die werken.</em>',
-      lede: 'Hoi, ik ben Anthony. Ik studeer Business Analytics en help als Vervo Studio kleine bedrijven: ik maak rommelige Excel-bestanden schoon, bouw systemen in Google Sheets die vanzelf draaien en programmeer snelle websites.',
+      lede: 'Ik ben Anthony, student Business Analytics, en werk zelfstandig als Vervo Studio. Ik maak van rommelige spreadsheets rapporten waarop je kunt vertrouwen, automatiseer het werk eromheen en bouw snelle websites voor kleine bedrijven.',
       proof: [
         { b: '300', t: 'bestellingen opgeschoond in één project' },
         { b: '2', t: 'certificaten in SQL en Python' },
-        { b: '5', t: 'live website-demo’s' },
+        { b: '10', t: 'live demo’s en tools' },
         { b: '< 24 u', t: 'reactietijd' },
       ],
       chips: ['18 dubbele rijen weg', 'Werkt zichzelf bij'],
     },
     skillsLabel: 'Tools waarmee ik werk',
+    toolkit: [
+      'Formules, draaitabellen, validatie en heldere rapportages',
+      'Gedeelde trackers, dashboards en live overzichten',
+      'Bestel- en aanvraagformulieren die direct in een sheet landen',
+      'Automatiseringen tussen Sheets, Gmail en Agenda',
+      'Data opvragen, koppelen en samenvatten, HackerRank-gecertificeerd',
+      'Scripts en herhaalbare analyses op grotere bestanden',
+      'Snelle, met de hand gecodeerde websites zonder paginabouwers',
+      'Het framework waarmee deze site is gebouwd',
+    ],
+    lab: {
+      label: 'Lab',
+      h2: 'Conceptwerk',
+      lede: 'Eigen projecten die laten zien hoe ik van begin tot eind met data en code werk. Elk project draait live in je browser op gegenereerde voorbeelddata.',
+      tag: 'Concept · voorbeelddata',
+      open: 'Open live ↗',
+      items: [
+        { t: 'Verkoopdashboard', k: 'Dashboard · JavaScript · SVG', o: 'Een jaar aan bestellingen van een fictieve koffiebranderij, omgezet in een interactief dashboard: omzettrend, verdeling per kanaal en regio, productprestaties en een heatmap van weekdag en uur. Elke grafiek reageert op de filters.', tags: ['KPI’s met verschil', 'Filters', 'Heatmap'] },
+        { t: 'SQL-playground', k: 'SQL · SQLite in de browser', o: 'Een database van deelfietsritten die je zelf kunt bevragen. Acht analysevragen met de SQL die ze beantwoordt en een korte conclusie; pas elke query aan en voer hem uit op de echte tabellen.', tags: ['Live SQL', 'Joins en window functions', 'Automatische grafieken'] },
+        { t: 'CSV-opschoner', k: 'Tool · JavaScript', o: 'De opschoonstappen die ik op exports van klanten gebruik, als kleine tool: datums, prijzen, landen, hoofdletters en dubbele rijen in één keer gecorrigeerd, met elke wijziging gemarkeerd. Bestanden verlaten je computer niet.', tags: ['Eigen bestand', 'Wijzigingen zichtbaar', 'Download schone CSV'] },
+        { t: 'Cohort-retentie', k: 'Analyse · Cohorten', o: 'Twaalf maandcohorten van een maaltijdbox-abonnement: wie blijft betalen en wie vertrekt, het effect van een kortingsactie en van betere onboarding, uitgewerkt als conclusies.', tags: ['Cohort-heatmap', 'Retentiecurves', 'Conclusies'] },
+        { t: 'Factuurgenerator', k: 'Web-app · Print CSS', o: 'Een kleine app voor freelancers en winkels: regels, btw en korting live berekend, factuurnummering en een nette A4-pagina om te printen of als pdf op te slaan.', tags: ['Live A4-voorbeeld', 'Lokaal opgeslagen', 'Print naar pdf'] },
+      ],
+    },
+    profile: { name: 'Anthony A.', status: 'available' },
     services: {
       label: 'Diensten',
       h2: 'Waarmee ik je kan helpen',
@@ -519,11 +600,11 @@ export const T = {
     },
     about: {
       label: 'Over mij',
-      h2: 'Hoi, ik ben Anthony',
+      h2: 'Wie er achter Vervo zit',
       p: [
-        'Ik studeer Business Analytics, dus ik zit dagelijks tussen data, cijfers en de bedrijven daarachter. Met Vervo Studio zet ik dat in voor echte klanten.',
-        'De meeste kleine bedrijven hebben geen groot IT-project nodig. Ze willen dat de spreadsheet klopt, dat bestellingen niet meer zoekraken en dat de website klanten oplevert. Precies dat soort werk vind ik leuk.',
-        'Ik houd het simpel: ik leg in gewone taal uit wat ik ga doen, spreek de prijs vooraf af en lever bestanden op die volledig van jou zijn.',
+        'Ik ben Anthony en studeer Business Analytics. Vervo Studio is waar die opleiding samenkomt met echte projecten voor kleine bedrijven en zelfstandige verkopers.',
+        'Het meeste werk zit tussen de cijfers en de dagelijkse praktijk: een spreadsheet die eindelijk klopt, een bestelproces dat geen informatie meer kwijtraakt, een website die de vragen beantwoordt die klanten echt stellen.',
+        'Voordat er iets begint krijg je een duidelijke afbakening en een vaste prijs. Tijdens het werk korte updates in gewone taal. Aan het eind bestanden die volledig van jou zijn.',
       ],
       facts: [{ k: 'Studie', v: 'Business Analytics' }, { k: 'Talen', v: 'Pools, Engels' }, { k: 'Werkt', v: 'Op afstand, wereldwijd' }],
       why: [
@@ -547,12 +628,12 @@ export const T = {
       label: 'FAQ',
       h2: 'Veelgestelde vragen',
       items: [
-        { q: 'Kan ik via Fiverr bestellen?', a: 'Ja. Fiverr is de makkelijkste manier: je betaling is beschermd en je krijgt een duidelijke opleverdatum. Je kunt me ook direct schrijven via het formulier hieronder.' },
-        { q: 'Wat heb je van mij nodig om te beginnen?', a: 'Het bestand of een kopie ervan, en een paar zinnen over wat je eruit wilt halen. Is iets onduidelijk, dan vraag ik het voordat ik begin.' },
-        { q: 'Excel of Google Sheets?', a: 'Allebei. Ik werk in wat je al gebruikt. Twijfel je, dan stel ik voor wat het beste bij je team past.' },
-        { q: 'Is mijn data veilig?', a: 'Ik gebruik je data alleen voor jouw project, deel het met niemand en verwijder mijn kopie na oplevering als je dat wilt. Bij gevoelige bestanden kun je een voorbeeld sturen zonder persoonsgegevens.' },
-        { q: 'Hoe lang duurt het?', a: 'Dat hangt af van de omvang. Je krijgt een exacte opleverdatum in mijn offerte, voordat je iets betaalt.' },
-        { q: 'Bouw je ook websites voor bedrijven buiten Polen?', a: 'Ja. Ik bouw sites in het Engels en het Pools en kan het domein en de hosting voor je regelen.' },
+        { q: 'Hoe beginnen we?', a: 'Stuur het bestand, of een deel ervan, met een paar regels over wat je nodig hebt. Binnen 24 uur krijg je een kort plan met de afbakening, een vaste prijs en een opleverdatum.' },
+        { q: 'Waar kan ik je inhuren?', a: 'Via Fiverr, waar je betaling tot de oplevering veilig wordt bewaard, of rechtstreeks via het contactformulier hieronder. Werkwijze en kwaliteit zijn in beide gevallen hetzelfde.' },
+        { q: 'Hoe ga je om met vertrouwelijke data?', a: 'Je data wordt alleen voor jouw project gebruikt en nooit gedeeld. Op verzoek verwijder ik mijn kopie na oplevering, en een NDA tekenen is geen probleem. Bij gevoelige bestanden is een geanonimiseerd voorbeeld vaak genoeg om te beginnen.' },
+        { q: 'Excel of Google Sheets?', a: 'Allebei. Ik bouw in wat je team al gebruikt, zodat niemand een nieuw programma hoeft te leren. Twijfel je, dan adviseer ik de optie die past bij hoe jullie werken.' },
+        { q: 'Kan ik het daarna zelf onderhouden?', a: 'Ja. Elke oplevering bevat korte documentatie: wat er is veranderd, hoe de formules of scripts werken en hoe je nieuwe data toevoegt. Je zit nergens aan vast.' },
+        { q: 'Wat als er na oplevering iets aangepast moet worden?', a: 'Kleine aanpassingen binnen de afgesproken afbakening zijn inbegrepen. Nieuwe wensen krijgen een aparte offerte, dus de prijs die je afspreekt is de prijs die je betaalt.' },
       ],
     },
     kontakt: {

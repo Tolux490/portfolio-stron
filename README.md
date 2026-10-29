@@ -10,8 +10,10 @@ polski pod `/pl/`, niderlandzki pod `/nl/` (stary adres `/en/` przekierowuje na 
   CTA prowadzą do formularza. Po wklejeniu linku pojawiają się same.
 - Układ: `src/components/HubPage.astro`, style: `src/styles/hub.css` (trzy motywy: amber, lime, paper).
 - Ruch i interakcje: `src/scripts/hub/main.js` (GSAP + ScrollTrigger + SplitText, Lenis).
-- Sceny 3D (three.js, ładowane osobno): `src/scripts/hub/hero3d.js` (kostki składające się w wykres)
-  i `src/scripts/hub/logo3d.js` (logo „V” w sekcji kontaktu).
+- Świat 3D na całą stronę: `src/scripts/hub/world3d.js`. Te same kostki zmieniają kształt per sekcja
+  (atrybut `data-stage`): `chart` (hero), `globe` (manifest), `donut` (Lab), `sheet` (proces), `logo` (kontakt).
+- Projekty koncepcyjne (Lab): `src/pages/lab/*`, logika w `src/scripts/lab/*`, wspólny szkielet
+  `src/components/LabLayout.astro`, style `src/styles/lab.css`. Dane są generowane w przeglądarce.
 - Profile w kontakcie i menu: `FIVERR_URL`, `GITHUB_URL`, `LINKEDIN_URL`, `UPWORK_URL` w `src/data/hub-i18n.js`.
   Puste = link się nie pokazuje.
 - Media projektów: `public/img/work/`, `public/img/certs/`, `public/img/sites/`, `public/video/`,

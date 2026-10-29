@@ -1,0 +1,72 @@
+---
+import LabLayout from '../../../components/LabLayout.astro';
+---
+<LabLayout
+  title="Sales dashboard (concept)"
+  description="An interactive sales dashboard for a fictional coffee roaster: KPIs with year-on-year change, revenue trend, channels, regions, products and a weekday by hour heatmap. Concept project with generated sample data."
+  crumb="Sales dashboard"
+  path="/lab/sales-dashboard/"
+>
+  <section class="lab-head">
+    <p class="lab mono">[ Lab 01 ] Dashboard · JavaScript · SVG</p>
+    <h1>Fernwood Roasters<br /><em>Sales 2025</em></h1>
+    <p>A fictional specialty coffee roaster selling through its webshop, its own café and wholesale accounts in four countries. Every number below is computed live in your browser from individual orders, and every chart answers to the filters.</p>
+    <div class="lab-meta mono" id="dsMeta"><span>Loading data…</span></div>
+  </section>
+
+  <div class="filters" role="group" aria-label="Filters">
+    <div><span class="flab mono">Period</span>
+      <span class="seg" id="fPeriod">
+        <button type="button" data-v="FY" aria-pressed="true">FY 2025</button>
+        <button type="button" data-v="Q1" aria-pressed="false">Q1</button>
+        <button type="button" data-v="Q2" aria-pressed="false">Q2</button>
+        <button type="button" data-v="Q3" aria-pressed="false">Q3</button>
+        <button type="button" data-v="Q4" aria-pressed="false">Q4</button>
+      </span>
+    </div>
+    <div id="fChannel"><span class="flab mono">Channel</span></div>
+    <div><span class="flab mono">Country</span>
+      <select class="sel" id="fRegion" aria-label="Country"><option value="">All countries</option></select>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid-a">
+    <section class="panel">
+      <div class="panel__h"><h2>Revenue per week</h2><div class="legend" id="lgTrend"></div></div>
+      <div class="chart" id="cTrend"></div>
+    </section>
+    <section class="panel">
+      <div class="panel__h"><h2>What stands out</h2><span class="mono">Auto-generated</span></div>
+      <div class="insights" id="insights"></div>
+    </section>
+  </div>
+
+  <div class="grid-b">
+    <section class="panel">
+      <div class="panel__h"><h2>Revenue by channel per month</h2><div class="legend" id="lgChannel"></div></div>
+      <div class="chart" id="cChannel"></div>
+    </section>
+    <section class="panel">
+      <div class="panel__h"><h2>Revenue by country</h2><span class="mono" id="regionNote"></span></div>
+      <div class="chart" id="cRegion"></div>
+    </section>
+  </div>
+
+  <div class="grid-b">
+    <section class="panel">
+      <div class="panel__h"><h2>Products</h2><span class="mono">Click a column to sort</span></div>
+      <div class="tbl-wrap"><table class="tbl" id="tProducts"></table></div>
+    </section>
+    <section class="panel">
+      <div class="panel__h"><h2>Orders by weekday and hour</h2><span class="mono">Darker = busier</span></div>
+      <div class="chart" id="cHeat"></div>
+    </section>
+  </div>
+
+  <script>
+    import { initDashboard } from '../../../scripts/lab/dashboard.js';
+    initDashboard();
+  </script>
+</LabLayout>

@@ -4,7 +4,7 @@ import '@fontsource-variable/geist-mono';
 import '../styles/hub.css';
 import {
   T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, SITE_HREFS, SITE_THUMBS, CERTS,
-  FIVERR_URL, GITHUB_URL, LINKEDIN_URL, UPWORK_URL, FICHES_URL, FORM_ID, EMAIL_PARTS,
+  FIVERR_URL, GITHUB_URL, LINKEDIN_URL, UPWORK_URL, FICHES_URL, FORM_ID, EMAIL_PARTS, LAB,
 } from '../data/hub-i18n.js';
 
 const { lang = DEFAULT_LANG } = Astro.props;
@@ -29,8 +29,8 @@ const fmtDate = (d) => new Intl.DateTimeFormat(lang, { day: 'numeric', month: 's
 const pad = (n) => String(n).padStart(2, '0');
 
 // Menu i boczny wskaźnik sekcji: [kotwica, indeks etykiety w ui.sections]
-const NAV = [['#work', 1], ['#websites', 2], ['#services', 3], ['#about', 5], ['#faq', 7], ['#contact', 8]];
-const RAIL = ['#top', '#work', '#websites', '#services', '#certificates', '#about', '#process', '#faq', '#contact'];
+const NAV = [['#work', 1], ['#lab', 2], ['#websites', 3], ['#services', 4], ['#about', 6], ['#faq', 8], ['#contact', 9]];
+const RAIL = ['#top', '#work', '#lab', '#websites', '#services', '#certificates', '#about', '#process', '#faq', '#contact'];
 
 // Profile: puste adresy w hub-i18n.js po prostu się nie pokazują.
 const socials = [
@@ -60,7 +60,6 @@ const schema = {
   founder: {
     '@type': 'Person',
     name: 'Anthony A.',
-    image: abs('img/antoni.webp'),
     jobTitle: t.jobTitle,
     knowsAbout: SKILLS,
     sameAs: socials.map((s) => s.href),
@@ -79,8 +78,27 @@ const serviceIcons = [
   '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M3 8.5h18"/>',
   '<path d="M4 20V4M4 20h16"/><path d="m7.5 15 3.5-4 3 2.5 5-6"/>',
 ];
-const marqueeA = [...SKILLS, ...SKILLS];
 const isNum = (v) => /^\d+$/.test(v);
+// ikony narzędzi (rysują się przy przewijaniu: pathLength=1)
+const KIT_ICONS = [
+  '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16M15 4v16"/>',
+  '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 11h7M9 14.5h7M9 18h4"/>',
+  '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8.5l1.5 1.5L12 7.5M8 14.5l1.5 1.5 2.5-2.5M14 9h3M14 15h3"/>',
+  '<path d="M9 4c-2.5 0-3 1.2-3 3v2.5c0 1-.8 2-2 2.5 1.2.5 2 1.5 2 2.5V17c0 1.8.5 3 3 3M15 4c2.5 0 3 1.2 3 3v2.5c0 1 .8 2 2 2.5-1.2.5-2 1.5-2 2.5V17c0 1.8-.5 3-3 3"/>',
+  '<ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/>',
+  '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/>',
+  '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',
+  '<path d="M12 3c3 3 4.5 6.5 4.5 10.5H7.5C7.5 9.5 9 6 12 3z"/><path d="M7.5 13.5L5 17h4M16.5 13.5L19 17h-4M10 17l2 4 2-4"/>',
+];
+// karta profile.json w sekcji „O mnie” (zamiast zdjęcia)
+const pj = [
+  ['name', `"${t.profile.name}"`],
+  ['studio', '"Vervo Studio"'],
+  ...t.about.facts.map((f) => [f.k.toLowerCase(), `"${f.v}"`]),
+  ['stack', `[${SKILLS.slice(0, 6).map((k) => `"${k}"`).join(', ')}]`],
+  ['certified', `[${CERTS.map((c) => `"${c.org} ${c.t}"`).join(', ')}]`],
+  ['status', `"${t.profile.status}"`, true],
+];
 const wordmark = 'VERVO'.split('');
 ---
 <!doctype html>
@@ -126,6 +144,7 @@ const wordmark = 'VERVO'.split('');
   <body>
     <a class="skip" href="#main">{ui.skip}</a>
     <div class="grain" aria-hidden="true"></div>
+    <canvas class="world" id="world" aria-hidden="true"></canvas>
 
     <!-- PRELOADER -->
     <div class="pre" id="pre" aria-hidden="true">
@@ -191,8 +210,7 @@ const wordmark = 'VERVO'.split('');
 
     <main id="main">
       <!-- HERO -->
-      <section class="hero" id="top" data-sec="0">
-        <canvas class="hero__gl" id="heroGl" aria-hidden="true"></canvas>
+      <section class="hero stage" id="top" data-sec="0" data-stage="chart">
         <div class="hero__veil" aria-hidden="true"></div>
         <div class="wrap hero__in">
           <p class="avail mono"><span class="live"></span>{t.hero.available}</p>
@@ -217,7 +235,7 @@ const wordmark = 'VERVO'.split('');
             <defs><path id="badgeCirc" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>
             <text><textPath href="#badgeCirc" textLength="502">{ui.badge}{ui.badge}</textPath></text>
           </svg>
-          <img src={asset('img/antoni-avatar.webp')} width="240" height="240" alt="" />
+          <svg class="badge__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <div class="term mono" aria-hidden="true">
           <div class="term__bar"><span>little_kettle / cleaning_log.sql</span><span class="live"></span></div>
@@ -226,19 +244,24 @@ const wordmark = 'VERVO'.split('');
         <p class="cue mono" aria-hidden="true"><span>{ui.scroll}</span><i></i></p>
       </section>
 
-      <!-- PASEK NARZĘDZI -->
-      <div class="marq" aria-label={t.skillsLabel}>
-        <div class="marq__track">
-          {[0, 1].map((r) => (
-            <div class="marq__grp" aria-hidden={r === 1 ? 'true' : undefined}>
-              {marqueeA.map((s, i) => <span class:list={['marq__it', { 'marq__it--o': i % 2 }]}>{s}<b aria-hidden="true">✦</b></span>)}
-            </div>
-          ))}
+      <!-- NARZĘDZIA -->
+      <section class="kit" aria-label={t.skillsLabel}>
+        <div class="wrap">
+          <p class="lab mono">{t.skillsLabel}</p>
+          <ol class="kit__grid">
+            {SKILLS.map((k, i) => (
+              <li class="kit__i">
+                <span class="kit__top"><span class="mono kit__n">{pad(i + 1)}</span><svg class="kit__ic draw" viewBox="0 0 24 24" aria-hidden="true" set:html={KIT_ICONS[i].replace(/<(path|rect|ellipse)/g, '<$1 pathLength="1"')}></svg></span>
+                <span class="kit__h">{k}</span>
+                <span class="kit__p">{t.toolkit[i]}</span>
+              </li>
+            ))}
+          </ol>
         </div>
-      </div>
+      </section>
 
       <!-- MANIFEST -->
-      <section class="mani band" aria-label="Vervo Studio">
+      <section class="mani band stage" aria-label="Vervo Studio" data-stage="globe">
         <div class="wrap">
           <p class="lab mono">[ 00 ] Vervo Studio</p>
           <p class="mani__txt" data-words>{ui.manifesto}</p>
@@ -311,12 +334,41 @@ const wordmark = 'VERVO'.split('');
         </div>
       </section>
 
+      <!-- LAB: projekty koncepcyjne -->
+      <section class="band labsec stage" id="lab" data-sec="2">
+        <div class="wrap">
+          <header class="shead labsec__head" data-stage="donut">
+            <p class="lab mono">[ 02 ] {t.lab.label}</p>
+            <h2 class="h2 split">{t.lab.h2}</h2>
+            <p class="shead__lede">{t.lab.lede}</p>
+          </header>
+          <div class="labs">
+            {t.lab.items.map((it, i) => (
+              <a class="labc" href={`${b}${LAB[i].href}`} data-cursor="open">
+                <span class="labc__win">
+                  <span class="site__bar mono"><span><i></i><i></i><i></i></span><span>vervostudio.com{LAB[i].href}</span></span>
+                  <span class="labc__img"><img src={asset(LAB[i].img)} width="1280" height="800" alt={it.t} loading="lazy" decoding="async" /></span>
+                </span>
+                <span class="labc__meta">
+                  <span class="mono labc__k">{pad(i + 1)} — {it.k}</span>
+                  <span class="mono labc__tag">{t.lab.tag}</span>
+                  <span class="labc__h">{it.t}</span>
+                  <span class="labc__p">{it.o}</span>
+                  <span class="tags mono">{it.tags.map((x) => <span>{x}</span>)}</span>
+                  <span class="mono labc__go">{t.lab.open}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <!-- STRONY WWW: przewijanie w bok -->
-      <section class="sites" id="websites" data-sec="2">
+      <section class="sites" id="websites" data-sec="3">
         <div class="sites__pin">
           <div class="wrap sites__head">
             <div>
-              <p class="lab mono">[ 02 ] {t.sites.label}</p>
+              <p class="lab mono">[ 03 ] {t.sites.label}</p>
               <h2 class="h2 split">{t.sites.h2}</h2>
             </div>
             <div class="sites__meta">
@@ -361,10 +413,10 @@ const wordmark = 'VERVO'.split('');
       </section>
 
       <!-- USŁUGI -->
-      <section class="band" id="services" data-sec="3">
+      <section class="band" id="services" data-sec="4">
         <div class="wrap">
           <header class="shead">
-            <p class="lab mono">[ 03 ] {t.services.label}</p>
+            <p class="lab mono">[ 04 ] {t.services.label}</p>
             <h2 class="h2 split">{t.services.h2}</h2>
             <p class="shead__lede">{t.services.lede}</p>
           </header>
@@ -372,7 +424,7 @@ const wordmark = 'VERVO'.split('');
             {t.services.items.map((s, i) => (
               <li class="svc__row">
                 <span class="svc__n mono">{pad(i + 1)}</span>
-                <span class="svc__ic" aria-hidden="true"><svg viewBox="0 0 24 24" set:html={serviceIcons[i]}></svg></span>
+                <span class="svc__ic" aria-hidden="true"><svg class="draw" viewBox="0 0 24 24" set:html={serviceIcons[i].replace(/<(path|rect|ellipse)/g, '<$1 pathLength="1"')}></svg></span>
                 <div class="svc__main">
                   <h3 class="svc__h">{s.t}</h3>
                   <p class="svc__p">{s.o}</p>
@@ -386,10 +438,10 @@ const wordmark = 'VERVO'.split('');
       </section>
 
       <!-- CERTYFIKATY -->
-      <section class="band band--alt" id="certificates" data-sec="4">
+      <section class="band band--alt" id="certificates" data-sec="5">
         <div class="wrap">
           <header class="shead">
-            <p class="lab mono">[ 04 ] {t.certs.label}</p>
+            <p class="lab mono">[ 05 ] {t.certs.label}</p>
             <h2 class="h2 split">{t.certs.h2}</h2>
             <p class="shead__lede">{t.certs.lede}</p>
           </header>
@@ -413,20 +465,16 @@ const wordmark = 'VERVO'.split('');
       </section>
 
       <!-- O MNIE -->
-      <section class="band" id="about" data-sec="5">
+      <section class="band" id="about" data-sec="6">
         <div class="wrap about">
           <div class="about__pic">
-            <div class="portrait" data-cursor="hover">
-              <img src={asset('img/antoni.webp')} width="533" height="647" alt="Anthony A." loading="lazy" decoding="async" />
-              <span class="portrait__scan" aria-hidden="true"></span>
-              <span class="portrait__tag mono">Anthony A. — Vervo Studio</span>
-            </div>
-            <dl class="hfacts mono">
-              {t.about.facts.map((f) => <div><dt>{f.k}</dt><dd>{f.v}</dd></div>)}
-            </dl>
+            <figure class="pjson mono" aria-label={t.about.h2}>
+              <div class="pjson__bar"><span><i></i><i></i><i></i></span><span>profile.json</span><span class="live"></span></div>
+              <pre class="pjson__code"><code>{'{'}{pj.map(([k, v, ok], i) => <span>{'\n  '}<b>"{k}"</b>: {ok ? <strong>{v}</strong> : <em>{v}</em>}{i === pj.length - 1 ? '' : ','}</span>)}{'\n}'}</code></pre>
+            </figure>
           </div>
           <div class="about__txt">
-            <p class="lab mono">[ 05 ] {t.about.label}</p>
+            <p class="lab mono">[ 06 ] {t.about.label}</p>
             <h2 class="h2 split">{t.about.h2}</h2>
             {t.about.p.map((p) => <p class="about__p">{p}</p>)}
             <div class="why">
@@ -436,29 +484,32 @@ const wordmark = 'VERVO'.split('');
         </div>
       </section>
 
-      <!-- PROCES -->
-      <section class="band band--alt" id="process" data-sec="6">
-        <div class="wrap">
-          <header class="shead">
-            <p class="lab mono">[ 06 ] {t.proces.label}</p>
-            <h2 class="h2 split">{t.proces.h2}</h2>
-          </header>
-          <div class="steps">
-            <div class="steps__line" aria-hidden="true"><i id="stepsLine"></i></div>
-            <ol class="steps__list">
+      <!-- PROCES: arkusz w 3D czyści się w rytm przewijania -->
+      <section class="process stage" id="process" data-sec="7" data-stage="sheet">
+        <div class="process__pin">
+          <div class="wrap process__in">
+            <header class="shead">
+              <p class="lab mono">[ 07 ] {t.proces.label}</p>
+              <h2 class="h2 split">{t.proces.h2}</h2>
+            </header>
+            <ol class="pstep">
               {t.proces.steps.map((s, i) => (
-                <li class="step"><span class="step__n">{pad(i + 1)}</span><h3>{s.t}</h3><p>{s.o}</p></li>
+                <li class="pstep__i" data-step={i}>
+                  <span class="pstep__n">{pad(i + 1)}</span>
+                  <div><h3>{s.t}</h3><p>{s.o}</p></div>
+                </li>
               ))}
             </ol>
+            <div class="process__bar mono" aria-hidden="true"><span>rows_flagged</span><i><b id="cleanBar"></b></i><span id="cleanPct">0%</span></div>
           </div>
         </div>
       </section>
 
       <!-- FAQ -->
-      <section class="band" id="faq" data-sec="7">
+      <section class="band" id="faq" data-sec="8">
         <div class="wrap faqw">
           <header class="shead">
-            <p class="lab mono">[ 07 ] {t.faq.label}</p>
+            <p class="lab mono">[ 08 ] {t.faq.label}</p>
             <h2 class="h2 split">{t.faq.h2}</h2>
           </header>
           <div class="faq">
@@ -473,16 +524,16 @@ const wordmark = 'VERVO'.split('');
       </section>
 
       <!-- KONTAKT -->
-      <section class="contact" id="contact" data-sec="8">
+      <section class="contact stage" id="contact" data-sec="9">
         <div class="wrap">
-          <div class="contact__top">
+          <div class="contact__top" data-stage="logo">
             <div>
-              <p class="lab mono">[ 08 ] {t.kontakt.label}</p>
+              <p class="lab mono">[ 09 ] {t.kontakt.label}</p>
               <h2 class="contact__big" aria-label={ui.contactBig.join(' ')}>
                 {ui.contactBig.map((l, i) => <span class={`hl hl--${i === 1 ? 2 : 0}`} aria-hidden="true"><span class="hl__in">{l}</span></span>)}
               </h2>
             </div>
-            <canvas class="logo3d" id="logoGl" aria-hidden="true" data-cursor="hover"></canvas>
+            <div class="logo-space" aria-hidden="true"></div>
           </div>
 
           <a class="cta-bar mono" {...hire} data-cursor="hover">

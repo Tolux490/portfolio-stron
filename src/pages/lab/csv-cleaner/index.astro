@@ -1,0 +1,67 @@
+---
+import LabLayout from '../../../components/LabLayout.astro';
+---
+<LabLayout
+  title="CSV cleaner (concept)"
+  description="A browser tool that cleans messy CSV exports: trims spaces, fixes dates and prices, standardises country names and removes duplicates, with every change highlighted. Nothing leaves your computer."
+  crumb="CSV cleaner"
+  path="/lab/csv-cleaner/"
+>
+  <section class="lab-head">
+    <p class="lab mono">[ Lab 03 ] Tool · JavaScript</p>
+    <h1>CSV cleaner<br /><em>in your browser</em></h1>
+    <p>The same cleaning steps I use on client exports, packed into a small tool. Load the messy sample or your own CSV, switch steps on and off, and see every changed cell highlighted. Files are read locally and never uploaded.</p>
+  </section>
+
+  <div class="filters" role="group" aria-label="Input">
+    <button type="button" class="chip" id="loadSample" aria-pressed="true"><i></i>Messy sample</button>
+    <label class="chip" style="cursor:pointer"><i></i>Open your CSV<input type="file" id="file" accept=".csv,text/csv,.txt" hidden /></label>
+    <span class="mono" id="srcInfo" style="color:var(--muted)"></span>
+  </div>
+
+  <div class="csvw">
+    <aside class="panel">
+      <div class="panel__h"><h2>Cleaning steps</h2><span class="mono">Toggle</span></div>
+      <ul class="steps-l" id="steps"></ul>
+      <div class="csvstats" id="stats"></div>
+      <button type="button" class="btn btn--acc btn--full" id="download" style="margin-top:1rem"><span>Download clean CSV</span><span aria-hidden="true">↓</span></button>
+    </aside>
+    <section class="panel" style="min-width:0">
+      <div class="panel__h"><h2>Preview</h2><span class="seg" id="view"><button type="button" data-v="clean" aria-pressed="true">Cleaned</button><button type="button" data-v="raw" aria-pressed="false">Original</button></span></div>
+      <div class="tbl-wrap csvt"><table class="tbl" id="tbl"></table></div>
+      <p class="mono csvleg"><span class="chg">changed</span> <span class="dup">duplicate, removed</span> <span class="bad">needs a human check</span></p>
+    </section>
+  </div>
+
+  <style is:global>
+    .csvw { display: grid; gap: 1rem; }
+    @media (min-width: 1000px) { .csvw { grid-template-columns: 320px minmax(0, 1fr); align-items: start; } }
+    .steps-l { display: grid; border-top: 1px solid var(--line); }
+    .steps-l label { display: grid; grid-template-columns: auto 1fr auto; gap: 0.7rem; align-items: start; padding: 0.75rem 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+    .steps-l input { accent-color: var(--acc); margin-top: 0.2rem; }
+    .steps-l b { font-weight: 600; font-size: 0.92rem; display: block; }
+    .steps-l small { color: var(--muted); font-size: 0.8rem; }
+    .steps-l em { font-style: normal; font-family: var(--font-m); font-size: 0.72rem; color: var(--acc); }
+    .csvstats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-top: 1rem; }
+    .csvstats div { background: var(--bg-2); padding: 0.8rem; display: grid; gap: 0.2rem; }
+    .csvstats b { font-family: var(--font-d); font-stretch: 62%; font-weight: 800; font-size: 2rem; line-height: 1; }
+    .csvstats span { font-family: var(--font-m); font-size: 0.64rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.04em; }
+    .csvt { max-height: 620px; overflow: auto; }
+    .csvt .tbl th { position: sticky; top: 0; background: var(--bg-2); text-align: left; }
+    .csvt .tbl td { text-align: left; font-size: 0.8rem; }
+    .csvt td.chg { background: color-mix(in srgb, var(--acc) 16%, transparent); color: var(--fg); }
+    .csvt td.chg[title]:hover { outline: 1px solid var(--acc); }
+    .csvt tr.dup td { text-decoration: line-through; color: var(--muted); background: color-mix(in srgb, #ff5a4d 8%, transparent); }
+    .csvt td.bad { background: color-mix(in srgb, #ff5a4d 18%, transparent); }
+    .csvleg { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.8rem; color: var(--muted); }
+    .csvleg span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.4rem; vertical-align: -1px; }
+    .csvleg .chg::before { background: color-mix(in srgb, var(--acc) 40%, transparent); }
+    .csvleg .dup::before { background: color-mix(in srgb, #ff5a4d 25%, transparent); }
+    .csvleg .bad::before { background: color-mix(in srgb, #ff5a4d 45%, transparent); }
+  </style>
+
+  <script>
+    import { initCsv } from '../../../scripts/lab/csv.js';
+    initCsv();
+  </script>
+</LabLayout>

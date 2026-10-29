@@ -17,7 +17,7 @@ const isDesktop = () => window.matchMedia('(min-width: 900px)').matches;
 export function initHub() {
   const cfg = JSON.parse($('#hubConfig')?.textContent || '{}');
   let lenis = null;
-  const scenes = { hero: null, logo: null };
+  let world = null;
 
   // ---------- płynne przewijanie ----------
   if (!reduced) {
@@ -43,33 +43,26 @@ export function initHub() {
     scrollTo(h);
   }));
 
-  // ---------- sceny 3D (osobny chunk z three.js) ----------
-  const heroCanvas = $('#heroGl');
-  const logoCanvas = $('#logoGl');
+  // ---------- świat 3D (osobny chunk z three.js) ----------
+  const worldCanvas = $('#world');
   const webgl = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; } })();
-  if (webgl && heroCanvas) {
-    import('./hero3d.js').then(({ createHero3D }) => {
-      scenes.hero = createHero3D(heroCanvas, { autoAssemble: false });
-      if (heroReady) scenes.hero.setAssemble(reduced ? 1 : 0);
+  if (webgl && worldCanvas) {
+    import('./world3d.js').then(({ createWorld }) => {
+      world = createWorld(worldCanvas);
+      world.setActive(stagesInView.size > 0);
+      worldCanvas.classList.toggle('on', stagesInView.size > 0);
+      if (activeStage) world.morphTo(activeStage);
       heroAssembleStart();
-    });
-  }
-  if (webgl && logoCanvas) {
-    const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
-      io.disconnect();
-      import('./logo3d.js').then(({ createLogo3D }) => { scenes.logo = createLogo3D(logoCanvas); });
-    }, { rootMargin: '600px' });
-    io.observe(logoCanvas);
+    }).catch(() => { /* bez 3D strona działa normalnie */ });
   }
 
   // składanie wykresu w hero: animujemy parametr po zakończeniu preloadera
   let heroReady = false, heroAnim = null;
   const assembleProxy = { v: 0 };
   function heroAssembleStart() {
-    if (!heroReady || !scenes.hero || heroAnim) return;
-    if (reduced) { scenes.hero.setAssemble(1); return; }
-    heroAnim = gsap.to(assembleProxy, { v: 1, duration: 3.2, ease: 'power2.inOut', onUpdate: () => scenes.hero?.setAssemble(assembleProxy.v) });
+    if (!heroReady || !world || heroAnim) return;
+    if (reduced) { world.setAssemble(1); return; }
+    heroAnim = gsap.to(assembleProxy, { v: 1, duration: 3.2, ease: 'power2.inOut', onUpdate: () => world?.setAssemble(assembleProxy.v) });
   }
 
   // ---------- motywy ----------
@@ -79,7 +72,7 @@ export function initHub() {
     try { localStorage.setItem('vervo-theme', th); } catch {}
     requestAnimationFrame(() => {
       themeColor?.setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim());
-      scenes.hero?.readTheme(); scenes.logo?.readTheme();
+      world?.readTheme();
     });
   };
   $$('[data-set-theme]').forEach((b) => b.addEventListener('click', () => setTheme(b.dataset.setTheme)));
@@ -208,11 +201,70 @@ export function initHub() {
   // ---------- hero: postęp przewijania → scena ----------
   ScrollTrigger.create({
     trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true,
-    onUpdate: (st) => scenes.hero?.setScroll(st.progress),
+    onUpdate: (st) => world?.setScroll(st.progress),
   });
   if (!reduced) {
     gsap.to('.hero__in', { yPercent: -18, opacity: 0.2, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
   }
+
+  // ---------- sceny świata 3D ----------
+  const stagesInView = new Set();
+  let activeStage = 'chart';
+  $$('[data-stage]').forEach((el) => {
+    const name = el.dataset.stage;
+    ScrollTrigger.create({
+      trigger: el, start: 'top bottom', end: 'bottom top', refreshPriority: -1,
+      onToggle: (st) => {
+        if (st.isActive) stagesInView.add(el); else stagesInView.delete(el);
+        const on = stagesInView.size > 0;
+        worldCanvas?.classList.toggle('on', on);
+        world?.setActive(on);
+      },
+    });
+    ScrollTrigger.create({
+      trigger: el, start: 'top 80%', end: 'bottom 35%', refreshPriority: -1,
+      onToggle: (st) => { if (st.isActive) { activeStage = name; world?.morphTo(name); } },
+    });
+  });
+
+  // kotwice: gdzie na ekranie stoi kształt danej sceny (śledzą sekcję przy przewijaniu)
+  const wide = () => window.innerWidth >= 900;
+  const centerOf = (sel, fx) => { const e = $(sel); if (!e) return null; const r = e.getBoundingClientRect(); return { x: wide() ? window.innerWidth * fx : window.innerWidth / 2, y: r.top + r.height / 2 }; };
+  const ANCHORS = {
+    chart: () => { const r = $('.hero').getBoundingClientRect(); return { x: wide() ? window.innerWidth * 0.68 : window.innerWidth / 2, y: r.top + (wide() ? 0.52 : 0.78) * window.innerHeight }; },
+    // na telefonie kształt stoi nad tekstem (sekcje mają na to miejsce u góry)
+    globe: () => (wide() ? centerOf('.mani', 0.72) : { x: window.innerWidth / 2, y: $('.mani').getBoundingClientRect().top + window.innerHeight * 0.26 }),
+    donut: () => (wide() ? centerOf('.labsec__head', 0.72) : { x: window.innerWidth / 2, y: $('.labsec__head').getBoundingClientRect().top + 175 }),
+    sheet: () => ({ x: wide() ? window.innerWidth * 0.66 : window.innerWidth / 2, y: window.innerHeight * (wide() ? 0.56 : 0.72) }),
+    logo: () => { const e = $('.logo-space'); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; },
+  };
+  gsap.ticker.add(() => {
+    if (!world || !stagesInView.size) return;
+    const a = ANCHORS[activeStage]?.();
+    if (a) world.setAnchor(a.x, a.y);
+  });
+
+  // ---------- proces: arkusz czyści się w rytm przewijania ----------
+  const steps = $$('.pstep__i'), cleanBar = $('#cleanBar'), cleanPct = $('#cleanPct');
+  const setClean = (p) => {
+    world?.setClean(p);
+    const idx = Math.min(steps.length - 1, Math.floor(p * steps.length * 0.999));
+    steps.forEach((s, i) => { s.classList.toggle('on', i === idx); s.classList.toggle('done', i < idx); });
+    if (cleanBar) cleanBar.style.transform = `scaleX(${p})`;
+    if (cleanPct) cleanPct.textContent = `${Math.round((1 - p) * 20)}%`;
+  };
+  setClean(0);
+  const mmP = gsap.matchMedia();
+  mmP.add('(min-width: 900px) and (min-height: 620px)', () => {
+    if (reduced) { setClean(1); return; }
+    const st = ScrollTrigger.create({ trigger: '.process__pin', start: 'top top', end: '+=160%', pin: true, scrub: true, onUpdate: (s) => setClean(s.progress) });
+    return () => st.kill();
+  });
+  mmP.add('(max-width: 899px), (max-height: 619px)', () => {
+    if (reduced) { setClean(1); return; }
+    const st = ScrollTrigger.create({ trigger: '.process', start: 'top 70%', end: 'bottom 40%', scrub: true, onUpdate: (s) => setClean(s.progress) });
+    return () => st.kill();
+  });
 
   // ---------- nagłówki sekcji: litery wyjeżdżają z maski ----------
   if (!reduced) {
@@ -239,19 +291,48 @@ export function initHub() {
       el.classList.add('rv');
       gsap.to(el, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', ...opts, scrollTrigger: { trigger: el, start: 'top 88%' } });
     });
-    reveal('.shead__lede, .lab, .case, .svc__row, .cert, .why__i, .step, .faq details, .proof li, .contact__p, .soc li, .form, .cta-bar, .portrait, .about__p, .about__pic .hfacts, .sites__meta');
+    reveal('.shead__lede, .lab, .case, .svc__row, .cert, .why__i, .faq details, .proof li, .contact__p, .soc li, .form, .cta-bar, .about__p, .sites__meta, .labc, .pjson');
+    gsap.from('.kit__i', { opacity: 0, y: 30, duration: 1, stagger: 0.06, ease: 'expo.out', scrollTrigger: { trigger: '.kit', start: 'top 85%' } });
 
-    // portret: lekka paralaksa
-    gsap.fromTo('.portrait img', { yPercent: -6 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: '.portrait', start: 'top bottom', end: 'bottom top', scrub: true } });
+    // 2D #1: etykiety „odszyfrowują się” znak po znaku
+    const GLYPHS = '01#%/_=+<>[]{}ABCDEFXYZ';
+    const scramble = (el) => {
+      const final = el.textContent;
+      const o = { p: 0 };
+      gsap.to(o, {
+        p: 1, duration: Math.min(1.2, 0.35 + final.length * 0.03), ease: 'none',
+        onUpdate: () => {
+          const n = Math.floor(o.p * final.length);
+          let out = final.slice(0, n);
+          for (let i = n; i < final.length; i++) out += final[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+          el.textContent = out;
+        },
+        onComplete: () => { el.textContent = final; },
+      });
+    };
+    $$('.lab.mono, .labc__k, .case__bar span:first-child, .site__n').forEach((el) => {
+      if (!el.firstChild || el.children.length) return;
+      ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => scramble(el) });
+    });
 
-    // proces: linia rysuje się przy przewijaniu
-    gsap.to('#stepsLine', { scaleX: 1, ease: 'none', scrollTrigger: { trigger: '.steps', start: 'top 75%', end: 'bottom 60%', scrub: true } });
+    // 2D #2: zrzuty i okna odsłaniają się „kurtyną” z lekkim zoomem
+    $$('.screen, .labc__img, .shot__img, .cert__img').forEach((el) => {
+      const img = el.querySelector('img, video');
+      const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 88%' } });
+      tl.fromTo(el, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut' });
+      if (img) tl.fromTo(img, { scale: 1.25 }, { scale: 1, duration: 1.6, ease: 'expo.out' }, 0.1);
+    });
 
     // wielki napis w stopce
     gsap.from('.word span', { yPercent: 100, duration: 1.2, stagger: 0.06, ease: 'expo.out', scrollTrigger: { trigger: '.word', start: 'top 95%' } });
-  } else {
-    gsap.set('#stepsLine', { scaleX: 1 });
   }
+
+  // ---------- ikony rysują się, gdy wjadą w kadr ----------
+  const dio = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('drawn'); dio.unobserve(e.target);
+  }), { rootMargin: '0px 0px -10% 0px' });
+  $$('.draw').forEach((el, i) => { el.style.setProperty('--d', `${(i % 8) * 0.08}s`); dio.observe(el); });
 
   // ---------- liczniki ----------
   $$('[data-count]').forEach((el) => {
@@ -264,24 +345,6 @@ export function initHub() {
       onEnter: () => gsap.to(o, { v: end, duration: 1.6, ease: 'power3.out', onUpdate: () => { el.textContent = Math.round(o.v); } }),
     });
   });
-
-  // ---------- pasek narzędzi: nieskończona pętla, reaguje na prędkość przewijania ----------
-  const track = $('.marq__track');
-  if (track && !reduced) {
-    const loop = gsap.to(track, { xPercent: -50, duration: 38, ease: 'none', repeat: -1 });
-    let dir = 1;
-    ScrollTrigger.create({
-      trigger: '.marq', start: 'top bottom', end: 'bottom top',
-      onUpdate: (st) => {
-        const v = st.getVelocity();
-        dir = v < 0 ? -1 : 1;
-        gsap.to(loop, { timeScale: dir * (1 + Math.min(4, Math.abs(v) / 400)), duration: 0.3, overwrite: true });
-        gsap.to(loop, { timeScale: dir, duration: 1.2, delay: 0.3, overwrite: false });
-        gsap.to('.marq__it', { skewX: gsap.utils.clamp(-10, 10, -v / 180), duration: 0.4, overwrite: true });
-        gsap.to('.marq__it', { skewX: 0, duration: 0.8, delay: 0.3, overwrite: false });
-      },
-    });
-  }
 
   // ---------- strony www: przypięta sekcja przewijana w bok ----------
   const sitesTrack = $('#sitesTrack'), sitesProg = $('#sitesProg'), view = $('.sites__view');
@@ -320,7 +383,7 @@ export function initHub() {
   $$('[data-sec]').forEach((sec) => {
     const i = +sec.dataset.sec;
     ScrollTrigger.create({
-      trigger: sec, start: 'top 50%', end: 'bottom 50%',
+      trigger: sec, start: 'top 50%', end: 'bottom 50%', refreshPriority: -1,
       onToggle: (st) => { if (st.isActive) railLinks.forEach((a) => a.classList.toggle('on', +a.dataset.rail === i)); },
     });
   });
@@ -431,6 +494,11 @@ export function initHub() {
     finally { btn.disabled = false; btnLabel.textContent = cfg.submitLabel; }
   });
 
-  // przeliczenie pozycji po załadowaniu obrazków i fontów
-  window.addEventListener('load', () => ScrollTrigger.refresh());
+  // podgląd stanu scen do testów: dodaj ?debug do adresu
+  if (location.search.includes('debug')) window.__vervo = () => ({ form: world?.form, dbg: world?.debug, inView: [...stagesInView].map((e) => e.dataset.stage), y: window.scrollY, st: ScrollTrigger.getAll().filter((t) => t.trigger?.dataset?.stage).map((t) => [t.trigger.dataset.stage, Math.round(t.start), Math.round(t.end), t.isActive]) });
+
+  // przypięcia i sceny liczone od góry strony do dołu (kolejność ma znaczenie przy pin)
+  ScrollTrigger.sort();
+  ScrollTrigger.refresh();
+  window.addEventListener('load', () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); });
 }
