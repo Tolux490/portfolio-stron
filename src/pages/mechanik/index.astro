@@ -110,7 +110,7 @@ const opinie = [
     <!-- ============ HERO ============ -->
     <section class="hero" id="gora">
       <div class="hero__media">
-        <Foto src="warsztat-hero.webp" alt="Auto na podnośniku w hali serwisu" ratio="16/9" label="Hero" />
+        <Foto src="kolodziej/hero.webp" alt="Samochód w hali serwisu, w tle auta na podnośnikach" ratio="16/9" label="Hero" />
       </div>
       <div class="hero__veil"></div>
 
@@ -174,14 +174,14 @@ const opinie = [
         </ol>
 
         <div class="zakres__foto reveal">
-          <Foto src="warsztat-detal.webp" alt="Skrzynka z narzędziami" ratio="4/5" label="Detal" />
+          <Foto src="kolodziej/narzedzia.webp" alt="Ściana z kluczami i nasadkami" ratio="4/5" label="Detal" />
         </div>
       </div>
     </section>
 
     <!-- ============ PASEK-PRZERYWNIK ============ -->
     <section class="przerywnik reveal" aria-hidden="true">
-      <Foto src="warsztat-galeria-4.webp" alt="" ratio="21/9" label="Pas — komora silnika" />
+      <Foto src="kolodziej/silnik-pas.webp" alt="" ratio="21/9" label="Pas — komora silnika" />
     </section>
 
     <!-- ============ KALKULATOR WYCENY ============ -->
@@ -281,12 +281,12 @@ const opinie = [
       </div>
       <div class="wrap galeria reveal" id="galeria">
         {[
-          { plik: 'warsztat-galeria-1.webp', opis: 'Hala serwisu — auta na stanowiskach' },
-          { plik: 'warsztat-galeria-2.webp', opis: 'Diagnostyka komputerowa' },
-          { plik: 'warsztat-galeria-3.webp', opis: 'Narzędzia — zestaw nasadek' },
-          { plik: 'warsztat-galeria-4.webp', opis: 'Praca w komorze silnika' },
-          { plik: 'warsztat-galeria-5.webp', opis: 'Serwis — klucz przy silniku' },
-          { plik: 'warsztat-galeria-6.webp', opis: 'Mechanik przy pracy' },
+          { plik: 'kolodziej/komora.webp', opis: 'Praca w komorze silnika' },
+          { plik: 'kolodziej/hala.webp', opis: 'Hala serwisu — auto na stanowisku' },
+          { plik: 'kolodziej/elektryka.webp', opis: 'Diagnostyka akumulatora i elektryki' },
+          { plik: 'kolodziej/klucz.webp', opis: 'Klucz przy silniku' },
+          { plik: 'kolodziej/olej.webp', opis: 'Wymiana oleju' },
+          { plik: 'kolodziej/podwozie.webp', opis: 'Praca przy podwoziu' },
         ].map((g, i) => (
           <button class="galeria__kafel reveal" data-opis={g.opis} type="button">
             <Foto src={g.plik} alt={g.opis} ratio={i % 3 === 0 ? '3/4' : '4/3'} label={g.opis} />
@@ -349,7 +349,7 @@ const opinie = [
           </div>
         </div>
         <div class="reveal">
-          <Foto src="warsztat-wjazd.webp" alt="Hala serwisu" ratio="3/4" label="Wjazd / hala" />
+          <Foto src="kolodziej/po-serwisie.webp" alt="Auto po serwisie, gotowe do odbioru" ratio="3/4" label="Wjazd / hala" />
         </div>
       </div>
     </section>
