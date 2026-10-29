@@ -9,10 +9,13 @@ export const GITHUB_URL = 'https://github.com/Tolux490';
 // Adresu e-mail nie ma nigdzie w HTML (ochrona przed spamem). Formularz wysyła przez FormSubmit:
 // - FORM_ID: losowy kod z maila aktywacyjnego FormSubmit (zastępuje adres w zapytaniu). Najlepsza opcja.
 // - EMAIL_PARTS: zapasowo, gdy FORM_ID jest puste. Adres składa się dopiero w przeglądarce przy wysyłce.
+// Profile w stopce i w sekcji kontaktu. Puste = link się nie pokazuje (wystarczy wkleić adres).
+export const LINKEDIN_URL = '';
+export const UPWORK_URL = '';
 export const FORM_ID = '';
 export const EMAIL_PARTS = ['antoni.antczak05', 'gmail', 'com'];
 
-export const NAV_HREFS = ['#work', '#services', '#about', '#faq', '#contact'];
+export const NAV_HREFS = ['#work', '#websites', '#services', '#about', '#contact'];
 export const SKILLS = ['Excel', 'Google Sheets', 'Google Forms', 'Apps Script', 'SQL', 'Python', 'HTML · CSS · JS', 'Astro'];
 
 // Media wspólne dla wszystkich języków. Teksty (podpisy, opisy) są w T[lang] pod tym samym indeksem.
@@ -45,6 +48,27 @@ export const CERTS = [
 
 export const T = {
   en: {
+    ui: {
+      menu: 'Menu', close: 'Close', skip: 'Skip to content',
+      loading: ['Cleaning data', 'Building sheets', 'Rendering'],
+      heroLines: ['Clean data.', 'Smart sheets.', 'Sites that work.'],
+      heroFacts: [['Role', 'Data & web freelancer'], ['Base', 'Remote · CET'], ['Stack', 'Excel / Sheets / SQL / Python / Astro'], ['For', 'Small businesses & startups']],
+      badge: 'Available for work · Vervo Studio · ',
+      scroll: 'Scroll',
+      localTime: 'Local time',
+      manifesto: 'Most small businesses don’t need a big IT project. They need numbers they can trust, orders that don’t get lost and a website that brings in customers. That’s exactly what I build.',
+      chapter: 'Ch',
+      sideways: 'Scroll sideways',
+      cursor: { view: 'View', play: 'Play', open: 'Open', drag: 'Drag', copy: 'Copy' },
+      contactBig: ['Let’s make it', 'work.'],
+      elsewhere: 'Elsewhere',
+      copyEmail: 'Copy email', copied: 'Copied!', emailMe: 'Email me',
+      startProject: 'Start a project',
+      backTop: 'Back to top',
+      theme: 'Theme', themes: { amber: 'Amber', lime: 'Lime', paper: 'Paper' },
+      sections: ['Intro', 'Work', 'Websites', 'Services', 'Skills', 'About', 'Process', 'FAQ', 'Contact'],
+      handmade: 'Designed & built by hand. No templates.',
+    },
     meta: {
       ogLocale: 'en_US',
       title: 'Anthony A. | Excel, Google Sheets & web freelancer | Vervo Studio',
@@ -201,6 +225,27 @@ export const T = {
   },
 
   pl: {
+    ui: {
+      menu: 'Menu', close: 'Zamknij', skip: 'Przejdź do treści',
+      loading: ['Czyszczę dane', 'Buduję arkusze', 'Renderuję'],
+      heroLines: ['Czyste dane.', 'Mądre arkusze.', 'Strony, które działają.'],
+      heroFacts: [['Rola', 'Freelancer: dane i strony'], ['Baza', 'Zdalnie · CET'], ['Narzędzia', 'Excel / Arkusze / SQL / Python / Astro'], ['Dla', 'Małe firmy i startupy']],
+      badge: 'Przyjmuję zlecenia · Vervo Studio · ',
+      scroll: 'Przewiń',
+      localTime: 'Czas lokalny',
+      manifesto: 'Większość małych firm nie potrzebuje wielkiego projektu IT. Potrzebuje liczb, którym można ufać, zamówień, które nie giną, i strony, która przyprowadza klientów. Dokładnie to buduję.',
+      chapter: 'Rozdz.',
+      sideways: 'Przewiń w bok',
+      cursor: { view: 'Zobacz', play: 'Odtwórz', open: 'Otwórz', drag: 'Przeciągnij', copy: 'Kopiuj' },
+      contactBig: ['Zróbmy, żeby', 'działało.'],
+      elsewhere: 'Gdzie indziej',
+      copyEmail: 'Kopiuj e-mail', copied: 'Skopiowano!', emailMe: 'Napisz e-mail',
+      startProject: 'Zacznijmy projekt',
+      backTop: 'Na górę',
+      theme: 'Motyw', themes: { amber: 'Bursztyn', lime: 'Limonka', paper: 'Papier' },
+      sections: ['Start', 'Projekty', 'Strony', 'Usługi', 'Certyfikaty', 'O mnie', 'Proces', 'FAQ', 'Kontakt'],
+      handmade: 'Zaprojektowane i zakodowane ręcznie. Bez szablonów.',
+    },
     meta: {
       ogLocale: 'pl_PL',
       title: 'Anthony A. | Excel, Arkusze Google i strony www | Vervo Studio',
@@ -357,6 +402,27 @@ export const T = {
   },
 
   nl: {
+    ui: {
+      menu: 'Menu', close: 'Sluiten', skip: 'Naar de inhoud',
+      loading: ['Data opschonen', 'Sheets bouwen', 'Renderen'],
+      heroLines: ['Schone data.', 'Slimme sheets.', 'Sites die werken.'],
+      heroFacts: [['Rol', 'Freelancer: data & web'], ['Basis', 'Op afstand · CET'], ['Stack', 'Excel / Sheets / SQL / Python / Astro'], ['Voor', 'Kleine bedrijven & startups']],
+      badge: 'Beschikbaar voor werk · Vervo Studio · ',
+      scroll: 'Scroll',
+      localTime: 'Lokale tijd',
+      manifesto: 'De meeste kleine bedrijven hebben geen groot IT-project nodig. Ze hebben cijfers nodig waarop ze kunnen vertrouwen, bestellingen die niet zoekraken en een website die klanten oplevert. Precies dat bouw ik.',
+      chapter: 'Hfst.',
+      sideways: 'Scroll opzij',
+      cursor: { view: 'Bekijk', play: 'Afspelen', open: 'Open', drag: 'Sleep', copy: 'Kopieer' },
+      contactBig: ['Laten we het', 'laten werken.'],
+      elsewhere: 'Elders',
+      copyEmail: 'Kopieer e-mail', copied: 'Gekopieerd!', emailMe: 'Mail me',
+      startProject: 'Start een project',
+      backTop: 'Terug naar boven',
+      theme: 'Thema', themes: { amber: 'Amber', lime: 'Limoen', paper: 'Papier' },
+      sections: ['Intro', 'Werk', 'Websites', 'Diensten', 'Skills', 'Over mij', 'Werkwijze', 'FAQ', 'Contact'],
+      handmade: 'Met de hand ontworpen en gebouwd. Geen templates.',
+    },
     meta: {
       ogLocale: 'nl_NL',
       title: 'Anthony A. | Excel, Google Sheets & websites | Vervo Studio',

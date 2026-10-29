@@ -1,18 +1,20 @@
 ---
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/geist-mono';
+import '../styles/hub.css';
 import {
-  T, LANGS, DEFAULT_LANG, NAV_HREFS, SKILLS, CASE_MEDIA, SITE_HREFS, SITE_THUMBS, CERTS,
-  FIVERR_URL, GITHUB_URL, FICHES_URL, FORM_ID, EMAIL_PARTS,
+  T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, SITE_HREFS, SITE_THUMBS, CERTS,
+  FIVERR_URL, GITHUB_URL, LINKEDIN_URL, UPWORK_URL, FICHES_URL, FORM_ID, EMAIL_PARTS,
 } from '../data/hub-i18n.js';
 
 const { lang = DEFAULT_LANG } = Astro.props;
 const t = T[lang] || T[DEFAULT_LANG];
+const ui = t.ui;
 
 const b = import.meta.env.BASE_URL.replace(/\/$/, '');
 const site = Astro.site ? Astro.site.origin : 'https://vervostudio.com';
-const og = (p) => new URL(`${b}/og/${p}`, Astro.site || 'https://vervostudio.com/').href;
+const abs = (p) => new URL(`${b}/${p}`, Astro.site || 'https://vervostudio.com/').href;
 const asset = (p) => `${b}/${p}`;
-
-// Formularz kontaktowy idzie przez FormSubmit. Adres e-mail nie trafia do HTML (patrz FORM_ID w hub-i18n.js).
 
 const langPath = (l) => (l === DEFAULT_LANG ? '/' : `/${l}/`);
 const urls = Object.fromEntries(LANGS.map((l) => [l, `${site}${langPath(l)}`]));
@@ -24,6 +26,27 @@ const fiverr = FIVERR_URL || '';
 const extLink = { target: '_blank', rel: 'noopener' };
 const hire = fiverr ? { href: fiverr, ...extLink } : { href: '#contact' };
 const fmtDate = (d) => new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(d));
+const pad = (n) => String(n).padStart(2, '0');
+
+// Menu i boczny wskaźnik sekcji: [kotwica, indeks etykiety w ui.sections]
+const NAV = [['#work', 1], ['#websites', 2], ['#services', 3], ['#about', 5], ['#faq', 7], ['#contact', 8]];
+const RAIL = ['#top', '#work', '#websites', '#services', '#certificates', '#about', '#process', '#faq', '#contact'];
+
+// Profile: puste adresy w hub-i18n.js po prostu się nie pokazują.
+const socials = [
+  { k: 'fiverr', label: 'Fiverr', href: FIVERR_URL },
+  { k: 'github', label: 'GitHub', href: GITHUB_URL },
+  { k: 'linkedin', label: 'LinkedIn', href: LINKEDIN_URL },
+  { k: 'upwork', label: 'Upwork', href: UPWORK_URL },
+].filter((s) => s.href);
+
+const THEMES = ['amber', 'lime', 'paper'];
+
+// Konfiguracja dla skryptu w przeglądarce (bez pełnego adresu e-mail w HTML).
+const config = {
+  lang, formId: FORM_ID, parts: EMAIL_PARTS, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit,
+  copied: ui.copied, copyEmail: ui.copyEmail, loading: ui.loading, cursor: ui.cursor,
+};
 
 const schema = {
   '@context': 'https://schema.org',
@@ -31,16 +54,16 @@ const schema = {
   name: 'Vervo Studio',
   description: t.schemaDesc,
   url: canonical,
-  image: og('vervo.png'),
+  image: abs('og/vervo.jpg'),
   inLanguage: lang,
   areaServed: 'Worldwide',
   founder: {
     '@type': 'Person',
     name: 'Anthony A.',
-    image: new URL(`${b}/img/antoni.webp`, Astro.site || 'https://vervostudio.com/').href,
+    image: abs('img/antoni.webp'),
     jobTitle: t.jobTitle,
     knowsAbout: SKILLS,
-    sameAs: [GITHUB_URL, fiverr].filter(Boolean),
+    sameAs: socials.map((s) => s.href),
   },
 };
 const faqSchema = {
@@ -51,18 +74,17 @@ const faqSchema = {
 };
 
 const serviceIcons = [
-  // tabela
   '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M9.5 9.5v10"/>',
-  // błyskawica / automatyzacja
   '<path d="M13 3 5 13.5h6L10 21l8-10.5h-6L13 3Z"/>',
-  // przeglądarka
-  '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M3 8.5h18"/><circle cx="6" cy="6.5" r=".4"/><circle cx="8" cy="6.5" r=".4"/>',
-  // wykres
+  '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M3 8.5h18"/>',
   '<path d="M4 20V4M4 20h16"/><path d="m7.5 15 3.5-4 3 2.5 5-6"/>',
 ];
+const marqueeA = [...SKILLS, ...SKILLS];
+const isNum = (v) => /^\d+$/.test(v);
+const wordmark = 'VERVO'.split('');
 ---
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-theme="amber" class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -71,7 +93,7 @@ const serviceIcons = [
     <link rel="canonical" href={canonical} />
     {LANGS.map((l) => <link rel="alternate" hreflang={l} href={urls[l]} />)}
     <link rel="alternate" hreflang="x-default" href={urls[DEFAULT_LANG]} />
-    <meta name="theme-color" content="#f6f4ef" />
+    <meta name="theme-color" content="#0c0d10" />
     <link rel="icon" href={`${b}/favicon.svg`} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={t.meta.ogLocale} />
@@ -79,152 +101,206 @@ const serviceIcons = [
     <meta property="og:title" content={t.meta.ogTitle} />
     <meta property="og:description" content={t.meta.ogDescription} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={og('vervo.png')} />
+    <meta property="og:image" content={abs('og/vervo.jpg')} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={t.meta.ogTitle} />
     <meta name="twitter:description" content={t.meta.ogDescription} />
-    <meta name="twitter:image" content={og('vervo.png')} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" />
+    <meta name="twitter:image" content={abs('og/vervo.jpg')} />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      // Motyw i preloader ustawiamy przed pierwszym malowaniem, żeby nic nie mrugało.
+      (function () {
+        var d = document.documentElement, th = null, seen = null;
+        try { th = localStorage.getItem('vervo-theme'); seen = sessionStorage.getItem('vervo-seen'); } catch (e) {}
+        if (th === 'amber' || th === 'lime' || th === 'paper') d.setAttribute('data-theme', th);
+        d.classList.remove('no-js'); d.classList.add('js');
+        if (seen) d.classList.add('seen');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('reduced');
+      })();
+    </script>
   </head>
 
   <body>
+    <a class="skip" href="#main">{ui.skip}</a>
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- PRELOADER -->
+    <div class="pre" id="pre" aria-hidden="true">
+      <div class="pre__row mono"><span>Vervo_Studio</span><span id="preStage">01 / {ui.loading[0]}</span></div>
+      <div class="pre__num"><span id="preNum">0</span><span class="pre__pct">%</span></div>
+      <div class="pre__bar"><i id="preBar"></i></div>
+      <div class="pre__row mono"><span>{t.jobTitle}</span><span>©{new Date().getFullYear()}</span></div>
+    </div>
+
+    <!-- KURSOR -->
+    <div class="cur" id="cur" aria-hidden="true"><span class="cur__dot"></span><span class="cur__ring"><b class="cur__lab" id="curLab"></b></span></div>
+
+    <!-- NAGŁÓWEK -->
     <header class="hdr" id="hdr">
-      <div class="wrap hdr__in">
-        <a class="brand" href="#top" aria-label="Vervo Studio">
-          <svg class="brand__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="brand__tx">Vervo <em>Studio</em></span>
-        </a>
-        <nav class="nav" aria-label="Nav">{NAV_HREFS.map((href, i) => <a href={href}>{t.navLabels[i]}</a>)}</nav>
-        <div class="lang" role="group" aria-label="Language">
+      <a class="brand" href="#top" aria-label="Vervo Studio" data-cursor="hover">
+        <svg class="brand__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="brand__tx">Vervo<span class="blink">_</span></span>
+      </a>
+      <p class="hdr__time mono"><span class="live"></span>{ui.localTime} <time id="clock">--:--</time> CET</p>
+      <div class="hdr__right">
+        <div class="themes" role="group" aria-label={ui.theme}>
+          {THEMES.map((th) => <button type="button" class={`sw sw--${th}`} data-set-theme={th} aria-label={`${ui.theme}: ${ui.themes[th]}`} title={ui.themes[th]}></button>)}
+        </div>
+        <div class="lang mono" role="group" aria-label="Language">
           {LANGS.map((l) => <a class:list={['lang__a', { on: l === lang }]} href={langUrl(l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>)}
         </div>
-        <a class="btn btn--dark btn--sm hdr__cta" {...hire}>{t.cta.hire}</a>
-        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span></button>
+        <button class="menubtn mono" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu" data-cursor="hover">
+          <span class="menubtn__tx"><span class="scr">{ui.menu}</span><span class="scr">{ui.close}</span></span>
+          <span class="menubtn__ic" aria-hidden="true"><i></i><i></i></span>
+        </button>
       </div>
     </header>
 
-    <div class="drawer" id="drawer">
-      {NAV_HREFS.map((href, i) => <a href={href}>{t.navLabels[i]}</a>)}
-      <a {...hire}>{t.cta.hire}</a>
-      <div class="lang lang--drawer" role="group" aria-label="Language">
-        {LANGS.map((l) => <a class:list={['lang__a', { on: l === lang }]} href={langUrl(l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>)}
-      </div>
-    </div>
-
-    <main id="top">
-      <!-- HERO -->
-      <section class="hero">
-        <div class="wrap hero__grid">
-          <div class="hero__txt">
-            <p class="avail"><span class="avail__dot" aria-hidden="true"></span>{t.hero.available}</p>
-            <p class="who">
-              <img class="mono" src={asset('img/antoni-avatar.webp')} width="240" height="240" alt="" />
-              <span><b>Anthony A.</b><span>{t.jobTitle}</span></span>
-            </p>
-            <h1 set:html={t.hero.h1}></h1>
-            <p class="hero__lede">{t.hero.lede}</p>
-            <div class="hero__cta">
-              {fiverr
-                ? <a class="btn btn--acc" href={fiverr} {...extLink}>{t.cta.fiverr} ↗</a>
-                : <a class="btn btn--acc" href="#contact">{t.cta.quote}</a>}
-              <a class="btn btn--line" href="#work">{t.cta.seeWork}</a>
-            </div>
+    <!-- MENU PEŁNOEKRANOWE -->
+    <nav class="menu" id="menu" aria-label="Menu" inert>
+      <div class="menu__bg"></div>
+      <div class="menu__in">
+        <ol class="menu__list">
+          {NAV.map(([href, i], k) => (
+            <li><a href={href} class="menu__a" data-cursor="hover"><span class="mono menu__n">{pad(k + 1)}</span><span class="menu__w">{ui.sections[i]}</span></a></li>
+          ))}
+        </ol>
+        <div class="menu__side mono">
+          <p class="menu__lab">{ui.elsewhere}</p>
+          {socials.map((s) => <a href={s.href} {...extLink}>{s.label} ↗</a>)}
+          <button type="button" class="linkbtn" data-copy-email>{ui.copyEmail}</button>
+          <p class="menu__lab">Language</p>
+          <div class="lang lang--menu">
+            {LANGS.map((l) => <a class:list={['lang__a', { on: l === lang }]} href={langUrl(l)} hreflang={l} lang={l}>{l.toUpperCase()}</a>)}
           </div>
-
-          <div class="hero__art" aria-hidden="true">
-            <figure class="win win--a">
-              <div class="win__bar"><i></i><i></i><i></i><span>Sweet Crumb Bakery · Google Sheets</span></div>
-              <img src={asset(CASE_MEDIA[1].shots[1].src)} width={CASE_MEDIA[1].shots[1].w} height={CASE_MEDIA[1].shots[1].h} alt="" fetchpriority="high" />
-            </figure>
-            <figure class="win win--b">
-              <div class="win__bar"><i></i><i></i><i></i><span>Cleaning log</span></div>
-              <img src={asset(CASE_MEDIA[0].shots[2].src)} width={CASE_MEDIA[0].shots[2].w} height={CASE_MEDIA[0].shots[2].h} alt="" />
-            </figure>
-            <figure class="win win--c">
-              <div class="win__bar"><i></i><i></i><i></i><span>Little Kettle Shop.xlsx</span></div>
-              <img src={asset(CASE_MEDIA[0].shots[1].src)} width={CASE_MEDIA[0].shots[1].w} height={CASE_MEDIA[0].shots[1].h} alt="" />
-            </figure>
-            <span class="chip chip--1"><span class="avail__dot"></span>{t.hero.chips[1]}</span>
-            <span class="chip chip--2"><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>{t.hero.chips[0]}</span>
+          <p class="menu__lab">{ui.theme}</p>
+          <div class="themes themes--lg">
+            {THEMES.map((th) => <button type="button" class={`sw sw--${th}`} data-set-theme={th} aria-label={`${ui.theme}: ${ui.themes[th]}`}><span>{ui.themes[th]}</span></button>)}
           </div>
         </div>
+      </div>
+    </nav>
 
+    <!-- WSKAŹNIK SEKCJI -->
+    <ol class="rail mono" aria-hidden="true">
+      {RAIL.map((href, i) => <li><a href={href} tabindex="-1" data-rail={i}><span>{pad(i)}</span><em>{ui.sections[i]}</em></a></li>)}
+    </ol>
+
+    <main id="main">
+      <!-- HERO -->
+      <section class="hero" id="top" data-sec="0">
+        <canvas class="hero__gl" id="heroGl" aria-hidden="true"></canvas>
+        <div class="hero__veil" aria-hidden="true"></div>
+        <div class="wrap hero__in">
+          <p class="avail mono"><span class="live"></span>{t.hero.available}</p>
+          <h1 class="hero__h" aria-label={ui.heroLines.join(' ')}>
+            {ui.heroLines.map((l, i) => <span class={`hl hl--${i}`} aria-hidden="true"><span class="hl__in">{l}</span></span>)}
+          </h1>
+          <div class="hero__row">
+            <p class="hero__lede">{t.hero.lede}</p>
+            <dl class="hfacts mono">
+              {ui.heroFacts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+            </dl>
+          </div>
+          <div class="hero__cta">
+            {fiverr
+              ? <a class="btn btn--acc magnetic" href={fiverr} {...extLink} data-cursor="hover"><span>{t.cta.fiverr}</span><span aria-hidden="true">↗</span></a>
+              : <a class="btn btn--acc magnetic" href="#contact" data-cursor="hover"><span>{t.cta.quote}</span></a>}
+            <a class="btn btn--line magnetic" href="#work" data-cursor="hover"><span>{t.cta.seeWork}</span><span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <a class="badge" href="#about" aria-label={t.about.h2} data-cursor="hover">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <defs><path id="badgeCirc" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>
+            <text><textPath href="#badgeCirc" textLength="502">{ui.badge}{ui.badge}</textPath></text>
+          </svg>
+          <img src={asset('img/antoni-avatar.webp')} width="240" height="240" alt="" />
+        </a>
+        <div class="term mono" aria-hidden="true">
+          <div class="term__bar"><span>little_kettle / cleaning_log.sql</span><span class="live"></span></div>
+          <ol class="term__out" id="term"></ol>
+        </div>
+        <p class="cue mono" aria-hidden="true"><span>{ui.scroll}</span><i></i></p>
+      </section>
+
+      <!-- PASEK NARZĘDZI -->
+      <div class="marq" aria-label={t.skillsLabel}>
+        <div class="marq__track">
+          {[0, 1].map((r) => (
+            <div class="marq__grp" aria-hidden={r === 1 ? 'true' : undefined}>
+              {marqueeA.map((s, i) => <span class:list={['marq__it', { 'marq__it--o': i % 2 }]}>{s}<b aria-hidden="true">✦</b></span>)}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- MANIFEST -->
+      <section class="mani band" aria-label="Vervo Studio">
         <div class="wrap">
+          <p class="lab mono">[ 00 ] Vervo Studio</p>
+          <p class="mani__txt" data-words>{ui.manifesto}</p>
           <ul class="proof">
-            {t.hero.proof.map((f) => <li><b>{f.b}</b><span>{f.t}</span></li>)}
+            {t.hero.proof.map((f) => (
+              <li><b data-count={isNum(f.b) ? f.b : undefined}>{f.b}</b><span>{f.t}</span></li>
+            ))}
           </ul>
         </div>
       </section>
 
-      <!-- NARZĘDZIA -->
-      <section class="tools" aria-label={t.skillsLabel}>
-        <div class="wrap tools__in">
-          <p class="tools__lab">{t.skillsLabel}</p>
-          <ul class="tools__list">{SKILLS.map((s) => <li>{s}</li>)}</ul>
-        </div>
-      </section>
-
       <!-- PROJEKTY -->
-      <section class="band" id="work">
+      <section class="band" id="work" data-sec="1">
         <div class="wrap">
-          <div class="sec__head rv">
-            <p class="label">{t.work.label}</p>
-            <h2 class="h2">{t.work.h2}</h2>
-            <p class="sec__lede">{t.work.lede}</p>
-          </div>
+          <header class="shead">
+            <p class="lab mono">[ 01 ] {t.work.label}</p>
+            <h2 class="h2 split">{t.work.h2}</h2>
+            <p class="shead__lede">{t.work.lede}</p>
+          </header>
 
           <div class="cases">
             {t.work.cases.map((c, i) => {
               const m = CASE_MEDIA[i];
               return (
-                <article class="case rv">
-                  <header class="case__head">
-                    <div class="case__meta">
-                      <span class="kicker">{c.kicker}</span>
-                      <span class="sample">{t.work.sample}</span>
-                    </div>
-                    <h3>{c.title}</h3>
-                  </header>
-
-                  <div class="case__body">
+                <article class="case">
+                  <div class="case__bar mono">
+                    <span>{ui.chapter} {pad(i + 1)} — {c.kicker}</span>
+                    <span class="case__sample">{t.work.sample}</span>
+                  </div>
+                  <div class="case__grid">
                     <div class="case__text">
-                      <p class="case__lab">{t.work.problem}</p>
+                      <h3 class="case__h">{c.title}</h3>
+                      <p class="lab mono">{t.work.problem}</p>
                       <p class="case__intro">{c.intro}</p>
-                      <p class="case__lab">{t.work.did}</p>
+                      <p class="lab mono">{t.work.did}</p>
                       <ol class="did">{c.did.map((d) => <li>{d}</li>)}</ol>
                     </div>
                     <div class="case__side">
-                      <figure class="vid">
-                        <video controls preload="none" playsinline muted poster={asset(m.poster)} width={m.vw} height={m.vh}>
+                      <figure class="screen" data-cursor="play">
+                        <div class="screen__bar mono"><span><i></i><i></i><i></i></span><span>{t.work.video}</span><span>REC ●</span></div>
+                        <video class="screen__vid" muted loop playsinline preload="none" poster={asset(m.poster)} width={m.vw} height={m.vh}>
                           <source src={asset(m.video)} type="video/mp4" />
                         </video>
-                        <figcaption><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5L8 5.5Z"/></svg>{t.work.video}</figcaption>
+                        <span class="screen__scan" aria-hidden="true"></span>
                       </figure>
-                      <ul class="stats">{c.stats.map((s) => <li><b>{s.b}</b><span>{s.t}</span></li>)}</ul>
+                      <ul class="stats">{c.stats.map((s) => <li><b data-count={isNum(s.b) ? s.b : undefined}>{s.b}</b><span>{s.t}</span></li>)}</ul>
                       <div class="result">
-                        <p class="case__lab">{t.work.result}</p>
+                        <p class="lab mono">{t.work.result}</p>
                         <p>{c.result}</p>
                       </div>
                       {m.download && (
-                        <a class="btn btn--line btn--sm dl" href={asset(m.download)} download>
-                          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>{t.work.download}
+                        <a class="btn btn--line btn--sm" href={asset(m.download)} download data-cursor="hover">
+                          <span>↓ {t.work.download}</span>
                         </a>
                       )}
                     </div>
                   </div>
-
                   <div class:list={['shots', `shots--${m.shots.length}`]}>
                     {m.shots.map((s, k) => (
-                      <button class="shot" type="button" data-zoom={asset(s.src)} data-cap={c.caps[k]} aria-label={`${c.caps[k]}. ${t.work.zoom}`}>
+                      <button class="shot" type="button" data-zoom={asset(s.src)} data-cap={c.caps[k]} aria-label={`${c.caps[k]}. ${t.work.zoom}`} data-cursor="view">
                         <span class="shot__img"><img src={asset(s.src)} width={s.w} height={s.h} alt={c.caps[k]} loading="lazy" decoding="async" /></span>
-                        <span class="shot__cap">{c.caps[k]}</span>
+                        <span class="shot__cap mono"><em>{pad(k + 1)}</em> {c.caps[k]}</span>
                       </button>
                     ))}
                   </div>
@@ -235,86 +311,100 @@ const serviceIcons = [
         </div>
       </section>
 
-      <!-- STRONY WWW -->
-      <section class="band band--alt" id="websites">
-        <div class="wrap">
-          <div class="sec__head rv">
-            <p class="label">{t.sites.label}</p>
-            <h2 class="h2">{t.sites.h2}</h2>
-            <p class="sec__lede">{t.sites.note}</p>
+      <!-- STRONY WWW: przewijanie w bok -->
+      <section class="sites" id="websites" data-sec="2">
+        <div class="sites__pin">
+          <div class="wrap sites__head">
+            <div>
+              <p class="lab mono">[ 02 ] {t.sites.label}</p>
+              <h2 class="h2 split">{t.sites.h2}</h2>
+            </div>
+            <div class="sites__meta">
+              <p class="shead__lede">{t.sites.note}</p>
+              <p class="mono sites__hint">{ui.sideways} <span aria-hidden="true">→</span></p>
+            </div>
           </div>
-          <div class="sites">
-            {t.sites.items.map((r, i) => (
-              <a class="site rv" href={`${b}${SITE_HREFS[i]}`}>
-                <span class="site__img"><img src={asset(SITE_THUMBS[i])} width="960" height="600" alt={`${r.nazwa}, ${r.bran}`} loading="lazy" decoding="async" /></span>
-                <span class="site__body">
-                  <span class="site__top"><span class="site__bran">{r.bran}</span><span class="site__go">{t.sites.goLive}</span></span>
-                  <span class="site__h">{r.nazwa}</span>
-                  <span class="site__p">{r.opis}</span>
-                  <span class="tags">{r.tagi.map((x) => <span>{x}</span>)}</span>
+          <div class="sites__view">
+            <div class="sites__track" id="sitesTrack">
+              {t.sites.items.map((r, i) => (
+                <a class="site" href={`${b}${SITE_HREFS[i]}`} data-cursor="open">
+                  <span class="site__win">
+                    <span class="site__bar mono"><span><i></i><i></i><i></i></span><span>vervostudio.com{SITE_HREFS[i]}</span></span>
+                    <span class="site__img"><img src={asset(SITE_THUMBS[i])} width="960" height="600" alt={`${r.nazwa}, ${r.bran}`} loading="lazy" decoding="async" /></span>
+                  </span>
+                  <span class="site__meta">
+                    <span class="mono site__n">{pad(i + 1)} / {pad(t.sites.items.length + 1)}</span>
+                    <span class="site__h">{r.nazwa}</span>
+                    <span class="mono site__bran">{r.bran}</span>
+                    <span class="site__p">{r.opis}</span>
+                    <span class="tags mono">{r.tagi.map((x) => <span>{x}</span>)}</span>
+                  </span>
+                </a>
+              ))}
+              <a class="site site--app" href={FICHES_URL} {...extLink} data-cursor="open">
+                <span class="site__win fiche" aria-hidden="true">
+                  <span class="fiche__card fiche__card--back">bread</span>
+                  <span class="fiche__card">le pain</span>
+                </span>
+                <span class="site__meta">
+                  <span class="mono site__n">{pad(t.sites.items.length + 1)} / {pad(t.sites.items.length + 1)}</span>
+                  <span class="site__h">{t.sites.project.nazwa}</span>
+                  <span class="mono site__bran">{t.sites.project.bran}</span>
+                  <span class="site__p">{t.sites.project.opis}</span>
+                  <span class="tags mono">{t.sites.project.tagi.map((x) => <span>{x}</span>)}</span>
                 </span>
               </a>
-            ))}
-            <a class="site site--app rv" href={FICHES_URL} {...extLink}>
-              <span class="site__img fiche" aria-hidden="true">
-                <span class="fiche__card fiche__card--back">bread</span>
-                <span class="fiche__card">le pain</span>
-              </span>
-              <span class="site__body">
-                <span class="site__top"><span class="site__bran">{t.sites.project.bran}</span><span class="site__go">{t.sites.project.go}</span></span>
-                <span class="site__h">{t.sites.project.nazwa}</span>
-                <span class="site__p">{t.sites.project.opis}</span>
-                <span class="tags">{t.sites.project.tagi.map((x) => <span>{x}</span>)}</span>
-              </span>
-            </a>
+            </div>
           </div>
+          <div class="wrap"><div class="sites__prog" aria-hidden="true"><i id="sitesProg"></i></div></div>
         </div>
       </section>
 
       <!-- USŁUGI -->
-      <section class="band" id="services">
+      <section class="band" id="services" data-sec="3">
         <div class="wrap">
-          <div class="sec__head rv">
-            <p class="label">{t.services.label}</p>
-            <h2 class="h2">{t.services.h2}</h2>
-            <p class="sec__lede">{t.services.lede}</p>
-          </div>
-          <div class="svc">
+          <header class="shead">
+            <p class="lab mono">[ 03 ] {t.services.label}</p>
+            <h2 class="h2 split">{t.services.h2}</h2>
+            <p class="shead__lede">{t.services.lede}</p>
+          </header>
+          <ol class="svc">
             {t.services.items.map((s, i) => (
-              <div class="svc__i rv">
+              <li class="svc__row">
+                <span class="svc__n mono">{pad(i + 1)}</span>
                 <span class="svc__ic" aria-hidden="true"><svg viewBox="0 0 24 24" set:html={serviceIcons[i]}></svg></span>
-                <h3>{s.t}</h3>
-                <p>{s.o}</p>
-                <ul class="checks">{s.co.map((c) => <li>{c}</li>)}</ul>
-                <a class="svc__go" {...hire}>{fiverr ? t.cta.fiverr : t.cta.ask} →</a>
-              </div>
+                <div class="svc__main">
+                  <h3 class="svc__h">{s.t}</h3>
+                  <p class="svc__p">{s.o}</p>
+                </div>
+                <ul class="svc__co mono">{s.co.map((c) => <li>{c}</li>)}</ul>
+                <a class="svc__go mono" {...hire} data-cursor="hover">{fiverr ? t.cta.fiverr : t.cta.ask} ↗</a>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
       <!-- CERTYFIKATY -->
-      <section class="band band--alt" id="certificates">
+      <section class="band band--alt" id="certificates" data-sec="4">
         <div class="wrap">
-          <div class="sec__head rv">
-            <p class="label">{t.certs.label}</p>
-            <h2 class="h2">{t.certs.h2}</h2>
-            <p class="sec__lede">{t.certs.lede}</p>
-          </div>
+          <header class="shead">
+            <p class="lab mono">[ 04 ] {t.certs.label}</p>
+            <h2 class="h2 split">{t.certs.h2}</h2>
+            <p class="shead__lede">{t.certs.lede}</p>
+          </header>
           <div class="certs">
-            {CERTS.map((c) => (
-              <div class="cert rv">
-                <button class="cert__img" type="button" data-zoom={asset(c.img)} data-cap={`${c.org} · ${c.t}`} aria-label={`${c.org} ${c.t}. ${t.work.zoom}`}>
+            {CERTS.map((c, i) => (
+              <div class="cert tilt">
+                <button class="cert__img" type="button" data-zoom={asset(c.img)} data-cap={`${c.org} · ${c.t}`} aria-label={`${c.org} ${c.t}. ${t.work.zoom}`} data-cursor="view">
                   <img src={asset(c.img)} width={c.w} height={c.h} alt={`${c.org} ${c.t}`} loading="lazy" decoding="async" />
+                  <span class="cert__glare" aria-hidden="true"></span>
                 </button>
                 <div class="cert__body">
-                  <p class="cert__org">{c.org}</p>
-                  <h3>{c.t}</h3>
-                  <p class="cert__date">{t.certs.earned} {fmtDate(c.date)}</p>
-                  <div class="cert__links">
-                    <button type="button" class="cert__a" data-zoom={asset(c.img)} data-cap={`${c.org} · ${c.t}`}>{t.certs.view}</button>
-                    {c.verify && <a class="cert__a" href={c.verify} {...extLink}>{t.certs.verify}</a>}
-                  </div>
+                  <p class="mono cert__org">{pad(i + 1)} — {c.org}</p>
+                  <h3 class="cert__h">{c.t}</h3>
+                  <p class="mono cert__date">{t.certs.earned} {fmtDate(c.date)}</p>
+                  {c.verify && <a class="mono cert__a" href={c.verify} {...extLink} data-cursor="hover">{t.certs.verify}</a>}
                 </div>
               </div>
             ))}
@@ -323,51 +413,58 @@ const serviceIcons = [
       </section>
 
       <!-- O MNIE -->
-      <section class="band" id="about">
+      <section class="band" id="about" data-sec="5">
         <div class="wrap about">
-          <div class="about__card rv">
-            <img class="portrait" src={asset('img/antoni.webp')} width="533" height="647" alt="Anthony A." loading="lazy" decoding="async" />
-            <p class="about__name">Anthony A.</p>
-            <p class="about__role">Vervo Studio</p>
-            <dl class="facts">
+          <div class="about__pic">
+            <div class="portrait" data-cursor="hover">
+              <img src={asset('img/antoni.webp')} width="533" height="647" alt="Anthony A." loading="lazy" decoding="async" />
+              <span class="portrait__scan" aria-hidden="true"></span>
+              <span class="portrait__tag mono">Anthony A. — Vervo Studio</span>
+            </div>
+            <dl class="hfacts mono">
               {t.about.facts.map((f) => <div><dt>{f.k}</dt><dd>{f.v}</dd></div>)}
             </dl>
-            <div class="about__links">
-              <a href={GITHUB_URL} {...extLink}>{t.cta.github} ↗</a>
-              {fiverr && <a href={fiverr} {...extLink}>Fiverr ↗</a>}
-            </div>
           </div>
-          <div class="rv">
-            <p class="label">{t.about.label}</p>
-            <h2 class="h2">{t.about.h2}</h2>
+          <div class="about__txt">
+            <p class="lab mono">[ 05 ] {t.about.label}</p>
+            <h2 class="h2 split">{t.about.h2}</h2>
             {t.about.p.map((p) => <p class="about__p">{p}</p>)}
             <div class="why">
-              {t.about.why.map((w) => <div class="why__i"><b>{w.b}</b><span>{w.s}</span></div>)}
+              {t.about.why.map((w, i) => <div class="why__i"><span class="mono">{pad(i + 1)}</span><b>{w.b}</b><span>{w.s}</span></div>)}
             </div>
           </div>
         </div>
       </section>
 
       <!-- PROCES -->
-      <section class="band band--alt" id="process">
+      <section class="band band--alt" id="process" data-sec="6">
         <div class="wrap">
-          <div class="sec__head rv"><p class="label">{t.proces.label}</p><h2 class="h2">{t.proces.h2}</h2></div>
-          <ol class="steps">
-            {t.proces.steps.map((s, i) => (
-              <li class="step rv"><span class="step__n">{String(i + 1).padStart(2, '0')}</span><h3>{s.t}</h3><p>{s.o}</p></li>
-            ))}
-          </ol>
+          <header class="shead">
+            <p class="lab mono">[ 06 ] {t.proces.label}</p>
+            <h2 class="h2 split">{t.proces.h2}</h2>
+          </header>
+          <div class="steps">
+            <div class="steps__line" aria-hidden="true"><i id="stepsLine"></i></div>
+            <ol class="steps__list">
+              {t.proces.steps.map((s, i) => (
+                <li class="step"><span class="step__n">{pad(i + 1)}</span><h3>{s.t}</h3><p>{s.o}</p></li>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
 
       <!-- FAQ -->
-      <section class="band" id="faq">
-        <div class="wrap wrap--narrow">
-          <div class="sec__head rv"><p class="label">{t.faq.label}</p><h2 class="h2">{t.faq.h2}</h2></div>
+      <section class="band" id="faq" data-sec="7">
+        <div class="wrap faqw">
+          <header class="shead">
+            <p class="lab mono">[ 07 ] {t.faq.label}</p>
+            <h2 class="h2 split">{t.faq.h2}</h2>
+          </header>
           <div class="faq">
-            {t.faq.items.map((f) => (
+            {t.faq.items.map((f, i) => (
               <details>
-                <summary>{f.q}</summary>
+                <summary data-cursor="hover"><span class="mono">{pad(i + 1)}</span><span>{f.q}</span></summary>
                 <p>{f.a}</p>
               </details>
             ))}
@@ -376,412 +473,71 @@ const serviceIcons = [
       </section>
 
       <!-- KONTAKT -->
-      <section class="band band--dark" id="contact">
-        <div class="wrap contact">
-          <div>
-            <p class="label">{t.kontakt.label}</p>
-            <h2 class="h2">{t.kontakt.h2}</h2>
-            <p class="contact__p">{t.kontakt.p}</p>
-            {fiverr && (
-              <div class="contact__fiverr">
-                <p>{t.kontakt.fiverrNote}</p>
-                <a class="btn btn--acc" href={fiverr} {...extLink}>{t.cta.fiverr} ↗</a>
-              </div>
-            )}
-          </div>
-          <form id="kForm" novalidate>
-            <div class="frow">
-              <label class="fld"><span>{t.kontakt.form.imie}</span><input type="text" name="imie" autocomplete="name" required /></label>
-              <label class="fld"><span>{t.kontakt.form.email}</span><input type="email" name="email" autocomplete="email" required /></label>
+      <section class="contact" id="contact" data-sec="8">
+        <div class="wrap">
+          <div class="contact__top">
+            <div>
+              <p class="lab mono">[ 08 ] {t.kontakt.label}</p>
+              <h2 class="contact__big" aria-label={ui.contactBig.join(' ')}>
+                {ui.contactBig.map((l, i) => <span class={`hl hl--${i === 1 ? 2 : 0}`} aria-hidden="true"><span class="hl__in">{l}</span></span>)}
+              </h2>
             </div>
-            <label class="fld"><span>{t.kontakt.form.need}</span>
-              <select name="potrzeba" required><option value="">{t.kontakt.form.needChoose}</option>{t.kontakt.form.needs.map((x) => <option value={x}>{x}</option>)}</select>
-            </label>
-            <label class="fld"><span>{t.kontakt.form.wiadomosc}</span><textarea name="wiadomosc" rows="4" placeholder={t.kontakt.form.wiadomoscPlaceholder} required></textarea></label>
-            <label class="consent"><input type="checkbox" name="zgoda" value="tak" required /><span>{t.kontakt.form.consent}</span></label>
-            <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0" />
-            <button class="btn btn--dark kbtn" type="submit" id="kBtn">{t.kontakt.form.submit}</button>
-            <p class="kstat" id="kStat" role="status" aria-live="polite"></p>
-          </form>
+            <canvas class="logo3d" id="logoGl" aria-hidden="true" data-cursor="hover"></canvas>
+          </div>
+
+          <a class="cta-bar mono" {...hire} data-cursor="hover">
+            <span>[ {ui.startProject} ]</span><span>{fiverr ? 'Fiverr' : t.cta.quote} ↗</span>
+          </a>
+
+          <div class="contact__grid">
+            <div class="contact__side">
+              <p class="contact__p">{t.kontakt.p}</p>
+              <p class="lab mono">{ui.elsewhere}</p>
+              <ul class="soc mono">
+                {socials.map((s) => <li><a href={s.href} {...extLink} data-cursor="hover"><span>{s.label}</span><span>↗</span></a></li>)}
+                <li><button type="button" data-copy-email data-cursor="copy"><span>{ui.copyEmail}</span><span>⧉</span></button></li>
+                <li><a href="#contact" data-mailto data-cursor="hover"><span>{ui.emailMe}</span><span>→</span></a></li>
+              </ul>
+            </div>
+            <form id="kForm" class="form" novalidate>
+              <div class="frow">
+                <label class="fld"><span class="mono">01 · {t.kontakt.form.imie}</span><input type="text" name="imie" autocomplete="name" required /></label>
+                <label class="fld"><span class="mono">02 · {t.kontakt.form.email}</span><input type="email" name="email" autocomplete="email" required /></label>
+              </div>
+              <label class="fld"><span class="mono">03 · {t.kontakt.form.need}</span>
+                <select name="potrzeba" required><option value="">{t.kontakt.form.needChoose}</option>{t.kontakt.form.needs.map((x) => <option value={x}>{x}</option>)}</select>
+              </label>
+              <label class="fld"><span class="mono">04 · {t.kontakt.form.wiadomosc}</span><textarea name="wiadomosc" rows="4" placeholder={t.kontakt.form.wiadomoscPlaceholder} required></textarea></label>
+              <label class="consent"><input type="checkbox" name="zgoda" value="tak" required /><span>{t.kontakt.form.consent}</span></label>
+              <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0" />
+              <button class="btn btn--acc btn--full magnetic" type="submit" id="kBtn" data-cursor="hover"><span>{t.kontakt.form.submit}</span><span aria-hidden="true">→</span></button>
+              <p class="kstat mono" id="kStat" role="status" aria-live="polite"></p>
+            </form>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="foot">
-      <div class="wrap foot__in">
-        <a class="brand" href="#top">
-          <svg class="brand__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="brand__tx">Vervo <em>Studio</em></span>
-        </a>
-        <p class="foot__tx">{t.footer.tx}</p>
-        <p class="foot__legal">© {new Date().getFullYear()} Anthony A. · <a href={GITHUB_URL} {...extLink}>GitHub</a></p>
+      <div class="wrap foot__row mono">
+        <span>© {new Date().getFullYear()} Anthony A. · Vervo Studio</span>
+        <span class="foot__mid">{ui.handmade}</span>
+        <a href="#top" data-cursor="hover">{ui.backTop} ↑</a>
       </div>
+      <div class="wrap foot__tx">{t.footer.tx}</div>
+      <p class="word" aria-hidden="true">{wordmark.map((c) => <span>{c}</span>)}</p>
     </footer>
 
     <dialog class="lb" id="lb" aria-label={t.work.zoom}>
-      <button class="lb__x" type="button" id="lbX" aria-label="Close">×</button>
+      <button class="lb__x mono" type="button" id="lbX" aria-label={ui.close}>{ui.close} ✕</button>
       <img id="lbImg" alt="" />
-      <p id="lbCap"></p>
+      <p id="lbCap" class="mono"></p>
     </dialog>
 
-    <script define:vars={{ formId: FORM_ID, parts: EMAIL_PARTS, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit }}>
-      const hdr = document.getElementById('hdr');
-      const onScroll = () => hdr?.classList.toggle('stuck', window.scrollY > 20);
-      onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
-      const burger = document.getElementById('burger');
-      const setMenu = (o) => { const v = o ?? !document.body.classList.contains('menu-open'); document.body.classList.toggle('menu-open', v); burger?.setAttribute('aria-expanded', String(v)); };
-      burger?.addEventListener('click', () => setMenu());
-      document.querySelectorAll('#drawer a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
-
-      // pojawianie się sekcji przy przewijaniu
-      const rv = document.querySelectorAll('.rv');
-      if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
-        rv.forEach((el) => io.observe(el));
-      } else rv.forEach((el) => el.classList.add('in'));
-
-      // powiększanie zrzutów ekranu i certyfikatów
-      const lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg'), lbCap = document.getElementById('lbCap');
-      document.querySelectorAll('[data-zoom]').forEach((el) => el.addEventListener('click', () => {
-        lbImg.src = el.dataset.zoom; lbImg.alt = el.dataset.cap || ''; lbCap.textContent = el.dataset.cap || '';
-        lb.showModal();
-      }));
-      document.getElementById('lbX')?.addEventListener('click', () => lb.close());
-      lb?.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
-
-      const form = document.getElementById('kForm'), stat = document.getElementById('kStat'), btn = document.getElementById('kBtn');
-      form?.addEventListener('submit', async (e) => {
-        e.preventDefault(); stat.textContent = ''; stat.className = 'kstat';
-        let ok = true;
-        form.querySelectorAll('[required]').forEach((p) => {
-          if (p.type === 'checkbox') { if (!p.checked) ok = false; return; }
-          if (!p.value.trim()) { p.closest('.fld')?.classList.add('bad'); ok = false; } else { p.closest('.fld')?.classList.remove('bad'); }
-        });
-        if (!ok) { stat.textContent = msgs.incomplete; stat.classList.add('err'); return; }
-        const d = Object.fromEntries(new FormData(form).entries());
-        if (d._honey) return; // pułapka na boty
-        try {
-          btn.disabled = true; btn.textContent = msgs.sending;
-          const to = formId || parts[0] + String.fromCharCode(64) + parts.slice(1).join('.');
-          const res = await fetch('https://formsubmit.co/ajax/' + to, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify({
-              _subject: msgs.subject,
-              _template: 'table',
-              _captcha: 'false',
-              'Imię': d.imie, 'E-mail': d.email, 'Potrzeba': d.potrzeba, 'Wiadomość': d.wiadomosc, 'Język strony': document.documentElement.lang,
-            }),
-          });
-          const r = await res.json();
-          if (r.success === true || r.success === 'true') { stat.textContent = msgs.ok; stat.classList.add('ok'); form.reset(); }
-          else throw 0;
-        } catch { stat.textContent = msgs.fail; stat.classList.add('err'); }
-        finally { btn.disabled = false; btn.textContent = submitLabel; }
-      });
+    <script type="application/json" id="hubConfig" set:html={JSON.stringify(config)}></script>
+    <script>
+      import { initHub } from '../scripts/hub/main.js';
+      initHub();
     </script>
-
-    <style is:global>
-      :root {
-        --paper: #f6f4ef; --paper-2: #eeebe3; --card: #ffffff;
-        --ink: #16181d; --ink-2: #3b3f47; --muted: #6b7078; --line: #e4e0d7; --line-2: #d2cec4;
-        /* akcent karmelowy, spójny z kolorami arkuszy w projektach */
-        --acc: #c8862f; --acc-ink: #8f5717; --acc-soft: #f4e8d6; --ok: #2f9e5b;
-        --dark: #16181d; --dark-2: #22252c;
-        --font-d: 'Manrope', system-ui, -apple-system, sans-serif; --font-b: 'Manrope', system-ui, -apple-system, sans-serif;
-        --font-s: 'Instrument Serif', Georgia, serif;
-        --ease: cubic-bezier(0.22, 0.61, 0.36, 1); --maxw: 1180px; --r: 14px;
-        --shadow: 0 1px 2px rgba(22,24,29,0.04), 0 12px 32px -14px rgba(22,24,29,0.18);
-      }
-      * { box-sizing: border-box; }
-      html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 4.5rem; }
-      @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-      body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-b); font-size: 1rem; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-      img { max-width: 100%; height: auto; display: block; }
-      a { color: inherit; text-decoration: none; }
-      button { font: inherit; cursor: pointer; color: inherit; }
-      :focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
-      h1, h2, h3 { font-family: var(--font-d); font-weight: 700; line-height: 1.1; letter-spacing: -0.025em; margin: 0; }
-      h1 em, h2 em { font-family: var(--font-s); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
-      p { margin: 0; }
-      .wrap { width: min(100% - 2rem, var(--maxw)); margin-inline: auto; }
-      @media (min-width: 600px) { .wrap { width: min(100% - 3rem, var(--maxw)); } }
-      .wrap--narrow { max-width: 780px; }
-      .band { padding-block: clamp(4rem, 9vw, 7rem); }
-      .band--alt { background: var(--paper-2); }
-      .label { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--acc-ink); margin-bottom: 0.9rem; }
-      .label::before { content: ''; width: 1.4rem; height: 2px; background: var(--acc); border-radius: 2px; }
-      .h2 { font-size: clamp(2rem, 4.6vw, 3.1rem); }
-      .sec__head { margin-bottom: clamp(2rem, 4vw, 3rem); max-width: 720px; }
-      .sec__lede { color: var(--ink-2); font-size: 1.05rem; margin-top: 1rem; max-width: 60ch; }
-
-      .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.95rem 1.6rem; font-weight: 700; font-size: 0.92rem; border-radius: 999px; border: 2px solid transparent; transition: background 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease), transform 0.25s var(--ease); }
-      .btn:hover { transform: translateY(-1px); }
-      .btn--sm { padding: 0.6rem 1.15rem; font-size: 0.85rem; }
-      .btn--dark { background: var(--dark); color: var(--paper); border-color: var(--dark); }
-      .btn--dark:hover { background: var(--dark-2); border-color: var(--dark-2); }
-      .btn--acc { background: var(--acc); color: #fff; border-color: var(--acc); box-shadow: 0 10px 24px -12px rgba(200,134,47,0.8); }
-      .btn--acc:hover { background: var(--acc-ink); border-color: var(--acc-ink); }
-      .btn--line { border-color: var(--line-2); color: var(--ink); background: transparent; }
-      .btn--line:hover { border-color: var(--ink); }
-      .btn svg { width: 1.05rem; height: 1.05rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-      /* pojawianie się przy przewijaniu (tylko gdy działa JS) */
-      .js .rv { opacity: 0; transform: translateY(18px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
-      .js .rv.in { opacity: 1; transform: none; }
-
-      /* nagłówek */
-      .hdr { position: fixed; inset: 0 0 auto 0; z-index: 80; padding-block: 1rem; transition: padding 0.3s var(--ease), background 0.3s, border-color 0.3s; border-bottom: 1px solid transparent; }
-      .hdr.stuck { background: rgba(246,244,239,0.88); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); padding-block: 0.65rem; border-bottom-color: var(--line); }
-      .hdr__in { display: flex; align-items: center; gap: 1rem; }
-      .brand { display: inline-flex; align-items: center; gap: 0.55rem; color: var(--ink); margin-right: auto; }
-      .brand__mk { width: 28px; height: 25px; color: var(--acc); flex: none; }
-      .brand__tx { font-family: var(--font-d); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
-      .brand__tx em { font-style: normal; color: var(--muted); font-weight: 700; }
-      .nav { display: none; gap: 1.7rem; }
-      .nav a { font-size: 0.9rem; font-weight: 600; color: var(--ink-2); transition: color 0.2s; }
-      .nav a:hover { color: var(--ink); }
-      .lang { display: inline-flex; align-items: center; gap: 0.1rem; }
-      .lang__a { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.03em; color: var(--muted); padding: 0.3rem 0.45rem; border-radius: 6px; transition: color 0.2s, background 0.2s; }
-      .lang__a:hover { color: var(--ink); }
-      .lang__a.on { color: var(--ink); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
-      .hdr__cta { display: none; }
-      .burger { width: 2.6rem; height: 2.6rem; display: grid; place-items: center; background: none; border: 0; position: relative; z-index: 90; }
-      .burger span, .burger span::before, .burger span::after { content: ''; display: block; width: 22px; height: 2px; background: var(--ink); position: relative; transition: transform 0.3s var(--ease), background 0.3s; }
-      .burger span::before { position: absolute; top: -7px; } .burger span::after { position: absolute; top: 7px; }
-      body.menu-open .burger span { background: transparent; }
-      body.menu-open .burger span::before { transform: translateY(7px) rotate(45deg); }
-      body.menu-open .burger span::after { transform: translateY(-7px) rotate(-45deg); }
-      .drawer { position: fixed; inset: 0; z-index: 85; background: var(--paper); display: flex; flex-direction: column; justify-content: center; gap: 0.2rem; padding: 5rem 1.5rem; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
-      body.menu-open .drawer { opacity: 1; visibility: visible; }
-      .drawer > a { font-family: var(--font-d); font-weight: 800; font-size: 1.9rem; letter-spacing: -0.02em; padding: 0.45rem 0; border-bottom: 1px solid var(--line); }
-      .lang--drawer { margin-top: 1.5rem; gap: 0.5rem; }
-      .lang--drawer .lang__a { font-size: 1rem; padding: 0.5rem 0.9rem; border: 1px solid var(--line-2); border-radius: 8px; }
-      @media (min-width: 940px) { .nav { display: flex; } .hdr__cta { display: inline-flex; } .burger, .drawer { display: none; } }
-
-      /* hero */
-      .hero { position: relative; padding-top: clamp(6.5rem, 14vh, 9rem); padding-bottom: clamp(2.5rem, 6vw, 4rem); overflow: hidden; }
-      .hero::before { content: ''; position: absolute; inset: -20% -10% auto auto; width: 70vw; height: 70vw; max-width: 900px; max-height: 900px; background: radial-gradient(closest-side, rgba(200,134,47,0.16), transparent 70%); pointer-events: none; }
-      .hero__grid { position: relative; display: grid; gap: 3rem; align-items: center; }
-      @media (min-width: 1000px) { .hero__grid { grid-template-columns: 1.02fr 0.98fr; gap: 3.5rem; } }
-      .avail { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.82rem; font-weight: 600; color: var(--ink-2); background: var(--card); border: 1px solid var(--line); padding: 0.4rem 0.85rem 0.4rem 0.7rem; border-radius: 999px; box-shadow: var(--shadow); }
-      .avail__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgba(47,158,91,0.5); animation: ping 2.4s infinite; flex: none; }
-      @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(47,158,91,0.45); } 70% { box-shadow: 0 0 0 8px rgba(47,158,91,0); } 100% { box-shadow: 0 0 0 0 rgba(47,158,91,0); } }
-      @media (prefers-reduced-motion: reduce) { .avail__dot { animation: none; } }
-      .who { display: flex; align-items: center; gap: 0.8rem; margin-top: 1.6rem; }
-      .who > span:last-child { display: grid; line-height: 1.3; }
-      .who b { font-size: 1rem; }
-      .who span span { font-size: 0.86rem; color: var(--muted); }
-      .mono { width: 3.4rem; height: 3.4rem; border-radius: 50%; flex: none; object-fit: cover; background: var(--paper-2); box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--acc); }
-      .hero h1 { font-size: clamp(2.3rem, 5.2vw, 3.9rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.04; margin-top: 1.4rem; }
-      .hero h1 em { display: block; color: var(--acc-ink); font-size: 1.06em; line-height: 1.02; }
-      .hero__lede { font-size: clamp(1.04rem, 1.6vw, 1.2rem); color: var(--ink-2); max-width: 52ch; margin-top: 1.5rem; }
-      .hero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
-
-      /* kolaż zrzutów w hero */
-      .hero__art { position: relative; min-height: 270px; }
-      @media (min-width: 420px) { .hero__art { min-height: 320px; } }
-      @media (min-width: 600px) { .hero__art { min-height: 430px; } }
-      .win { position: absolute; margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 30px 60px -28px rgba(22,24,29,0.45), 0 2px 6px rgba(22,24,29,0.06); }
-      .win img { width: 100%; }
-      .win__bar { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); background: #faf9f6; }
-      .win__bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); }
-      .win__bar i:first-child { background: #ec6a5e; } .win__bar i:nth-child(2) { background: #f4bf4f; } .win__bar i:nth-child(3) { background: #61c554; }
-      .win__bar span { margin-left: 0.45rem; font-size: 0.7rem; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .win--a { top: 0; right: 0; width: 86%; transform: rotate(1.5deg); }
-      .win--b { top: 30%; left: 0; width: 52%; z-index: 2; transform: rotate(-2deg); }
-      .win--c { bottom: 0; right: 4%; width: 82%; z-index: 3; }
-      .chip { position: absolute; z-index: 4; display: inline-flex; align-items: center; gap: 0.45rem; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 0.45rem 0.85rem; font-size: 0.78rem; font-weight: 700; box-shadow: var(--shadow); white-space: nowrap; }
-      .chip svg { width: 0.95rem; height: 0.95rem; fill: none; stroke: var(--ok); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-      .chip--1 { top: 22%; right: -0.25rem; }
-      .chip--2 { bottom: 4%; left: 0; }
-      @media (max-width: 599px) { .win--b { display: none; } .win--a { width: 92%; } .win--c { width: 94%; right: 0; } .chip--1 { top: 34%; right: 0.5rem; } }
-
-      .proof { list-style: none; margin: clamp(2.5rem, 6vw, 4rem) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
-      @media (min-width: 760px) { .proof { grid-template-columns: repeat(4, 1fr); } }
-      .proof li { background: var(--card); padding: 1.2rem 1.3rem; display: grid; gap: 0.15rem; }
-      .proof b { font-weight: 800; font-size: clamp(1.6rem, 3vw, 2.1rem); letter-spacing: -0.03em; line-height: 1.1; }
-      .proof span { color: var(--muted); font-size: 0.86rem; line-height: 1.4; }
-
-      /* narzędzia */
-      .tools { border-block: 1px solid var(--line); background: var(--card); }
-      .tools__in { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; padding-block: 1.25rem; }
-      .tools__lab { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-      .tools__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-      .tools__list li { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 0.3rem 0.8rem; }
-
-      /* projekty */
-      .cases { display: grid; gap: clamp(1.5rem, 4vw, 2.5rem); }
-      .case { background: var(--card); border: 1px solid var(--line); border-radius: calc(var(--r) + 6px); padding: clamp(1.25rem, 3.5vw, 2.5rem); box-shadow: var(--shadow); }
-      .case__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.9rem; }
-      .kicker { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--acc-ink); background: var(--acc-soft); padding: 0.3rem 0.7rem; border-radius: 999px; }
-      .sample { font-size: 0.74rem; font-weight: 600; color: var(--muted); border: 1px dashed var(--line-2); padding: 0.25rem 0.65rem; border-radius: 999px; }
-      .case h3 { font-size: clamp(1.45rem, 3vw, 2.1rem); max-width: 28ch; }
-      .case__body { display: grid; gap: 2rem; margin-top: 1.75rem; }
-      @media (min-width: 960px) { .case__body { grid-template-columns: 1fr 1.05fr; gap: 3rem; } }
-      .case__lab { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.55rem; }
-      .case__intro { color: var(--ink-2); margin-bottom: 1.6rem; }
-      .did { list-style: none; margin: 0; padding: 0; counter-reset: d; display: grid; gap: 0.7rem; }
-      .did li { counter-increment: d; position: relative; padding-left: 2.2rem; color: var(--ink-2); font-size: 0.96rem; }
-      .did li::before { content: counter(d); position: absolute; left: 0; top: 0.05rem; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--dark); color: var(--paper); font-size: 0.72rem; font-weight: 800; display: grid; place-items: center; }
-      .case__side { display: grid; gap: 1.1rem; align-content: start; }
-      .vid { margin: 0; border-radius: 12px; overflow: hidden; background: var(--dark); border: 1px solid var(--line); position: relative; }
-      .vid video { width: 100%; height: auto; display: block; background: var(--dark); }
-      .vid figcaption { position: absolute; top: 0.7rem; left: 0.7rem; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.74rem; font-weight: 700; color: #fff; background: rgba(22,24,29,0.78); padding: 0.3rem 0.65rem 0.3rem 0.5rem; border-radius: 999px; pointer-events: none; }
-      .vid figcaption svg { width: 0.85rem; height: 0.85rem; fill: currentColor; }
-      .stats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
-      @media (min-width: 560px) { .stats { grid-template-columns: repeat(4, 1fr); } }
-      .stats li { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 0.75rem 0.85rem; display: grid; gap: 0.1rem; }
-      .stats b { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em; white-space: nowrap; }
-      .stats span { font-size: 0.76rem; color: var(--muted); line-height: 1.35; }
-      .result { background: var(--acc-soft); border-radius: 10px; padding: 1rem 1.1rem; }
-      .result .case__lab { color: var(--acc-ink); margin-bottom: 0.35rem; }
-      .result p:last-child { color: var(--ink); font-weight: 600; font-size: 0.96rem; }
-      .dl { justify-self: start; }
-      .shots { display: grid; gap: 0.9rem; margin-top: 2rem; padding-top: 1.75rem; border-top: 1px solid var(--line); grid-template-columns: 1fr; }
-      @media (min-width: 640px) { .shots { grid-template-columns: repeat(2, 1fr); } }
-      @media (min-width: 960px) { .shots--3 { grid-template-columns: repeat(3, 1fr); } .shots--4 { grid-template-columns: repeat(4, 1fr); } }
-      .shot { text-align: left; background: none; border: 0; padding: 0; display: grid; gap: 0.55rem; }
-      .shot__img { display: block; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); }
-      .shot__img img { width: 100%; height: 100%; object-fit: cover; object-position: left top; transition: transform 0.5s var(--ease); }
-      .shot:hover .shot__img img { transform: scale(1.04); }
-      .shot__cap { font-size: 0.82rem; color: var(--muted); line-height: 1.4; }
-      .shot:hover .shot__cap { color: var(--ink); }
-
-      /* strony www */
-      .sites { display: grid; gap: 1.25rem; }
-      @media (min-width: 640px) { .sites { grid-template-columns: repeat(2, 1fr); } }
-      @media (min-width: 1000px) { .sites { grid-template-columns: repeat(3, 1fr); } }
-      .site { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s; }
-      .site:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -24px rgba(22,24,29,0.35); border-color: var(--line-2); }
-      .site__img { display: block; aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--paper-2); }
-      .site__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
-      .site:hover .site__img img { transform: scale(1.04); }
-      .site__body { display: flex; flex-direction: column; gap: 0.45rem; padding: 1.2rem 1.3rem 1.35rem; flex: 1; }
-      .site__top { display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
-      .site__bran { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--acc-ink); }
-      .site__go { font-size: 0.78rem; font-weight: 600; color: var(--muted); transition: color 0.2s; white-space: nowrap; }
-      .site:hover .site__go { color: var(--ink); }
-      .site__h { font-family: var(--font-d); font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em; }
-      .site__p { color: var(--ink-2); font-size: 0.9rem; flex: 1; }
-      .tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
-      .tags span { font-size: 0.7rem; font-weight: 600; color: var(--ink-2); background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.6rem; }
-      .site--app { background: var(--dark); border-color: var(--dark); color: var(--paper); }
-      .site--app .site__bran { color: var(--acc); } .site--app .site__p { color: rgba(246,244,239,0.72); }
-      .site--app .site__go { color: rgba(246,244,239,0.6); } .site--app:hover .site__go { color: var(--paper); }
-      .site--app .tags span { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.16); color: var(--paper); }
-      .fiche { position: relative; display: grid; place-items: center; background: radial-gradient(circle at 30% 20%, #2c3039, var(--dark-2) 70%); border-bottom-color: rgba(255,255,255,0.08); }
-      .fiche__card { position: absolute; width: 52%; aspect-ratio: 3 / 2; display: grid; place-items: center; border-radius: 12px; background: var(--paper); color: var(--ink); font-family: var(--font-s); font-style: italic; font-size: clamp(1.4rem, 3vw, 2rem); box-shadow: 0 20px 40px -18px rgba(0,0,0,0.6); transform: rotate(-4deg); transition: transform 0.5s var(--ease); }
-      .fiche__card--back { background: var(--acc); color: #fff; transform: rotate(7deg) translate(14%, 6%); }
-      .site--app:hover .fiche__card { transform: rotate(-7deg) translate(-6%, -3%); }
-      .site--app:hover .fiche__card--back { transform: rotate(10deg) translate(20%, 8%); }
-
-      /* usługi */
-      .svc { display: grid; gap: 1.25rem; }
-      @media (min-width: 760px) { .svc { grid-template-columns: repeat(2, 1fr); } }
-      .svc__i { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(1.4rem, 3vw, 2rem); display: flex; flex-direction: column; gap: 0.7rem; transition: border-color 0.3s, box-shadow 0.3s; }
-      .svc__i:hover { border-color: var(--line-2); box-shadow: var(--shadow); }
-      .svc__ic { width: 2.8rem; height: 2.8rem; border-radius: 12px; background: var(--acc-soft); color: var(--acc-ink); display: grid; place-items: center; margin-bottom: 0.3rem; }
-      .svc__ic svg { width: 1.4rem; height: 1.4rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-      .svc__i h3 { font-size: 1.3rem; }
-      .svc__i > p { color: var(--ink-2); font-size: 0.95rem; }
-      .checks { list-style: none; margin: 0.3rem 0 0; padding: 0; display: grid; gap: 0.45rem; flex: 1; }
-      .checks li { position: relative; padding-left: 1.6rem; font-size: 0.9rem; color: var(--ink-2); }
-      .checks li::before { content: ''; position: absolute; left: 0; top: 0.3rem; width: 1rem; height: 1rem; border-radius: 50%; background: var(--dark) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f6f4ef' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 70% no-repeat; }
-      .svc__go { margin-top: 0.8rem; font-weight: 700; font-size: 0.9rem; color: var(--acc-ink); align-self: flex-start; border-bottom: 2px solid var(--acc-soft); padding-bottom: 0.1rem; transition: border-color 0.2s; }
-      .svc__go:hover { border-color: var(--acc); }
-
-      /* certyfikaty */
-      .certs { display: grid; gap: 1.25rem; }
-      @media (min-width: 700px) { .certs { grid-template-columns: repeat(2, 1fr); max-width: 840px; } }
-      .cert { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column; }
-      .cert__img { display: block; padding: 1rem; background: var(--paper); border: 0; border-bottom: 1px solid var(--line); }
-      .cert__img img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 24px -14px rgba(22,24,29,0.35); transition: transform 0.4s var(--ease); }
-      .cert__img:hover img { transform: scale(1.03); }
-      .cert__body { padding: 1.1rem 1.25rem 1.3rem; display: grid; gap: 0.2rem; }
-      .cert__org { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--acc-ink); }
-      .cert h3 { font-size: 1.2rem; }
-      .cert__date { font-size: 0.85rem; color: var(--muted); }
-      .cert__links { display: flex; gap: 1rem; margin-top: 0.6rem; }
-      .cert__a { background: none; border: 0; padding: 0; font-size: 0.86rem; font-weight: 700; color: var(--ink); border-bottom: 2px solid var(--line-2); transition: border-color 0.2s; }
-      .cert__a:hover { border-color: var(--acc); }
-
-      /* o mnie */
-      .about { display: grid; gap: 2.5rem; }
-      @media (min-width: 900px) { .about { grid-template-columns: 0.75fr 1.25fr; gap: 4rem; align-items: start; } }
-      .about__card { background: var(--card); border: 1px solid var(--line); border-radius: calc(var(--r) + 6px); padding: 2rem 1.75rem; text-align: center; box-shadow: var(--shadow); }
-      @media (min-width: 900px) { .about__card { position: sticky; top: 6rem; } }
-      .portrait { width: 100%; max-width: 320px; aspect-ratio: 533 / 647; object-fit: cover; border-radius: 12px; margin: 0 auto 1.2rem; background: var(--paper-2); }
-      .about__name { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em; }
-      .about__role { color: var(--muted); font-size: 0.9rem; }
-      .facts { margin: 1.4rem 0 0; display: grid; text-align: left; border-top: 1px solid var(--line); }
-      .facts div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); font-size: 0.88rem; }
-      .facts dt { color: var(--muted); } .facts dd { margin: 0; font-weight: 700; text-align: right; }
-      .about__links { display: grid; gap: 0.35rem; margin-top: 1.2rem; font-size: 0.88rem; font-weight: 700; }
-      .about__links a { color: var(--ink-2); word-break: break-all; } .about__links a:hover { color: var(--acc-ink); }
-      .about__p { color: var(--ink-2); margin-top: 1.1rem; max-width: 62ch; font-size: 1.04rem; }
-      .why { display: grid; gap: 0.75rem; margin-top: 2rem; }
-      @media (min-width: 560px) { .why { grid-template-columns: repeat(2, 1fr); } }
-      .why__i { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem; }
-      .why__i b { font-weight: 800; font-size: 1rem; display: block; margin-bottom: 0.15rem; }
-      .why__i span { color: var(--muted); font-size: 0.88rem; }
-
-      /* proces */
-      .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
-      @media (min-width: 640px) { .steps { grid-template-columns: repeat(2, 1fr); } }
-      @media (min-width: 1000px) { .steps { grid-template-columns: repeat(4, 1fr); } }
-      .step { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 1.6rem 1.4rem; }
-      .step__n { font-family: var(--font-s); font-style: italic; font-size: 2.2rem; line-height: 1; color: var(--acc); }
-      .step h3 { font-size: 1.15rem; margin: 0.7rem 0 0.4rem; }
-      .step p { color: var(--ink-2); font-size: 0.9rem; }
-
-      /* faq */
-      .faq { border-top: 1px solid var(--line); }
-      .faq details { border-bottom: 1px solid var(--line); }
-      .faq summary { list-style: none; cursor: pointer; padding: 1.2rem 0; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; font-weight: 700; font-size: clamp(1.02rem, 2vw, 1.12rem); letter-spacing: -0.01em; }
-      .faq summary::-webkit-details-marker { display: none; }
-      .faq summary::after { content: '+'; flex: none; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; background: var(--card); border: 1px solid var(--line); font-size: 1.2rem; font-weight: 500; color: var(--ink-2); transition: transform 0.25s var(--ease), background 0.25s; }
-      .faq details[open] summary::after { transform: rotate(45deg); background: var(--acc-soft); }
-      .faq details p { color: var(--ink-2); padding: 0 0 1.3rem; max-width: 66ch; }
-
-      /* kontakt */
-      .band--dark { background: var(--dark); color: var(--paper); }
-      .band--dark .label { color: var(--acc); }
-      .contact { display: grid; gap: 2.5rem; }
-      @media (min-width: 900px) { .contact { grid-template-columns: 0.9fr 1.1fr; gap: 4rem; align-items: start; } }
-      .contact__p { color: rgba(246,244,239,0.75); margin-top: 1.1rem; max-width: 46ch; font-size: 1.05rem; }
-      .contact__fiverr { margin-top: 2rem; display: grid; gap: 0.75rem; justify-items: start; }
-      .contact__fiverr p { color: rgba(246,244,239,0.65); font-size: 0.9rem; }
-      #kForm { background: var(--card); color: var(--ink); border-radius: calc(var(--r) + 4px); padding: clamp(1.4rem, 3vw, 2.25rem); }
-      .frow { display: grid; gap: 0 1rem; }
-      @media (min-width: 560px) { .frow { grid-template-columns: 1fr 1fr; } }
-      .fld { display: block; margin-bottom: 1rem; }
-      .fld > span { display: block; font-size: 0.8rem; font-weight: 700; color: var(--ink-2); margin-bottom: 0.4rem; }
-      .fld input, .fld select, .fld textarea { width: 100%; background: var(--paper); border: 1px solid var(--line-2); border-radius: 10px; padding: 0.8rem 0.9rem; font: inherit; color: var(--ink); }
-      .fld textarea { resize: vertical; }
-      .fld input:focus, .fld select:focus, .fld textarea:focus { outline: none; border-color: var(--acc); box-shadow: 0 0 0 3px var(--acc-soft); }
-      .fld.bad input, .fld.bad select, .fld.bad textarea { border-color: #c0392b; }
-      .consent { display: flex; gap: 0.6rem; font-size: 0.86rem; color: var(--ink-2); margin: 0.3rem 0 1.2rem; cursor: pointer; }
-      .consent input { margin-top: 0.2rem; width: 1rem; height: 1rem; accent-color: var(--acc); flex: none; }
-      .kbtn { width: 100%; }
-      .kstat { margin-top: 0.9rem; font-size: 0.88rem; min-height: 1.2em; }
-      .kstat.ok { color: #2e7d46; } .kstat.err { color: #c0392b; }
-
-      /* stopka */
-      .foot { background: var(--dark); color: var(--paper); border-top: 1px solid rgba(255,255,255,0.08); padding-block: 2.5rem; }
-      .foot__in { display: grid; gap: 0.9rem; }
-      .foot .brand { color: var(--paper); }
-      .foot .brand__tx em { color: rgba(246,244,239,0.55); }
-      .foot__tx { color: rgba(246,244,239,0.65); max-width: 52ch; font-size: 0.92rem; }
-      .foot__legal { font-size: 0.82rem; color: rgba(246,244,239,0.5); }
-      .foot__legal a { color: rgba(246,244,239,0.8); word-break: break-all; } .foot__legal a:hover { color: var(--acc); }
-
-      /* lightbox */
-      .lb { border: 0; padding: 0; background: transparent; max-width: min(96vw, 1400px); max-height: 92vh; overflow: visible; }
-      .lb::backdrop { background: rgba(14,15,18,0.86); backdrop-filter: blur(4px); }
-      .lb img { max-width: min(96vw, 1400px); max-height: 82vh; width: auto; height: auto; border-radius: 10px; margin-inline: auto; background: #fff; }
-      .lb p { color: #f6f4ef; text-align: center; font-size: 0.92rem; margin-top: 0.8rem; }
-      .lb__x { position: absolute; top: -2.9rem; right: 0; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 0; background: #f6f4ef; color: var(--ink); font-size: 1.5rem; line-height: 1; display: grid; place-items: center; }
-    </style>
   </body>
 </html>

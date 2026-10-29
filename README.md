@@ -8,7 +8,12 @@ polski pod `/pl/`, niderlandzki pod `/nl/` (stary adres `/en/` przekierowuje na 
 - Wszystkie teksty i lista projektów: `src/data/hub-i18n.js`.
 - Link do Fiverr: stała `FIVERR_URL` na górze tego pliku. Pusta = przyciski Fiverr ukryte,
   CTA prowadzą do formularza. Po wklejeniu linku pojawiają się same.
-- Układ i style: `src/components/HubPage.astro`.
+- Układ: `src/components/HubPage.astro`, style: `src/styles/hub.css` (trzy motywy: amber, lime, paper).
+- Ruch i interakcje: `src/scripts/hub/main.js` (GSAP + ScrollTrigger + SplitText, Lenis).
+- Sceny 3D (three.js, ładowane osobno): `src/scripts/hub/hero3d.js` (kostki składające się w wykres)
+  i `src/scripts/hub/logo3d.js` (logo „V” w sekcji kontaktu).
+- Profile w kontakcie i menu: `FIVERR_URL`, `GITHUB_URL`, `LINKEDIN_URL`, `UPWORK_URL` w `src/data/hub-i18n.js`.
+  Puste = link się nie pokazuje.
 - Media projektów: `public/img/work/`, `public/img/certs/`, `public/img/sites/`, `public/video/`,
   skoroszyt do pobrania w `public/files/`.
 
