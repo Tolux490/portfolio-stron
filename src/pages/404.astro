@@ -2,11 +2,11 @@
 const b = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <!doctype html>
-<html lang="pl">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Nie znaleziono strony — Vervo Studio</title>
+    <title>Page not found | Vervo Studio</title>
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#f7f6f2" />
     <link rel="icon" href={`${b}/favicon.svg`} type="image/svg+xml" />
@@ -17,12 +17,13 @@ const b = import.meta.env.BASE_URL.replace(/\/$/, '');
   <body>
     <main class="e404">
       <svg class="mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <p class="tag">Błąd 404</p>
-      <h1>Tej strony tu nie ma.</h1>
-      <p class="lede">Link mógł się zdezaktualizować albo wpisano zły adres. Wróć na stronę główną — stamtąd trafisz wszędzie.</p>
+      <p class="tag">Error 404</p>
+      <h1>This page isn’t here.</h1>
+      <p class="lede">The link may be out of date or the address was mistyped. Head back to the homepage, you can reach everything from there.</p>
+      <p class="lede lede--pl" lang="pl">Tej strony tu nie ma. <a href={`${b}/pl/`}>Wróć na stronę główną</a>.</p>
       <div class="cta">
-        <a class="btn btn--dark" href={`${b}/`}>Strona główna</a>
-        <a class="btn btn--line" href={`${b}/#realizacje`}>Zobacz realizacje</a>
+        <a class="btn btn--dark" href={`${b}/`}>Homepage</a>
+        <a class="btn btn--line" href={`${b}/#work`}>See my work</a>
       </div>
     </main>
     <style is:global>
@@ -35,6 +36,7 @@ const b = import.meta.env.BASE_URL.replace(/\/$/, '');
       .tag { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 0 0 1rem; }
       h1 { font-family: var(--font-d); font-weight: 800; letter-spacing: -0.02em; font-size: clamp(2rem, 6vw, 3rem); margin: 0; }
       .lede { color: var(--ink-2); margin: 1.1rem auto 0; max-width: 40ch; }
+      .lede--pl { font-size: 0.9rem; color: var(--muted); } .lede--pl a { text-decoration: underline; }
       .cta { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2rem; }
       .btn { display: inline-flex; align-items: center; padding: 0.9rem 1.6rem; font-weight: 700; font-size: 0.9rem; border-radius: 3px; border: 2px solid transparent; transition: all .25s ease; }
       .btn--dark { background: var(--ink); color: var(--paper); border-color: var(--ink); }

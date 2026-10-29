@@ -1,5 +1,17 @@
 # Portfolio stron — szkielet startowy
 
+## Strona główna (vervostudio.com)
+
+Osobista strona Antoniego / Vervo Studio pod zlecenia z Fiverr. Angielski jest pod `/`,
+polski pod `/pl/`, niderlandzki pod `/nl/` (stary adres `/en/` przekierowuje na `/`).
+
+- Wszystkie teksty i lista projektów: `src/data/hub-i18n.js`.
+- Link do Fiverr: stała `FIVERR_URL` na górze tego pliku. Pusta = przyciski Fiverr ukryte,
+  CTA prowadzą do formularza. Po wklejeniu linku pojawiają się same.
+- Układ i style: `src/components/HubPage.astro`.
+- Media projektów: `public/img/work/`, `public/img/certs/`, `public/img/sites/`, `public/video/`,
+  skoroszyt do pobrania w `public/files/`.
+
 Trzy demo (warsztat, restauracja, biuro nieruchomości) na jednym silniku Astro.
 Wspólny szkielet, osobne tokeny designu dla każdej branży.
 
