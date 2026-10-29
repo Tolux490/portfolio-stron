@@ -1,0 +1,103 @@
+---
+// Ogrodowa 3 — karta win (PL: /restauracja/wina/, EN: /restauracja/en/wina/).
+import Restauracja from '../../layouts/Restauracja.astro';
+import Foto from '../../components/Foto.astro';
+import * as PL from '../../data/restauracja.js';
+import * as EN from '../../data/restauracja-en.js';
+
+const { lang = 'pl' } = Astro.props;
+const en = lang === 'en';
+const { wina, zespol } = en ? EN : PL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/restauracja${en ? '/en' : ''}`;
+const sommelier = zespol.find((z) => z.rola.toLowerCase().includes('somm'));
+
+const t = en ? {
+  title: 'Wine list · Ogrodowa 3, Wołomin',
+  desc: 'Natural wines and classics from small vineyards: Poland, Moravia, Austria, Georgia, Tokaj. A glass from PLN 26, with relaxed advice from our sommelier.',
+  imgAlt: 'Wine shelves in the cellar', kicker: 'Wine cellar', h1: 'Wine list',
+  lede: 'We focus on wines from small vineyards and natural vintages you will not find in a supermarket. A glass from PLN 26, and we will pair something with every dish on the menu.',
+  badge: ['Prices: ', 'glass', ' 150 ml / ', 'bottle', ' 750 ml'],
+  count: (n) => `${n} ${n === 1 ? 'wine' : 'wines'}`, priceLabel: 'glass / bottle',
+  note: 'Prices in PLN. The wine list changes more often than the menu, so the list above is an example. Have a bottle for a special occasion? You can bring it, corkage is PLN 40 per bottle.',
+  sommAlt: 'Glasses of natural wine', sommKicker: 'Sommelier', sommH2: 'Ask and we will pair it',
+  sommP: 'Not sure what to choose? Tell us what you like and what you are in the mood for, and leave the rest to us. There is always half a glass to taste first.',
+  book: 'Book an evening →',
+} : {
+  title: 'Karta win · Ogrodowa 3, Wołomin',
+  desc: 'Wina naturalne i klasyka z małych winnic: Polska, Morawy, Austria, Gruzja, Tokaj. Kieliszek od 26 zł, doradztwo sommelierki bez zadęcia.',
+  imgAlt: 'Półki z winami w piwniczce', kicker: 'Piwniczka', h1: 'Karta win',
+  lede: 'Stawiamy na wina z małych winnic i naturalne roczniki, których nie znajdziesz w markecie. Kieliszek od 26 zł, a do każdego dania z karty dobierzemy parę.',
+  badge: ['Ceny: ', 'kieliszek', ' 150 ml / ', 'butelka', ' 750 ml'],
+  count: (n) => `${n} ${n === 1 ? 'pozycja' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'pozycje' : 'pozycji'}`, priceLabel: 'kieliszek / butelka',
+  note: 'Ceny w złotych. Karta win zmienia się częściej niż karta dań, więc powyższa lista jest przykładowa. Masz butelkę na wyjątkową okazję? Możesz ją przynieść, korkowe 40 zł od butelki.',
+  sommAlt: 'Kieliszki wina naturalnego', sommKicker: 'Sommelier', sommH2: 'Zapytaj, a dobierzemy',
+  sommP: 'Nie wiesz, co wybrać? Powiedz, co lubisz i na co masz ochotę, a resztę zostaw nam. Pół kieliszka na spróbowanie zawsze się znajdzie.',
+  book: 'Zarezerwuj wieczór →',
+};
+---
+<Restauracja title={t.title} description={t.desc} current="wina" ogImage="restauracja/piwnica-win.webp" lang={lang} path="wina/">
+
+  <!-- pagehead ze zdjęciem piwnicy -->
+  <section class="pagehead pagehead--foto">
+    <div class="hero__bg">
+      <Foto src="restauracja/piwnica-win.webp" alt={t.imgAlt} ratio="3/2" label="Piwniczka" eager={true} />
+    </div>
+    <div class="hero__veil"></div>
+    <div class="wrap">
+      <p class="eyebrow reveal">{t.kicker}</p>
+      <h1 class="reveal">{t.h1}</h1>
+      <p class="lede reveal">{t.lede}</p>
+    </div>
+  </section>
+
+  <section class="band band--tight">
+    <div class="wrap">
+      <div class="badge reveal" style="display:inline-block;margin-bottom:2.75rem">
+        {t.badge[0]}<strong>{t.badge[1]}</strong>{t.badge[2]}<strong>{t.badge[3]}</strong>{t.badge[4]}
+      </div>
+
+      {wina.map((kat) => (
+        <div class="wine-cat reveal">
+          <div class="wine-cat__h">
+            <h3>{kat.grupa}</h3>
+            <span>{t.count(kat.pozycje.length)}</span>
+          </div>
+          <ul class="wine">
+            {kat.pozycje.map((w) => (
+              <li>
+                <span class="wine__n">{w.n}</span>
+                <span class="wine__reg">{w.reg}</span>
+                <span class="wine__desc">{w.desc}</span>
+                <span class="wine__price">
+                  <b>{w.kieliszek} / {w.butelka}</b>
+                  <small>{t.priceLabel}</small>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <p class="mono-note reveal maxw-prose">{t.note}</p>
+    </div>
+  </section>
+
+  <!-- sommelierka -->
+  {sommelier && (
+    <section class="band band--zielen">
+      <div class="wrap split split--wide-r">
+        <div class="split__media figure reveal">
+          <Foto src="restauracja/wino-kieliszki.webp" alt={t.sommAlt} ratio="3/4" label="Wino" />
+        </div>
+        <div class="reveal">
+          <p class="eyebrow">{t.sommKicker}</p>
+          <h2 class="h2">{t.sommH2}</h2>
+          <p class="lede">{sommelier.o}</p>
+          <p class="lede">{t.sommP}</p>
+          <a class="btn btn--outline mt-m" href={`${root}/rezerwacja/`}>{t.book}</a>
+        </div>
+      </div>
+    </section>
+  )}
+</Restauracja>

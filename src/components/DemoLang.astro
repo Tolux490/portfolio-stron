@@ -1,0 +1,24 @@
+---
+// Przełącznik PL / EN dla stron demo: mała pastylka w rogu ekranu.
+// pl / en: pełne adresy tej samej podstrony w obu językach.
+// z-index 78: nad paskami „Zadzwoń" (70–75), pod lightboxami i panelami (85+).
+const { lang = 'pl', pl, en } = Astro.props;
+---
+<nav class="dlang" aria-label={lang === 'en' ? 'Language' : 'Język'}>
+  <a href={pl} hreflang="pl" lang="pl" aria-current={lang === 'pl' ? 'page' : undefined}>PL</a>
+  <a href={en} hreflang="en" lang="en" aria-current={lang === 'en' ? 'page' : undefined}>EN</a>
+</nav>
+
+<style>
+  .dlang {
+    position: fixed; z-index: 78; right: 1rem; bottom: 4.6rem;
+    display: flex; gap: 2px; padding: 3px; border-radius: 999px;
+    background: rgba(18, 18, 20, 0.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+    font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em;
+  }
+  .dlang a { color: rgba(255, 255, 255, 0.62); padding: 0.55rem 0.7rem; border-radius: 999px; text-decoration: none; transition: color 0.2s, background 0.2s; }
+  .dlang a:hover { color: #fff; }
+  .dlang a[aria-current='page'] { background: #fff; color: #111; }
+  @media (min-width: 1000px) { .dlang { bottom: 1.2rem; right: 1.2rem; } }
+</style>

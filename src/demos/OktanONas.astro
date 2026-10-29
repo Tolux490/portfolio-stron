@@ -1,0 +1,289 @@
+---
+// OKTAN — podstrona „O nas" w dwóch językach (PL: /oktan/o-nas/, EN: /oktan/en/o-nas/).
+import '../styles/oktan.css';
+import Foto from '../components/Foto.astro';
+import DemoLang from '../components/DemoLang.astro';
+import { oktan as bizPl, inLang } from '../data/firmy.js';
+
+const { lang = 'pl' } = Astro.props;
+const en = lang === 'en';
+const biz = inLang(bizPl, lang);
+const tel = biz.phone.replace(/[^+\d]/g, '');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const plRoot = `${base}/oktan`;
+const root = en ? `${plRoot}/en` : plRoot;
+
+const T = {
+  pl: {
+    title: 'O nas i zespół — OKTAN Serwis, Warszawa',
+    desc: 'Poznaj OKTAN — warszawski serwis samochodowy od 2007 roku. Zespół mechaników, którzy mówią wprost, ile zapłacisz. Uczciwa wycena, gwarancja 24 miesiące.',
+    ogDesc: 'Warszawski serwis od 2007 roku. Zespół, który mówi wprost, ile zapłacisz.',
+    nav: ['Usługi', 'Cennik', 'Proces', 'O nas', 'Realizacje', 'Opinie', 'Kontakt'],
+    logoHome: 'OKTAN — strona główna', logoSub: 'Serwis · Warszawa', navLabel: 'Nawigacja', book: 'Umów wizytę',
+    heroAlt: 'Hala serwisu OKTAN z autami na stanowiskach', heroTag: 'O nas · Warszawa-Praga',
+    h1: 'Ludzie, którym', h1mark: 'oddajesz kluczyki',
+    lede: 'OKTAN to nie sieć i nie call center. To warsztat z twarzą — zespół mechaników, którzy mówią wprost, co i za ile trzeba zrobić.',
+    kicker: 'Skąd się wzięliśmy', h2: 'Zaczęło się od jednego podnośnika',
+    p1: 'OKTAN otworzyliśmy w 2007 roku na warszawskiej Pradze: jeden podnośnik, dwie pary rąk i prosta zasada — mówić klientowi prawdę.',
+    p2: 'Dziś mamy sześć stanowisk i zespół, który ogarnia auta od miejskich maluchów po hybrydy. Ale zasada się nie zmieniła: zarabiamy na dobrze zrobionej robocie i na tym, że wracasz — nie na naciąganiu i strachu przed odbiorem auta.',
+    wartosci: [
+      { b: 'Uczciwa wycena', s: 'Cenę znasz przed naprawą i płacisz dokładnie tyle. Nie dopisujemy nic po cichu.' },
+      { b: 'Bez wciskania na siłę', s: 'Mówimy, co trzeba zrobić teraz, a co spokojnie poczeka. Ty decydujesz.' },
+      { b: 'Gwarancja 24 miesiące', s: 'Na każdą robociznę. Coś nie tak po naprawie? Poprawiamy na nasz koszt.' },
+      { b: 'Nowoczesny sprzęt', s: 'Diagnostyka, geometria kół 3D i serwis klimatyzacji obu czynników.' },
+    ],
+    mechAlt: 'Mechanik OKTAN przy pracy', tagbox: 'Na Pradze od 2007',
+    trust: ['lat na Pradze', 'stanowisk', 'naprawionych aut', 'mies. gwarancji'],
+    teamKicker: 'Zespół', teamH2: 'Poznaj ekipę OKTAN',
+    zespol: [
+      { imie: 'Marek Zieliński', rola: 'Właściciel, szef warsztatu', o: 'Od 2007 roku pod maską OKTAN. Pilnuje, żeby każda wycena była uczciwa, a każda naprawa dopięta.' },
+      { imie: 'Rafał Nowak', rola: 'Mechanik diagnosta', o: 'Elektronika i silniki nowej generacji. Jak coś miga na desce, on wie dlaczego i ile to naprawdę kosztuje.' },
+      { imie: 'Kamil Woźniak', rola: 'Mechanik', o: 'Zawieszenie, hamulce, rozrządy. Robota zawsze na czas i porządnie, bez chodzenia na skróty.' },
+      { imie: 'Adrian Lewandowski', rola: 'Elektryk samochodowy', o: 'Instalacja, czujniki, rozruch, komfort. Naprawia to, czego inni wolą nie tykać.' },
+      { imie: 'Tomasz Mazur', rola: 'Opony i geometria', o: 'Wymiana, wyważanie, geometria kół 3D. Dba, żeby auto jechało prosto i pewnie.' },
+      { imie: 'Piotr Kaczmarek', rola: 'Doradca serwisowy', o: 'Odbiera telefon i tłumaczy wszystko po ludzku. Twój pierwszy kontakt z warsztatem.' },
+    ],
+    teamNote: 'Imiona i opisy przykładowe — to demonstracyjna wizytówka warsztatu.',
+    ctaKicker: 'Zapraszamy', ctaH2: 'Podjedź i przekonaj się sam',
+    ctaP: 'Umów wizytę online albo zadzwoń. Powiemy wprost, co trzeba zrobić i ile to kosztuje.',
+    callFull: 'Zadzwoń', call: 'Zadzwoń',
+    footService: 'Serwis', hours: 'Godziny', footMenu: 'Menu', footLinks: ['Strona główna', 'Cennik', 'Umów wizytę'],
+    credit: 'Realizacja · Vervo Studio ↗', privacy: 'Polityka prywatności',
+  },
+  en: {
+    title: 'About us and the team — OKTAN Car Service, Warsaw',
+    desc: 'Meet OKTAN, a Warsaw car service running since 2007. A team of mechanics who tell you straight what you will pay. Honest quotes and a 24-month warranty.',
+    ogDesc: 'A Warsaw car service since 2007. A team that tells you straight what you will pay.',
+    nav: ['Services', 'Prices', 'Process', 'About us', 'Workshop', 'Reviews', 'Contact'],
+    logoHome: 'OKTAN — homepage', logoSub: 'Car service · Warsaw', navLabel: 'Navigation', book: 'Book a visit',
+    heroAlt: 'The OKTAN workshop floor with cars on the lifts', heroTag: 'About us · Warsaw-Praga',
+    h1: 'The people you', h1mark: 'hand your keys to',
+    lede: 'OKTAN is not a chain and not a call centre. It is a workshop with real people behind it: a team of mechanics who tell you straight what needs doing and what it costs.',
+    kicker: 'Where we started', h2: 'It started with a single lift',
+    p1: 'We opened OKTAN in 2007 in the Praga district of Warsaw: one lift, two pairs of hands and one simple rule — tell the customer the truth.',
+    p2: 'Today we have six bays and a team that handles everything from small city cars to hybrids. The rule has not changed: we earn from work done well and from you coming back, not from padding the bill or making you dread picking up your car.',
+    wartosci: [
+      { b: 'Honest quotes', s: 'You know the price before the repair and you pay exactly that. Nothing gets added quietly.' },
+      { b: 'No hard selling', s: 'We tell you what needs doing now and what can safely wait. You decide.' },
+      { b: '24-month warranty', s: 'On all labour. Something not right after a repair? We fix it at our cost.' },
+      { b: 'Modern equipment', s: 'Diagnostics, 3D wheel alignment and A/C service for both refrigerant types.' },
+    ],
+    mechAlt: 'An OKTAN mechanic at work', tagbox: 'In Praga since 2007',
+    trust: ['years in Praga', 'service bays', 'cars repaired', 'months of warranty'],
+    teamKicker: 'The team', teamH2: 'Meet the OKTAN crew',
+    zespol: [
+      { imie: 'Marek Zieliński', rola: 'Owner, head of the workshop', o: 'Under the bonnet at OKTAN since 2007. Makes sure every quote is fair and every repair is finished properly.' },
+      { imie: 'Rafał Nowak', rola: 'Diagnostic technician', o: 'Electronics and modern engines. When a warning light comes on, he knows why and what it really costs to fix.' },
+      { imie: 'Kamil Woźniak', rola: 'Mechanic', o: 'Suspension, brakes, timing belts. Always on time and done properly, no shortcuts.' },
+      { imie: 'Adrian Lewandowski', rola: 'Auto electrician', o: 'Wiring, sensors, starting and comfort systems. He fixes what others would rather not touch.' },
+      { imie: 'Tomasz Mazur', rola: 'Tyres and alignment', o: 'Fitting, balancing, 3D wheel alignment. Makes sure the car drives straight and steady.' },
+      { imie: 'Piotr Kaczmarek', rola: 'Service advisor', o: 'Answers the phone and explains everything in plain language. Your first contact with the workshop.' },
+    ],
+    teamNote: 'Names and descriptions are examples — this is a demo website for the workshop.',
+    ctaKicker: 'Come and see us', ctaH2: 'Drop by and see for yourself',
+    ctaP: 'Book a visit online or give us a call. We will tell you straight what needs doing and what it costs.',
+    callFull: 'Call', call: 'Call',
+    footService: 'Workshop', hours: 'Opening hours', footMenu: 'Menu', footLinks: ['Homepage', 'Prices', 'Book a visit'],
+    credit: 'Website · Vervo Studio ↗', privacy: 'Privacy policy',
+  },
+};
+const t = T[lang];
+const ids = ['uslugi', 'cennik', 'proces', null, 'galeria', 'opinie', 'kontakt'];
+const nav = t.nav.map((label, i) => (ids[i] ? { href: `${root}/#${ids[i]}`, label } : { href: `${root}/o-nas/`, label, current: true }));
+const inicjaly = (n) => n.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="pl" href={new URL(`${plRoot}/o-nas/`, Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(`${plRoot}/en/o-nas/`, Astro.url).href} />
+    <meta name="theme-color" content="#0e1013" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.ogDesc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={en ? 'en_GB' : 'pl_PL'} />
+    <meta property="og:image" content={new URL('/og/oktan.png', Astro.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" />
+  </head>
+
+  <body>
+    <header class="top" id="top">
+      <div class="wrap top__in">
+        <a class="logo" href={`${root}/`} aria-label={t.logoHome}>
+          <span class="logo__dot"></span>
+          <span>OKTAN<small>{t.logoSub}</small></span>
+        </a>
+        <nav class="nav" aria-label={t.navLabel}>
+          {nav.map((l) => <a href={l.href} aria-current={l.current ? 'page' : undefined} style={l.current ? 'color:var(--ink)' : undefined}>{l.label}</a>)}
+        </nav>
+        <div class="top__cta">
+          <a class="top__tel" href={`tel:${tel}`}>{biz.phone}</a>
+          <a class="btn btn--red" href={`${root}/#umow`}>{t.book}</a>
+        </div>
+        <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span></button>
+      </div>
+    </header>
+
+    <div class="drawer" id="drawer">
+      {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href={`${root}/#umow`}>{t.book}</a>
+      <div class="drawer__foot">
+        <a href={`tel:${tel}`}>{biz.phone}</a>
+        <span>{biz.street}, {biz.city}</span>
+      </div>
+    </div>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero hero--short">
+        <div class="hero__media">
+          <Foto src="warsztat-galeria-1.webp" alt={t.heroAlt} ratio="16/9" label="Warsztat" eager={true} />
+        </div>
+        <div class="wrap hero__in">
+          <p class="hero__tag">{t.heroTag}</p>
+          <h1>{t.h1} <span class="mark">{t.h1mark}</span></h1>
+          <p class="hero__lede">{t.lede}</p>
+        </div>
+      </section>
+
+      <!-- HISTORIA + WARTOŚCI -->
+      <section class="section">
+        <div class="wrap split split--rev">
+          <div class="reveal">
+            <p class="kicker">{t.kicker}</p>
+            <h2 class="h2">{t.h2}</h2>
+            <p class="lede">{t.p1}</p>
+            <p class="lede" style="margin-top:1rem">{t.p2}</p>
+            <ul class="checks">
+              {t.wartosci.map((w) => (
+                <li>
+                  <span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg></span>
+                  <span><b>{w.b}</b><span>{w.s}</span></span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="split__media reveal">
+            <Foto src="warsztat-galeria-6.webp" alt={t.mechAlt} ratio="4/3" label="Mechanik" />
+            <span class="tagbox">{t.tagbox}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASEK LICZB -->
+      <section class="trust">
+        <div class="wrap trust__in">
+          <div class="trust__cell"><span class="trust__num">18</span><span class="trust__lab">{t.trust[0]}</span></div>
+          <div class="trust__cell"><span class="trust__num">6</span><span class="trust__lab">{t.trust[1]}</span></div>
+          <div class="trust__cell"><span class="trust__num">40<span class="mark">k+</span></span><span class="trust__lab">{t.trust[2]}</span></div>
+          <div class="trust__cell"><span class="trust__num">24</span><span class="trust__lab">{t.trust[3]}</span></div>
+        </div>
+      </section>
+
+      <!-- ZESPÓŁ -->
+      <section class="section section--alt">
+        <div class="wrap">
+          <div class="head reveal">
+            <div>
+              <p class="kicker">{t.teamKicker}</p>
+              <h2 class="h2">{t.teamH2}</h2>
+            </div>
+            <a class="btn btn--red" href={`${root}/#umow`}>{t.book}</a>
+          </div>
+          <div class="team">
+            {t.zespol.map((o) => (
+              <article class="member reveal">
+                <span class="member__ava" aria-hidden="true">{inicjaly(o.imie)}</span>
+                <h3>{o.imie}</h3>
+                <span class="member__role">{o.rola}</span>
+                <p>{o.o}</p>
+              </article>
+            ))}
+          </div>
+          <p class="note reveal mt-m">{t.teamNote}</p>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section band">
+        <div class="wrap">
+          <p class="kicker kicker--center">{t.ctaKicker}</p>
+          <h2>{t.ctaH2}</h2>
+          <p>{t.ctaP}</p>
+          <div class="band__cta">
+            <a class="btn btn--light" href={`${root}/#umow`}>{t.book}</a>
+            <a class="btn btn--outline-light" href={`tel:${tel}`}>{t.callFull}: {biz.phone}</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <div class="foot__grid">
+          <div>
+            <span class="logo"><span class="logo__dot"></span><span>OKTAN<small>{t.logoSub}</small></span></span>
+            <p class="foot__tag">{biz.tagline}</p>
+          </div>
+          <div>
+            <h4>{t.footService}</h4>
+            <ul>
+              <li>{biz.street}</li>
+              <li>{biz.zip} {biz.city}</li>
+              <li><a href={`tel:${tel}`}>{biz.phone}</a></li>
+              <li><a href={`mailto:${biz.email}`}>{biz.email}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>{t.hours}</h4>
+            <ul>{biz.hours.map((h) => <li>{h}</li>)}</ul>
+            <h4 style="margin-top:1.5rem">{t.footMenu}</h4>
+            <ul>
+              <li><a href={`${root}/`}>{t.footLinks[0]}</a></li>
+              <li><a href={`${root}/#cennik`}>{t.footLinks[1]}</a></li>
+              <li><a href={`${root}/#umow`}>{t.book}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__legal">
+          <span>{biz.legalName} · NIP {biz.nip} · {biz.street}, {biz.zip} {biz.city}</span>
+          <span><a href={`${base}/${en ? '' : 'pl/'}`}>{t.credit}</a> &nbsp;·&nbsp; <a href={`${root}/polityka-prywatnosci/`}>{t.privacy}</a></span>
+        </div>
+      </div>
+    </footer>
+
+    <div class="callbar">
+      <a href={`${root}/#umow`}>{t.book}</a>
+      <a href={`tel:${tel}`}>{t.call}</a>
+    </div>
+
+    <DemoLang lang={lang} pl={`${plRoot}/o-nas/`} en={`${plRoot}/en/o-nas/`} />
+
+    <script>
+      const top = document.getElementById('top');
+      const onScroll = () => top?.classList.toggle('stuck', window.scrollY > 30);
+      onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+      const burger = document.getElementById('burger');
+      const setMenu = (open?: boolean) => {
+        const o = open ?? !document.body.classList.contains('nav-open');
+        document.body.classList.toggle('nav-open', o);
+        burger?.setAttribute('aria-expanded', String(o));
+      };
+      burger?.addEventListener('click', () => setMenu());
+      document.querySelectorAll('#drawer a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+      const obs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); } }), { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      document.querySelectorAll('.reveal').forEach((el, i) => { (el as HTMLElement).style.transitionDelay = (Math.min(i % 3, 2) * 70) + 'ms'; obs.observe(el); });
+    </script>
+  </body>
+</html>

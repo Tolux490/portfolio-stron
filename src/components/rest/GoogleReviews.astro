@@ -1,23 +1,26 @@
 ---
 import Stars from './Stars.astro';
 import { restauracja as biz } from '../../data/firmy.js';
-import { opinie } from '../../data/restauracja.js';
+import { opinie as opiniePl } from '../../data/restauracja.js';
+import { opinie as opinieEn } from '../../data/restauracja-en.js';
 
 // `limit` — ile opinii pokazać; `cols3` — trzy kolumny (dla pełnej strony opinii)
-const { limit = 6, cols3 = false } = Astro.props;
-const lista = opinie.slice(0, limit);
+const { limit = 6, cols3 = false, lang = 'pl' } = Astro.props;
+const en = lang === 'en';
+const lista = (en ? opinieEn : opiniePl).slice(0, limit);
+const ocena = en ? String(biz.googleRating) : biz.googleRating.toString().replace('.', ',');
 const inicjal = (n) => n.trim().charAt(0).toUpperCase();
 ---
 <div class="gsum reveal">
-  <div class="gsum__score">{biz.googleRating.toString().replace('.', ',')}</div>
+  <div class="gsum__score">{ocena}</div>
   <div>
-    <Stars g={biz.googleRating} />
+    <Stars g={biz.googleRating} lang={lang} />
     <div class="gsum__g" style="margin-top:.4rem">
       <span class="gsum__logo"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
-      <span>· {biz.googleCount} opinii</span>
+      <span>· {biz.googleCount} {en ? 'reviews' : 'opinii'}</span>
     </div>
   </div>
-  <a class="btn btn--outline" href={biz.googleUrl} target="_blank" rel="noopener" style="margin-left:auto">Zobacz na Google</a>
+  <a class="btn btn--outline" href={biz.googleUrl} target="_blank" rel="noopener" style="margin-left:auto">{en ? 'See on Google' : 'Zobacz na Google'}</a>
 </div>
 
 <div class={`reviews${cols3 ? ' reviews--3' : ''}`}>
@@ -27,10 +30,10 @@ const inicjal = (n) => n.trim().charAt(0).toUpperCase();
         <span class="review__ava" aria-hidden="true">{inicjal(o.a)}</span>
         <figcaption class="review__who">
           <b>{o.a}</b>
-          <div class="review__meta">{o.kiedy}{o.lokalny ? ' · Lokalny przewodnik' : ''}</div>
+          <div class="review__meta">{o.kiedy}{o.lokalny ? (en ? ' · Local Guide' : ' · Lokalny przewodnik') : ''}</div>
         </figcaption>
       </div>
-      <div class="review__stars"><Stars g={o.g} /></div>
+      <div class="review__stars"><Stars g={o.g} lang={lang} /></div>
       <blockquote class="review__t">{o.t}</blockquote>
     </figure>
   ))}
