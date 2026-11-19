@@ -13,14 +13,14 @@ const site = Astro.site ? Astro.site.origin : 'https://vervostudio.com';
 const og = new URL(`${b}/og/vervo.jpg`, Astro.site || 'https://vervostudio.com/').href;
 ---
 <!doctype html>
-<html lang="en" data-theme="coral">
+<html lang="en" data-theme="paper">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} | Vervo Studio</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={`${site}${path}`} />
-    <meta name="theme-color" content="#0c0d10" />
+    <meta name="theme-color" content="#f4f2ee" />
     <link rel="icon" href={`${b}/favicon.svg`} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Vervo Studio" />
@@ -29,7 +29,7 @@ const og = new URL(`${b}/og/vervo.jpg`, Astro.site || 'https://vervostudio.com/'
     <meta property="og:image" content={og} />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>
-      try { var th = localStorage.getItem('vervo-theme'); if (th === 'coral' || th === 'mono' || th === 'paper') document.documentElement.setAttribute('data-theme', th); } catch (e) {}
+      try { var th = localStorage.getItem('vervo-theme'); if (th === 'mono' || th === 'paper') document.documentElement.setAttribute('data-theme', th); } catch (e) {}
     </script>
   </head>
   <body class="lab-page">

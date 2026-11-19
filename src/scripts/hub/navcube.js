@@ -9,7 +9,7 @@ const FONT_B = "'Geist Variable', 'Geist', system-ui, sans-serif";
 function themeColors() {
   const cs = getComputedStyle(document.documentElement);
   const v = (n, d) => cs.getPropertyValue(n).trim() || d;
-  return { face: v('--fg', '#f3efe8'), ink: v('--bg', '#0e1116'), acc: v('--acc', '#ff6a4d'), muted: v('--muted', '#888') };
+  return { face: v('--fg', '#141414'), ink: v('--bg', '#f4f2ee'), acc: v('--acc', '#3048ff'), muted: v('--muted', '#888') };
 }
 
 function drawFace(face, c, size = 1024) {

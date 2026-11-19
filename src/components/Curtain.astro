@@ -16,7 +16,6 @@
     if (!el) return;
     var KEY = 'vervo-curtain';
     var PAL = {
-      coral: ['#0e1116', '#f3efe8', '#ff6a4d'],
       mono: ['#0c0c0c', '#f1eee7', '#f1eee7'],
       paper: ['#f4f2ee', '#141414', '#3048ff'],
     };
@@ -59,9 +58,9 @@
       if (url.pathname === location.pathname) return; // kotwice na tej samej stronie
       var from = demoOf(location.pathname), to = demoOf(url.pathname);
       if (from && from === to) return; // nawigacja wewnątrz jednego dema
-      var th = 'coral';
-      try { th = localStorage.getItem('vervo-theme') || 'coral'; } catch (err) {}
-      var p = PAL[th] || PAL.coral;
+      var th = 'paper';
+      try { th = localStorage.getItem('vervo-theme') || 'paper'; } catch (err) {}
+      var p = PAL[th] || PAL.paper;
       var label = a.getAttribute('data-curtain') || (to ? DEMOS[to] : from ? 'Vervo.' : '') || (a.querySelector('.menu__w, .nextp__w, .chap__t, .hnav__a') || a).textContent.trim();
       if (!label || label.length > 40) label = 'Vervo.';
       var d = { label: label, kicker: 'vervostudio.com' + url.pathname, bg: p[0], fg: p[1], acc: p[2], ts: Date.now() };
@@ -76,7 +75,7 @@
   })();
 </script>
 <style is:global>
-  .vcur { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; visibility: hidden; --vc-bg: #0e1116; --vc-fg: #f3efe8; --vc-acc: #ff6a4d; }
+  .vcur { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; visibility: hidden; --vc-bg: #f4f2ee; --vc-fg: #141414; --vc-acc: #3048ff; }
   .vcur__a, .vcur__b { position: absolute; inset: 0; transform: translate3d(0, 101%, 0); }
   .vcur__a { background: var(--vc-acc); }
   .vcur__b { background: var(--vc-bg); color: var(--vc-fg); display: flex; flex-direction: column; justify-content: flex-end; gap: 0.9rem; padding: clamp(20px, 4vw, 48px) clamp(18px, 3.2vw, 44px) calc(clamp(28px, 6vh, 64px) + env(safe-area-inset-bottom, 0px)); }
