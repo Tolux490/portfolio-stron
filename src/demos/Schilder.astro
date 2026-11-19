@@ -1,0 +1,498 @@
+---
+import Curtain from '../components/Curtain.astro';
+import DemoLang from '../components/DemoLang.astro';
+// Kwast & Kleur (demo): firma malarska w Maastricht, NL + EN. Strony: src/pages/schilder/ (NL) i /en/ (EN).
+// Fikcyjna firma: numery, adres, ceny i opinie są przykładowe.
+
+const { lang = 'nl' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f) => `${base}/img/schilder/${f}`;
+const root = (l) => `${base}/schilder/${l === 'nl' ? '' : `${l}/`}`;
+const tel = '+31430000000';
+
+// stawki do kalkulatora (EUR, z VAT), orientacyjne
+const RATES = { wall: 13, ceiling: 16, door: 85, frameOut: 175, facade: 24, darkPct: 0.12 };
+const CHIPS = [['#e9e4d8', 'Kalkwit'], ['#c9b79c', 'Zandsteen'], ['#8a9a7b', 'Mergelgroen'], ['#3f5b4f', 'Maasgroen'], ['#1e3d33', 'Bosgroen'], ['#d39b2a', 'Oker'], ['#a9573a', 'Terracotta'], ['#2d3540', 'Leisteen']];
+const T = {
+  nl: {
+    title: 'Kwast & Kleur — schildersbedrijf in Maastricht en Heuvelland',
+    desc: 'Binnen- en buitenschilderwerk in Maastricht en Heuvelland. Vaste prijs vooraf, 2 jaar garantie. Bereken direct een prijsindicatie.',
+    nav: ['Diensten', 'Prijs berekenen', 'Projecten', 'Werkwijze'], quote: 'Gratis offerte', calcBtn: 'Bereken je prijs',
+    kicker: 'Schildersbedrijf · Maastricht & Heuvelland',
+    h1: ['Strak geschilderd.', 'Op tijd klaar.'],
+    lede: 'Binnen- en buitenschilderwerk met een vaste prijs vooraf. We plakken alles af, werken netjes en laten je huis schoner achter dan we het vonden.',
+    rating: '4,8 uit 96 reviews',
+    usp: ['Vaste prijs vooraf', '2 jaar garantie', 'Schoon opgeleverd', 'Binnenwerk ook in de winter'],
+    cLab: 'Prijsindicatie', cH: 'Wat kost het ongeveer?',
+    cLede: 'Vul in wat er geschilderd moet worden. Je ziet direct een indicatie; de exacte prijs krijg je na een gratis bezoek.',
+    tabIn: 'Binnen', tabOut: 'Buiten',
+    walls: 'Muren', ceilings: 'Plafonds', doors: 'Deuren en kozijnen binnen', frames: 'Kozijnen buiten', facade: 'Gevel', m2: 'm²', pcs: 'stuks',
+    dark: 'Van licht naar donker (of andersom)', paint: 'Verf en materiaal inbegrepen',
+    result: 'Indicatie', incl: 'incl. btw', days: 'Ongeveer', daysU: 'werkdagen',
+    btwNote: 'Op arbeidsloon voor woningen ouder dan 2 jaar geldt 9% btw. Het exacte bedrag staat in je offerte.',
+    takeCalc: 'Vraag offerte aan met deze berekening',
+    sLab: 'Diensten', sH: 'Waar we je mee helpen',
+    services: [['groen.webp', 'Binnenschilderwerk', 'Muren, plafonds, trappen en deuren. Latex of krijtverf, strak tot in de hoeken.'], ['gevel.webp', 'Buitenschilderwerk', 'Kozijnen, deuren en gevels. Eerst goed schuren en gronden, dan pas lakken.'], ['woonkamer.webp', 'Kleuradvies', 'Twijfel je tussen twee tinten? We zetten proefvlakken op de muur, gratis bij elke klus.'], ['wit.webp', 'Onderhoudsplan', 'Elke 6 jaar je buitenwerk laten checken, zodat je nooit voor houtrot betaalt.']],
+    kLab: 'Kleuradvies', kH: 'Kleuren die passen bij Limburg',
+    kP: 'Onze favorieten voor huizen in Maastricht en het Heuvelland: warm, rustig en mooi bij mergel en baksteen.',
+    pLab: 'Projecten', pH: 'Recent opgeleverd',
+    projects: [['groen.webp', 'Woonkamer in Maasgroen', 'Wyck · 3 dagen'], ['geel.webp', 'Lichte zithoek', 'Sint Pieter · 2 dagen'], ['slaapkamer.webp', 'Slaapkamer, muren en plafond', 'Heer · 2 dagen'], ['gang.webp', 'Hal en trap', 'Meerssen · 4 dagen'], ['gevel.webp', 'Kozijnen en gevel', 'Gulpen · 6 dagen']],
+    wLab: 'Werkwijze', wH: 'Zo gaat het',
+    how: [['Bezoek', 'We komen gratis langs, meten op en bespreken kleuren.'], ['Vaste prijs', 'Binnen 2 werkdagen een offerte met een vaste prijs en startdatum.'], ['Schilderen', 'Alles wordt afgedekt. Elke dag ruimen we op voordat we gaan.'], ['Oplevering', 'Samen lopen we alles na. Pas als jij tevreden bent, sturen we de factuur.']],
+    rLab: 'Reviews', rH: 'Wat klanten zeggen',
+    reviews: [['Precies op de afgesproken dag begonnen en een dag eerder klaar. Geen spatje op de vloer.', 'Familie Hermans, Heer'], ['Het kleuradvies was goud waard. We twijfelden maanden, na de proefvlakken wisten we het meteen.', 'Ingrid, Wyck'], ['Vaste prijs was ook echt de eindprijs. Dat maak je niet vaak mee.', 'Bas, Meerssen']],
+    oLab: 'Gratis offerte', oH: 'Vertel wat er geschilderd moet worden',
+    oP: 'Je hoort binnen één werkdag van ons. Foto’s helpen, maar zijn niet nodig.',
+    fName: 'Naam', fPhone: 'Telefoon', fZip: 'Postcode', fWhat: 'Wat moet er gebeuren?', fWhatPh: 'Bijv. woonkamer en hal, muren en plafond, kleur nog niet gekozen', fPhotos: 'Foto’s (optioneel)', fWhen: 'Gewenste periode', when: ['Zo snel mogelijk', 'Binnen 1 tot 2 maanden', 'Later dit jaar'], send: 'Offerte aanvragen',
+    doneH: 'Bedankt! We bellen je binnen één werkdag.', doneP: 'Demoversie: er is niets verstuurd. In de echte site komt je aanvraag direct binnen bij het bedrijf.',
+    calcPrefix: 'Mijn berekening',
+    demo: 'Conceptwebsite voor een fictief schildersbedrijf, gemaakt door Vervo Studio.', credit: 'Website door Vervo Studio ↗',
+  },
+  en: {
+    title: 'Kwast & Kleur — painters in Maastricht and the Heuvelland',
+    desc: 'Interior and exterior painting in Maastricht and the Heuvelland. Fixed price upfront, 2-year guarantee. Get an instant price estimate.',
+    nav: ['Services', 'Price estimate', 'Projects', 'How we work'], quote: 'Free quote', calcBtn: 'Estimate your price',
+    kicker: 'Painters · Maastricht & Heuvelland',
+    h1: ['Clean lines.', 'Done on time.'],
+    lede: 'Interior and exterior painting at a fixed price agreed upfront. We cover everything, work tidily and leave your home cleaner than we found it.',
+    rating: '4.8 from 96 reviews',
+    usp: ['Fixed price upfront', '2-year guarantee', 'Left spotless', 'Indoor work all winter'],
+    cLab: 'Price estimate', cH: 'Roughly how much will it cost?',
+    cLede: 'Fill in what needs painting. You see an estimate right away; you get the exact price after a free visit.',
+    tabIn: 'Indoor', tabOut: 'Outdoor',
+    walls: 'Walls', ceilings: 'Ceilings', doors: 'Indoor doors and frames', frames: 'Outdoor window frames', facade: 'Facade', m2: 'm²', pcs: 'pcs',
+    dark: 'Light to dark (or the other way round)', paint: 'Paint and materials included',
+    result: 'Estimate', incl: 'incl. VAT', days: 'About', daysU: 'working days',
+    btwNote: 'Labour on homes older than 2 years is taxed at 9% VAT in the Netherlands. The exact amount is in your quote.',
+    takeCalc: 'Request a quote with this estimate',
+    sLab: 'Services', sH: 'What we can do for you',
+    services: [['groen.webp', 'Interior painting', 'Walls, ceilings, stairs and doors. Latex or chalk paint, crisp right into the corners.'], ['gevel.webp', 'Exterior painting', 'Window frames, doors and facades. Sanded and primed properly before the top coat.'], ['woonkamer.webp', 'Colour advice', 'Torn between two shades? We paint sample patches on your wall, free with every job.'], ['wit.webp', 'Maintenance plan', 'A check of your exterior every 6 years, so you never pay for wood rot.']],
+    kLab: 'Colour advice', kH: 'Colours that suit Limburg',
+    kP: 'Our favourites for homes in Maastricht and the Heuvelland: warm, calm and lovely next to marl stone and brick.',
+    pLab: 'Projects', pH: 'Recently finished',
+    projects: [['groen.webp', 'Living room in Maas green', 'Wyck · 3 days'], ['geel.webp', 'Bright reading corner', 'Sint Pieter · 2 days'], ['slaapkamer.webp', 'Bedroom, walls and ceiling', 'Heer · 2 days'], ['gang.webp', 'Hallway and stairs', 'Meerssen · 4 days'], ['gevel.webp', 'Window frames and facade', 'Gulpen · 6 days']],
+    wLab: 'How we work', wH: 'What to expect',
+    how: [['Visit', 'We come by for free, measure up and talk colours.'], ['Fixed price', 'Within 2 working days, a quote with a fixed price and a start date.'], ['Painting', 'Everything gets covered. We tidy up every day before we leave.'], ['Handover', 'We walk through it together. Only when you’re happy do we send the invoice.']],
+    rLab: 'Reviews', rH: 'What clients say',
+    reviews: [['Started exactly on the agreed day and finished a day early. Not a single drop on the floor.', 'The Hermans family, Heer'], ['The colour advice was worth gold. We doubted for months; after the sample patches we knew straight away.', 'Ingrid, Wyck'], ['The fixed price really was the final price. You don’t see that often.', 'Bas, Meerssen']],
+    oLab: 'Free quote', oH: 'Tell us what needs painting',
+    oP: 'You’ll hear from us within one working day. Photos help, but aren’t required.',
+    fName: 'Name', fPhone: 'Phone', fZip: 'Postcode', fWhat: 'What needs doing?', fWhatPh: 'E.g. living room and hallway, walls and ceiling, colour not chosen yet', fPhotos: 'Photos (optional)', fWhen: 'Preferred timing', when: ['As soon as possible', 'Within 1 to 2 months', 'Later this year'], send: 'Request a quote',
+    doneH: 'Thank you! We’ll call you within one working day.', doneP: 'Demo version: nothing was sent. On the real site the request goes straight to the company.',
+    calcPrefix: 'My estimate',
+    demo: 'Concept website for a fictional painting company, made by Vervo Studio.', credit: 'Website by Vervo Studio ↗',
+  },
+  pl: {
+    title: 'Kwast & Kleur — firma malarska w Maastricht i okolicach',
+    desc: 'Malowanie wnętrz i elewacji w Maastricht i Heuvelland. Stała cena z góry, 2 lata gwarancji. Sprawdź od razu orientacyjny koszt.',
+    nav: ['Usługi', 'Ile to kosztuje?', 'Realizacje', 'Jak pracujemy'], quote: 'Bezpłatna wycena', calcBtn: 'Oblicz koszt',
+    kicker: 'Firma malarska · Maastricht i Heuvelland',
+    h1: ['Równo pomalowane.', 'Na czas.'],
+    lede: 'Malowanie wnętrz i elewacji za cenę ustaloną z góry. Wszystko zabezpieczamy, pracujemy czysto i zostawiamy dom w lepszym stanie, niż go zastaliśmy.',
+    rating: '4,8 z 96 opinii',
+    usp: ['Stała cena z góry', '2 lata gwarancji', 'Sprzątamy po sobie', 'Wnętrza malujemy też zimą'],
+    cLab: 'Orientacyjny koszt', cH: 'Ile to mniej więcej kosztuje?',
+    cLede: 'Zaznacz, co trzeba pomalować, a od razu zobaczysz orientacyjną kwotę. Dokładną cenę podamy po bezpłatnych oględzinach.',
+    tabIn: 'Wnętrza', tabOut: 'Na zewnątrz',
+    walls: 'Ściany', ceilings: 'Sufity', doors: 'Drzwi i ościeżnice wewnątrz', frames: 'Ramy okienne na zewnątrz', facade: 'Elewacja', m2: 'm²', pcs: 'szt.',
+    dark: 'Z jasnego na ciemny (albo odwrotnie)', paint: 'Farba i materiały w cenie',
+    result: 'Szacunek', incl: 'z VAT', days: 'Około', daysU: 'dni roboczych',
+    btwNote: 'W Holandii robocizna przy domach starszych niż 2 lata ma obniżony VAT 9%. Dokładną kwotę podamy w wycenie.',
+    takeCalc: 'Poproś o wycenę z tym szacunkiem',
+    sLab: 'Usługi', sH: 'W czym możemy pomóc',
+    services: [['groen.webp', 'Malowanie wnętrz', 'Ściany, sufity, schody i drzwi. Farba lateksowa lub kredowa, równo aż po same narożniki.'], ['gevel.webp', 'Malowanie na zewnątrz', 'Ramy okienne, drzwi i elewacje. Najpierw porządne szlifowanie i podkład, dopiero potem lakier.'], ['woonkamer.webp', 'Doradztwo kolorystyczne', 'Wahasz się między dwoma odcieniami? Malujemy próbki na ścianie, gratis przy każdym zleceniu.'], ['wit.webp', 'Plan konserwacji', 'Przegląd stolarki zewnętrznej co 6 lat, żeby nigdy nie trzeba było płacić za zgniłe drewno.']],
+    kLab: 'Doradztwo kolorystyczne', kH: 'Kolory, które pasują do Limburgii',
+    kP: 'Nasze ulubione odcienie do domów w Maastricht i Heuvelland: ciepłe, spokojne i ładnie grające z marglem i cegłą.',
+    pLab: 'Realizacje', pH: 'Ostatnio oddane',
+    projects: [['groen.webp', 'Salon w zieleni znad Mozy', 'Wyck · 3 dni'], ['geel.webp', 'Jasny kącik do czytania', 'Sint Pieter · 2 dni'], ['slaapkamer.webp', 'Sypialnia, ściany i sufit', 'Heer · 2 dni'], ['gang.webp', 'Korytarz i schody', 'Meerssen · 4 dni'], ['gevel.webp', 'Ramy okienne i elewacja', 'Gulpen · 6 dni']],
+    wLab: 'Jak pracujemy', wH: 'Jak to wygląda',
+    how: [['Oględziny', 'Przyjeżdżamy bezpłatnie, mierzymy i rozmawiamy o kolorach.'], ['Stała cena', 'W ciągu 2 dni roboczych dostajesz wycenę ze stałą ceną i datą startu.'], ['Malowanie', 'Wszystko zabezpieczamy. Codziennie sprzątamy przed wyjściem.'], ['Odbiór', 'Razem wszystko sprawdzamy. Fakturę wystawiamy dopiero wtedy, gdy wszystko Ci się podoba.']],
+    rLab: 'Opinie', rH: 'Co mówią klienci',
+    reviews: [['Zaczęli dokładnie w umówiony dzień i skończyli dzień wcześniej. Ani jednej kropli na podłodze.', 'Rodzina Hermans, Heer'], ['Porada kolorystyczna była na wagę złota. Wahaliśmy się miesiącami, a po próbkach na ścianie od razu wiedzieliśmy.', 'Ingrid, Wyck'], ['Stała cena naprawdę okazała się ceną końcową. Rzadko się to zdarza.', 'Bas, Meerssen']],
+    oLab: 'Bezpłatna wycena', oH: 'Napisz, co trzeba pomalować',
+    oP: 'Odezwiemy się w ciągu jednego dnia roboczego. Zdjęcia pomagają, ale nie są konieczne.',
+    fName: 'Imię i nazwisko', fPhone: 'Telefon', fZip: 'Kod pocztowy', fWhat: 'Co trzeba zrobić?', fWhatPh: 'Np. salon i przedpokój, ściany i sufit, kolor jeszcze niewybrany', fPhotos: 'Zdjęcia (opcjonalnie)', fWhen: 'Preferowany termin', when: ['Jak najszybciej', 'W ciągu 1–2 miesięcy', 'Później w tym roku'], send: 'Poproś o wycenę',
+    doneH: 'Dziękujemy! Zadzwonimy w ciągu jednego dnia roboczego.', doneP: 'Wersja pokazowa: nic nie zostało wysłane. Na prawdziwej stronie zgłoszenie trafia od razu do firmy.',
+    calcPrefix: 'Mój szacunek',
+    demo: 'Strona koncepcyjna fikcyjnej firmy malarskiej, wykonana przez Vervo Studio.', credit: 'Strona: Vervo Studio ↗',
+  },
+};
+const t = T[lang];
+const cfg = { lang, rates: RATES, t: { m2: t.m2, pcs: t.pcs, walls: t.walls, ceilings: t.ceilings, doors: t.doors, frames: t.frames, facade: t.facade, dark: t.dark, prefix: t.calcPrefix } };
+const range = (name, label, min, max, val, unit) => ({ name, label, min, max, val, unit });
+const IN = [range('walls', t.walls, 0, 300, 80, t.m2), range('ceilings', t.ceilings, 0, 150, 30, t.m2), range('doors', t.doors, 0, 20, 2, t.pcs)];
+const OUT = [range('frames', t.frames, 0, 30, 8, t.pcs), range('facade', t.facade, 0, 250, 0, t.m2)];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="nl" href={new URL(root('nl'), Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(root('en'), Astro.url).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(root('pl'), Astro.url).href} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.desc} />
+    <meta property="og:image" content={new URL(img('hero.webp'), Astro.url).href} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#1e3d33" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Figtree:wght@400;500;600&display=swap" />
+  </head>
+  <body>
+    <Curtain />
+    <div class="topbar">
+      <span>{t.usp[0]} · {t.usp[1]}</span>
+      <a href={`tel:${tel}`}>☎ 043 000 00 00</a>
+    </div>
+    <header class="hd">
+      <a class="hd__logo" href="#top"><i aria-hidden="true"></i>Kwast <b>&</b> Kleur</a>
+      <nav class="hd__nav">{['#diensten', '#prijs', '#projecten', '#werkwijze'].map((h, i) => <a href={h}>{t.nav[i]}</a>)}</nav>
+      <a class="btn btn--ochre hd__cta" href="#offerte">{t.quote}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero__txt">
+          <p class="kicker">{t.kicker}</p>
+          <h1>{t.h1[0]}<br /><span>{t.h1[1]}</span></h1>
+          <p class="lede">{t.lede}</p>
+          <div class="hero__cta">
+            <a class="btn btn--green" href="#prijs">{t.calcBtn}</a>
+            <a class="btn btn--line" href="#offerte">{t.quote}</a>
+          </div>
+          <p class="rating"><span>★★★★★</span> {t.rating}</p>
+        </div>
+        <div class="hero__img">
+          <img src={img('hero.webp')} alt="" fetchpriority="high" />
+          <div class="chips" aria-hidden="true">{CHIPS.slice(2, 6).map(([c, n]) => <div class="chip" style={`--c:${c}`}><span>{n}</span></div>)}</div>
+        </div>
+      </section>
+
+      <ul class="usp">{t.usp.map((u) => <li>✓ {u}</li>)}</ul>
+
+      <section class="sec sec--calc" id="prijs">
+        <div class="wrap calc">
+          <div>
+            <p class="lab">{t.cLab}</p>
+            <h2 class="h2">{t.cH}</h2>
+            <p class="lede">{t.cLede}</p>
+            <img class="calc__img" src={img('roller.webp')} alt="" loading="lazy" />
+          </div>
+          <form class="calc__box" data-calc>
+            <div class="tabs" role="tablist">
+              <button type="button" role="tab" aria-selected="true" data-tab="in">{t.tabIn}</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="out">{t.tabOut}</button>
+            </div>
+            <div data-panel="in">
+              {IN.map((r) => <label class="rng"><span><b>{r.label}</b><output data-out={r.name}>{r.val} {r.unit}</output></span><input type="range" name={r.name} min={r.min} max={r.max} value={r.val} data-unit={r.unit} /></label>)}
+            </div>
+            <div data-panel="out" hidden>
+              {OUT.map((r) => <label class="rng"><span><b>{r.label}</b><output data-out={r.name}>{r.val} {r.unit}</output></span><input type="range" name={r.name} min={r.min} max={r.max} value={r.val} data-unit={r.unit} /></label>)}
+            </div>
+            <label class="tog"><input type="checkbox" name="dark" /><span>{t.dark}</span></label>
+            <p class="tog tog--fixed">✓ {t.paint}</p>
+            <div class="res">
+              <p class="res__l">{t.result} <small>{t.incl}</small></p>
+              <p class="res__v" data-res>€ –</p>
+              <p class="res__d">{t.days} <b data-days>–</b> {t.daysU}</p>
+            </div>
+            <p class="note">{t.btwNote}</p>
+            <a class="btn btn--ochre btn--full" href="#offerte" data-take>{t.takeCalc}</a>
+          </form>
+        </div>
+      </section>
+
+      <section class="sec" id="diensten">
+        <div class="wrap">
+          <p class="lab rv">{t.sLab}</p>
+          <h2 class="h2 rv">{t.sH}</h2>
+          <div class="svc">
+            {t.services.map(([f, h, p]) => <article class="rv"><img src={img(f)} alt="" loading="lazy" /><h3>{h}</h3><p>{p}</p></article>)}
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--kleur">
+        <div class="wrap kleur">
+          <div>
+            <p class="lab">{t.kLab}</p>
+            <h2 class="h2">{t.kH}</h2>
+            <p class="lede">{t.kP}</p>
+          </div>
+          <div class="fan">{CHIPS.map(([c, n], i) => <div class="fan__c rv" style={`--c:${c};--i:${i}`}><span>{n}</span><small>{c.toUpperCase()}</small></div>)}</div>
+        </div>
+      </section>
+
+      <section class="sec" id="projecten">
+        <div class="wrap">
+          <p class="lab rv">{t.pLab}</p>
+          <h2 class="h2 rv">{t.pH}</h2>
+        </div>
+        <div class="proj" tabindex="0">
+          {t.projects.map(([f, h, m]) => <figure><img src={img(f)} alt={h} loading="lazy" /><figcaption><b>{h}</b><span>{m}</span></figcaption></figure>)}
+        </div>
+      </section>
+
+      <section class="sec sec--how" id="werkwijze">
+        <div class="wrap">
+          <p class="lab rv">{t.wLab}</p>
+          <h2 class="h2 rv">{t.wH}</h2>
+          <ol class="how">{t.how.map(([h, p], i) => <li class="rv"><span>{i + 1}</span><h3>{h}</h3><p>{p}</p></li>)}</ol>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="wrap">
+          <p class="lab rv">{t.rLab}</p>
+          <h2 class="h2 rv">{t.rH}</h2>
+          <div class="revs">{t.reviews.map(([q, w]) => <blockquote class="rv"><span>★★★★★</span><p>{q}</p><cite>{w}</cite></blockquote>)}</div>
+        </div>
+      </section>
+
+      <section class="sec sec--offer" id="offerte">
+        <div class="wrap offer">
+          <div>
+            <p class="lab">{t.oLab}</p>
+            <h2 class="h2">{t.oH}</h2>
+            <p class="lede">{t.oP}</p>
+            <p class="offer__tel"><a href={`tel:${tel}`}>☎ 043 000 00 00</a></p>
+          </div>
+          <form class="form" data-form novalidate>
+            <div class="f2">
+              <label class="f"><span>{t.fName}</span><input name="name" autocomplete="name" required /></label>
+              <label class="f"><span>{t.fPhone}</span><input name="phone" type="tel" autocomplete="tel" required /></label>
+            </div>
+            <label class="f"><span>{t.fZip}</span><input name="zip" autocomplete="postal-code" placeholder="6211 AB" /></label>
+            <label class="f"><span>{t.fWhat}</span><textarea name="what" rows="4" placeholder={t.fWhatPh}></textarea></label>
+            <label class="f"><span>{t.fPhotos}</span><input type="file" name="photos" accept="image/*" multiple /></label>
+            <label class="f"><span>{t.fWhen}</span><select name="when">{t.when.map((w) => <option>{w}</option>)}</select></label>
+            <button class="btn btn--green btn--full" type="submit">{t.send}</button>
+            <div class="done" data-done hidden><h3>{t.doneH}</h3><p>{t.doneP}</p></div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ft">
+      <div class="wrap ft__in">
+        <p class="ft__logo">Kwast <b>&</b> Kleur</p>
+        <p>Maastricht · KvK 00000000 · BTW NL000000000B01 · VCA-gecertificeerd</p>
+        <p>{t.demo} <a href={`${base}/`}>{t.credit}</a></p>
+      </div>
+    </footer>
+    <div class="mbar"><a href={`tel:${tel}`}>☎</a><a class="mbar__go" href="#offerte">{t.quote}</a></div>
+    <DemoLang lang={lang} links={[['nl', root('nl')], ['en', root('en')], ['pl', root('pl')]]} />
+    <script type="application/json" id="cfg" set:html={JSON.stringify(cfg)} />
+  </body>
+</html>
+
+<style is:global>
+  :root { --bg: #f4f1ea; --paper: #fbfaf6; --ink: #1d2420; --mut: #66706a; --green: #1e3d33; --ochre: #d39b2a; --line: rgba(29, 36, 32, 0.12); --ff-d: 'Sora', system-ui, sans-serif; --ff: 'Figtree', system-ui, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { background: var(--bg); color: var(--ink); font: 400 16.5px/1.6 var(--ff); overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { width: min(100% - 2.4rem, 74rem); margin-inline: auto; }
+  .lab { font: 600 0.74rem/1 var(--ff); letter-spacing: 0.16em; text-transform: uppercase; color: #9a6c12; margin-bottom: 0.9rem; }
+  .h2 { font: 700 clamp(2rem, 5vw, 3.4rem)/1.05 var(--ff-d); letter-spacing: -0.03em; max-width: 20ch; }
+  .lede { color: var(--mut); max-width: 34rem; margin-top: 1rem; font-size: 1.05rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.95rem 1.35rem; border-radius: 10px; font: 600 0.95rem/1 var(--ff); text-decoration: none; border: 1.5px solid transparent; cursor: pointer; transition: background 0.2s, transform 0.2s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn--green { background: var(--green); color: #fff; }
+  .btn--ochre { background: var(--ochre); color: #1d1a12; }
+  .btn--line { border-color: var(--green); color: var(--green); }
+  .btn--full { width: 100%; }
+
+  .topbar { background: var(--green); color: #dfe8e2; font-size: 0.82rem; display: flex; justify-content: space-between; gap: 1rem; padding: 0.45rem clamp(1.2rem, 3vw, 2.4rem); }
+  .topbar a { color: #fff; text-decoration: none; font-weight: 600; }
+  .hd { position: sticky; top: 0; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.8rem clamp(1.2rem, 3vw, 2.4rem); background: rgba(244, 241, 234, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .hd__logo { display: flex; align-items: center; gap: 0.6rem; font: 700 1.2rem/1 var(--ff-d); text-decoration: none; letter-spacing: -0.02em; }
+  .hd__logo i { width: 1.6rem; height: 1.6rem; border-radius: 6px 6px 6px 1px; background: conic-gradient(from 200deg, var(--ochre), #a9573a, var(--green), var(--ochre)); }
+  .hd__logo b, .ft__logo b { color: var(--ochre); }
+  .hd__nav { display: none; gap: 1.8rem; font: 500 0.92rem var(--ff); color: var(--mut); }
+  .hd__nav a { text-decoration: none; }
+  .hd__nav a:hover { color: var(--ink); }
+  .hd__cta { padding: 0.7rem 1rem; font-size: 0.85rem; }
+  @media (min-width: 900px) { .hd__nav { display: flex; } }
+
+  .hero { display: grid; gap: 2.4rem; align-items: center; padding: clamp(2.4rem, 6vw, 5rem) clamp(1.2rem, 4vw, 3rem); max-width: 84rem; margin-inline: auto; }
+  @media (min-width: 960px) { .hero { grid-template-columns: 1fr 1fr; } }
+  .hero > * { min-width: 0; }
+  .kicker { font: 600 0.78rem/1 var(--ff); letter-spacing: 0.14em; text-transform: uppercase; color: #9a6c12; margin-bottom: 1.2rem; }
+  .hero h1 { font: 700 clamp(2.5rem, 7vw, 5.2rem)/1.02 var(--ff-d); letter-spacing: -0.045em; }
+  .hero h1 span { color: var(--green); }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
+  .rating { margin-top: 1.4rem; font-size: 0.9rem; color: var(--mut); }
+  .rating span { color: var(--ochre); letter-spacing: 0.08em; }
+  .hero__img { position: relative; }
+  .hero__img img { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; border-radius: 22px; }
+  .chips { position: absolute; left: -0.8rem; bottom: -1.2rem; display: flex; gap: 0.45rem; }
+  .chip { width: clamp(3.6rem, 9vw, 5rem); aspect-ratio: 2 / 3; background: #fff; border-radius: 8px; padding: 0.3rem 0.3rem 0; box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.45); display: grid; grid-template-rows: 1fr auto; transform: rotate(calc(-6deg + var(--n, 0) * 4deg)); }
+  .chip::before { content: ''; background: var(--c); border-radius: 5px; }
+  .chip:nth-child(2) { --n: 1; } .chip:nth-child(3) { --n: 2; } .chip:nth-child(4) { --n: 3; }
+  .chip span { font: 600 0.58rem/1.6 var(--ff); color: var(--mut); text-align: center; white-space: nowrap; overflow: hidden; }
+
+  .usp { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem 2rem; padding: 1.3rem 1.2rem; border-block: 1px solid var(--line); background: var(--paper); font: 600 0.92rem var(--ff); color: var(--green); }
+
+  .sec { padding: clamp(4.5rem, 9vw, 7rem) 0; }
+  .sec--calc { background: var(--green); color: #fff; }
+  .sec--calc .lab { color: var(--ochre); }
+  .sec--calc .lede { color: #c7d6cd; }
+  .calc { display: grid; gap: 2.4rem; }
+  @media (min-width: 940px) { .calc { grid-template-columns: 1fr 1fr; align-items: start; } }
+  .calc > * { min-width: 0; }
+  .calc__img { margin-top: 2rem; border-radius: 18px; aspect-ratio: 16 / 10; object-fit: cover; width: 100%; }
+  .calc__box { background: var(--paper); color: var(--ink); border-radius: 22px; padding: clamp(1.3rem, 4vw, 2.2rem); display: grid; gap: 1.1rem; box-shadow: 0 40px 70px -40px rgba(0, 0, 0, 0.6); }
+  .tabs { display: inline-flex; gap: 0.3rem; padding: 0.3rem; background: var(--bg); border-radius: 10px; justify-self: start; }
+  .tabs button { border: 0; background: none; padding: 0.55rem 1.2rem; border-radius: 8px; font: 600 0.9rem var(--ff); color: var(--mut); cursor: pointer; }
+  .tabs button[aria-selected='true'] { background: var(--green); color: #fff; }
+  .rng { display: grid; gap: 0.45rem; margin-bottom: 0.9rem; }
+  .rng span { display: flex; justify-content: space-between; font-size: 0.92rem; }
+  .rng output { font: 600 0.92rem var(--ff); color: var(--green); }
+  .rng input { width: 100%; accent-color: var(--green); height: 1.4rem; }
+  .tog { display: flex; gap: 0.6rem; align-items: center; font-size: 0.92rem; cursor: pointer; }
+  .tog input { width: 1.15rem; height: 1.15rem; accent-color: var(--green); }
+  .tog--fixed { color: var(--mut); cursor: default; }
+  .res { background: var(--bg); border-radius: 14px; padding: 1.1rem 1.2rem; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 0.2rem 1rem; }
+  .res__l { font: 600 0.84rem var(--ff); color: var(--mut); }
+  .res__l small { font-weight: 400; }
+  .res__v { grid-column: 1; font: 700 clamp(1.6rem, 5vw, 2.3rem)/1.1 var(--ff-d); color: var(--green); letter-spacing: -0.03em; }
+  .res__d { grid-column: 2; grid-row: 1 / 3; text-align: right; font-size: 0.84rem; color: var(--mut); }
+  .res__d b { display: block; font: 700 1.6rem/1 var(--ff-d); color: var(--ink); }
+  .note { font-size: 0.78rem; color: var(--mut); }
+
+  .svc { display: grid; gap: 1.4rem; margin-top: 2.6rem; }
+  @media (min-width: 640px) { .svc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1040px) { .svc { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .svc img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; }
+  .svc h3 { font: 700 1.15rem/1.2 var(--ff-d); margin: 1rem 0 0.35rem; letter-spacing: -0.02em; }
+  .svc p { color: var(--mut); font-size: 0.94rem; }
+
+  .sec--kleur { background: var(--paper); border-block: 1px solid var(--line); }
+  .kleur { display: grid; gap: 2.4rem; align-items: center; }
+  @media (min-width: 940px) { .kleur { grid-template-columns: 0.9fr 1.1fr; } }
+  .kleur > * { min-width: 0; }
+  .fan { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.7rem; }
+  .fan__c { background: #fff; border-radius: 10px; padding: 0.4rem 0.4rem 0.6rem; box-shadow: 0 10px 22px -16px rgba(0, 0, 0, 0.4); }
+  .fan__c::before { content: ''; display: block; aspect-ratio: 1; border-radius: 7px; background: var(--c); }
+  .fan__c span { display: block; font: 600 0.84rem var(--ff); margin-top: 0.5rem; }
+  .fan__c small { color: var(--mut); font-size: 0.72rem; }
+
+  .proj { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2.4rem max(1.2rem, calc((100vw - 74rem) / 2)) 0.6rem; scrollbar-width: thin; }
+  .proj figure { flex: 0 0 auto; width: min(80vw, 24rem); scroll-snap-align: start; }
+  .proj img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 18px; }
+  .proj figcaption { margin-top: 0.7rem; }
+  .proj b { display: block; font: 600 1rem var(--ff); }
+  .proj span { color: var(--mut); font-size: 0.86rem; }
+
+  .sec--how { background: var(--paper); border-block: 1px solid var(--line); }
+  .how { list-style: none; display: grid; gap: 1rem; margin-top: 2.6rem; }
+  @media (min-width: 860px) { .how { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .how li { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 1.3rem; }
+  .how span { display: inline-grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--ochre); font: 700 0.95rem var(--ff-d); }
+  .how h3 { font: 700 1.1rem var(--ff-d); margin: 0.9rem 0 0.35rem; }
+  .how p { color: var(--mut); font-size: 0.93rem; }
+
+  .revs { display: grid; gap: 1rem; margin-top: 2.4rem; }
+  @media (min-width: 860px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .revs blockquote { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 1.4rem; }
+  .revs span { color: var(--ochre); letter-spacing: 0.08em; font-size: 0.9rem; }
+  .revs p { margin: 0.6rem 0 0.8rem; font-size: 1.02rem; }
+  .revs cite { font-style: normal; color: var(--mut); font-size: 0.86rem; }
+
+  .sec--offer { background: var(--green); color: #fff; }
+  .sec--offer .lab { color: var(--ochre); }
+  .sec--offer .lede { color: #c7d6cd; }
+  .offer { display: grid; gap: 2.4rem; }
+  @media (min-width: 940px) { .offer { grid-template-columns: 0.9fr 1.1fr; align-items: start; } }
+  .offer > * { min-width: 0; }
+  .offer__tel { margin-top: 1.6rem; font: 700 1.3rem var(--ff-d); }
+  .offer__tel a { text-decoration: none; }
+  .form { background: var(--paper); color: var(--ink); border-radius: 22px; padding: clamp(1.3rem, 4vw, 2.2rem); display: grid; gap: 1rem; }
+  .f { display: grid; gap: 0.35rem; font: 600 0.84rem var(--ff); }
+  .f input, .f select, .f textarea { font: 400 1rem var(--ff); border: 1.5px solid var(--line); border-radius: 10px; padding: 0.85rem 0.9rem; background: #fff; width: 100%; color: var(--ink); }
+  .f input[type='file'] { padding: 0.6rem; font-size: 0.88rem; }
+  .f input:focus, .f select:focus, .f textarea:focus { outline: none; border-color: var(--green); }
+  .f .is-bad { border-color: #c0392b; }
+  .f2 { display: grid; gap: 1rem; }
+  @media (min-width: 520px) { .f2 { grid-template-columns: 1fr 1fr; } }
+  .done { background: #e7efe9; border-radius: 12px; padding: 1rem 1.1rem; }
+  .done h3 { font: 700 1.05rem var(--ff-d); color: var(--green); }
+  .done p { color: var(--mut); font-size: 0.86rem; margin-top: 0.3rem; }
+
+  .ft { padding: 3rem 0 6rem; font-size: 0.84rem; color: var(--mut); }
+  .ft__in { display: grid; gap: 0.4rem; }
+  .ft__logo { font: 700 1.8rem/1 var(--ff-d); color: var(--ink); letter-spacing: -0.03em; }
+  .ft a { color: var(--green); font-weight: 600; }
+  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 7.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); display: grid; grid-template-columns: 3.4rem 1fr; gap: 0.4rem; }
+  .mbar a { display: grid; place-items: center; padding: 0.95rem; border-radius: 12px; text-decoration: none; font: 600 0.95rem var(--ff); background: var(--green); color: #fff; box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.5); }
+  .mbar__go { background: var(--ochre) !important; color: #1d1a12 !important; }
+  @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }
+  .dlang { bottom: 0.9rem !important; }
+
+  .rv { opacity: 0; transform: translateY(16px); transition: opacity 0.7s, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .rv.is-in { opacity: 1; transform: none; }
+  .fan__c.rv { transition-delay: calc(var(--i) * 60ms); }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
+</style>
+
+<script>
+  const cfg = JSON.parse(document.getElementById('cfg').textContent);
+  const R = cfg.rates, L = cfg.t;
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  $$('.rv').forEach((el) => io.observe(el));
+
+  // kalkulator ceny
+  const calc = $('[data-calc]');
+  let mode = 'in';
+  const nf = new Intl.NumberFormat({ en: 'en-IE', nl: 'nl-NL', pl: 'pl-PL' }[cfg.lang], { maximumFractionDigits: 0 });
+  const val = (n) => +calc[n].value;
+  const compute = () => {
+    let sum = mode === 'in'
+      ? val('walls') * R.wall + val('ceilings') * R.ceiling + val('doors') * R.door
+      : val('frames') * R.frameOut + val('facade') * R.facade;
+    if (calc.dark.checked) sum *= 1 + R.darkPct;
+    const area = mode === 'in' ? val('walls') + val('ceilings') + val('doors') * 4 : val('frames') * 6 + val('facade');
+    const days = Math.max(1, Math.round(area / 45));
+    const lo = Math.round((sum * 0.9) / 10) * 10, hi = Math.round((sum * 1.12) / 10) * 10;
+    $('[data-res]').textContent = sum ? `€ ${nf.format(lo)} – ${nf.format(hi)}` : '€ –';
+    $('[data-days]').textContent = sum ? (days > 1 ? `${days - 1}–${days + 1}` : '1') : '–';
+    $$('input[type=range]', calc).forEach((r) => (calc.querySelector(`[data-out="${r.name}"]`).textContent = `${r.value} ${r.dataset.unit}`));
+    return { lo, hi };
+  };
+  calc.addEventListener('input', compute);
+  $$('[data-tab]', calc).forEach((b) => b.addEventListener('click', () => {
+    mode = b.dataset.tab;
+    $$('[data-tab]', calc).forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+    $$('[data-panel]', calc).forEach((p) => (p.hidden = p.dataset.panel !== mode));
+    compute();
+  }));
+  compute();
+  $('[data-take]').addEventListener('click', () => {
+    const { lo, hi } = compute();
+    const parts = mode === 'in'
+      ? [`${L.walls} ${val('walls')} ${L.m2}`, `${L.ceilings} ${val('ceilings')} ${L.m2}`, `${L.doors} ${val('doors')} ${L.pcs}`]
+      : [`${L.frames} ${val('frames')} ${L.pcs}`, `${L.facade} ${val('facade')} ${L.m2}`];
+    if (calc.dark.checked) parts.push(L.dark);
+    $('[data-form]').what.value = `${L.prefix}: ${parts.join(', ')} (€ ${nf.format(lo)} – ${nf.format(hi)})`;
+  });
+
+  // formularz oferty (demo)
+  const form = $('[data-form]');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let ok = true;
+    ['name', 'phone'].forEach((n) => { const bad = form[n].value.trim().length < 2; form[n].classList.toggle('is-bad', bad); if (bad) ok = false; });
+    if (ok) $('[data-done]').hidden = false;
+  });
+</script>

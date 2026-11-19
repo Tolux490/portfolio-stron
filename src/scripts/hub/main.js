@@ -17,7 +17,7 @@ const isDesktop = () => window.matchMedia('(min-width: 900px)').matches;
 export function initHub() {
   const cfg = JSON.parse($('#hubConfig')?.textContent || '{}');
   // stare linki do sekcji jednej długiej strony (np. /#work) prowadzą teraz na podstrony
-  const MOVED = { '#work': 'work/', '#lab': 'lab/', '#websites': 'websites/', '#about': 'about/', '#certificates': 'about/#certificates', '#process': 'about/#process', '#faq': 'about/#faq' };
+  const MOVED = { '#work': 'work/', '#lab': 'lab/', '#websites': 'websites/', '#about': 'about/', '#certificates': 'about/', '#process': 'pricing/#process', '#faq': 'pricing/#faq', '#services': 'pricing/' };
   if (cfg.page === 'home' && MOVED[location.hash]) { location.replace(location.pathname.replace(/\/?$/, '/') + MOVED[location.hash]); return; }
   let lenis = null;
   let world = null;
@@ -159,7 +159,8 @@ export function initHub() {
   function startIntro() {
     heroReady = true;
     heroAssembleStart();
-    if (reduced) return;
+    // bez animacji: od razu stan końcowy (inaczej .from() zostawia nagłówki podstron ukryte)
+    if (reduced) { intro.progress(1); return; }
     if (hasHero) gsap.set('.hero .hl__in', { yPercent: 110 });
     intro.play();
   }
@@ -187,19 +188,19 @@ export function initHub() {
       .add(() => { $('#pre').style.display = 'none'; lenis?.start(); ScrollTrigger.refresh(); });
   }
 
-  // ---------- terminal w hero: pisze kroki czyszczenia danych z projektu Little Kettle ----------
+  // ---------- terminal w hero: pisze kroki budowy strony demo (Scheermes) ----------
   const term = $('#term');
-  if (term && !reduced) {
+  if (term) {
     const LINES = [
-      ['> SELECT * FROM orders_export', '300 rows'],
-      ['> TRIM(order_id)', '✓ 24'],
-      ['> PARSE_DATE(5 formats)', '✓ 193'],
-      ['> MAP country  17 → 4', '✓ 240'],
-      ['> MAP product  28 → 8', '✓ 201'],
-      ['> DEDUPE orders', '✓ −18'],
-      ['> FLAG suspicious_rows', '⚑ 10'],
-      ['> BUILD summary', '€14,306'],
-      ['> EXPORT report.xlsx', 'done'],
+      ['> new site scheermes', 'barbershop'],
+      ['> design  mobile-first', '✓'],
+      ['> pages   home · prices · team', '✓ 3'],
+      ['> booking service → time', '✓'],
+      ['> lang    nl · en · pl', '✓ 3'],
+      ['> seo     titles · sitemap', '✓'],
+      ['> plugins', '0'],
+      ['> build', '✓ static'],
+      ['> deploy', 'live'],
     ];
     let li = 0;
     const typeLine = () => {
@@ -225,7 +226,14 @@ export function initHub() {
       };
       step();
     };
-    setTimeout(typeLine, seen ? 1200 : 3600);
+    // bez animacji: od razu cały log
+    if (reduced) LINES.slice(-8).forEach(([cmd, res]) => {
+      const el = document.createElement('li');
+      el.append(cmd + ' '.repeat(Math.max(1, 30 - cmd.length)));
+      const b = document.createElement('b'); b.textContent = res; el.append(b);
+      term.appendChild(el);
+    });
+    else setTimeout(typeLine, seen ? 1200 : 3600);
   }
 
   // ---------- hero: postęp przewijania → scena ----------

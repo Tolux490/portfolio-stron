@@ -5,15 +5,22 @@ import '@fontsource-variable/geist-mono';
 import '../styles/hub.css';
 import Curtain from './Curtain.astro';
 import {
-  T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, siteHref, siteThumb, CERTS,
-  FIVERR_URL, GITHUB_URL, LINKEDIN_URL, UPWORK_URL, FICHES_URL, FORM_ID, EMAIL_PARTS, LAB,
+  T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, SITES, siteHref, siteThumb, PRICES,
+  WHATSAPP, KVK, GITHUB_URL, FICHES_URL, FORM_ID, EMAIL_PARTS, LAB,
 } from '../data/hub-i18n.js';
 
-// page: 'home' | 'work' | 'lab' | 'websites' | 'about' — strona główna i cztery podstrony (każda w 3 językach)
+// page: 'home' | 'websites' | 'pricing' | 'about' | 'work' | 'lab' — strona studia w 3 językach.
+// work i lab to starsze strony z projektami danych: działają dalej, ale nie ma ich w głównej nawigacji.
 const { lang = DEFAULT_LANG, page = 'home' } = Astro.props;
-const t = T[lang] || T[DEFAULT_LANG];
-const ui = t.ui;
 const home = page === 'home';
+
+// ceny w walucie i formacie danego języka; {PRICE0} itd. w tekstach podmieniamy raz, tutaj
+const LOCALE = { en: 'en-IE', nl: 'nl-NL', pl: 'pl-PL' }[lang];
+const eur = (n) => new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+const PLACE = { PRICE0: eur(PRICES.packages[0]), FOUNDING: eur(PRICES.founding), LEFT: String(PRICES.foundingLeft), CARE: eur(PRICES.care) };
+const fill = (v) => (typeof v === 'string' ? v.replace(/\{(\w+)\}/g, (m, k) => PLACE[k] ?? m) : Array.isArray(v) ? v.map(fill) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fill(x)])) : v);
+const t = fill(T[lang] || T[DEFAULT_LANG]);
+const ui = t.ui;
 
 const b = import.meta.env.BASE_URL.replace(/\/$/, '');
 const site = Astro.site ? Astro.site.origin : 'https://vervostudio.com';
@@ -31,39 +38,25 @@ const meta = home
   ? { title: t.meta.title, description: t.meta.description, ogTitle: t.meta.ogTitle, ogDescription: t.meta.ogDescription }
   : { title: ui.pageMeta[page].title, description: ui.pageMeta[page].description, ogTitle: ui.pageMeta[page].title, ogDescription: ui.pageMeta[page].description };
 
-// Bez linku do Fiverr główne CTA prowadzą do formularza kontaktowego.
-const fiverr = FIVERR_URL || '';
 const extLink = { target: '_blank', rel: 'noopener' };
-const hire = fiverr ? { href: fiverr, ...extLink } : { href: contactUrl };
-const fmtDate = (d) => new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(d));
+const wa = WHATSAPP ? `https://wa.me/${WHATSAPP}` : '';
 const pad = (n) => String(n).padStart(2, '0');
 
-// Menu: strony + kontakt (sekcja na stronie głównej)
-const NAV = [
-  ['home', pageUrl('home')], ['work', pageUrl('work')], ['lab', pageUrl('lab')],
-  ['websites', pageUrl('websites')], ['about', pageUrl('about')], ['contact', contactUrl],
-];
-// Kolejność podstron: każda kończy się dużym linkiem do następnej
-const ORDER = ['work', 'lab', 'websites', 'about'];
-const nextOf = { work: 'lab', lab: 'websites', websites: 'about' };
+// Nawigacja: trzy podstrony studia + kontakt; projekty z danymi tylko w menu („więcej”) i w stopce
+const ORDER = ['websites', 'pricing', 'about'];
+const NAV = [['home', pageUrl('home')], ...ORDER.map((k) => [k, pageUrl(k)]), ['contact', contactUrl]];
+const MORE = ['work', 'lab'];
+const nextOf = { websites: 'pricing', pricing: 'about', work: 'lab', lab: 'websites' };
+const CHAPTERS = ['websites', 'pricing', 'about', 'work'];
 const CHAPTER_IMG = {
+  websites: siteThumb(SITES[0], lang),
+  pricing: siteThumb(SITES[3], lang),
+  about: siteThumb(SITES[1], lang),
   work: CASE_MEDIA[0].poster,
-  lab: LAB[0].img,
-  websites: siteThumb(0, lang),
-  about: CERTS[0].img,
 };
-
-// Profile: puste adresy w hub-i18n.js po prostu się nie pokazują.
-const socials = [
-  { k: 'fiverr', label: 'Fiverr', href: FIVERR_URL },
-  { k: 'upwork', label: 'Upwork', href: UPWORK_URL },
-  { k: 'github', label: 'GitHub', href: GITHUB_URL },
-  { k: 'linkedin', label: 'LinkedIn', href: LINKEDIN_URL },
-].filter((s) => s.href);
+const socials = [{ k: 'github', label: 'GitHub', href: GITHUB_URL }].filter((s) => s.href);
 
 const THEMES = ['coral', 'mono', 'paper'];
-
-// Konfiguracja dla skryptu w przeglądarce (bez pełnego adresu e-mail w HTML).
 const config = {
   lang, page, formId: FORM_ID, parts: EMAIL_PARTS, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit,
   copied: ui.copied, copyEmail: ui.copyEmail, loading: ui.loading, cursor: ui.cursor, bored: ui.bored,
@@ -77,14 +70,11 @@ const schema = {
   url: `${site}${langPath(lang)}`,
   image: abs('og/vervo.jpg'),
   inLanguage: lang,
-  areaServed: 'Worldwide',
-  founder: {
-    '@type': 'Person',
-    name: 'Anthony A.',
-    jobTitle: t.jobTitle,
-    knowsAbout: SKILLS,
-    sameAs: socials.map((s) => s.href),
-  },
+  priceRange: `${eur(PRICES.packages[0])}–${eur(PRICES.packages[2])}`,
+  address: { '@type': 'PostalAddress', addressLocality: 'Maastricht', addressCountry: 'NL' },
+  areaServed: ['NL', 'PL'],
+  founder: { '@type': 'Person', name: 'Anthony A.', knowsAbout: SKILLS },
+  sameAs: socials.map((s) => s.href),
 };
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -92,54 +82,49 @@ const faqSchema = {
   inLanguage: lang,
   mainEntity: t.faq.items.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 };
-
-const serviceIcons = [
-  '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M9.5 9.5v10"/>',
-  '<path d="M13 3 5 13.5h6L10 21l8-10.5h-6L13 3Z"/>',
-  '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M3 8.5h18"/>',
-  '<path d="M4 20V4M4 20h16"/><path d="m7.5 15 3.5-4 3 2.5 5-6"/>',
-];
 const isNum = (v) => /^\d+$/.test(v);
-// ikony narzędzi (rysują się przy przewijaniu: pathLength=1)
-const KIT_ICONS = [
-  '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16M15 4v16"/>',
-  '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 11h7M9 14.5h7M9 18h4"/>',
-  '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8.5l1.5 1.5L12 7.5M8 14.5l1.5 1.5 2.5-2.5M14 9h3M14 15h3"/>',
-  '<path d="M9 4c-2.5 0-3 1.2-3 3v2.5c0 1-.8 2-2 2.5 1.2.5 2 1.5 2 2.5V17c0 1.8.5 3 3 3M15 4c2.5 0 3 1.2 3 3v2.5c0 1 .8 2 2 2.5-1.2.5-2 1.5-2 2.5V17c0 1.8-.5 3-3 3"/>',
-  '<ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/>',
-  '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/>',
-  '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',
-  '<path d="M12 3c3 3 4.5 6.5 4.5 10.5H7.5C7.5 9.5 9 6 12 3z"/><path d="M7.5 13.5L5 17h4M16.5 13.5L19 17h-4M10 17l2 4 2-4"/>',
+// ikony „w każdej stronie” (rysują się przy przewijaniu: pathLength=1)
+const INC_ICONS = [
+  '<path d="M4 20l4-1 10-10-3-3L5 16l-1 4z"/><path d="M13.5 7.5l3 3"/>',
+  '<rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M10.5 18.5h3"/>',
+  '<path d="M13 3 5 13.5h6L10 21l8-10.5h-6L13 3Z"/>',
+  '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14.5l2 2 4-4"/>',
+  '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5S14.6 18.1 12 20.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5z"/>',
+  '<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/>',
+  '<rect x="3.5" y="4.5" width="17" height="6" rx="1.5"/><rect x="3.5" y="13.5" width="17" height="6" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+  '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16"/>',
 ];
-// karta profile.json w sekcji „O mnie” (zamiast zdjęcia)
+// karta studio.json w sekcji „O nas”
 const pj = [
-  ['name', `"${t.profile.name}"`],
-  ['studio', '"Vervo Studio"'],
-  ...t.about.facts.map((f) => [f.k.toLowerCase(), `"${f.v}"`]),
-  ['stack', `[${SKILLS.slice(0, 6).map((k) => `"${k}"`).join(', ')}]`],
-  ['certified', `[${CERTS.map((c) => `"${c.org} ${c.t}"`).join(', ')}]`],
+  ['name', '"Vervo Studio"'],
+  ...t.about.facts.map((f) => [f.k.toLowerCase().replace(/\s+/g, '_'), `"${f.v}"`]),
+  ['stack', `[${SKILLS.slice(0, 4).map((k) => `"${k}"`).join(', ')}]`],
+  ['templates', '0'],
   ['status', `"${t.profile.status}"`, true],
 ];
 const wordmark = 'Vervo.'.split('');
 
-// nagłówek podstrony: etykieta, tytuł, opis i scena 3D obok
+// nagłówki podstron: etykieta, tytuł, opis i scena 3D obok
 const HEADS = {
-  work: { n: '01', label: t.work.label, h: t.work.h2, lede: t.work.lede, stage: 'sheet' },
-  lab: { n: '02', label: t.lab.label, h: t.lab.h2, lede: t.lab.lede, stage: 'donut' },
-  websites: { n: '03', label: t.sites.label, h: t.sites.h2, lede: t.sites.note, stage: 'wave' },
-  about: { n: '04', label: t.about.label, h: t.about.h2, lede: t.about.p[0], stage: 'helix' },
+  websites: { n: '01', label: t.sites.label, h: t.sites.h2, lede: t.sites.note, stage: 'wave' },
+  pricing: { n: '02', label: t.pricing.label, h: t.pricing.h2, lede: t.pricing.lede, stage: 'donut' },
+  about: { n: '03', label: t.about.label, h: t.about.h2, lede: t.about.p[0], stage: 'helix' },
+  work: { n: '04', label: ui.pages.work, h: t.work.h2, lede: t.work.lede, stage: 'sheet' },
+  lab: { n: '05', label: t.lab.label, h: t.lab.h2, lede: t.lab.lede, stage: 'globe' },
 };
 const head = HEADS[page];
 // ściany kostki-nawigacji w kolejności materiałów BoxGeometry: +x, -x, +y, -y, +z, -z
 const CUBE = [
-  { k: 'lab', n: '02', t: ui.pages.lab, s: ui.chapters.items.lab.n, href: pageUrl('lab') },
+  { k: 'pricing', n: '02', t: ui.pages.pricing, s: ui.chapters.items.pricing.n, href: pageUrl('pricing') },
   { k: 'contact', n: '05', t: ui.pages.contact, s: ui.cube.contactSub, href: '#contact' },
-  { k: 'websites', n: '03', t: ui.pages.websites, s: ui.chapters.items.websites.n, href: pageUrl('websites') },
+  { k: 'about', n: '03', t: ui.pages.about, s: ui.chapters.items.about.n, href: pageUrl('about') },
   { k: 'pong', n: '06', t: ui.cube.pongTop, s: ui.cube.pongSub, href: '#bored' },
-  { k: 'work', n: '01', t: ui.pages.work, s: ui.chapters.items.work.n, href: pageUrl('work') },
-  { k: 'about', n: '04', t: ui.pages.about, s: ui.chapters.items.about.n, href: pageUrl('about') },
+  { k: 'websites', n: '01', t: ui.pages.websites, s: ui.chapters.items.websites.n, href: pageUrl('websites') },
+  { k: 'work', n: '04', t: ui.pages.work, s: ui.chapters.items.work.n, href: pageUrl('work') },
 ];
 const nextKey = nextOf[page];
+const SHOWCASE = SITES.filter((s) => s.neu).concat(SITES.filter((s) => ['restauracja', 'oktan'].includes(s.slug)));
+const P = t.pricing;
 ---
 <!doctype html>
 <html lang={lang} data-theme="coral" data-page={page} class="no-js">
@@ -167,7 +152,7 @@ const nextKey = nextOf[page];
     <meta name="twitter:description" content={meta.ogDescription} />
     <meta name="twitter:image" content={abs('og/vervo.jpg')} />
     {home && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
-    {page === 'about' && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+    {page === 'pricing' && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
     <script is:inline>
       // Motyw i preloader ustawiamy przed pierwszym malowaniem, żeby nic nie mrugało.
       (function () {
@@ -232,8 +217,15 @@ const nextKey = nextOf[page];
         </ol>
         <div class="menu__side">
           <div class="menu__grp">
+            <p class="menu__lab">{t.footer.data}</p>
+            <div class="menu__chips">
+              {MORE.map((k) => <a href={pageUrl(k)}>{ui.pages[k]} <span aria-hidden="true">→</span></a>)}
+            </div>
+          </div>
+          <div class="menu__grp">
             <p class="menu__lab">{ui.elsewhere}</p>
             <div class="menu__chips">
+              {wa && <a href={wa} {...extLink}>{ui.whatsapp} <span aria-hidden="true">↗</span></a>}
               {socials.map((s) => <a href={s.href} {...extLink}>{s.label} <span aria-hidden="true">↗</span></a>)}
               <button type="button" data-copy-email><span>{ui.copyEmail}</span></button>
             </div>
@@ -272,10 +264,8 @@ const nextKey = nextOf[page];
               </dl>
             </div>
             <div class="hero__cta">
-              {fiverr
-                ? <a class="btn btn--acc magnetic" href={fiverr} {...extLink} data-cursor="hover"><span>{t.cta.fiverr}</span><span aria-hidden="true">↗</span></a>
-                : <a class="btn btn--acc magnetic" href="#contact" data-cursor="hover"><span>{t.cta.quote}</span></a>}
-              <a class="btn btn--line magnetic" href={pageUrl('work')} data-cursor="hover"><span>{t.cta.seeWork}</span><span aria-hidden="true">→</span></a>
+              <a class="btn btn--acc magnetic" href="#contact" data-cursor="hover"><span>{t.cta.quote}</span><span aria-hidden="true">→</span></a>
+              <a class="btn btn--line magnetic" href={pageUrl('websites')} data-cursor="hover"><span>{t.cta.seeWork}</span><span aria-hidden="true">→</span></a>
             </div>
           </div>
           <a class="badge" href={pageUrl('about')} aria-label={t.about.h2} data-cursor="hover">
@@ -286,7 +276,7 @@ const nextKey = nextOf[page];
             <svg class="badge__mk" viewBox="0 0 68 60" aria-hidden="true"><path d="M6 10 L34 48 L62 10" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
           <div class="term" aria-hidden="true">
-            <div class="term__bar"><span>little_kettle / cleaning_log.sql</span><span class="live"></span></div>
+            <div class="term__bar"><span>{ui.term}</span><span class="live"></span></div>
             <ol class="term__out" id="term"></ol>
           </div>
         </section>
@@ -307,18 +297,50 @@ const nextKey = nextOf[page];
       )}
 
       {home && (
-        <section class="kit" aria-label={t.skillsLabel}>
+        <section class="kit" aria-label={t.includes.label}>
           <div class="wrap">
-            <p class="lab mono">{t.skillsLabel}</p>
+            <p class="lab mono">{t.includes.label}</p>
             <ol class="kit__grid">
-              {SKILLS.map((k, i) => (
+              {t.includes.items.map(([h, p], i) => (
                 <li class="kit__i">
-                  <span class="kit__top"><span class="mono kit__n">{pad(i + 1)}</span><svg class="kit__ic draw" viewBox="0 0 24 24" aria-hidden="true" set:html={KIT_ICONS[i].replace(/<(path|rect|ellipse)/g, '<$1 pathLength="1"')}></svg></span>
-                  <span class="kit__h">{k}</span>
-                  <span class="kit__p">{t.toolkit[i]}</span>
+                  <span class="kit__top"><span class="mono kit__n">{pad(i + 1)}</span><svg class="kit__ic draw" viewBox="0 0 24 24" aria-hidden="true" set:html={INC_ICONS[i].replace(/<(path|rect|ellipse|circle)/g, '<$1 pathLength="1"')}></svg></span>
+                  <span class="kit__h">{h}</span>
+                  <span class="kit__p">{p}</span>
                 </li>
               ))}
             </ol>
+          </div>
+        </section>
+      )}
+
+      {home && (
+        <section class="band show" id="showcase">
+          <div class="wrap">
+            <header class="shead">
+              <p class="lab mono">{t.show.label}</p>
+              <h2 class="h2 split">{t.show.h2}</h2>
+              <p class="shead__lede">{t.show.lede}</p>
+            </header>
+            <div class="show__grid">
+              {SHOWCASE.map((s, i) => {
+                const it = t.sites.items[s.slug];
+                return (
+                  <a class="showc" href={`${b}${siteHref(s, lang)}`} data-cursor="open" data-curtain={s.name}>
+                    <span class="site__win">
+                      <span class="site__bar"><span><i></i><i></i><i></i></span><span>vervostudio.com{siteHref(s, lang)}</span></span>
+                      <span class="site__img"><img src={asset(siteThumb(s, lang))} width="960" height="600" alt={`${s.name}, ${it.bran}`} loading="lazy" decoding="async" /></span>
+                    </span>
+                    <span class="showc__meta">
+                      <span class="showc__h">{s.name}</span>
+                      <span class="mono showc__k">{pad(i + 1)} · {it.bran}</span>
+                      <span class="showc__p">{it.opis}</span>
+                      <span class="mono showc__tag">{t.show.concept}</span>
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+            <a class="btn btn--line magnetic show__all" href={pageUrl('websites')} data-cursor="hover"><span>{t.cta.allSites}</span><span aria-hidden="true">→</span></a>
           </div>
         </section>
       )}
@@ -337,6 +359,62 @@ const nextKey = nextOf[page];
         </section>
       )}
 
+      {(home || page === 'pricing') && (
+        <section class:list={['band', 'prc', { 'band--first': !home }]} id="pricing">
+          <div class="wrap">
+            {home && (
+              <header class="shead">
+                <p class="lab mono">{P.label}</p>
+                <h2 class="h2 split">{P.h2}</h2>
+                <p class="shead__lede">{P.lede}</p>
+              </header>
+            )}
+            <div class="pkgs">
+              {P.packages.map((p, i) => (
+                <article class:list={['pkg', { 'pkg--top': i === 1 }]}>
+                  {i === 1 && <span class="pkg__tag mono">{P.popular}</span>}
+                  <p class="pkg__n">{p.n}</p>
+                  <p class="pkg__p">{i === 2 && <small>{P.from} </small>}<b>{eur(PRICES.packages[i])}</b></p>
+                  <p class="pkg__ex mono">{P.ex}</p>
+                  <p class="pkg__d">{p.d}</p>
+                  <ul class="pkg__f">{p.f.map((x) => <li>{x}</li>)}</ul>
+                  <a class:list={['btn', 'btn--full', i === 1 ? 'btn--acc' : 'btn--line']} href={contactUrl} data-cursor="hover"><span>{t.cta.ask}</span><span aria-hidden="true">→</span></a>
+                </article>
+              ))}
+            </div>
+            {PRICES.foundingLeft > 0 && (
+              <aside class="found">
+                <div class="found__l">
+                  <p class="lab mono">{P.founding.k}</p>
+                  <h3 class="found__h">{P.founding.h}</h3>
+                  <p class="found__p">{P.founding.p}</p>
+                </div>
+                <div class="found__r">
+                  <p class="found__spots mono">
+                    <span class="found__dots" aria-hidden="true">{[0, 1, 2].map((k) => <i class:list={{ on: k < PRICES.foundingLeft }}></i>)}</span>
+                    {P.founding.spots}
+                  </p>
+                  <a class="btn btn--acc magnetic" href={contactUrl} data-cursor="hover"><span>{P.founding.cta}</span><span aria-hidden="true">→</span></a>
+                </div>
+              </aside>
+            )}
+            {page === 'pricing' && (
+              <div class="care">
+                <div>
+                  <p class="lab mono">{P.care.k}</p>
+                  <h3 class="care__h">{P.care.h}</h3>
+                  <p class="care__p">{P.care.p}</p>
+                </div>
+                <p class="care__price"><b>{P.care.price}</b><span class="mono">{P.care.per}</span></p>
+                <ul class="care__f">{P.care.f.map((x) => <li>{x}</li>)}</ul>
+              </div>
+            )}
+            <p class="prc__note mono">{P.note}</p>
+            {home && <a class="btn btn--line magnetic" href={pageUrl('pricing')} data-cursor="hover"><span>{P.more}</span><span aria-hidden="true">→</span></a>}
+          </div>
+        </section>
+      )}
+
       {home && (
         <section class="band chap" id="index">
           <div class="wrap">
@@ -350,7 +428,7 @@ const nextKey = nextOf[page];
               <p class="chap__hint mono">{ui.cube.hint}</p>
             </div>
             <ol class="chap__list">
-              {ORDER.map((k, i) => (
+              {CHAPTERS.map((k, i) => (
                 <li>
                   <a class="chap__a" href={pageUrl(k)} data-img={asset(CHAPTER_IMG[k])} data-cursor="open">
                     <span class="chap__n mono">{pad(i + 1)}</span>
@@ -381,7 +459,7 @@ const nextKey = nextOf[page];
       )}
 
       {page === 'work' && (
-        <section class="band band--first" id="work">
+        <section class="band band--first" id="cases">
           <div class="wrap">
             <div class="cases">
               {t.work.cases.map((c, i) => {
@@ -466,32 +544,34 @@ const nextKey = nextOf[page];
           <div class="sites__pin">
             <div class="sites__view">
               <div class="sites__track" id="sitesTrack">
-                {t.sites.items.map((r, i) => (
-                  <a class="site" href={`${b}${siteHref(i, lang)}`} data-cursor="open" data-curtain={r.nazwa}>
-                    <span class="site__win">
-                      <span class="site__bar"><span><i></i><i></i><i></i></span><span>vervostudio.com{siteHref(i, lang)}</span></span>
-                      <span class="site__img"><img src={asset(siteThumb(i, lang))} width="960" height="600" alt={`${r.nazwa}, ${r.bran}`} loading="lazy" decoding="async" /></span>
-                    </span>
-                    <span class="site__meta">
-                      <span class="mono site__n">{pad(i + 1)} / {pad(t.sites.items.length + 1)}</span>
-                      <span class="site__h">{r.nazwa}</span>
-                      <span class="mono site__bran">{r.bran}</span>
-                      <span class="site__p">{r.opis}</span>
-                      <span class="tags mono">{r.tagi.map((x) => <span>{x}</span>)}</span>
-                    </span>
-                  </a>
-                ))}
+                {SITES.map((s, i) => {
+                  const r = t.sites.items[s.slug];
+                  return (
+                    <a class="site" href={`${b}${siteHref(s, lang)}`} data-cursor="open" data-curtain={s.name}>
+                      <span class="site__win">
+                        <span class="site__bar"><span><i></i><i></i><i></i></span><span>vervostudio.com{siteHref(s, lang)}</span></span>
+                        <span class="site__img"><img src={asset(siteThumb(s, lang))} width="960" height="600" alt={`${s.name}, ${r.bran}`} loading="lazy" decoding="async" /></span>
+                      </span>
+                      <span class="site__meta">
+                        <span class="mono site__n">{pad(i + 1)} / {pad(SITES.length + 1)}</span>
+                        <span class="site__h">{s.name}</span>
+                        <span class="mono site__bran">{r.bran} · {s.langs.map((x) => x.toUpperCase()).join(' / ')}</span>
+                        <span class="site__p">{r.opis}</span>
+                        <span class="tags mono">{r.tagi.map((x) => <span>{x}</span>)}</span>
+                      </span>
+                    </a>
+                  );
+                })}
                 <a class="site site--app" href={FICHES_URL} {...extLink} data-cursor="open">
                   <span class="site__win fiche" aria-hidden="true">
                     <span class="fiche__card fiche__card--back">bread</span>
                     <span class="fiche__card">le pain</span>
                   </span>
                   <span class="site__meta">
-                    <span class="mono site__n">{pad(t.sites.items.length + 1)} / {pad(t.sites.items.length + 1)}</span>
-                    <span class="site__h">{t.sites.project.nazwa}</span>
-                    <span class="mono site__bran">{t.sites.project.bran}</span>
-                    <span class="site__p">{t.sites.project.opis}</span>
-                    <span class="tags mono">{t.sites.project.tagi.map((x) => <span>{x}</span>)}</span>
+                    <span class="mono site__n">{pad(SITES.length + 1)} / {pad(SITES.length + 1)}</span>
+                    <span class="site__h">Fiches</span>
+                    <span class="mono site__bran">App · AI</span>
+                    <span class="site__p">{lang === 'pl' ? 'Aplikacja do nauki francuskiego z fiszkami tworzonymi przez AI, nasz własny projekt.' : lang === 'nl' ? 'Een app om Frans te leren met flashcards die door AI worden gemaakt, ons eigen project.' : 'A French-learning app with AI-made flashcards, our own project.'}</span>
                   </span>
                 </a>
               </div>
@@ -501,38 +581,12 @@ const nextKey = nextOf[page];
         </section>
       )}
 
-      {home && (
-        <section class="band" id="services">
-          <div class="wrap">
-            <header class="shead">
-              <p class="lab mono">{t.services.label}</p>
-              <h2 class="h2 split">{t.services.h2}</h2>
-              <p class="shead__lede">{t.services.lede}</p>
-            </header>
-            <ol class="svc">
-              {t.services.items.map((s, i) => (
-                <li class="svc__row">
-                  <span class="svc__n mono">{pad(i + 1)}</span>
-                  <span class="svc__ic" aria-hidden="true"><svg class="draw" viewBox="0 0 24 24" set:html={serviceIcons[i].replace(/<(path|rect|ellipse)/g, '<$1 pathLength="1"')}></svg></span>
-                  <div class="svc__main">
-                    <h3 class="svc__h">{s.t}</h3>
-                    <p class="svc__p">{s.o}</p>
-                  </div>
-                  <ul class="svc__co mono">{s.co.map((c) => <li>{c}</li>)}</ul>
-                  <a class="svc__go mono" {...hire} data-cursor="hover">{fiverr ? t.cta.fiverr : t.cta.ask} ↗</a>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-      )}
-
       {page === 'about' && (
         <section class="band band--first" id="about">
           <div class="wrap about">
             <div class="about__pic">
               <figure class="pjson" aria-label={t.about.h2}>
-                <div class="pjson__bar mono"><span><i></i><i></i><i></i></span><span>profile.json</span><span class="live"></span></div>
+                <div class="pjson__bar mono"><span><i></i><i></i><i></i></span><span>studio.json</span><span class="live"></span></div>
                 <pre class="pjson__code"><code>{'{'}{pj.map(([k, v, ok], i) => <span>{'\n  '}<b>"{k}"</b>: {ok ? <strong>{v}</strong> : <em>{v}</em>}{i === pj.length - 1 ? '' : ','}</span>)}{'\n}'}</code></pre>
               </figure>
             </div>
@@ -546,35 +600,7 @@ const nextKey = nextOf[page];
         </section>
       )}
 
-      {page === 'about' && (
-        <section class="band band--alt" id="certificates">
-          <div class="wrap">
-            <header class="shead">
-              <p class="lab mono">{t.certs.label}</p>
-              <h2 class="h2 split">{t.certs.h2}</h2>
-              <p class="shead__lede">{t.certs.lede}</p>
-            </header>
-            <div class="certs">
-              {CERTS.map((c, i) => (
-                <div class="cert tilt">
-                  <button class="cert__img" type="button" data-zoom={asset(c.img)} data-cap={`${c.org} · ${c.t}`} aria-label={`${c.org} ${c.t}. ${t.work.zoom}`} data-cursor="view">
-                    <img src={asset(c.img)} width={c.w} height={c.h} alt={`${c.org} ${c.t}`} loading="lazy" decoding="async" />
-                    <span class="cert__glare" aria-hidden="true"></span>
-                  </button>
-                  <div class="cert__body">
-                    <p class="mono cert__org">{pad(i + 1)} — {c.org}</p>
-                    <h3 class="cert__h">{c.t}</h3>
-                    <p class="mono cert__date">{t.certs.earned} {fmtDate(c.date)}</p>
-                    {c.verify && <a class="mono cert__a" href={c.verify} {...extLink} data-cursor="hover">{t.certs.verify}</a>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {page === 'about' && (
+      {page === 'pricing' && (
         <section class="process stage" id="process" data-stage="sheet">
           <div class="process__pin">
             <div class="wrap process__in">
@@ -591,13 +617,13 @@ const nextKey = nextOf[page];
                   </li>
                 ))}
               </ol>
-              <div class="process__bar" aria-hidden="true"><span>rows_flagged</span><i><b id="cleanBar"></b></i><span id="cleanPct">0%</span></div>
+              <div class="process__bar" aria-hidden="true"><span>build</span><i><b id="cleanBar"></b></i><span id="cleanPct">0%</span></div>
             </div>
           </div>
         </section>
       )}
 
-      {page === 'about' && (
+      {page === 'pricing' && (
         <section class="band" id="faq">
           <div class="wrap faqw">
             <header class="shead">
@@ -629,8 +655,8 @@ const nextKey = nextOf[page];
               <div class="logo-space" data-space aria-hidden="true"></div>
             </div>
 
-            <a class="cta-bar" {...hire} data-cursor="hover">
-              <span>{ui.startProject}</span><span>{fiverr ? 'Fiverr' : t.cta.quote} ↗</span>
+            <a class="cta-bar" href={wa || '#kForm'} {...(wa ? extLink : {})} data-cursor="hover">
+              <span>{ui.startProject}</span><span>{wa ? ui.whatsapp : t.cta.quote} {wa ? '↗' : '↓'}</span>
             </a>
 
             <div class="contact__grid">
@@ -638,7 +664,7 @@ const nextKey = nextOf[page];
                 <p class="contact__p">{t.kontakt.p}</p>
                 <p class="lab mono">{ui.elsewhere}</p>
                 <ul class="soc">
-                  {socials.map((s) => <li><a href={s.href} {...extLink} data-cursor="hover"><span>{s.label}</span><span>↗</span></a></li>)}
+                  {wa && <li><a href={wa} {...extLink} data-cursor="hover"><span>{ui.whatsapp}</span><span>↗</span></a></li>}
                   <li><button type="button" data-copy-email data-cursor="copy"><span>{ui.copyEmail}</span><span>⧉</span></button></li>
                   <li><a href="#contact" data-mailto data-cursor="hover"><span>{ui.emailMe}</span><span>→</span></a></li>
                 </ul>
@@ -665,7 +691,7 @@ const nextKey = nextOf[page];
       {!home && (
         <section class="nextp">
           <a class="nextp__a wrap" href={nextKey ? pageUrl(nextKey) : contactUrl} data-cursor="open">
-            <span class="nextp__k mono">{nextKey ? `${ui.next} · ${pad(ORDER.indexOf(nextKey) + 1)}` : ui.pages.contact}</span>
+            <span class="nextp__k mono">{nextKey ? `${ui.next} · ${HEADS[nextKey].n}` : ui.pages.contact}</span>
             <span class="nextp__t"><span class="nextp__w">{nextKey ? ui.pages[nextKey] : ui.talk}</span><span class="nextp__arr" aria-hidden="true">→</span></span>
             <span class="nextp__line" aria-hidden="true"></span>
           </a>
@@ -675,11 +701,14 @@ const nextKey = nextOf[page];
 
     <footer class="foot">
       <div class="wrap foot__row mono">
-        <span>© {new Date().getFullYear()} Anthony A. · Vervo Studio</span>
+        <span>© {new Date().getFullYear()} Vervo Studio{KVK ? ` · ${t.footer.kvk} ${KVK}` : ''}</span>
         <span class="foot__mid">{ui.handmade}</span>
         <a href="#top" data-cursor="hover">{ui.backTop} ↑</a>
       </div>
-      <div class="wrap foot__tx">{t.footer.tx}</div>
+      <div class="wrap foot__tx">
+        {t.footer.tx}
+        <span class="foot__data">{t.footer.data} {MORE.map((k, i) => <>{i > 0 && ' · '}<a href={pageUrl(k)}>{ui.pages[k]}</a></>)}</span>
+      </div>
       <p class="word" aria-hidden="true">{wordmark.map((c) => <span>{c}</span>)}</p>
     </footer>
 
