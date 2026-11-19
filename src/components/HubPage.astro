@@ -56,7 +56,7 @@ const CHAPTER_IMG = {
 };
 const socials = [{ k: 'github', label: 'GitHub', href: GITHUB_URL }].filter((s) => s.href);
 
-const THEMES = ['coral', 'mono', 'paper'];
+const THEMES = ['paper', 'mono'];
 const config = {
   lang, page, formId: FORM_ID, parts: EMAIL_PARTS, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit,
   copied: ui.copied, copyEmail: ui.copyEmail, loading: ui.loading, cursor: ui.cursor, bored: ui.bored,
@@ -127,7 +127,7 @@ const SHOWCASE = SITES.filter((s) => s.neu).concat(SITES.filter((s) => ['restaur
 const P = t.pricing;
 ---
 <!doctype html>
-<html lang={lang} data-theme="coral" data-page={page} class="no-js">
+<html lang={lang} data-theme="paper" data-page={page} class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -136,7 +136,7 @@ const P = t.pricing;
     <link rel="canonical" href={canonical} />
     {LANGS.map((l) => <link rel="alternate" hreflang={l} href={urls[l]} />)}
     <link rel="alternate" hreflang="x-default" href={urls[DEFAULT_LANG]} />
-    <meta name="theme-color" content="#0e1116" />
+    <meta name="theme-color" content="#f4f2ee" />
     <link rel="icon" href={`${b}/favicon.svg`} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={t.meta.ogLocale} />
@@ -158,7 +158,7 @@ const P = t.pricing;
       (function () {
         var d = document.documentElement, th = null, seen = null;
         try { th = localStorage.getItem('vervo-theme'); seen = sessionStorage.getItem('vervo-seen'); } catch (e) {}
-        if (th === 'coral' || th === 'mono' || th === 'paper') d.setAttribute('data-theme', th);
+        if (th === 'mono' || th === 'paper') d.setAttribute('data-theme', th);
         d.classList.remove('no-js'); d.classList.add('js');
         if (seen) d.classList.add('seen');
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('reduced');

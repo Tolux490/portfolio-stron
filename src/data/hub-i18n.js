@@ -88,7 +88,7 @@ export const T = {
       copyEmail: 'Copy email', copied: 'Copied!', emailMe: 'Email us', whatsapp: 'WhatsApp',
       startProject: 'Plan a free call',
       backTop: 'Back to top',
-      theme: 'Theme', themes: { coral: 'Coral', mono: 'Mono', paper: 'Paper' },
+      theme: 'Theme', themes: { paper: 'Light', mono: 'Dark' },
       sections: ['Intro', 'Work', 'Pricing', 'About', 'Contact'],
       pages: { home: 'Home', websites: 'Work', pricing: 'Pricing', about: 'About', work: 'Data projects', lab: 'Lab', contact: 'Contact' },
       pageMeta: {
@@ -320,7 +320,7 @@ export const T = {
       copyEmail: 'Kopiuj adres e-mail', copied: 'Skopiowano!', emailMe: 'Napisz do nas', whatsapp: 'WhatsApp',
       startProject: 'Umów bezpłatną rozmowę',
       backTop: 'Na górę',
-      theme: 'Motyw', themes: { coral: 'Koral', mono: 'Mono', paper: 'Papier' },
+      theme: 'Motyw', themes: { paper: 'Jasny', mono: 'Ciemny' },
       sections: ['Start', 'Realizacje', 'Cennik', 'O nas', 'Kontakt'],
       pages: { home: 'Start', websites: 'Realizacje', pricing: 'Cennik', about: 'O nas', work: 'Projekty z danymi', lab: 'Lab', contact: 'Kontakt' },
       pageMeta: {
@@ -552,7 +552,7 @@ export const T = {
       copyEmail: 'Kopieer e-mailadres', copied: 'Gekopieerd!', emailMe: 'Mail ons', whatsapp: 'WhatsApp',
       startProject: 'Plan een gratis gesprek',
       backTop: 'Terug naar boven',
-      theme: 'Thema', themes: { coral: 'Koraal', mono: 'Mono', paper: 'Papier' },
+      theme: 'Thema', themes: { paper: 'Licht', mono: 'Donker' },
       sections: ['Intro', 'Werk', 'Prijzen', 'Over ons', 'Contact'],
       pages: { home: 'Home', websites: 'Werk', pricing: 'Prijzen', about: 'Over ons', work: 'Datawerk', lab: 'Lab', contact: 'Contact' },
       pageMeta: {
