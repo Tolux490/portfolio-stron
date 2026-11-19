@@ -1,0 +1,708 @@
+---
+import Curtain from '../components/Curtain.astro';
+import DemoLang from '../components/DemoLang.astro';
+// Scheermes (demo): barbershop in Maastricht, NL + EN. Strony: src/pages/barbier/ (NL) i /en/ (EN).
+// Fikcyjna firma: numery, adres i opinie są przykładowe.
+
+const { lang = 'nl' } = Astro.props;
+const en = lang === 'en';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f) => `${base}/img/barbier/${f}`;
+const root = (l) => `${base}/barbier/${l === 'nl' ? '' : `${l}/`}`;
+const phone = '043 000 00 00';
+const tel = '+31430000000';
+
+const SERVICES = [
+  { id: 'knip', min: 30, price: 32 },
+  { id: 'fade', min: 40, price: 36 },
+  { id: 'combo', min: 60, price: 52 },
+  { id: 'baard', min: 20, price: 22 },
+  { id: 'shave', min: 30, price: 34 },
+  { id: 'buzz', min: 20, price: 22 },
+  { id: 'kids', min: 25, price: 24 },
+];
+const BARBERS = [
+  { id: 'yusuf', img: 'yusuf.webp' },
+  { id: 'mila', img: 'mila.webp' },
+  { id: 'daan', img: 'werk.webp' },
+];
+
+const T = {
+  nl: {
+    title: 'Scheermes — barbershop in Wyck, Maastricht',
+    desc: 'Fades, knippen, baard en hot towel shaves in Wyck, Maastricht. Online je stoel boeken in 30 seconden.',
+    nav: ['Prijzen', 'Werk', 'Team', 'Contact'], book: 'Boek je stoel', call: 'Bel',
+    kicker: 'Barbershop · Wyck, Maastricht',
+    h1: ['Strak geknipt.', 'Zonder wachtrij.'],
+    lede: 'Fades, klassieke cuts en hot towel shaves. Boek online, kom binnen, je stoel staat klaar.',
+    seePrices: 'Bekijk prijzen',
+    stats: [['4,9', 'gemiddeld op Google'], ['380+', 'reviews'], ['3', 'barbers, 6 dagen per week']],
+    ticker: ['Skin fades', 'Klassieke cuts', 'Baard shapen', 'Hot towel shave', 'Kids cuts', 'Buzz cuts'],
+    pricesLab: 'Prijzen', pricesH: 'Vaste prijzen, geen verrassingen',
+    services: {
+      knip: ['Knippen', 'Wassen, knippen en stylen'],
+      fade: ['Skin fade', 'Strak naar nul, met de schaar bovenop'],
+      combo: ['Knippen + baard', 'De complete behandeling, onze favoriet'],
+      baard: ['Baard trimmen', 'Shapen, contouren met het mes, olie'],
+      shave: ['Hot towel shave', 'Warme doeken, scheermes, aftershave balm'],
+      buzz: ['Buzz cut', 'Eén lengte, strak afgewerkt'],
+      kids: ['Kids cut', 'Tot en met 12 jaar'],
+    },
+    minutes: 'min', bookThis: 'Boek',
+    workLab: 'Werk', workH: 'Uit de stoel van deze week',
+    work: [['fade.webp', 'Mid fade met textuur'], ['tattoo.webp', 'Skin fade met lijn'], ['knip.webp', 'Klassieke schaarsnede'], ['baard.webp', 'Baard shapen met kwast'], ['scheren.webp', 'Hot towel shave']],
+    teamLab: 'Team', teamH: 'Kies je barber',
+    barbers: { yusuf: ['Yusuf', 'Fades en designs'], mila: ['Mila', 'Schaarwerk en lang haar'], daan: ['Daan', 'Baarden en shaves'] },
+    bookWith: 'Boek bij',
+    bookLab: 'Online boeken', bookH: 'Je stoel in 30 seconden',
+    steps: ['Behandeling', 'Barber', 'Dag', 'Tijd', 'Gegevens'],
+    anyBarber: 'Geen voorkeur', anyBarberSub: 'Eerste vrije stoel',
+    closed: 'dicht', noSlots: 'Vol, kies een andere dag',
+    name: 'Naam', phoneL: 'Telefoon (voor de herinnering)', confirm: 'Bevestig afspraak', back: 'Terug',
+    summary: 'Jouw afspraak', total: 'Totaal', pickFirst: 'Kies eerst een behandeling',
+    doneH: 'Gelukt, je stoel staat klaar.',
+    doneP: 'Demoversie: er is niets verstuurd. In de echte site krijgt de zaak de boeking en jij een bevestiging en herinnering via WhatsApp.',
+    again: 'Nieuwe afspraak',
+    revLab: 'Reviews', revH: '4,9 uit 380+ reviews',
+    reviews: [
+      ['Eindelijk een barber waar je niet een uur hoeft te wachten. Geboekt in de trein, om 17:30 in de stoel. Fade is strak.', 'Thomas, Wyck'],
+      ['Yusuf neemt echt de tijd om te vragen wat je wil. Beste fade die ik in Maastricht heb gehad.', 'Rachid'],
+      ['Hot towel shave voor mijn verjaardag cadeau gekregen. Aanrader, voelt als een uur vakantie.', 'Jeroen M.'],
+    ],
+    visitLab: 'Langskomen', visitH: 'Midden in Wyck, vijf minuten van het station',
+    hoursH: 'Openingstijden', days: ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'],
+    hoursNote: 'Donderdag koopavond tot 21:00.',
+    openNow: 'Nu open', closedNow: 'Nu gesloten', until: 'tot', opensAt: 'opent',
+    mapNote: 'De kaart van Google laadt pas na je klik, dus zonder cookies vooraf.', showMap: 'Toon kaart',
+    contactH: 'Contact', whatsapp: 'WhatsApp',
+    demo: 'Conceptwebsite voor een fictieve barbershop, gemaakt door Vervo Studio.', credit: 'Website door Vervo Studio ↗', privacy: 'Privacy',
+  },
+  en: {
+    title: 'Scheermes — barbershop in Wyck, Maastricht',
+    desc: 'Fades, cuts, beards and hot towel shaves in Wyck, Maastricht. Book your chair online in 30 seconds.',
+    nav: ['Prices', 'Work', 'Team', 'Contact'], book: 'Book your chair', call: 'Call',
+    kicker: 'Barbershop · Wyck, Maastricht',
+    h1: ['Sharp cuts.', 'No waiting.'],
+    lede: 'Fades, classic cuts and hot towel shaves. Book online, walk in, your chair is ready.',
+    seePrices: 'See prices',
+    stats: [['4.9', 'average on Google'], ['380+', 'reviews'], ['3', 'barbers, 6 days a week']],
+    ticker: ['Skin fades', 'Classic cuts', 'Beard shaping', 'Hot towel shave', 'Kids cuts', 'Buzz cuts'],
+    pricesLab: 'Prices', pricesH: 'Fixed prices, no surprises',
+    services: {
+      knip: ['Haircut', 'Wash, cut and style'],
+      fade: ['Skin fade', 'Down to zero, scissors on top'],
+      combo: ['Haircut + beard', 'The full treatment, our favourite'],
+      baard: ['Beard trim', 'Shaping, razor line-up, oil'],
+      shave: ['Hot towel shave', 'Warm towels, straight razor, balm'],
+      buzz: ['Buzz cut', 'One length, clean finish'],
+      kids: ['Kids cut', 'Up to age 12'],
+    },
+    minutes: 'min', bookThis: 'Book',
+    workLab: 'Work', workH: 'Out of the chair this week',
+    work: [['fade.webp', 'Textured mid fade'], ['tattoo.webp', 'Skin fade with a line'], ['knip.webp', 'Classic scissor cut'], ['baard.webp', 'Beard shaping'], ['scheren.webp', 'Hot towel shave']],
+    teamLab: 'Team', teamH: 'Pick your barber',
+    barbers: { yusuf: ['Yusuf', 'Fades and designs'], mila: ['Mila', 'Scissor work and long hair'], daan: ['Daan', 'Beards and shaves'] },
+    bookWith: 'Book with',
+    bookLab: 'Book online', bookH: 'Your chair in 30 seconds',
+    steps: ['Service', 'Barber', 'Day', 'Time', 'Details'],
+    anyBarber: 'No preference', anyBarberSub: 'First free chair',
+    closed: 'closed', noSlots: 'Fully booked, pick another day',
+    name: 'Name', phoneL: 'Phone (for the reminder)', confirm: 'Confirm booking', back: 'Back',
+    summary: 'Your booking', total: 'Total', pickFirst: 'Pick a service first',
+    doneH: 'Done, your chair is ready.',
+    doneP: 'Demo version: nothing was sent. On the real site the shop gets the booking and you get a confirmation and a reminder on WhatsApp.',
+    again: 'New booking',
+    revLab: 'Reviews', revH: '4.9 from 380+ reviews',
+    reviews: [
+      ['Finally a barber where you don’t wait an hour. Booked on the train, in the chair at 5:30. The fade is spot on.', 'Thomas, Wyck'],
+      ['Yusuf really takes the time to ask what you want. Best fade I’ve had in Maastricht.', 'Rachid'],
+      ['Got a hot towel shave as a birthday present. Highly recommended, feels like an hour of holiday.', 'Jeroen M.'],
+    ],
+    visitLab: 'Visit', visitH: 'In the heart of Wyck, five minutes from the station',
+    hoursH: 'Opening hours', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    hoursNote: 'Late opening on Thursday until 21:00.',
+    openNow: 'Open now', closedNow: 'Closed now', until: 'until', opensAt: 'opens',
+    mapNote: 'The Google map only loads after you click, so no cookies upfront.', showMap: 'Show map',
+    contactH: 'Contact', whatsapp: 'WhatsApp',
+    demo: 'Concept website for a fictional barbershop, made by Vervo Studio.', credit: 'Website by Vervo Studio ↗', privacy: 'Privacy',
+  },
+  pl: {
+    title: 'Scheermes — barber w Wyck, Maastricht',
+    desc: 'Fade’y, strzyżenie, broda i golenie na gorąco w dzielnicy Wyck w Maastricht. Zarezerwuj fotel online w 30 sekund.',
+    nav: ['Cennik', 'Realizacje', 'Barberzy', 'Kontakt'], book: 'Zarezerwuj fotel', call: 'Zadzwoń',
+    kicker: 'Barbershop · Wyck, Maastricht',
+    h1: ['Równo ostrzyżony.', 'Bez kolejki.'],
+    lede: 'Fade’y, klasyczne cięcia i golenie z gorącym ręcznikiem. Rezerwujesz online, przychodzisz, a fotel już na Ciebie czeka.',
+    seePrices: 'Zobacz cennik',
+    stats: [['4,9', 'średnia ocena w Google'], ['380+', 'opinii'], ['3', 'barberów, 6 dni w tygodniu']],
+    ticker: ['Skin fade', 'Klasyczne cięcia', 'Modelowanie brody', 'Golenie na gorąco', 'Strzyżenie dzieci', 'Buzz cut'],
+    pricesLab: 'Cennik', pricesH: 'Stałe ceny, bez niespodzianek',
+    services: {
+      knip: ['Strzyżenie', 'Mycie, strzyżenie i stylizacja'],
+      fade: ['Skin fade', 'Cieniowanie do zera, góra nożyczkami'],
+      combo: ['Strzyżenie + broda', 'Pełen pakiet, nasz ulubiony'],
+      baard: ['Trymowanie brody', 'Modelowanie, kontur brzytwą, olejek'],
+      shave: ['Golenie na gorąco', 'Gorące ręczniki, brzytwa, balsam po goleniu'],
+      buzz: ['Buzz cut', 'Jedna długość, równo wykończone'],
+      kids: ['Strzyżenie dziecka', 'Do 12 lat'],
+    },
+    minutes: 'min', bookThis: 'Rezerwuj',
+    workLab: 'Realizacje', workH: 'Prosto z fotela, z tego tygodnia',
+    work: [['fade.webp', 'Mid fade z teksturą'], ['tattoo.webp', 'Skin fade z wygolonym wzorem'], ['knip.webp', 'Klasyczne cięcie nożyczkami'], ['baard.webp', 'Modelowanie brody'], ['scheren.webp', 'Golenie na gorąco']],
+    teamLab: 'Barberzy', teamH: 'Wybierz swojego barbera',
+    barbers: { yusuf: ['Yusuf', 'Fade’y i wzory'], mila: ['Mila', 'Nożyczki i dłuższe włosy'], daan: ['Daan', 'Brody i golenie'] },
+    bookWith: 'Rezerwuj u:',
+    bookLab: 'Rezerwacja online', bookH: 'Twój fotel w 30 sekund',
+    steps: ['Usługa', 'Barber', 'Dzień', 'Godzina', 'Dane'],
+    anyBarber: 'Bez znaczenia', anyBarberSub: 'Pierwszy wolny fotel',
+    closed: 'nieczynne', noSlots: 'Brak wolnych terminów, wybierz inny dzień',
+    name: 'Imię', phoneL: 'Telefon (do przypomnienia)', confirm: 'Potwierdź rezerwację', back: 'Wstecz',
+    summary: 'Twoja wizyta', total: 'Razem', pickFirst: 'Najpierw wybierz usługę',
+    doneH: 'Gotowe, fotel czeka.',
+    doneP: 'Wersja pokazowa: nic nie zostało wysłane. Na prawdziwej stronie salon dostaje rezerwację, a Ty potwierdzenie i przypomnienie na WhatsAppie.',
+    again: 'Nowa rezerwacja',
+    revLab: 'Opinie', revH: '4,9 z ponad 380 opinii',
+    reviews: [
+      ['Wreszcie barber, u którego nie czekasz godziny. Zarezerwowałem w pociągu, o 17:30 siedziałem w fotelu. Fade idealny.', 'Thomas, Wyck'],
+      ['Yusuf naprawdę dopytuje, czego chcesz. Najlepszy fade, jaki miałem w Maastricht.', 'Rachid'],
+      ['Dostałem golenie na gorąco na urodziny. Polecam, czujesz się jak po godzinie urlopu.', 'Jeroen M.'],
+    ],
+    visitLab: 'Dojazd', visitH: 'W samym sercu Wyck, pięć minut od dworca',
+    hoursH: 'Godziny otwarcia', days: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'],
+    hoursNote: 'W czwartki otwarte dłużej, do 21:00.',
+    openNow: 'Teraz otwarte', closedNow: 'Teraz zamknięte', until: 'do', opensAt: 'otwieramy',
+    mapNote: 'Mapa Google ładuje się dopiero po kliknięciu, więc bez cookies na start.', showMap: 'Pokaż mapę',
+    contactH: 'Kontakt', whatsapp: 'WhatsApp',
+    demo: 'Strona koncepcyjna fikcyjnego barbershopu, wykonana przez Vervo Studio.', credit: 'Strona: Vervo Studio ↗', privacy: 'Prywatność',
+  },
+};
+const t = T[lang];
+// godziny: [otwarcie, zamknięcie] w minutach od północy, pon = 0
+const HOURS = [[12 * 60, 19 * 60], [9 * 60, 19 * 60], [9 * 60, 19 * 60], [9 * 60, 21 * 60], [9 * 60, 19 * 60], [9 * 60, 17 * 60], null];
+const fmt = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+const cfg = { lang, services: SERVICES.map((s) => ({ ...s, name: t.services[s.id][0] })), barbers: BARBERS.map((b) => ({ id: b.id, name: t.barbers[b.id][0] })), hours: HOURS, t: { closed: t.closed, noSlots: t.noSlots, anyBarber: t.anyBarber, total: t.total, pickFirst: t.pickFirst, minutes: t.minutes, openNow: t.openNow, closedNow: t.closedNow, until: t.until, opensAt: t.opensAt, days: t.days } };
+const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=embed';
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="nl" href={new URL(root('nl'), Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(root('en'), Astro.url).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(root('pl'), Astro.url).href} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.desc} />
+    <meta property="og:image" content={new URL(img('hero.webp'), Astro.url).href} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#121110" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap" />
+    <link rel="preload" as="image" href={img('hero.webp')} />
+  </head>
+  <body>
+    <Curtain />
+    <header class="hd" id="hd">
+      <a class="hd__logo" href="#top">Scheermes</a>
+      <nav class="hd__nav">
+        {['#prijzen', '#werk', '#team', '#contact'].map((h, i) => <a href={h}>{t.nav[i]}</a>)}
+      </nav>
+      <a class="btn btn--brass hd__cta" href="#boeken">{t.book}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <img class="hero__img" src={img('hero.webp')} alt="" fetchpriority="high" />
+        <div class="hero__in">
+          <p class="kicker">{t.kicker}</p>
+          <h1><span>{t.h1[0]}</span><em>{t.h1[1]}</em></h1>
+          <p class="hero__lede">{t.lede}</p>
+          <div class="hero__cta">
+            <a class="btn btn--brass" href="#boeken">{t.book}</a>
+            <a class="btn btn--line" href="#prijzen">{t.seePrices}</a>
+          </div>
+          <p class="status" data-status></p>
+        </div>
+        <ul class="hero__stats">
+          {t.stats.map(([b, s]) => <li><b>{b}</b><span>{s}</span></li>)}
+        </ul>
+      </section>
+
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker__row">
+          {[0, 1].map(() => t.ticker.map((w) => <span>{w}<i>✦</i></span>))}
+        </div>
+      </div>
+
+      <section class="sec" id="prijzen">
+        <div class="wrap">
+          <p class="lab rv">{t.pricesLab}</p>
+          <h2 class="h2 rv">{t.pricesH}</h2>
+          <ul class="prices rv">
+            {SERVICES.map((s) => (
+              <li class="price">
+                <div class="price__t">
+                  <b>{t.services[s.id][0]}</b>
+                  <span>{t.services[s.id][1]} · {s.min} {t.minutes}</span>
+                </div>
+                <span class="price__dots" aria-hidden="true"></span>
+                <span class="price__p">€{s.price}</span>
+                <a class="price__go" href="#boeken" data-pick-service={s.id}>{t.bookThis} →</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section class="sec sec--work" id="werk">
+        <div class="wrap">
+          <p class="lab rv">{t.workLab}</p>
+          <h2 class="h2 rv">{t.workH}</h2>
+        </div>
+        <div class="work" tabindex="0">
+          {t.work.map(([f, c], i) => (
+            <figure class={`work__i work__i--${i % 3}`}>
+              <img src={img(f)} alt={c} loading="lazy" />
+              <figcaption>{c}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <section class="sec" id="team">
+        <div class="wrap">
+          <p class="lab rv">{t.teamLab}</p>
+          <h2 class="h2 rv">{t.teamH}</h2>
+          <div class="team">
+            {BARBERS.map((b) => (
+              <article class="barber rv">
+                <img src={img(b.img)} alt={t.barbers[b.id][0]} loading="lazy" />
+                <div class="barber__t">
+                  <h3>{t.barbers[b.id][0]}</h3>
+                  <p>{t.barbers[b.id][1]}</p>
+                  <a href="#boeken" data-pick-barber={b.id}>{t.bookWith} {t.barbers[b.id][0]} →</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--book" id="boeken">
+        <div class="wrap book">
+          <div class="book__head">
+            <p class="lab">{t.bookLab}</p>
+            <h2 class="h2">{t.bookH}</h2>
+            <ol class="book__steps" data-steps>
+              {t.steps.map((s, i) => <li data-step-dot={i}><span>{i + 1}</span>{s}</li>)}
+            </ol>
+          </div>
+          <form class="book__form" data-book novalidate>
+            <fieldset data-step="0">
+              <legend>{t.steps[0]}</legend>
+              <div class="chips chips--svc">
+                {SERVICES.map((s) => (
+                  <label class="chip"><input type="radio" name="svc" value={s.id} /><span><b>{t.services[s.id][0]}</b><small>{s.min} {t.minutes} · €{s.price}</small></span></label>
+                ))}
+              </div>
+            </fieldset>
+            <fieldset data-step="1" hidden>
+              <legend>{t.steps[1]}</legend>
+              <div class="chips chips--barber">
+                <label class="chip"><input type="radio" name="barber" value="any" /><span><b>{t.anyBarber}</b><small>{t.anyBarberSub}</small></span></label>
+                {BARBERS.map((b) => (
+                  <label class="chip chip--img"><input type="radio" name="barber" value={b.id} /><span><img src={img(b.img)} alt="" loading="lazy" /><b>{t.barbers[b.id][0]}</b><small>{t.barbers[b.id][1]}</small></span></label>
+                ))}
+              </div>
+              <button type="button" class="link" data-back>{t.back}</button>
+            </fieldset>
+            <fieldset data-step="2" hidden>
+              <legend>{t.steps[2]}</legend>
+              <div class="chips chips--days" data-days></div>
+              <button type="button" class="link" data-back>{t.back}</button>
+            </fieldset>
+            <fieldset data-step="3" hidden>
+              <legend>{t.steps[3]}</legend>
+              <div class="chips chips--times" data-times></div>
+              <button type="button" class="link" data-back>{t.back}</button>
+            </fieldset>
+            <fieldset data-step="4" hidden>
+              <legend>{t.steps[4]}</legend>
+              <label class="field"><span>{t.name}</span><input name="naam" autocomplete="name" required /></label>
+              <label class="field"><span>{t.phoneL}</span><input name="tel" type="tel" autocomplete="tel" required /></label>
+              <button class="btn btn--brass btn--full" type="submit">{t.confirm}</button>
+              <button type="button" class="link" data-back>{t.back}</button>
+            </fieldset>
+            <div class="done" data-done hidden>
+              <p class="done__mark">✓</p>
+              <h3>{t.doneH}</h3>
+              <p class="done__what" data-done-what></p>
+              <p class="done__note">{t.doneP}</p>
+              <button type="button" class="btn btn--line" data-again>{t.again}</button>
+            </div>
+          </form>
+          <aside class="book__sum" aria-live="polite">
+            <p class="lab">{t.summary}</p>
+            <div data-sum><p class="muted">{t.pickFirst}</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="sec" id="reviews">
+        <div class="wrap">
+          <p class="lab rv">{t.revLab}</p>
+          <h2 class="h2 rv"><span class="stars" aria-hidden="true">★★★★★</span> {t.revH}</h2>
+          <div class="revs">
+            {t.reviews.map(([q, w]) => <blockquote class="rev rv"><p>“{q}”</p><cite>{w}</cite></blockquote>)}
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--visit" id="contact">
+        <div class="wrap visit">
+          <div>
+            <p class="lab rv">{t.visitLab}</p>
+            <h2 class="h2 rv">{t.visitH}</h2>
+            <h3 class="visit__h3">{t.hoursH}</h3>
+            <table class="hours">
+              <tbody>
+                {HOURS.map((h, i) => <tr data-day={i}><th>{t.days[i]}</th><td>{h ? `${fmt(h[0])} – ${fmt(h[1])}` : t.closed}</td></tr>)}
+              </tbody>
+            </table>
+            <p class="muted">{t.hoursNote}</p>
+            <h3 class="visit__h3">{t.contactH}</h3>
+            <p class="visit__addr">Rechtstraat · 6221 Maastricht<br /><a href={`tel:${tel}`}>{phone}</a></p>
+          </div>
+          <div class="map" data-map>
+            <img src={img('stoel.webp')} alt="" loading="lazy" />
+            <div class="map__over">
+              <p>{t.mapNote}</p>
+              <button class="btn btn--brass" type="button" data-map-btn data-src={mapEmbed}>{t.showMap}</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ft">
+      <div class="wrap ft__in">
+        <p class="ft__logo">Scheermes</p>
+        <p>Rechtstraat · 6221 Maastricht · KvK 00000000 · BTW NL000000000B01</p>
+        <p class="ft__demo">{t.demo} <a href={`${base}/`}>{t.credit}</a> · <a href="#top">{t.privacy}</a></p>
+      </div>
+    </footer>
+
+    <div class="mbar">
+      <a href={`tel:${tel}`}>{t.call}</a>
+      <a href="#boeken" class="mbar__go">{t.book}</a>
+    </div>
+    <DemoLang lang={lang} links={[['nl', root('nl')], ['en', root('en')], ['pl', root('pl')]]} />
+    <script type="application/json" id="cfg" set:html={JSON.stringify(cfg)} />
+  </body>
+</html>
+
+<style is:global>
+  :root { --bg: #121110; --bg2: #1b1917; --fg: #efe6d8; --mut: #a39a8c; --line: rgba(239, 230, 216, 0.14); --brass: #c8a165; --brass2: #e0bd84; --ff-d: 'Anton', Impact, sans-serif; --ff-s: 'Instrument Serif', Georgia, serif; --ff-b: 'Inter Tight', system-ui, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { background: var(--bg); color: var(--fg); font: 400 16px/1.6 var(--ff-b); overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { width: min(100% - 2.4rem, 72rem); margin-inline: auto; }
+  .lab { font: 600 0.72rem/1 var(--ff-b); letter-spacing: 0.22em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
+  .h2 { font: 400 clamp(2.4rem, 7vw, 4.6rem)/0.95 var(--ff-d); text-transform: uppercase; letter-spacing: 0.01em; max-width: 18ch; }
+  .muted { color: var(--mut); font-size: 0.92rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.95rem 1.4rem; border-radius: 2px; font: 600 0.92rem/1 var(--ff-b); text-decoration: none; letter-spacing: 0.02em; border: 1px solid transparent; cursor: pointer; transition: background 0.25s, color 0.25s, border-color 0.25s; }
+  .btn--brass { background: var(--brass); color: #16120c; }
+  .btn--brass:hover { background: var(--brass2); }
+  .btn--line { border-color: rgba(239, 230, 216, 0.4); color: var(--fg); background: transparent; }
+  .btn--line:hover { border-color: var(--fg); }
+  .btn--full { width: 100%; margin-top: 0.6rem; }
+  .link { background: none; border: 0; color: var(--mut); font: 500 0.88rem var(--ff-b); text-decoration: underline; cursor: pointer; margin-top: 1rem; }
+
+  .hd { position: fixed; inset: 0 0 auto; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem clamp(1.2rem, 3vw, 2.4rem); transition: background 0.3s, border-color 0.3s; border-bottom: 1px solid transparent; }
+  .hd.is-solid { background: rgba(18, 17, 16, 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-color: var(--line); }
+  .hd__logo { font: 400 1.5rem/1 var(--ff-d); text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
+  .hd__nav { display: none; gap: 2rem; font-size: 0.9rem; }
+  .hd__nav a { text-decoration: none; color: var(--mut); transition: color 0.2s; }
+  .hd__nav a:hover { color: var(--fg); }
+  .hd__cta { padding: 0.7rem 1rem; font-size: 0.82rem; }
+  @media (min-width: 860px) { .hd__nav { display: flex; } }
+
+  .hero { position: relative; min-height: 100svh; display: grid; align-content: end; padding: 7rem clamp(1.2rem, 4vw, 3rem) 2rem; isolation: isolate; overflow: hidden; }
+  .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transform: scale(1.06); animation: heroZoom 14s ease-out forwards; }
+  .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(18, 17, 16, 0.55) 0%, rgba(18, 17, 16, 0.25) 35%, rgba(18, 17, 16, 0.85) 75%, #121110 100%); }
+  @keyframes heroZoom { to { transform: scale(1); } }
+  .kicker { font: 600 0.74rem/1 var(--ff-b); letter-spacing: 0.24em; text-transform: uppercase; color: var(--brass2); margin-bottom: 1.2rem; }
+  .hero h1 { font: 400 clamp(3.6rem, 15vw, 10.5rem)/0.86 var(--ff-d); text-transform: uppercase; letter-spacing: 0.005em; }
+  .hero h1 span, .hero h1 em { display: block; }
+  .hero h1 em { font: italic 400 clamp(3rem, 12vw, 8.6rem)/0.95 var(--ff-s); text-transform: none; color: var(--brass2); letter-spacing: -0.01em; }
+  .hero__lede { max-width: 34rem; margin-top: 1.4rem; color: #ddd3c3; font-size: clamp(1rem, 1.5vw, 1.15rem); }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
+  .status { margin-top: 1.2rem; font-size: 0.86rem; color: var(--mut); display: flex; align-items: center; gap: 0.55rem; min-height: 1.4em; }
+  .status i { width: 8px; height: 8px; border-radius: 50%; background: #7bc47f; box-shadow: 0 0 0 4px rgba(123, 196, 127, 0.18); }
+  .status.is-closed i { background: #d9786b; box-shadow: 0 0 0 4px rgba(217, 120, 107, 0.18); }
+  .hero__stats { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--line); max-width: 44rem; }
+  .hero__stats b { display: block; font: 400 clamp(1.6rem, 4vw, 2.4rem)/1 var(--ff-d); color: var(--fg); }
+  .hero__stats span { font-size: 0.8rem; color: var(--mut); }
+
+  .ticker { border-block: 1px solid var(--line); overflow: hidden; padding: 1.1rem 0; background: var(--bg2); }
+  .ticker__row { display: flex; width: max-content; animation: tick 32s linear infinite; }
+  .ticker span { font: 400 clamp(1.4rem, 3vw, 2rem)/1 var(--ff-d); text-transform: uppercase; padding-right: 2.4rem; display: inline-flex; gap: 2.4rem; align-items: center; color: #d8cdbc; }
+  .ticker i { font-style: normal; color: var(--brass); font-size: 0.7em; }
+  @keyframes tick { to { transform: translateX(-50%); } }
+
+  .sec { padding: clamp(4.5rem, 10vw, 8rem) 0; }
+  .prices { list-style: none; margin-top: 2.6rem; display: grid; gap: 0; }
+  @media (min-width: 900px) { .prices { grid-template-columns: 1fr 1fr; column-gap: 4rem; } }
+  .price { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 0.8rem; padding: 1.25rem 0; border-bottom: 1px solid var(--line); position: relative; }
+  .price__t b { display: block; font: 600 1.08rem/1.3 var(--ff-b); }
+  .price__t span { font-size: 0.84rem; color: var(--mut); }
+  .price__dots { border-bottom: 1px dotted rgba(239, 230, 216, 0.25); transform: translateY(-0.35rem); }
+  .price__p { font: 400 1.7rem/1 var(--ff-d); color: var(--brass2); }
+  .price__go { grid-column: 1 / -1; justify-self: start; font-size: 0.8rem; color: var(--brass); text-decoration: none; margin-top: -0.2rem; }
+  .price__go:hover { color: var(--brass2); }
+
+  .sec--work { background: var(--bg2); }
+  .work { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2.6rem max(1.2rem, calc((100vw - 72rem) / 2)) 0.6rem; scrollbar-width: thin; scrollbar-color: var(--brass) transparent; }
+  .work__i { flex: 0 0 auto; width: min(78vw, 22rem); scroll-snap-align: start; }
+  .work__i img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: saturate(0.85) contrast(1.05); transition: filter 0.4s; }
+  .work__i:hover img { filter: none; }
+  .work__i--1 { margin-top: 2.4rem; }
+  .work__i figcaption { font-size: 0.84rem; color: var(--mut); margin-top: 0.7rem; }
+
+  .team { display: grid; gap: 1.2rem; margin-top: 2.6rem; }
+  @media (min-width: 760px) { .team { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .barber { position: relative; overflow: hidden; background: var(--bg2); }
+  .barber img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(1) contrast(1.05); transition: filter 0.5s, transform 0.8s; }
+  .barber:hover img { filter: grayscale(0); transform: scale(1.03); }
+  .barber__t { padding: 1.2rem 1.2rem 1.4rem; }
+  .barber h3 { font: 400 2rem/1 var(--ff-d); text-transform: uppercase; }
+  .barber p { color: var(--mut); font-size: 0.9rem; margin: 0.3rem 0 0.8rem; }
+  .barber a { color: var(--brass); text-decoration: none; font-weight: 600; font-size: 0.88rem; }
+
+  .sec--book { background: #0c0b0a; border-block: 1px solid var(--line); }
+  .book { display: grid; gap: 2rem; }
+  .book > * { min-width: 0; }
+  @media (min-width: 980px) { .book { grid-template-columns: 1.1fr 1.6fr 0.9fr; align-items: start; } }
+  .book__steps { list-style: none; margin-top: 2rem; display: grid; gap: 0.6rem; }
+  .book__steps li { display: flex; align-items: center; gap: 0.7rem; color: var(--mut); font-size: 0.9rem; }
+  .book__steps span { width: 1.7rem; height: 1.7rem; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); font-size: 0.76rem; }
+  .book__steps li.is-on { color: var(--fg); }
+  .book__steps li.is-on span { background: var(--brass); color: #16120c; border-color: var(--brass); }
+  .book__steps li.is-done span { border-color: var(--brass); color: var(--brass); }
+  @media (max-width: 979px) { .book__steps { grid-auto-flow: column; overflow-x: auto; } .book__steps li { white-space: nowrap; font-size: 0.8rem; } }
+  .book__form fieldset { border: 0; }
+  .book__form legend { font: 400 1.6rem/1 var(--ff-d); text-transform: uppercase; margin-bottom: 1.2rem; }
+  .chips { display: grid; gap: 0.6rem; }
+  .chips--svc, .chips--barber { grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); }
+  .chips--days { grid-template-columns: repeat(auto-fill, minmax(5.4rem, 1fr)); }
+  .chips--times { grid-template-columns: repeat(auto-fill, minmax(4.6rem, 1fr)); }
+  .chip { position: relative; cursor: pointer; }
+  .chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip > span { display: grid; gap: 0.15rem; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: 2px; transition: border-color 0.2s, background 0.2s; height: 100%; }
+  .chip b { font-weight: 600; font-size: 0.95rem; }
+  .chip small { color: var(--mut); font-size: 0.78rem; }
+  .chip:hover > span { border-color: rgba(200, 161, 101, 0.6); }
+  .chip input:checked + span { border-color: var(--brass); background: rgba(200, 161, 101, 0.12); }
+  .chip input:focus-visible + span { outline: 2px solid var(--brass2); outline-offset: 2px; }
+  .chip input:disabled + span { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+  .chip--img > span { grid-template-columns: 3rem 1fr; column-gap: 0.8rem; align-items: center; }
+  .chip--img img { grid-row: span 2; width: 3rem; height: 3rem; object-fit: cover; border-radius: 50%; filter: grayscale(1); }
+  .chips--days .chip > span, .chips--times .chip > span { text-align: center; padding: 0.75rem 0.4rem; }
+  .field { display: grid; gap: 0.35rem; margin-bottom: 0.9rem; font-size: 0.86rem; color: var(--mut); }
+  .field input { background: transparent; border: 1px solid var(--line); border-radius: 2px; padding: 0.9rem 1rem; color: var(--fg); font: 400 1rem var(--ff-b); }
+  .field input:focus { outline: none; border-color: var(--brass); }
+  .field input.is-bad { border-color: #d9786b; }
+  .book__sum { border: 1px solid var(--line); padding: 1.4rem; position: sticky; top: 5.5rem; }
+  .sum__row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+  .sum__row span:first-child { color: var(--mut); }
+  .sum__tot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 1rem; }
+  .sum__tot b { font: 400 2rem/1 var(--ff-d); color: var(--brass2); }
+  .done { text-align: left; }
+  .done__mark { width: 3rem; height: 3rem; display: grid; place-items: center; border-radius: 50%; background: var(--brass); color: #16120c; font-size: 1.4rem; margin-bottom: 1.2rem; }
+  .done h3 { font: 400 2rem/1 var(--ff-d); text-transform: uppercase; }
+  .done__what { margin: 0.8rem 0; font-size: 1.05rem; }
+  .done__note { color: var(--mut); font-size: 0.86rem; margin-bottom: 1.2rem; max-width: 34rem; }
+
+  .stars { color: var(--brass2); font: 400 0.6em var(--ff-b); letter-spacing: 0.1em; vertical-align: middle; }
+  .revs { display: grid; gap: 1.2rem; margin-top: 2.6rem; }
+  @media (min-width: 860px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .rev { border-top: 1px solid var(--brass); padding-top: 1.2rem; }
+  .rev p { font: italic 400 1.35rem/1.35 var(--ff-s); }
+  .rev cite { display: block; margin-top: 0.8rem; font-style: normal; color: var(--mut); font-size: 0.84rem; }
+
+  .sec--visit { background: var(--bg2); }
+  .visit { display: grid; gap: 2.4rem; }
+  @media (min-width: 900px) { .visit { grid-template-columns: 1fr 1fr; align-items: start; } }
+  .visit__h3 { font: 600 0.78rem/1 var(--ff-b); letter-spacing: 0.2em; text-transform: uppercase; color: var(--mut); margin: 2.2rem 0 0.8rem; }
+  .hours { width: 100%; border-collapse: collapse; font-size: 0.95rem; max-width: 26rem; }
+  .hours th, .hours td { text-align: left; padding: 0.5rem 0; border-bottom: 1px solid var(--line); font-weight: 400; }
+  .hours td { text-align: right; color: var(--mut); }
+  .hours tr.is-today th, .hours tr.is-today td { color: var(--brass2); font-weight: 600; }
+  .visit__addr { font-size: 1.05rem; }
+  .visit__addr a { color: var(--brass2); }
+  .map { position: relative; aspect-ratio: 4 / 3.4; overflow: hidden; background: #000; }
+  .map img, .map iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+  .map img { opacity: 0.6; }
+  .map__over { position: absolute; inset: auto 0 0; padding: 1.4rem; display: grid; gap: 0.8rem; justify-items: start; background: linear-gradient(transparent, rgba(0, 0, 0, 0.75)); font-size: 0.86rem; color: #ddd3c3; }
+
+  .ft { border-top: 1px solid var(--line); padding: 3rem 0 6.5rem; font-size: 0.84rem; color: var(--mut); }
+  .ft__in { display: grid; gap: 0.6rem; }
+  .ft__logo { font: 400 2.4rem/1 var(--ff-d); text-transform: uppercase; color: var(--fg); }
+  .ft__demo a { color: var(--brass); }
+  @media (min-width: 1000px) { .ft { padding-bottom: 3rem; } }
+
+  .mbar { position: fixed; z-index: 70; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 2fr; padding-bottom: env(safe-area-inset-bottom, 0); background: var(--bg); border-top: 1px solid var(--line); }
+  .mbar a { padding: 1.05rem; text-align: center; text-decoration: none; font: 600 0.92rem var(--ff-b); }
+  .mbar__go { background: var(--brass); color: #16120c; }
+  @media (min-width: 1000px) { .mbar { display: none; } }
+
+  .rv { opacity: 0; transform: translateY(18px); transition: opacity 0.8s, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .rv.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } .hero__img, .ticker__row { animation: none; } html { scroll-behavior: auto; } }
+</style>
+
+<script>
+  const cfg = JSON.parse(document.getElementById('cfg').textContent);
+  const T = cfg.t;
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+
+  // nagłówek po przewinięciu
+  const hd = $('#hd');
+  const onScroll = () => hd.classList.toggle('is-solid', scrollY > 40);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // pojawianie się sekcji
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  $$('.rv').forEach((el) => io.observe(el));
+
+  // czas w Maastricht (Europe/Amsterdam)
+  const nowNL = () => {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Amsterdam', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date()).map((x) => [x.type, x.value]));
+    const wd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(p.weekday);
+    return { wd, min: +p.hour * 60 + +p.minute };
+  };
+  const fmt = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+  const { wd, min } = nowNL();
+  $(`.hours tr[data-day="${wd}"]`)?.classList.add('is-today');
+  const st = $('[data-status]');
+  const h = cfg.hours[wd];
+  if (h && min >= h[0] && min < h[1]) st.innerHTML = `<i></i>${T.openNow} · ${T.until} ${fmt(h[1])}`;
+  else {
+    let d = wd, label = '';
+    for (let k = 0; k < 7; k++) { const dd = (wd + k) % 7, hh = cfg.hours[dd]; if (hh && (k > 0 || min < hh[0])) { label = `${k === 0 ? '' : T.days[dd].toLowerCase() + ' '}${fmt(hh[0])}`; break; } }
+    st.classList.add('is-closed'); st.innerHTML = `<i></i>${T.closedNow} · ${T.opensAt} ${label}`;
+  }
+
+  // mapa po kliknięciu
+  $('[data-map-btn]')?.addEventListener('click', (e) => {
+    const f = document.createElement('iframe');
+    f.src = e.currentTarget.dataset.src; f.loading = 'lazy'; f.title = 'Google Maps';
+    $('[data-map]').replaceChildren(f);
+  });
+
+  // ---------- rezerwacja ----------
+  const form = $('[data-book]');
+  const steps = $$('fieldset', form);
+  const dots = $$('[data-step-dot]');
+  const state = { svc: null, barber: null, day: null, time: null };
+  const svcOf = (id) => cfg.services.find((s) => s.id === id);
+  const show = (i) => {
+    steps.forEach((f, k) => (f.hidden = k !== i));
+    $('[data-done]').hidden = true;
+    dots.forEach((d, k) => { d.classList.toggle('is-on', k === i); d.classList.toggle('is-done', k < i); });
+  };
+  let cur = 0;
+  const go = (i) => { cur = i; show(i); };
+
+  // dni: najbliższe 10 dni z godzinami otwarcia
+  const dayList = () => {
+    const out = [];
+    const base = new Date();
+    for (let k = 0; out.length < 10 && k < 14; k++) {
+      const d = new Date(base); d.setDate(base.getDate() + k);
+      const idx = (d.getDay() + 6) % 7;
+      out.push({ k, idx, date: d, open: !!cfg.hours[idx] });
+    }
+    return out;
+  };
+  const locale = { en: 'en-GB', nl: 'nl-NL', pl: 'pl-PL' }[cfg.lang];
+  // pseudo-losowe zajęte terminy, stałe dla dnia + barbera
+  const seeded = (s) => { let x = 0; for (const c of s) x = (x * 31 + c.charCodeAt(0)) >>> 0; return () => ((x = (x * 1103515245 + 12345) >>> 0) / 4294967296); };
+  const renderDays = () => {
+    const box = $('[data-days]');
+    box.innerHTML = dayList().map((d) => {
+      const lab = d.date.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
+      return `<label class="chip"><input type="radio" name="day" value="${d.k}" ${d.open ? '' : 'disabled'} /><span><b>${lab}</b>${d.open ? '' : `<small>${T.closed}</small>`}</span></label>`;
+    }).join('');
+  };
+  const renderTimes = () => {
+    const d = dayList().find((x) => x.k === state.day);
+    const hh = cfg.hours[d.idx];
+    const dur = svcOf(state.svc).min;
+    const rnd = seeded(`${d.date.toDateString()}-${state.barber}`);
+    const { min } = nowNL();
+    const slots = [];
+    for (let m = hh[0]; m + dur <= hh[1]; m += 30) {
+      const past = d.k === 0 && m <= min + 30;
+      const taken = rnd() < (state.barber === 'any' ? 0.25 : 0.45);
+      slots.push(`<label class="chip"><input type="radio" name="time" value="${m}" ${past || taken ? 'disabled' : ''} /><span><b>${fmt(m)}</b></span></label>`);
+    }
+    $('[data-times]').innerHTML = slots.join('') || `<p class="muted">${T.noSlots}</p>`;
+  };
+  const renderSum = () => {
+    const s = state.svc && svcOf(state.svc);
+    if (!s) { $('[data-sum]').innerHTML = `<p class="muted">${T.pickFirst}</p>`; return; }
+    const b = state.barber ? (state.barber === 'any' ? T.anyBarber : cfg.barbers.find((x) => x.id === state.barber).name) : '–';
+    const d = state.day != null ? dayList().find((x) => x.k === state.day).date.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' }) : '–';
+    const tm = state.time != null ? fmt(state.time) : '–';
+    $('[data-sum]').innerHTML = `
+      <div class="sum__row"><span>${s.name}</span><span>${s.min} ${T.minutes}</span></div>
+      <div class="sum__row"><span>Barber</span><span>${b}</span></div>
+      <div class="sum__row"><span>📅</span><span>${d}</span></div>
+      <div class="sum__row"><span>🕒</span><span>${tm}</span></div>
+      <div class="sum__tot"><span>${T.total}</span><b>€${s.price}</b></div>`;
+  };
+
+  form.addEventListener('change', (e) => {
+    const { name, value } = e.target;
+    if (name === 'svc') { state.svc = value; renderSum(); go(1); }
+    if (name === 'barber') { state.barber = value; state.day = null; state.time = null; renderDays(); renderSum(); go(2); }
+    if (name === 'day') { state.day = +value; state.time = null; renderTimes(); renderSum(); go(3); }
+    if (name === 'time') { state.time = +value; renderSum(); go(4); setTimeout(() => form.naam.focus({ preventScroll: true }), 50); }
+  });
+  $$('[data-back]', form).forEach((b) => b.addEventListener('click', () => go(Math.max(0, cur - 1))));
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let ok = true;
+    ['naam', 'tel'].forEach((n) => { const bad = form[n].value.trim().length < 2; form[n].classList.toggle('is-bad', bad); if (bad) ok = false; });
+    if (!ok) return;
+    const s = svcOf(state.svc);
+    const d = dayList().find((x) => x.k === state.day).date.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+    $('[data-done-what]').textContent = `${s.name} · ${d} · ${fmt(state.time)}`;
+    steps.forEach((f) => (f.hidden = true));
+    $('[data-done]').hidden = false;
+    dots.forEach((x) => { x.classList.remove('is-on'); x.classList.add('is-done'); });
+  });
+  $('[data-again]').addEventListener('click', () => { form.reset(); Object.assign(state, { svc: null, barber: null, day: null, time: null }); renderSum(); go(0); });
+
+  // skróty z cennika i zespołu
+  $$('[data-pick-service]').forEach((a) => a.addEventListener('click', () => {
+    const r = form.querySelector(`input[name="svc"][value="${a.dataset.pickService}"]`);
+    r.checked = true; r.dispatchEvent(new Event('change', { bubbles: true }));
+  }));
+  $$('[data-pick-barber]').forEach((a) => a.addEventListener('click', () => {
+    if (!state.svc) { const r = form.querySelector('input[name="svc"][value="knip"]'); r.checked = true; state.svc = 'knip'; }
+    const r = form.querySelector(`input[name="barber"][value="${a.dataset.pickBarber}"]`);
+    r.checked = true; r.dispatchEvent(new Event('change', { bubbles: true }));
+  }));
+  show(0);
+</script>

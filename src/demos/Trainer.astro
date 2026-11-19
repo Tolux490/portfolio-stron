@@ -1,0 +1,495 @@
+---
+import Curtain from '../components/Curtain.astro';
+import DemoLang from '../components/DemoLang.astro';
+// Kern Personal Training (demo): trener personalny w Maastricht, NL + EN. Strony: src/pages/trainer/ (NL) i /en/ (EN).
+// Fikcyjna firma: numery, adres, wyniki i opinie są przykładowe.
+
+const { lang = 'nl' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f) => `${base}/img/trainer/${f}`;
+const root = (l) => `${base}/trainer/${l === 'nl' ? '' : `${l}/`}`;
+const tel = '+31430000000';
+
+const T = {
+  nl: {
+    title: 'Kern Personal Training — sterker worden in Maastricht',
+    desc: 'Personal training in een privéstudio in Maastricht-Randwyck, duo training en online coaching. Plan een gratis intake.',
+    nav: ['Trajecten', 'Welk past bij mij?', 'Resultaten', 'FAQ'], cta: 'Gratis intake',
+    kicker: 'Personal training · Maastricht',
+    h1: ['Sterker.', 'Fitter.', 'Zonder giswerk.'],
+    lede: 'Een plan dat past bij jouw lijf, agenda en doel. Trainen in een rustige privéstudio, met iemand die bijhoudt of je echt vooruitgaat.',
+    second: 'Welk traject past bij mij?',
+    stats: [['120+', 'klanten begeleid'], ['1 op 1', 'geen drukke sportschool'], ['4 weken', 'tussen elke meting']],
+    pLab: 'Trajecten', pH: 'Kies hoe je wilt trainen',
+    plans: [
+      { n: '1-op-1', p: '€65', u: 'per sessie', tag: 'Meest gekozen', d: 'Samen in de studio, elke oefening gecoacht.', f: ['Intake en meting', 'Trainingsplan op maat', 'Voedingsadvies', 'App met je schema'], bundle: 'Strippenkaart 10x: €590' },
+      { n: 'Duo', p: '€40', u: 'per persoon', d: 'Trainen met een partner of vriend, zelfde aandacht.', f: ['Intake voor allebei', 'Plan voor jullie twee', 'Gezellig én effectief'], bundle: 'Strippenkaart 10x: €360 p.p.' },
+      { n: 'Online', p: '€89', u: 'per maand', d: 'Zelf trainen met een plan en wekelijkse check-ins.', f: ['Schema in de app', 'Wekelijkse check-in', 'Video-feedback op techniek'], bundle: 'Maandelijks opzegbaar' },
+    ],
+    qLab: 'Welk traject past bij mij?', qH: 'Drie vragen, één advies',
+    qs: [
+      ['Wat is je doel?', [['afvallen', 'Afvallen'], ['sterk', 'Sterker worden'], ['blessure', 'Fit na een blessure'], ['sport', 'Beter in mijn sport']]],
+      ['Hoe vaak kun je trainen?', [['1', '1 keer per week'], ['2', '2 keer per week'], ['3', '3 keer of vaker']]],
+      ['Hoe wil je begeleid worden?', [['naast', 'Iemand naast me in de studio'], ['samen', 'Samen met een vriend of partner'], ['online', 'Zelf trainen, online coaching']]],
+    ],
+    qResult: 'Ons advies', qBook: 'Plan je gratis intake', qAgain: 'Opnieuw',
+    advice: {
+      naast: ['1-op-1 personal training', 'Je traint naast een coach die elke herhaling ziet. Ideaal om veilig en snel resultaat te boeken.'],
+      samen: ['Duo training', 'Samen trainen houdt je allebei gemotiveerd, en het scheelt per persoon flink in prijs.'],
+      online: ['Online coaching', 'Je traint zelf, maar nooit zonder plan. Wekelijks kijken we samen naar je cijfers en techniek.'],
+    },
+    goalLine: { afvallen: 'met focus op vetverlies en energie', sterk: 'met focus op kracht en techniek', blessure: 'rustig opgebouwd, in overleg met je fysio', sport: 'gericht op jouw sport en seizoen' },
+    freq: { '1': '1 sessie per week, plus een thuisschema', '2': '2 sessies per week', '3': '2 sessies per week, plus een eigen training' },
+    howLab: 'Werkwijze', howH: 'Zo bouwen we het op',
+    how: [['Intake', 'Gratis gesprek van 30 minuten: doelen, blessures, agenda.'], ['Meting', 'Kracht, mobiliteit en lichaamssamenstelling als startpunt.'], ['Plan', 'Training en voeding op maat, in de app op je telefoon.'], ['Elke 4 weken', 'Opnieuw meten en bijsturen. Je ziet zwart op wit wat werkt.']],
+    rLab: 'Resultaten', rH: 'Echte vooruitgang, gemeten',
+    results: [['squat.webp', '−9 kg', 'in 14 weken', '“Na mijn zwangerschap wist ik niet waar te beginnen. Nu ben ik sterker dan ervoor.”', 'Eva, 34'], ['deadlift.webp', '60 → 120 kg', 'deadlift in 6 maanden', '“Ik dacht dat ik niet sterk kon worden. Daan liet me zien dat het techniek is, geen talent.”', 'Mark, 41'], ['core.webp', '0 dagen', 'rugpijn sinds maart', '“Na een hernia trainde ik bang. Nu train ik weer met plezier, pijnvrij.”', 'Sophie, 29']],
+    coachLab: 'Je coach', coachH: 'Daan, personal trainer',
+    coachP: ['Ik train al tien jaar mensen die zeggen dat ze “niet sportief” zijn. Mijn favoriete moment: als iemand na acht weken zonder twijfel een oefening doet die eerst eng voelde.', 'Gecertificeerd personal trainer (EREPS niveau 5) en leefstijlcoach. Ik werk samen met fysiotherapeuten in Maastricht.'],
+    fLab: 'FAQ', fH: 'Vaak gevraagd',
+    faq: [['Ik ben echt een beginner. Is dat erg?', 'Juist niet. De meeste klanten beginnen zonder ervaring. We starten op jouw niveau en bouwen rustig op.'], ['Waar train ik?', 'In onze privéstudio in Maastricht-Randwyck, met gratis parkeren. Thuis trainen kan ook, met een kleine toeslag.'], ['Hoe snel zie ik resultaat?', 'Na 4 weken meet je het verschil, na 8 tot 12 weken zie je het. Daarom meten we elke 4 weken.'], ['Kan ik tussentijds stoppen?', 'Ja. Strippenkaarten zijn een jaar geldig en online coaching is maandelijks opzegbaar.']],
+    iLab: 'Gratis intake', iH: 'Plan je kennismaking',
+    iP: '30 minuten, vrijblijvend. Je hoort binnen een dag van me.',
+    iName: 'Naam', iPhone: 'Telefoon', iGoal: 'Doel', iWhen: 'Wanneer schikt het?', when: ['Doordeweeks overdag', 'Doordeweeks ’s avonds', 'Zaterdag'], iSend: 'Intake aanvragen',
+    doneH: 'Top, ik neem snel contact op!', doneP: 'Demoversie: er is niets verstuurd. In de echte site krijgt de trainer je aanvraag direct binnen.',
+    demo: 'Conceptwebsite voor een fictieve personal trainer, gemaakt door Vervo Studio.', credit: 'Website door Vervo Studio ↗',
+  },
+  en: {
+    title: 'Kern Personal Training — get stronger in Maastricht',
+    desc: 'Personal training in a private studio in Maastricht-Randwyck, duo training and online coaching. Book a free intake.',
+    nav: ['Programmes', 'Which one fits me?', 'Results', 'FAQ'], cta: 'Free intake',
+    kicker: 'Personal training · Maastricht',
+    h1: ['Stronger.', 'Fitter.', 'No guesswork.'],
+    lede: 'A plan that fits your body, your schedule and your goal. Train in a quiet private studio, with someone who checks you’re really making progress.',
+    second: 'Which programme fits me?',
+    stats: [['120+', 'clients coached'], ['1 on 1', 'no crowded gym'], ['4 weeks', 'between check-ins']],
+    pLab: 'Programmes', pH: 'Choose how you want to train',
+    plans: [
+      { n: '1-on-1', p: '€65', u: 'per session', tag: 'Most popular', d: 'Together in the studio, every exercise coached.', f: ['Intake and measurements', 'Tailored training plan', 'Nutrition advice', 'App with your plan'], bundle: '10-session card: €590' },
+      { n: 'Duo', p: '€40', u: 'per person', d: 'Train with a partner or friend, same attention.', f: ['Intake for both', 'A plan for the two of you', 'Fun and effective'], bundle: '10-session card: €360 pp' },
+      { n: 'Online', p: '€89', u: 'per month', d: 'Train on your own with a plan and weekly check-ins.', f: ['Plan in the app', 'Weekly check-in', 'Video feedback on technique'], bundle: 'Cancel monthly' },
+    ],
+    qLab: 'Which programme fits me?', qH: 'Three questions, one answer',
+    qs: [
+      ['What’s your goal?', [['afvallen', 'Lose weight'], ['sterk', 'Get stronger'], ['blessure', 'Get fit after an injury'], ['sport', 'Get better at my sport']]],
+      ['How often can you train?', [['1', 'Once a week'], ['2', 'Twice a week'], ['3', 'Three times or more']]],
+      ['How do you want to be coached?', [['naast', 'Someone next to me in the studio'], ['samen', 'Together with a friend or partner'], ['online', 'On my own, with online coaching']]],
+    ],
+    qResult: 'Our advice', qBook: 'Book your free intake', qAgain: 'Start over',
+    advice: {
+      naast: ['1-on-1 personal training', 'You train next to a coach who sees every rep. The safest and fastest way to results.'],
+      samen: ['Duo training', 'Training together keeps you both motivated, and it’s a lot cheaper per person.'],
+      online: ['Online coaching', 'You train on your own, but never without a plan. Every week we look at your numbers and technique together.'],
+    },
+    goalLine: { afvallen: 'focused on fat loss and energy', sterk: 'focused on strength and technique', blessure: 'built up gently, together with your physio', sport: 'aimed at your sport and season' },
+    freq: { '1': '1 session a week, plus a home plan', '2': '2 sessions a week', '3': '2 sessions a week, plus one on your own' },
+    howLab: 'How it works', howH: 'How we build it up',
+    how: [['Intake', 'A free 30-minute talk: goals, injuries, schedule.'], ['Measure', 'Strength, mobility and body composition as a starting point.'], ['Plan', 'Training and nutrition tailored to you, in the app on your phone.'], ['Every 4 weeks', 'Measure again and adjust. You see in black and white what works.']],
+    rLab: 'Results', rH: 'Real progress, measured',
+    results: [['squat.webp', '−9 kg', 'in 14 weeks', '“After my pregnancy I didn’t know where to start. Now I’m stronger than before.”', 'Eva, 34'], ['deadlift.webp', '60 → 120 kg', 'deadlift in 6 months', '“I thought I couldn’t get strong. Daan showed me it’s technique, not talent.”', 'Mark, 41'], ['core.webp', '0 days', 'of back pain since March', '“After a slipped disc I trained scared. Now I enjoy training again, pain-free.”', 'Sophie, 29']],
+    coachLab: 'Your coach', coachH: 'Daan, personal trainer',
+    coachP: ['For ten years I’ve trained people who say they’re “not sporty”. My favourite moment: when, after eight weeks, someone does an exercise without hesitation that used to scare them.', 'Certified personal trainer (EREPS level 5) and lifestyle coach. I work together with physiotherapists in Maastricht.'],
+    fLab: 'FAQ', fH: 'Common questions',
+    faq: [['I’m a complete beginner. Is that a problem?', 'Not at all. Most clients start with no experience. We begin at your level and build up gradually.'], ['Where do I train?', 'In our private studio in Maastricht-Randwyck, with free parking. Training at home is possible too, for a small extra fee.'], ['How soon will I see results?', 'You can measure the difference after 4 weeks and see it after 8 to 12. That’s why we measure every 4 weeks.'], ['Can I stop in between?', 'Yes. Session cards are valid for a year and online coaching can be cancelled monthly.']],
+    iLab: 'Free intake', iH: 'Book your first meeting',
+    iP: '30 minutes, no strings attached. You’ll hear from me within a day.',
+    iName: 'Name', iPhone: 'Phone', iGoal: 'Goal', iWhen: 'When suits you?', when: ['Weekdays, daytime', 'Weekday evenings', 'Saturday'], iSend: 'Request intake',
+    doneH: 'Great, I’ll be in touch soon!', doneP: 'Demo version: nothing was sent. On the real site the trainer receives your request straight away.',
+    demo: 'Concept website for a fictional personal trainer, made by Vervo Studio.', credit: 'Website by Vervo Studio ↗',
+  },
+  pl: {
+    title: 'Kern Personal Training — trener personalny w Maastricht',
+    desc: 'Treningi personalne w prywatnym studiu w Maastricht-Randwyck, treningi w parze i prowadzenie online. Umów bezpłatną konsultację.',
+    nav: ['Pakiety', 'Co do mnie pasuje?', 'Efekty', 'FAQ'], cta: 'Bezpłatna konsultacja',
+    kicker: 'Trener personalny · Maastricht',
+    h1: ['Silniej.', 'Sprawniej.', 'Bez zgadywania.'],
+    lede: 'Plan dopasowany do Twojego ciała, grafiku i celu. Trenujesz w spokojnym, prywatnym studiu, z kimś, kto pilnuje Twoich postępów.',
+    second: 'Który pakiet do mnie pasuje?',
+    stats: [['120+', 'podopiecznych'], ['1 na 1', 'bez tłoku na siłowni'], ['co 4 tyg.', 'pomiar postępów']],
+    pLab: 'Pakiety', pH: 'Wybierz, jak chcesz trenować',
+    plans: [
+      { n: '1 na 1', p: '65 €', u: 'za trening', tag: 'Najczęściej wybierany', d: 'Razem w studiu, każde ćwiczenie pod okiem trenera.', f: ['Konsultacja i pomiary', 'Plan treningowy na miarę', 'Wskazówki żywieniowe', 'Aplikacja z Twoim planem'], bundle: 'Karnet na 10 treningów: 590 €' },
+      { n: 'W parze', p: '40 €', u: 'od osoby', d: 'Trening z partnerem lub znajomym, ta sama uwaga trenera.', f: ['Konsultacja dla obojga', 'Plan dla Was dwojga', 'Raźniej i skutecznie'], bundle: 'Karnet na 10 treningów: 360 € od osoby' },
+      { n: 'Online', p: '89 €', u: 'miesięcznie', d: 'Trenujesz samodzielnie, z planem i cotygodniowym podsumowaniem.', f: ['Plan w aplikacji', 'Cotygodniowe podsumowanie', 'Uwagi do techniki na podstawie nagrań'], bundle: 'Rezygnujesz w dowolnym miesiącu' },
+    ],
+    qLab: 'Który pakiet do mnie pasuje?', qH: 'Trzy pytania, jedna podpowiedź',
+    qs: [
+      ['Jaki masz cel?', [['afvallen', 'Schudnąć'], ['sterk', 'Być silniejszym'], ['blessure', 'Wrócić do formy po kontuzji'], ['sport', 'Poprawić wyniki w moim sporcie']]],
+      ['Jak często możesz trenować?', [['1', 'Raz w tygodniu'], ['2', 'Dwa razy w tygodniu'], ['3', 'Trzy razy lub częściej']]],
+      ['Jak chcesz trenować?', [['naast', 'Z trenerem obok mnie'], ['samen', 'Razem ze znajomym lub partnerem'], ['online', 'Samodzielnie, z prowadzeniem online']]],
+    ],
+    qResult: 'Nasza rada', qBook: 'Umów bezpłatną konsultację', qAgain: 'Od nowa',
+    advice: {
+      naast: ['Trening personalny 1 na 1', 'Trenujesz z trenerem, który widzi każde powtórzenie. Najbezpieczniejsza i najszybsza droga do efektów.'],
+      samen: ['Trening w parze', 'We dwoje łatwiej o motywację, a do tego wychodzi sporo taniej na osobę.'],
+      online: ['Prowadzenie online', 'Trenujesz samodzielnie, ale nigdy bez planu. Co tydzień razem patrzymy na wyniki i technikę.'],
+    },
+    goalLine: { afvallen: 'z naciskiem na spalanie tkanki tłuszczowej i energię', sterk: 'z naciskiem na siłę i technikę', blessure: 'spokojnie, w porozumieniu z Twoim fizjoterapeutą', sport: 'pod Twoją dyscyplinę i sezon' },
+    freq: { '1': '1 trening w tygodniu plus plan do domu', '2': '2 treningi w tygodniu', '3': '2 treningi w tygodniu plus jeden samodzielny' },
+    howLab: 'Jak pracujemy', howH: 'Krok po kroku',
+    how: [['Konsultacja', 'Bezpłatna, 30 minut: cele, kontuzje, grafik.'], ['Pomiary', 'Siła, mobilność i skład ciała jako punkt wyjścia.'], ['Plan', 'Trening i żywienie na miarę, w aplikacji w telefonie.'], ['Co 4 tygodnie', 'Znowu mierzymy i poprawiamy plan. Czarno na białym widzisz, co działa.']],
+    rLab: 'Efekty', rH: 'Prawdziwe postępy, zmierzone',
+    results: [['squat.webp', '−9 kg', 'w 14 tygodni', '„Po ciąży nie wiedziałam, od czego zacząć. Teraz jestem silniejsza niż przedtem.”', 'Eva, 34 lata'], ['deadlift.webp', '60 → 120 kg', 'w martwym ciągu w pół roku', '„Myślałem, że nie dam rady być silny. Daan pokazał mi, że to kwestia techniki, a nie talentu.”', 'Mark, 41 lat'], ['core.webp', '0 dni', 'z bólem pleców od marca', '„Po dyskopatii bałam się ćwiczyć. Dziś trenuję z przyjemnością i bez bólu.”', 'Sophie, 29 lat']],
+    coachLab: 'Twój trener', coachH: 'Daan, trener personalny',
+    coachP: ['Od dziesięciu lat trenuję ludzi, którzy mówią o sobie, że „nie są sportowcami”. Mój ulubiony moment: kiedy po ośmiu tygodniach ktoś bez wahania robi ćwiczenie, którego wcześniej się bał.', 'Certyfikowany trener personalny (EREPS poziom 5) i coach zdrowego stylu życia. Współpracuję z fizjoterapeutami w Maastricht.'],
+    fLab: 'FAQ', fH: 'Często zadawane pytania',
+    faq: [['Jestem zupełnie początkujący. Czy to problem?', 'Wręcz przeciwnie. Większość podopiecznych zaczyna bez doświadczenia. Startujemy od Twojego poziomu i spokojnie budujemy formę.'], ['Gdzie odbywają się treningi?', 'W naszym prywatnym studiu w Maastricht-Randwyck, z darmowym parkingiem. Możemy też trenować u Ciebie w domu, za niewielką dopłatą.'], ['Kiedy zobaczę efekty?', 'Po 4 tygodniach zmierzysz różnicę, po 8–12 ją zobaczysz. Dlatego mierzymy postępy co 4 tygodnie.'], ['Czy mogę przerwać w trakcie?', 'Tak. Karnety są ważne przez rok, a z prowadzenia online możesz zrezygnować w dowolnym miesiącu.']],
+    iLab: 'Bezpłatna konsultacja', iH: 'Umów się na pierwsze spotkanie',
+    iP: '30 minut, bez zobowiązań. Odezwę się w ciągu jednego dnia.',
+    iName: 'Imię', iPhone: 'Telefon', iGoal: 'Cel', iWhen: 'Kiedy Ci pasuje?', when: ['W tygodniu, w dzień', 'W tygodniu, wieczorem', 'W sobotę'], iSend: 'Umów konsultację',
+    doneH: 'Super, niedługo się odezwę!', doneP: 'Wersja pokazowa: nic nie zostało wysłane. Na prawdziwej stronie trener od razu dostaje Twoje zgłoszenie.',
+    demo: 'Strona koncepcyjna fikcyjnego trenera personalnego, wykonana przez Vervo Studio.', credit: 'Strona: Vervo Studio ↗',
+  },
+};
+const t = T[lang];
+const cfg = { advice: t.advice, goalLine: t.goalLine, freq: t.freq, goals: t.qs[0][1] };
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="nl" href={new URL(root('nl'), Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(root('en'), Astro.url).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(root('pl'), Astro.url).href} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.desc} />
+    <meta property="og:image" content={new URL(img('hero.webp'), Astro.url).href} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0d0d0d" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" />
+  </head>
+  <body>
+    <Curtain />
+    <header class="hd">
+      <a class="hd__logo" href="#top">KERN<span>●</span></a>
+      <nav class="hd__nav">{['#trajecten', '#quiz', '#resultaten', '#faq'].map((h, i) => <a href={h}>{t.nav[i]}</a>)}</nav>
+      <a class="btn btn--lime hd__cta" href="#intake">{t.cta}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero__txt">
+          <p class="kicker">{t.kicker}</p>
+          <h1>{t.h1.map((w, i) => <span class={i === 2 ? 'is-acc' : ''}>{w}</span>)}</h1>
+          <p class="lede">{t.lede}</p>
+          <div class="hero__cta">
+            <a class="btn btn--lime" href="#intake">{t.cta} →</a>
+            <a class="btn btn--line" href="#quiz">{t.second}</a>
+          </div>
+        </div>
+        <div class="hero__img">
+          <img src={img('hero.webp')} alt="" fetchpriority="high" />
+          <ul class="hero__stats">{t.stats.map(([b, s]) => <li><b>{b}</b><span>{s}</span></li>)}</ul>
+        </div>
+      </section>
+
+      <section class="sec" id="trajecten">
+        <div class="wrap">
+          <p class="lab rv">{t.pLab}</p>
+          <h2 class="h2 rv">{t.pH}</h2>
+          <div class="plans">
+            {t.plans.map((p, i) => (
+              <article class={`plan rv${i === 0 ? ' plan--top' : ''}`}>
+                {p.tag && <span class="plan__tag">{p.tag}</span>}
+                <h3>{p.n}</h3>
+                <p class="plan__price"><b>{p.p}</b> {p.u}</p>
+                <p class="plan__d">{p.d}</p>
+                <ul>{p.f.map((x) => <li>{x}</li>)}</ul>
+                <p class="plan__b">{p.bundle}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--dark" id="quiz">
+        <div class="wrap quiz">
+          <div>
+            <p class="lab">{t.qLab}</p>
+            <h2 class="h2">{t.qH}</h2>
+            <div class="quiz__bar"><span data-bar></span></div>
+          </div>
+          <div class="quiz__box" data-quiz>
+            {t.qs.map(([q, opts], i) => (
+              <div class="quiz__q" data-q={i} hidden={i !== 0}>
+                <p class="quiz__n">{i + 1} / 3</p>
+                <h3>{q}</h3>
+                <div class="quiz__opts">{opts.map(([v, l]) => <button type="button" data-v={v}>{l}</button>)}</div>
+              </div>
+            ))}
+            <div class="quiz__res" data-res hidden>
+              <p class="quiz__n">{t.qResult}</p>
+              <h3 data-res-h></h3>
+              <p data-res-p></p>
+              <ul data-res-l></ul>
+              <div class="quiz__act"><a class="btn btn--lime" href="#intake" data-res-go>{t.qBook} →</a><button type="button" class="link" data-again>{t.qAgain}</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="wrap">
+          <p class="lab rv">{t.howLab}</p>
+          <h2 class="h2 rv">{t.howH}</h2>
+          <ol class="how">{t.how.map(([h, p], i) => <li class="rv"><span>0{i + 1}</span><h3>{h}</h3><p>{p}</p></li>)}</ol>
+        </div>
+      </section>
+
+      <section class="sec sec--res" id="resultaten">
+        <div class="wrap">
+          <p class="lab rv">{t.rLab}</p>
+          <h2 class="h2 rv">{t.rH}</h2>
+          <div class="res">
+            {t.results.map(([f, b, s, q, w]) => (
+              <article class="res__i rv">
+                <img src={img(f)} alt="" loading="lazy" />
+                <div class="res__t"><b>{b}</b><span>{s}</span><p>{q}</p><cite>{w}</cite></div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="coach">
+        <img src={img('daan.webp')} alt={t.coachH} loading="lazy" />
+        <div class="coach__t">
+          <p class="lab">{t.coachLab}</p>
+          <h2 class="h2">{t.coachH}</h2>
+          {t.coachP.map((p) => <p class="coach__p">{p}</p>)}
+        </div>
+      </section>
+
+      <section class="sec" id="faq">
+        <div class="wrap faqw">
+          <div><p class="lab rv">{t.fLab}</p><h2 class="h2 rv">{t.fH}</h2></div>
+          <div class="faq">{t.faq.map(([q, a]) => <details class="rv"><summary>{q}</summary><p>{a}</p></details>)}</div>
+        </div>
+      </section>
+
+      <section class="sec sec--lime" id="intake">
+        <div class="wrap intake">
+          <div>
+            <p class="lab">{t.iLab}</p>
+            <h2 class="h2">{t.iH}</h2>
+            <p class="lede">{t.iP}</p>
+            <p class="intake__tel">☎ <a href={`tel:${tel}`}>043 000 00 00</a></p>
+          </div>
+          <form class="form" data-form novalidate>
+            <label class="f"><span>{t.iName}</span><input name="name" autocomplete="name" required /></label>
+            <label class="f"><span>{t.iPhone}</span><input name="phone" type="tel" autocomplete="tel" required /></label>
+            <label class="f"><span>{t.iGoal}</span><select name="goal">{t.qs[0][1].map(([v, l]) => <option value={v}>{l}</option>)}</select></label>
+            <fieldset class="f"><span>{t.iWhen}</span><div class="pills">{t.when.map((w, i) => <label><input type="radio" name="when" value={w} checked={i === 1} /><span>{w}</span></label>)}</div></fieldset>
+            <button class="btn btn--dark" type="submit">{t.iSend} →</button>
+            <div class="done" data-done hidden><h3>{t.doneH}</h3><p>{t.doneP}</p></div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ft">
+      <div class="wrap ft__in">
+        <p class="ft__logo">KERN<span>●</span></p>
+        <p>Randwyck · 6229 Maastricht · KvK 00000000</p>
+        <p>{t.demo} <a href={`${base}/`}>{t.credit}</a></p>
+      </div>
+    </footer>
+    <a class="mbar" href="#intake">{t.cta} →</a>
+    <DemoLang lang={lang} links={[['nl', root('nl')], ['en', root('en')], ['pl', root('pl')]]} />
+    <script type="application/json" id="cfg" set:html={JSON.stringify(cfg)} />
+  </body>
+</html>
+
+<style is:global>
+  :root { --bg: #ebe9e4; --ink: #0d0d0d; --mut: #5f5d58; --lime: #c6f432; --line: rgba(13, 13, 13, 0.14); --ff: 'Archivo', system-ui, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--ff); overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { width: min(100% - 2.4rem, 74rem); margin-inline: auto; }
+  .lab { font: 700 0.74rem/1 var(--ff); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.9rem; display: inline-flex; gap: 0.5rem; align-items: center; }
+  .lab::before { content: ''; width: 0.7rem; height: 0.7rem; background: var(--lime); border: 1.5px solid var(--ink); border-radius: 50%; }
+  .h2 { font: 800 clamp(1.9rem, 7.6vw, 4.4rem)/0.95 var(--ff); font-stretch: 125%; text-transform: uppercase; letter-spacing: -0.02em; max-width: 18ch; hyphens: auto; }
+  .lede { color: var(--mut); font-size: 1.05rem; max-width: 34rem; margin-top: 1.1rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 1rem 1.4rem; border-radius: 4px; font: 700 0.92rem/1 var(--ff); text-decoration: none; border: 1.5px solid var(--ink); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+  .btn--lime { background: var(--lime); color: var(--ink); }
+  .btn--line { background: transparent; }
+  .btn--dark { background: var(--ink); color: var(--lime); }
+  .link { background: none; border: 0; color: inherit; font: 600 0.9rem var(--ff); text-decoration: underline; cursor: pointer; }
+
+  .hd { position: fixed; z-index: 60; inset: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.8rem clamp(1.2rem, 3vw, 2.4rem); background: rgba(235, 233, 228, 0.86); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .hd__logo { font: 900 1.4rem/1 var(--ff); font-stretch: 125%; text-decoration: none; letter-spacing: -0.02em; }
+  .hd__logo span, .ft__logo span { color: var(--lime); -webkit-text-stroke: 1.5px var(--ink); margin-left: 0.15rem; font-size: 0.7em; vertical-align: 0.2em; }
+  .hd__nav { display: none; gap: 1.6rem; font: 600 0.88rem var(--ff); }
+  .hd__nav a { text-decoration: none; }
+  .hd__nav a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--lime); }
+  .hd__cta { padding: 0.7rem 1rem; font-size: 0.82rem; }
+  @media (min-width: 900px) { .hd__nav { display: flex; } }
+
+  .hero { display: grid; gap: 2rem; padding: 6.5rem clamp(1.2rem, 4vw, 3rem) 3rem; max-width: 84rem; margin-inline: auto; align-items: center; }
+  @media (min-width: 960px) { .hero { grid-template-columns: 1.15fr 0.85fr; min-height: 100svh; } }
+  .kicker { font: 700 0.76rem/1 var(--ff); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 1.2rem; }
+  .hero > * { min-width: 0; }
+  .hero h1 { font: 900 clamp(2.4rem, 10.5vw, 6rem)/0.88 var(--ff); font-stretch: 125%; text-transform: uppercase; letter-spacing: -0.035em; }
+  @media (min-width: 960px) { .hero h1 { font-size: clamp(3rem, 5.6vw, 6rem); } .quiz .h2 { font-size: clamp(2rem, 3.6vw, 3.2rem); } }
+  .hero h1 span { display: block; }
+  .hero h1 .is-acc { display: inline; background: var(--lime); padding: 0 0.12em; box-decoration-break: clone; -webkit-box-decoration-break: clone; font-size: 0.62em; line-height: 1.15; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
+  .hero__img { position: relative; }
+  .hero__img img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border: 1.5px solid var(--ink); border-radius: 6px; }
+  .hero__stats { list-style: none; position: absolute; left: -1rem; right: 1rem; bottom: -1.4rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--ink); color: var(--bg); border-radius: 6px; }
+  .hero__stats li { padding: 0.9rem 0.8rem; border-right: 1px solid rgba(255, 255, 255, 0.12); }
+  .hero__stats li:last-child { border: 0; }
+  .hero__stats b { display: block; font: 800 1.25rem/1.1 var(--ff); font-stretch: 112%; color: var(--lime); }
+  .hero__stats span { font-size: 0.74rem; color: #c9c7c1; }
+  @media (max-width: 959px) { .hero__stats { left: 0.6rem; right: 0.6rem; } }
+
+  .sec { padding: clamp(4.5rem, 9vw, 7.5rem) 0; }
+  .plans { display: grid; gap: 1rem; margin-top: 2.6rem; }
+  @media (min-width: 900px) { .plans { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; } }
+  .plan { position: relative; background: #fff; border: 1.5px solid var(--ink); border-radius: 6px; padding: 1.6rem; }
+  .plan--top { background: var(--ink); color: var(--bg); }
+  .plan__tag { position: absolute; top: -0.8rem; right: 1rem; background: var(--lime); color: var(--ink); border: 1.5px solid var(--ink); font: 700 0.72rem/1 var(--ff); padding: 0.4rem 0.6rem; border-radius: 99px; }
+  .plan h3 { font: 900 2rem/1 var(--ff); font-stretch: 125%; text-transform: uppercase; }
+  .plan__price { margin: 0.9rem 0 0.4rem; font-size: 0.88rem; opacity: 0.8; }
+  .plan__price b { font: 800 2.6rem/1 var(--ff); opacity: 1; }
+  .plan--top .plan__price b { color: var(--lime); }
+  .plan__d { font-size: 0.94rem; opacity: 0.85; }
+  .plan ul { list-style: none; margin: 1.2rem 0; display: grid; gap: 0.45rem; font-size: 0.92rem; }
+  .plan li::before { content: '✓'; font-weight: 800; margin-right: 0.5rem; color: #6a8a00; }
+  .plan--top li::before { color: var(--lime); }
+  .plan__b { font: 700 0.84rem var(--ff); padding-top: 1rem; border-top: 1px dashed currentColor; opacity: 0.85; }
+
+  .sec--dark { background: var(--ink); color: var(--bg); }
+  .sec--dark .lab::before { border-color: var(--bg); }
+  .quiz { display: grid; gap: 2.4rem; }
+  @media (min-width: 900px) { .quiz { grid-template-columns: 0.9fr 1.1fr; align-items: start; } }
+  .quiz > * { min-width: 0; }
+  .quiz__bar { height: 6px; background: rgba(255, 255, 255, 0.12); border-radius: 9px; margin-top: 2rem; max-width: 20rem; overflow: hidden; }
+  .quiz__bar span { display: block; height: 100%; width: 0; background: var(--lime); transition: width 0.4s; }
+  .quiz__box { background: #1a1a1a; border: 1.5px solid #333; border-radius: 8px; padding: clamp(1.3rem, 4vw, 2.2rem); }
+  .quiz__n { font: 700 0.74rem var(--ff); letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); }
+  .quiz h3 { font: 800 clamp(1.5rem, 3.4vw, 2.1rem)/1.1 var(--ff); font-stretch: 112%; margin: 0.5rem 0 1.2rem; }
+  .quiz__opts { display: grid; gap: 0.6rem; }
+  .quiz__opts button { text-align: left; background: transparent; color: var(--bg); border: 1.5px solid #444; border-radius: 6px; padding: 1rem 1.1rem; font: 600 1rem var(--ff); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+  .quiz__opts button:hover { border-color: var(--lime); background: rgba(198, 244, 50, 0.08); }
+  .quiz__res p { color: #c9c7c1; }
+  .quiz__res ul { list-style: none; margin: 1rem 0 1.4rem; display: grid; gap: 0.4rem; }
+  .quiz__res li::before { content: '→ '; color: var(--lime); }
+  .quiz__act { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+
+  .how { list-style: none; display: grid; gap: 1rem; margin-top: 2.6rem; counter-reset: s; }
+  @media (min-width: 860px) { .how { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .how li { border-top: 3px solid var(--ink); padding-top: 1rem; }
+  .how span { font: 800 0.9rem var(--ff); background: var(--lime); padding: 0.15rem 0.4rem; border: 1.5px solid var(--ink); }
+  .how h3 { font: 800 1.3rem/1.1 var(--ff); font-stretch: 112%; margin: 0.9rem 0 0.4rem; text-transform: uppercase; }
+  .how p { color: var(--mut); font-size: 0.94rem; }
+
+  .sec--res { background: #fff; border-block: 1.5px solid var(--ink); }
+  .res { display: grid; gap: 1rem; margin-top: 2.6rem; }
+  @media (min-width: 900px) { .res { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .res__i { border: 1.5px solid var(--ink); border-radius: 6px; overflow: hidden; background: var(--bg); }
+  .res__i img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+  .res__t { padding: 1.3rem; }
+  .res__t b { display: block; font: 900 2.4rem/1 var(--ff); font-stretch: 125%; }
+  .res__t span { font: 700 0.84rem var(--ff); background: var(--lime); padding: 0.1rem 0.35rem; }
+  .res__t p { margin: 1rem 0 0.6rem; font-size: 0.95rem; }
+  .res__t cite { font-style: normal; color: var(--mut); font-size: 0.84rem; }
+
+  .coach { display: grid; background: var(--ink); color: var(--bg); }
+  @media (min-width: 900px) { .coach { grid-template-columns: 1fr 1fr; } }
+  .coach img { width: 100%; height: 100%; min-height: 22rem; object-fit: cover; }
+  .coach__t { padding: clamp(2.4rem, 6vw, 5rem) clamp(1.2rem, 5vw, 4rem); align-self: center; }
+  .coach .lab::before { border-color: var(--bg); }
+  .coach__p { color: #cfcdc7; margin-top: 1rem; max-width: 34rem; }
+
+  .faqw { display: grid; gap: 2rem; }
+  @media (min-width: 900px) { .faqw { grid-template-columns: 0.8fr 1.2fr; } }
+  .faq details { border-bottom: 1.5px solid var(--ink); padding: 1.1rem 0; }
+  .faq summary { cursor: pointer; font: 700 1.08rem/1.35 var(--ff); list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+  .faq summary::after { content: '+'; font-size: 1.4rem; line-height: 1; }
+  .faq details[open] summary::after { content: '–'; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq p { color: var(--mut); margin-top: 0.7rem; }
+
+  .sec--lime { background: var(--lime); border-top: 1.5px solid var(--ink); }
+  .sec--lime .lab::before { background: var(--ink); }
+  .sec--lime .lede { color: #2b2f1b; }
+  .intake { display: grid; gap: 2.4rem; }
+  @media (min-width: 900px) { .intake { grid-template-columns: 1fr 1fr; align-items: start; } }
+  .intake > * { min-width: 0; }
+  .intake__tel { margin-top: 1.4rem; font: 700 1.2rem var(--ff); }
+  .form { background: #fff; border: 1.5px solid var(--ink); border-radius: 8px; padding: clamp(1.3rem, 4vw, 2rem); display: grid; gap: 1rem; box-shadow: 6px 6px 0 var(--ink); }
+  .f { display: grid; gap: 0.35rem; font: 600 0.82rem var(--ff); border: 0; }
+  .f input, .f select { font: 400 1rem var(--ff); border: 1.5px solid var(--ink); border-radius: 4px; padding: 0.85rem 0.9rem; background: #fff; width: 100%; }
+  .f input:focus, .f select:focus { outline: 3px solid var(--lime); outline-offset: 1px; }
+  .f .is-bad { border-color: #d0342c; }
+  .pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .pills label { cursor: pointer; position: relative; }
+  .pills input { position: absolute; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; }
+  .pills span { display: inline-block; border: 1.5px solid var(--ink); border-radius: 99px; padding: 0.5rem 0.85rem; font: 600 0.84rem var(--ff); }
+  .pills input:checked + span { background: var(--ink); color: var(--lime); }
+  .pills input:focus-visible + span { outline: 3px solid var(--lime); }
+  .done { background: var(--bg); border: 1.5px dashed var(--ink); border-radius: 6px; padding: 1rem; }
+  .done h3 { font: 800 1.2rem var(--ff); }
+  .done p { color: var(--mut); font-size: 0.86rem; margin-top: 0.3rem; }
+
+  .ft { padding: 3rem 0 6rem; font-size: 0.84rem; color: var(--mut); }
+  .ft__in { display: grid; gap: 0.4rem; }
+  .ft__logo { font: 900 2.4rem/1 var(--ff); font-stretch: 125%; color: var(--ink); }
+  .ft a { font-weight: 700; color: var(--ink); }
+  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 7.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); background: var(--lime); color: var(--ink); border: 1.5px solid var(--ink); text-align: center; padding: 1rem; border-radius: 6px; text-decoration: none; font: 800 0.95rem var(--ff); box-shadow: 3px 3px 0 var(--ink); }
+  @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }
+  .dlang { bottom: 0.9rem !important; }
+
+  .rv { opacity: 0; transform: translateY(16px); transition: opacity 0.7s, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .rv.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
+</style>
+
+<script>
+  const cfg = JSON.parse(document.getElementById('cfg').textContent);
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  $$('.rv').forEach((el) => io.observe(el));
+
+  // quiz: 3 pytania, potem rekomendacja
+  const qs = $$('[data-q]');
+  const ans = [];
+  const bar = $('[data-bar]');
+  const step = (i) => { qs.forEach((q, k) => (q.hidden = k !== i)); bar.style.width = `${(i / 3) * 100}%`; };
+  qs.forEach((q, i) => $$('button', q).forEach((b) => b.addEventListener('click', () => {
+    ans[i] = b.dataset.v;
+    if (i < 2) return step(i + 1);
+    qs.forEach((x) => (x.hidden = true));
+    bar.style.width = '100%';
+    const [goal, freq, how] = ans;
+    const [h, p] = cfg.advice[how];
+    $('[data-res-h]').textContent = h;
+    $('[data-res-p]').textContent = p;
+    $('[data-res-l]').innerHTML = `<li>${cfg.goalLine[goal]}</li><li>${cfg.freq[freq]}</li>`;
+    $('[data-res]').hidden = false;
+  })));
+  $('[data-again]').addEventListener('click', () => { ans.length = 0; $('[data-res]').hidden = true; step(0); });
+  $('[data-res-go]').addEventListener('click', () => { if (ans[0]) $('[data-form]').goal.value = ans[0]; });
+
+  // formularz intake (demo)
+  const form = $('[data-form]');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let ok = true;
+    ['name', 'phone'].forEach((n) => { const bad = form[n].value.trim().length < 2; form[n].classList.toggle('is-bad', bad); if (bad) ok = false; });
+    if (ok) $('[data-done]').hidden = false;
+  });
+</script>

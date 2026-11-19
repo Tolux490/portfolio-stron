@@ -1,12 +1,16 @@
 ---
-// Przełącznik PL / EN dla stron demo: mała pastylka w rogu ekranu.
-// pl / en: pełne adresy tej samej podstrony w obu językach.
+// Przełącznik języka dla stron demo: mała pastylka w rogu ekranu.
+// pl / nl / en: pełne adresy tej samej podstrony; dema holenderskie podają nl zamiast pl.
+// links: [[kod, adres], ...] dla dem w trzech językach (nadpisuje pl / nl / en).
 // z-index 78: nad paskami „Zadzwoń" (70–75), pod lightboxami i panelami (85+).
-const { lang = 'pl', pl, en } = Astro.props;
+const { lang = 'pl', pl, nl, en, links } = Astro.props;
+const list = links ?? [nl ? ['nl', nl] : ['pl', pl], ['en', en]];
+const label = { en: 'Language', nl: 'Taal', pl: 'Język' }[lang] ?? 'Language';
 ---
-<nav class="dlang" aria-label={lang === 'en' ? 'Language' : 'Język'}>
-  <a href={pl} hreflang="pl" lang="pl" aria-current={lang === 'pl' ? 'page' : undefined}>PL</a>
-  <a href={en} hreflang="en" lang="en" aria-current={lang === 'en' ? 'page' : undefined}>EN</a>
+<nav class="dlang" aria-label={label}>
+  {list.map(([code, href]) => (
+    <a href={href} hreflang={code} lang={code} aria-current={lang === code ? 'page' : undefined}>{code.toUpperCase()}</a>
+  ))}
 </nav>
 
 <style>

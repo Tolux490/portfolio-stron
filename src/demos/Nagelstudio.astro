@@ -1,0 +1,542 @@
+---
+import Curtain from '../components/Curtain.astro';
+import DemoLang from '../components/DemoLang.astro';
+// Studio Glans (demo): nagelstudio w Amsterdamie, NL + EN. Strony: src/pages/nagelstudio/ (NL) i /en/ (EN).
+// Fikcyjna firma: numery, adres i opinie są przykładowe.
+
+const { lang = 'nl' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f) => `${base}/img/nagelstudio/${f}`;
+const root = (l) => `${base}/nagelstudio/${l === 'nl' ? '' : `${l}/`}`;
+const phone = '020 000 00 00';
+const tel = '+31200000000';
+
+// kolory żeli: [id, hex, nl, en]
+const COLORS = [
+  ['melkroos', '#f2d4cf', 'Melkroos', 'Milky rose', 'Mleczny róż'], ['zand', '#d9b49a', 'Nude zand', 'Nude sand', 'Piaskowy nude'], ['koraal', '#ee7d6b', 'Koraal', 'Coral', 'Koralowy'],
+  ['kers', '#a3152a', 'Kersenrood', 'Cherry red', 'Wiśniowy'], ['mokka', '#6e4a3a', 'Mokka', 'Mocha', 'Mokka'], ['lavendel', '#b9a7d6', 'Lavendel', 'Lavender', 'Lawendowy'],
+  ['salie', '#9db39a', 'Saliegroen', 'Sage', 'Szałwiowy'], ['baby', '#a9c7e5', 'Babyblauw', 'Baby blue', 'Błękitny'], ['pistache', '#cfe0a3', 'Pistache', 'Pistachio', 'Pistacjowy'],
+  ['nacht', '#1f2440', 'Middernacht', 'Midnight', 'Nocny granat'], ['choco', '#3b2420', 'Chocolade', 'Chocolate', 'Czekoladowy'], ['zwart', '#141214', 'Zwart', 'Black', 'Czarny'],
+];
+const T = {
+  nl: {
+    title: 'Studio Glans — nagelstudio in Amsterdam Oud-West',
+    desc: 'Gellak, BIAB en nail art in Amsterdam Oud-West. Kies online je kleur en vraag je afspraak aan.',
+    nav: ['Behandelingen', 'Kleuren', 'Cadeaubon', 'Contact'], book: 'Afspraak maken',
+    kicker: 'Nagelstudio · Amsterdam Oud-West',
+    h1: ['Nagels die', 'drie weken', 'mooi blijven.'],
+    lede: 'Gellak, BIAB en nail art in een rustige studio. Kies hieronder alvast je kleur, wij doen de rest.',
+    pickColor: 'Kies je kleur',
+    why: [['Hygiënisch', 'Instrumenten gesteriliseerd na elke klant, vijlen per persoon.'], ['HEMA-vrij en vegan', 'Gellak zonder HEMA, dus veel minder kans op allergie.'], ['Glansgarantie', 'Laat er binnen 7 dagen iets los? We herstellen het gratis.']],
+    tLab: 'Behandelingen', tH: 'Kies wat bij je past',
+    tabs: { handen: 'Handen', voeten: 'Voeten', extra: 'Extra' },
+    treatments: {
+      handen: [['Gellak', 'Inclusief manicure en verzorgende olie', 45, '€40'], ['BIAB nieuwe set', 'Versterkende builder gel op je eigen nagel', 75, '€55'], ['BIAB opvullen', 'Na 3 tot 4 weken', 60, '€48'], ['Manicure', 'Vijlen, nagelriemen, handmassage', 30, '€30']],
+      voeten: [['Pedicure', 'Voetbad, eelt verwijderen, massage', 50, '€45'], ['Gellak voeten', 'Inclusief korte pedicure', 45, '€38']],
+      extra: [['Nail art', 'Lijntjes, chroom, stickers of handgeschilderd', 10, 'vanaf €5'], ['French', 'Klassiek of in kleur', 10, '€8'], ['Gellak verwijderen', 'Zonder nieuwe set', 15, '€12']],
+    },
+    minutes: 'min',
+    cLab: 'Kleurstudio', cH: 'Probeer je kleur alvast uit',
+    cLede: 'Klik op een kleur, kies vorm en afwerking. Met één klik neem je je keuze mee naar je afspraak.',
+    shape: 'Vorm', shapes: { amandel: 'Amandel', vierkant: 'Vierkant', rond: 'Rond' },
+    finish: 'Afwerking', finishes: { glans: 'Glans', mat: 'Mat', chroom: 'Chroom' },
+    yourChoice: 'Jouw keuze', bookColor: 'Boek met deze kleur',
+    gLab: 'Uit de studio', gH: 'Recent werk',
+    gallery: [['pastel.webp', 'Pastel mix'], ['donker.webp', 'Donker met goud'], ['nude.webp', 'Natuurlijk nude'], ['rood.webp', 'Rood met nail art'], ['flesjes.webp', 'Kleuren van dit seizoen']],
+    giftLab: 'Cadeaubon', giftH: 'Geef glans cadeau',
+    giftP: 'Digitale cadeaubon vanaf €25, direct in je mailbox en een jaar geldig. Ideaal voor verjaardagen en Moederdag.',
+    giftBtn: 'Cadeaubon bestellen',
+    bLab: 'Afspraak', bH: 'Vraag je afspraak aan',
+    bLede: 'Je krijgt binnen een uur een bevestiging via WhatsApp met de precieze tijd.',
+    fTreat: 'Behandeling', fColor: 'Kleur', fColorNone: 'Kies ik in de studio', fDay: 'Voorkeursdag', fPart: 'Dagdeel', parts: ['Ochtend', 'Middag', 'Avond'],
+    fName: 'Naam', fPhone: 'Telefoon', send: 'Aanvraag versturen',
+    doneH: 'Dank je! Je aanvraag staat klaar.',
+    doneP: 'Demoversie: er is niets verstuurd. In de echte site krijgt de studio dit bericht op WhatsApp:',
+    rLab: 'Reviews', rH: '4,9 op Google',
+    reviews: [['Mijn BIAB zit na vier weken nog perfect. En eindelijk een studio waar het rustig is in plaats van een fabriek.', 'Sanne, Oud-West'], ['Ik heb gevoelige huid en had allergie van gellak elders. Hier HEMA-vrij en nergens meer last van.', 'Fatima'], ['Kleur online uitgekozen, in de studio precies zo. Nail art is echt kunst.', 'Lotte V.']],
+    vLab: 'Langskomen', vH: 'Tweede verdieping, boven de bloemist',
+    hoursH: 'Openingstijden', hours: [['Maandag', 'gesloten'], ['Di – vr', '10:00 – 20:00'], ['Zaterdag', '09:30 – 17:00'], ['Zondag', '12:00 – 17:00']],
+    demo: 'Conceptwebsite voor een fictieve nagelstudio, gemaakt door Vervo Studio.', credit: 'Website door Vervo Studio ↗',
+  },
+  en: {
+    title: 'Studio Glans — nail studio in Amsterdam Oud-West',
+    desc: 'Gel polish, BIAB and nail art in Amsterdam Oud-West. Choose your colour online and request your appointment.',
+    nav: ['Treatments', 'Colours', 'Gift card', 'Contact'], book: 'Book now',
+    kicker: 'Nail studio · Amsterdam Oud-West',
+    h1: ['Nails that', 'stay beautiful', 'for three weeks.'],
+    lede: 'Gel polish, BIAB and nail art in a calm studio. Pick your colour below, we take care of the rest.',
+    pickColor: 'Pick your colour',
+    why: [['Hygienic', 'Tools sterilised after every client, files are single-use.'], ['HEMA-free and vegan', 'Gel polish without HEMA, so far less risk of allergies.'], ['Shine guarantee', 'Something lifts within 7 days? We fix it for free.']],
+    tLab: 'Treatments', tH: 'Choose what suits you',
+    tabs: { handen: 'Hands', voeten: 'Feet', extra: 'Extras' },
+    treatments: {
+      handen: [['Gel polish', 'Including manicure and nourishing oil', 45, '€40'], ['BIAB new set', 'Strengthening builder gel on your natural nail', 75, '€55'], ['BIAB refill', 'After 3 to 4 weeks', 60, '€48'], ['Manicure', 'Filing, cuticles, hand massage', 30, '€30']],
+      voeten: [['Pedicure', 'Foot bath, callus removal, massage', 50, '€45'], ['Gel polish feet', 'Including a short pedicure', 45, '€38']],
+      extra: [['Nail art', 'Lines, chrome, stickers or hand-painted', 10, 'from €5'], ['French', 'Classic or in colour', 10, '€8'], ['Gel removal', 'Without a new set', 15, '€12']],
+    },
+    minutes: 'min',
+    cLab: 'Colour studio', cH: 'Try your colour first',
+    cLede: 'Tap a colour, choose a shape and a finish. One click takes your choice to your booking.',
+    shape: 'Shape', shapes: { amandel: 'Almond', vierkant: 'Square', rond: 'Round' },
+    finish: 'Finish', finishes: { glans: 'Gloss', mat: 'Matte', chroom: 'Chrome' },
+    yourChoice: 'Your choice', bookColor: 'Book with this colour',
+    gLab: 'From the studio', gH: 'Recent work',
+    gallery: [['pastel.webp', 'Pastel mix'], ['donker.webp', 'Dark with gold'], ['nude.webp', 'Natural nude'], ['rood.webp', 'Red with nail art'], ['flesjes.webp', 'This season’s colours']],
+    giftLab: 'Gift card', giftH: 'Give some shine',
+    giftP: 'Digital gift card from €25, straight to your inbox and valid for a year. Perfect for birthdays and Mother’s Day.',
+    giftBtn: 'Order a gift card',
+    bLab: 'Appointment', bH: 'Request your appointment',
+    bLede: 'You get a confirmation with the exact time on WhatsApp within an hour.',
+    fTreat: 'Treatment', fColor: 'Colour', fColorNone: 'I’ll choose in the studio', fDay: 'Preferred day', fPart: 'Time of day', parts: ['Morning', 'Afternoon', 'Evening'],
+    fName: 'Name', fPhone: 'Phone', send: 'Send request',
+    doneH: 'Thank you! Your request is ready.',
+    doneP: 'Demo version: nothing was sent. On the real site the studio receives this message on WhatsApp:',
+    rLab: 'Reviews', rH: '4.9 on Google',
+    reviews: [['My BIAB still looks perfect after four weeks. And finally a studio that feels calm instead of like a factory.', 'Sanne, Oud-West'], ['I have sensitive skin and reacted to gel polish elsewhere. Here it’s HEMA-free and I’ve had no problems since.', 'Fatima'], ['Picked my colour online and it looked exactly the same in the studio. The nail art is real art.', 'Lotte V.']],
+    vLab: 'Visit', vH: 'Second floor, above the florist',
+    hoursH: 'Opening hours', hours: [['Monday', 'closed'], ['Tue – Fri', '10:00 – 20:00'], ['Saturday', '09:30 – 17:00'], ['Sunday', '12:00 – 17:00']],
+    demo: 'Concept website for a fictional nail studio, made by Vervo Studio.', credit: 'Website by Vervo Studio ↗',
+  },
+  pl: {
+    title: 'Studio Glans — stylizacja paznokci, Amsterdam Oud-West',
+    desc: 'Hybryda, BIAB i zdobienia w Amsterdamie, dzielnica Oud-West. Wybierz kolor online i poproś o termin.',
+    nav: ['Zabiegi', 'Kolory', 'Bon podarunkowy', 'Kontakt'], book: 'Umów wizytę',
+    kicker: 'Stylizacja paznokci · Amsterdam Oud-West',
+    h1: ['Paznokcie, które', 'trzy tygodnie', 'wyglądają jak nowe.'],
+    lede: 'Hybryda, BIAB i zdobienia w spokojnym studiu. Wybierz kolor już teraz, a resztą zajmiemy się my.',
+    pickColor: 'Wybierz kolor',
+    why: [['Higiena', 'Narzędzia sterylizowane po każdej klientce, pilniki jednorazowe.'], ['Bez HEMA, wegańskie', 'Lakiery hybrydowe bez HEMA, więc dużo mniejsze ryzyko alergii.'], ['Gwarancja trwałości', 'Coś odpryśnie w ciągu 7 dni? Poprawimy za darmo.']],
+    tLab: 'Zabiegi', tH: 'Wybierz coś dla siebie',
+    tabs: { handen: 'Dłonie', voeten: 'Stopy', extra: 'Dodatki' },
+    treatments: {
+      handen: [['Hybryda', 'Z manicure i odżywczym olejkiem', 45, '40 €'], ['BIAB, nowa stylizacja', 'Wzmacniający żel na naturalnej płytce', 75, '55 €'], ['BIAB, uzupełnienie', 'Po 3–4 tygodniach', 60, '48 €'], ['Manicure', 'Piłowanie, skórki, masaż dłoni', 30, '30 €']],
+      voeten: [['Pedicure', 'Kąpiel stóp, usuwanie zrogowaceń, masaż', 50, '45 €'], ['Hybryda na stopy', 'Z krótkim pedicure', 45, '38 €']],
+      extra: [['Zdobienia', 'Linie, chrom, naklejki lub malowane ręcznie', 10, 'od 5 €'], ['French', 'Klasyczny lub kolorowy', 10, '8 €'], ['Zdjęcie hybrydy', 'Bez nowej stylizacji', 15, '12 €']],
+    },
+    minutes: 'min',
+    cLab: 'Studio kolorów', cH: 'Przymierz kolor, zanim przyjdziesz',
+    cLede: 'Kliknij kolor, wybierz kształt i wykończenie. Jednym kliknięciem przeniesiesz swój wybór do formularza.',
+    shape: 'Kształt', shapes: { amandel: 'Migdał', vierkant: 'Kwadrat', rond: 'Owal' },
+    finish: 'Wykończenie', finishes: { glans: 'Połysk', mat: 'Mat', chroom: 'Chrom' },
+    yourChoice: 'Twój wybór', bookColor: 'Umów się z tym kolorem',
+    gLab: 'Ze studia', gH: 'Ostatnie stylizacje',
+    gallery: [['pastel.webp', 'Pastelowy mix'], ['donker.webp', 'Ciemne ze złotem'], ['nude.webp', 'Naturalny nude'], ['rood.webp', 'Czerwień ze zdobieniem'], ['flesjes.webp', 'Kolory tego sezonu']],
+    giftLab: 'Bon podarunkowy', giftH: 'Podaruj komuś piękne paznokcie',
+    giftP: 'Elektroniczny bon od 25 €, od razu na maila i ważny przez rok. Idealny na urodziny i Dzień Matki.',
+    giftBtn: 'Zamów bon',
+    bLab: 'Wizyta', bH: 'Poproś o termin',
+    bLede: 'W ciągu godziny dostaniesz na WhatsAppie potwierdzenie z dokładną godziną.',
+    fTreat: 'Zabieg', fColor: 'Kolor', fColorNone: 'Wybiorę w studiu', fDay: 'Preferowany dzień', fPart: 'Pora dnia', parts: ['Rano', 'Po południu', 'Wieczorem'],
+    fName: 'Imię', fPhone: 'Telefon', send: 'Wyślij prośbę',
+    doneH: 'Dziękujemy! Prośba gotowa do wysłania.',
+    doneP: 'Wersja pokazowa: nic nie zostało wysłane. Na prawdziwej stronie studio dostałoby taką wiadomość na WhatsAppie:',
+    rLab: 'Opinie', rH: '4,9 w Google',
+    reviews: [['Mój BIAB po czterech tygodniach dalej wygląda idealnie. I wreszcie studio, w którym jest spokojnie, a nie jak w fabryce.', 'Sanne, Oud-West'], ['Mam wrażliwą skórę i gdzie indziej hybryda mnie uczulała. Tutaj bez HEMA i zero problemów.', 'Fatima'], ['Kolor wybrałam online i w studiu wyszedł dokładnie taki sam. Zdobienia to prawdziwa sztuka.', 'Lotte V.']],
+    vLab: 'Dojazd', vH: 'Drugie piętro, nad kwiaciarnią',
+    hoursH: 'Godziny otwarcia', hours: [['Poniedziałek', 'nieczynne'], ['Wt – pt', '10:00 – 20:00'], ['Sobota', '09:30 – 17:00'], ['Niedziela', '12:00 – 17:00']],
+    demo: 'Strona koncepcyjna fikcyjnego studia paznokci, wykonana przez Vervo Studio.', credit: 'Strona: Vervo Studio ↗',
+  },
+};
+const t = T[lang];
+const ci = { nl: 2, en: 3, pl: 4 }[lang];
+const tabs = Object.keys(t.tabs);
+const allTreat = tabs.flatMap((k) => t.treatments[k].map((x) => x[0]));
+const cfg = { lang, colors: COLORS.map((c) => ({ id: c[0], hex: c[1], name: c[ci] })), shapes: t.shapes, finishes: t.finishes, none: t.fColorNone };
+// kształty paznokci (viewBox 0 0 60 100): ścieżki dla migdała, kwadratu i koła
+const NAIL = {
+  amandel: 'M30 2 C44 10 52 30 52 52 L52 92 Q52 98 46 98 L14 98 Q8 98 8 92 L8 52 C8 30 16 10 30 2 Z',
+  vierkant: 'M10 6 Q10 2 14 2 L46 2 Q50 2 50 6 L52 92 Q52 98 46 98 L14 98 Q8 98 8 92 Z',
+  rond: 'M30 2 C46 2 52 14 52 30 L52 92 Q52 98 46 98 L14 98 Q8 98 8 92 L8 30 C8 14 14 2 30 2 Z',
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="nl" href={new URL(root('nl'), Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(root('en'), Astro.url).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(root('pl'), Astro.url).href} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.desc} />
+    <meta property="og:image" content={new URL(img('hero.webp'), Astro.url).href} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f6efe9" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" />
+  </head>
+  <body>
+    <Curtain />
+    <header class="hd" id="hd">
+      <a class="hd__logo" href="#top">Studio <em>Glans</em></a>
+      <nav class="hd__nav">{['#behandelingen', '#kleur', '#cadeau', '#contact'].map((h, i) => <a href={h}>{t.nav[i]}</a>)}</nav>
+      <a class="btn btn--ink hd__cta" href="#afspraak">{t.book}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero__txt">
+          <p class="kicker">{t.kicker}</p>
+          <h1>{t.h1[0]} <em>{t.h1[1]}</em> {t.h1[2]}</h1>
+          <p class="lede">{t.lede}</p>
+          <div class="hero__cta">
+            <a class="btn btn--ink" href="#afspraak">{t.book}</a>
+            <a class="btn btn--soft" href="#kleur">{t.pickColor}</a>
+          </div>
+        </div>
+        <div class="hero__img">
+          <img src={img('hero.webp')} alt="" fetchpriority="high" />
+          <div class="hero__badge"><b>4,9</b><span>★★★★★<br />Google</span></div>
+        </div>
+      </section>
+
+      <section class="why">
+        <div class="wrap why__in">
+          {t.why.map(([h, p], i) => <div class="rv"><span class="why__n">0{i + 1}</span><h3>{h}</h3><p>{p}</p></div>)}
+        </div>
+      </section>
+
+      <section class="sec" id="behandelingen">
+        <div class="wrap">
+          <p class="lab rv">{t.tLab}</p>
+          <h2 class="h2 rv">{t.tH}</h2>
+          <div class="tabs rv" role="tablist">
+            {tabs.map((k, i) => <button role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-tab={k}>{t.tabs[k]}</button>)}
+          </div>
+          {tabs.map((k, i) => (
+            <ul class="treat" data-panel={k} hidden={i !== 0}>
+              {t.treatments[k].map(([n, o, m, p]) => (
+                <li><div><b>{n}</b><span>{o}</span></div><span class="treat__m">{m} {t.minutes}</span><span class="treat__p">{p}</span></li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      </section>
+
+      <section class="sec sec--studio" id="kleur">
+        <div class="wrap studio">
+          <div class="studio__ctl">
+            <p class="lab">{t.cLab}</p>
+            <h2 class="h2">{t.cH}</h2>
+            <p class="lede">{t.cLede}</p>
+            <div class="sw" role="radiogroup" aria-label={t.cLab}>
+              {cfg.colors.map((c, i) => <button type="button" class="sw__b" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-color={c.id} style={`--c:${c.hex}`} title={c.name}><span class="sr">{c.name}</span></button>)}
+            </div>
+            <div class="seg"><span>{t.shape}</span>{Object.entries(t.shapes).map(([k, v], i) => <button type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-shape={k}>{v}</button>)}</div>
+            <div class="seg"><span>{t.finish}</span>{Object.entries(t.finishes).map(([k, v], i) => <button type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-finish={k}>{v}</button>)}</div>
+          </div>
+          <div class="studio__view">
+            <div class="nails" data-nails data-finish="glans">
+              {[0.82, 1, 1.06, 0.98, 0.78].map((s, i) => (
+                <svg viewBox="0 0 60 100" style={`--s:${s};--r:${[-8, -3, 0, 3, 8][i]}deg`} aria-hidden="true">
+                  <defs>
+                    <linearGradient id={`g${i}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55" /><stop offset=".35" stop-color="#fff" stop-opacity="0" /></linearGradient>
+                    <linearGradient id={`c${i}`} x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".0" /><stop offset=".45" stop-color="#fff" stop-opacity=".7" /><stop offset=".55" stop-color="#fff" stop-opacity=".1" /><stop offset="1" stop-color="#000" stop-opacity=".25" /></linearGradient>
+                  </defs>
+                  <path class="nail__base" d={NAIL.amandel} />
+                  <path class="nail__chrome" d={NAIL.amandel} fill={`url(#c${i})`} />
+                  <path class="nail__gloss" d={NAIL.amandel} fill={`url(#g${i})`} />
+                </svg>
+              ))}
+            </div>
+            <div class="choice">
+              <span class="choice__dot" data-choice-dot></span>
+              <div><small>{t.yourChoice}</small><b data-choice></b></div>
+              <a class="btn btn--ink" href="#afspraak" data-take>{t.bookColor}</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="wrap">
+          <p class="lab rv">{t.gLab}</p>
+          <h2 class="h2 rv">{t.gH}</h2>
+          <div class="gal">
+            {t.gallery.map(([f, c]) => <figure class="rv"><img src={img(f)} alt={c} loading="lazy" /><figcaption>{c}</figcaption></figure>)}
+          </div>
+        </div>
+      </section>
+
+      <section class="gift" id="cadeau">
+        <div class="wrap gift__in">
+          <div class="gift__card rv" aria-hidden="true"><span>Studio <em>Glans</em></span><b>€50</b><small>cadeaubon</small></div>
+          <div class="rv">
+            <p class="lab">{t.giftLab}</p>
+            <h2 class="h2">{t.giftH}</h2>
+            <p class="lede">{t.giftP}</p>
+            <a class="btn btn--ink" href="#afspraak">{t.giftBtn}</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--book" id="afspraak">
+        <div class="wrap book">
+          <div>
+            <p class="lab">{t.bLab}</p>
+            <h2 class="h2">{t.bH}</h2>
+            <p class="lede">{t.bLede}</p>
+            <img class="book__img" src={img('studio.webp')} alt="" loading="lazy" />
+          </div>
+          <form class="form" data-form novalidate>
+            <label class="f"><span>{t.fTreat}</span><select name="treat">{allTreat.map((n) => <option>{n}</option>)}</select></label>
+            <label class="f"><span>{t.fColor}</span><select name="color" data-color-select><option value="">{t.fColorNone}</option>{cfg.colors.map((c) => <option value={c.id}>{c.name}</option>)}</select></label>
+            <div class="f2">
+              <label class="f"><span>{t.fDay}</span><input type="date" name="day" required /></label>
+              <label class="f"><span>{t.fPart}</span><select name="part">{t.parts.map((p) => <option>{p}</option>)}</select></label>
+            </div>
+            <div class="f2">
+              <label class="f"><span>{t.fName}</span><input name="name" autocomplete="name" required /></label>
+              <label class="f"><span>{t.fPhone}</span><input name="phone" type="tel" autocomplete="tel" required /></label>
+            </div>
+            <button class="btn btn--ink btn--full" type="submit">{t.send}</button>
+            <div class="done" data-done hidden>
+              <h3>{t.doneH}</h3>
+              <p>{t.doneP}</p>
+              <pre data-msg></pre>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="wrap">
+          <p class="lab rv">{t.rLab}</p>
+          <h2 class="h2 rv">{t.rH} <span class="stars">★★★★★</span></h2>
+          <div class="revs">{t.reviews.map(([q, w]) => <blockquote class="rv"><p>{q}</p><cite>{w}</cite></blockquote>)}</div>
+        </div>
+      </section>
+
+      <section class="sec sec--visit" id="contact">
+        <div class="wrap visit">
+          <div>
+            <p class="lab">{t.vLab}</p>
+            <h2 class="h2">{t.vH}</h2>
+            <p class="addr">Kinkerstraat · 1053 Amsterdam<br /><a href={`tel:${tel}`}>{phone}</a></p>
+          </div>
+          <div>
+            <h3 class="h3">{t.hoursH}</h3>
+            <table class="hours"><tbody>{t.hours.map(([d, h]) => <tr><th>{d}</th><td>{h}</td></tr>)}</tbody></table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ft">
+      <div class="wrap">
+        <p class="ft__logo">Studio <em>Glans</em></p>
+        <p>Kinkerstraat · 1053 Amsterdam · KvK 00000000</p>
+        <p>{t.demo} <a href={`${base}/`}>{t.credit}</a></p>
+      </div>
+    </footer>
+    <a class="mbar" href="#afspraak">{t.book}</a>
+    <DemoLang lang={lang} links={[['nl', root('nl')], ['en', root('en')], ['pl', root('pl')]]} />
+    <script type="application/json" id="cfg" set:html={JSON.stringify({ ...cfg, nail: NAIL })} />
+  </body>
+</html>
+
+<style is:global>
+  :root { --bg: #f6efe9; --bg2: #efe3da; --ink: #2b1d22; --mut: #7c6a6f; --rose: #b4566a; --line: rgba(43, 29, 34, 0.12); --ff-d: 'Cormorant', Georgia, serif; --ff-b: 'DM Sans', system-ui, sans-serif; --c: #f2d4cf; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--ff-b); overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .wrap { width: min(100% - 2.4rem, 70rem); margin-inline: auto; }
+  .lab { font: 600 0.72rem/1 var(--ff-b); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rose); margin-bottom: 0.9rem; }
+  .h2 { font: 500 clamp(2.4rem, 6vw, 4rem)/1 var(--ff-d); letter-spacing: -0.01em; max-width: 16ch; }
+  .h3 { font: 600 0.75rem/1 var(--ff-b); letter-spacing: 0.18em; text-transform: uppercase; color: var(--mut); margin-bottom: 0.8rem; }
+  .lede { color: var(--mut); max-width: 32rem; margin-top: 1rem; font-size: 1.04rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.95rem 1.5rem; border-radius: 999px; font: 600 0.92rem/1 var(--ff-b); text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform 0.2s, background 0.2s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn--ink { background: var(--ink); color: var(--bg); }
+  .btn--soft { background: #fff; color: var(--ink); border-color: var(--line); }
+  .btn--full { width: 100%; margin-top: 0.4rem; }
+
+  .hd { position: fixed; z-index: 60; inset: 0.8rem 0.8rem auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.55rem 0.55rem 0.55rem 1.2rem; border-radius: 999px; background: rgba(246, 239, 233, 0.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); }
+  .hd__logo { font: 600 1.45rem/1 var(--ff-d); text-decoration: none; }
+  .hd__logo em, .ft__logo em { color: var(--rose); }
+  .hd__nav { display: none; gap: 1.8rem; font-size: 0.9rem; color: var(--mut); }
+  .hd__nav a { text-decoration: none; }
+  .hd__nav a:hover { color: var(--ink); }
+  .hd__cta { padding: 0.7rem 1.1rem; font-size: 0.82rem; }
+  @media (min-width: 880px) { .hd__nav { display: flex; } }
+
+  .hero { display: grid; gap: 2rem; padding: 7rem clamp(1.2rem, 4vw, 3rem) 3rem; max-width: 80rem; margin-inline: auto; align-items: center; }
+  @media (min-width: 900px) { .hero { grid-template-columns: 1.05fr 0.95fr; min-height: 100svh; padding-top: 6rem; } }
+  .kicker { font: 600 0.74rem/1 var(--ff-b); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rose); margin-bottom: 1.2rem; }
+  .hero h1 { font: 500 clamp(3rem, 8.4vw, 6.4rem)/0.98 var(--ff-d); letter-spacing: -0.015em; }
+  .hero h1 em { color: var(--rose); }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
+  .hero__img { position: relative; }
+  .hero__img img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 999px 999px 24px 24px; }
+  .hero__badge { position: absolute; left: -0.6rem; bottom: 2rem; background: #fff; border-radius: 18px; padding: 0.8rem 1rem; display: flex; gap: 0.7rem; align-items: center; box-shadow: 0 20px 40px -20px rgba(43, 29, 34, 0.35); font-size: 0.72rem; color: var(--mut); line-height: 1.3; }
+  .hero__badge b { font: 600 2rem/1 var(--ff-d); color: var(--ink); }
+  .hero__badge span { color: #c9973e; }
+
+  .why { border-block: 1px solid var(--line); background: #fff; }
+  .why__in { display: grid; gap: 1.6rem; padding: 2.6rem 0; }
+  @media (min-width: 800px) { .why__in { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .why__n { font: italic 500 1.4rem/1 var(--ff-d); color: var(--rose); }
+  .why h3 { font: 600 1.02rem/1.3 var(--ff-b); margin: 0.4rem 0 0.3rem; }
+  .why p { color: var(--mut); font-size: 0.92rem; }
+
+  .sec { padding: clamp(4.5rem, 9vw, 7.5rem) 0; }
+  .tabs { display: inline-flex; gap: 0.3rem; padding: 0.3rem; background: #fff; border: 1px solid var(--line); border-radius: 999px; margin: 2rem 0 1rem; }
+  .tabs button { border: 0; background: none; padding: 0.6rem 1.2rem; border-radius: 999px; font: 500 0.9rem var(--ff-b); color: var(--mut); cursor: pointer; }
+  .tabs button[aria-selected='true'] { background: var(--ink); color: var(--bg); }
+  .treat { list-style: none; max-width: 46rem; }
+  .treat li { display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: baseline; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
+  .treat b { display: block; font: 600 1.6rem/1.15 var(--ff-d); }
+  .treat div span { color: var(--mut); font-size: 0.86rem; }
+  .treat__m { color: var(--mut); font-size: 0.82rem; white-space: nowrap; }
+  .treat__p { font: 600 1.15rem var(--ff-b); white-space: nowrap; }
+
+  .sec--studio { background: var(--bg2); }
+  .studio { display: grid; gap: 2.4rem; align-items: center; }
+  @media (min-width: 920px) { .studio { grid-template-columns: 1fr 1fr; } }
+  .studio > * { min-width: 0; }
+  .sw { display: grid; grid-template-columns: repeat(6, minmax(0, 2.6rem)); gap: clamp(0.45rem, 2vw, 0.7rem); margin: 1.8rem 0 1.4rem; }
+  .sw__b { width: 100%; aspect-ratio: 1; height: auto; border-radius: 50%; border: 0; background: var(--c); cursor: pointer; box-shadow: inset 0 -6px 10px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(43, 29, 34, 0.08); transition: transform 0.2s; }
+  .sw__b:hover { transform: scale(1.08); }
+  .sw__b[aria-checked='true'] { box-shadow: 0 0 0 3px var(--bg2), 0 0 0 5px var(--ink); }
+  .seg { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 0.7rem; }
+  .seg span { width: 5.6rem; font-size: 0.82rem; color: var(--mut); }
+  .seg button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 0.5rem 0.95rem; font: 500 0.84rem var(--ff-b); cursor: pointer; color: var(--ink); }
+  .seg button[aria-pressed='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .studio__view { background: #fff; border-radius: 28px; padding: clamp(1.4rem, 4vw, 2.6rem); box-shadow: 0 30px 60px -40px rgba(43, 29, 34, 0.5); }
+  .nails { display: flex; justify-content: center; align-items: flex-end; gap: clamp(0.4rem, 2vw, 1rem); height: clamp(11rem, 30vw, 15rem); }
+  .nails svg { width: clamp(3rem, 11vw, 5rem); height: auto; transform: scale(var(--s)) rotate(var(--r)); transform-origin: bottom center; overflow: visible; filter: drop-shadow(0 10px 12px rgba(43, 29, 34, 0.18)); }
+  .nail__base { fill: var(--c); transition: fill 0.35s; }
+  .nails[data-finish='mat'] .nail__gloss, .nails:not([data-finish='chroom']) .nail__chrome { display: none; }
+  .nails[data-finish='chroom'] .nail__gloss { opacity: 0.4; }
+  .choice { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem 0.9rem; align-items: center; margin-top: 1.8rem; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+  .choice__dot { width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--c); box-shadow: inset 0 -5px 8px rgba(0, 0, 0, 0.12); }
+  .choice small { display: block; color: var(--mut); font-size: 0.76rem; }
+  .choice b { font: 600 1.1rem var(--ff-b); }
+  .choice .btn { grid-column: 1 / -1; }
+  @media (min-width: 560px) { .choice { grid-template-columns: auto 1fr auto; } .choice .btn { grid-column: auto; } }
+
+  .gal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; margin-top: 2.4rem; }
+  @media (min-width: 900px) { .gal { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  .gal figure:nth-child(odd) { transform: translateY(1.4rem); }
+  .gal img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 18px; }
+  .gal figcaption { font-size: 0.8rem; color: var(--mut); margin-top: 0.5rem; }
+
+  .gift { background: var(--ink); color: var(--bg); padding: clamp(4rem, 8vw, 6rem) 0; }
+  .gift .lede { color: #cbb9bd; }
+  .gift .btn--ink { background: var(--bg); color: var(--ink); margin-top: 1.6rem; }
+  .gift__in { display: grid; gap: 2.4rem; align-items: center; }
+  @media (min-width: 860px) { .gift__in { grid-template-columns: 0.9fr 1.1fr; } }
+  .gift__card { aspect-ratio: 1.6; border-radius: 22px; padding: 1.6rem; display: grid; align-content: space-between; background: linear-gradient(135deg, #f2d4cf, #e7b3a8 60%, #d48e88); color: var(--ink); max-width: 26rem; transform: rotate(-4deg); box-shadow: 0 40px 70px -30px rgba(0, 0, 0, 0.6); }
+  .gift__card span { font: 600 1.4rem var(--ff-d); }
+  .gift__card em { color: var(--rose); }
+  .gift__card b { font: 600 3.4rem/1 var(--ff-d); }
+  .gift__card small { letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.7rem; }
+
+  .book { display: grid; gap: 2.4rem; }
+  @media (min-width: 900px) { .book { grid-template-columns: 1fr 1fr; } }
+  .book > * { min-width: 0; }
+  .book__img { margin-top: 2rem; border-radius: 22px; aspect-ratio: 16 / 10; object-fit: cover; width: 100%; filter: grayscale(0.2); }
+  .form { background: #fff; border-radius: 26px; padding: clamp(1.3rem, 4vw, 2.2rem); border: 1px solid var(--line); display: grid; gap: 0.9rem; align-content: start; }
+  .f { display: grid; gap: 0.35rem; font-size: 0.82rem; color: var(--mut); }
+  .f input, .f select { font: 400 1rem var(--ff-b); color: var(--ink); background: var(--bg); border: 1px solid transparent; border-radius: 12px; padding: 0.85rem 0.9rem; width: 100%; }
+  .f input:focus, .f select:focus { outline: none; border-color: var(--rose); }
+  .f .is-bad { border-color: #c0392b; }
+  .f2 { display: grid; gap: 0.9rem; }
+  @media (min-width: 520px) { .f2 { grid-template-columns: 1fr 1fr; } }
+  .done { background: var(--bg); border-radius: 16px; padding: 1.2rem; }
+  .done h3 { font: 600 1.6rem/1.1 var(--ff-d); }
+  .done p { color: var(--mut); font-size: 0.86rem; margin: 0.5rem 0; }
+  .done pre { white-space: pre-wrap; font: 400 0.88rem/1.5 var(--ff-b); background: #dcf8c6; color: #1b2a17; padding: 0.9rem 1rem; border-radius: 12px 12px 12px 2px; }
+
+  .stars { color: #c9973e; font: 400 0.5em var(--ff-b); letter-spacing: 0.12em; vertical-align: middle; }
+  .revs { display: grid; gap: 1.2rem; margin-top: 2.4rem; }
+  @media (min-width: 860px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .revs blockquote { background: #fff; border-radius: 22px; padding: 1.5rem; border: 1px solid var(--line); }
+  .revs p { font: italic 500 1.3rem/1.35 var(--ff-d); }
+  .revs cite { display: block; margin-top: 0.9rem; font-style: normal; color: var(--mut); font-size: 0.84rem; }
+
+  .sec--visit { background: #fff; border-top: 1px solid var(--line); }
+  .visit { display: grid; gap: 2.4rem; }
+  @media (min-width: 860px) { .visit { grid-template-columns: 1.2fr 1fr; align-items: end; } }
+  .addr { margin-top: 1.4rem; font-size: 1.05rem; }
+  .addr a { color: var(--rose); }
+  .hours { width: 100%; border-collapse: collapse; }
+  .hours th, .hours td { text-align: left; font-weight: 400; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
+  .hours td { text-align: right; color: var(--mut); }
+
+  .ft { padding: 3rem 0 6rem; font-size: 0.84rem; color: var(--mut); }
+  .ft .wrap { display: grid; gap: 0.5rem; }
+  .ft__logo { font: 600 2.2rem/1 var(--ff-d); color: var(--ink); }
+  .ft a { color: var(--rose); }
+  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 7.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); background: var(--ink); color: var(--bg); text-align: center; padding: 1rem; border-radius: 999px; text-decoration: none; font: 600 0.95rem var(--ff-b); box-shadow: 0 16px 30px -12px rgba(43, 29, 34, 0.6); }
+  @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }
+  .dlang { bottom: 0.9rem !important; }
+
+  .rv { opacity: 0; transform: translateY(16px); transition: opacity 0.8s, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .rv.is-in { opacity: 1; transform: none; }
+  .gal figure.rv:nth-child(odd).is-in { transform: translateY(1.4rem); }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
+</style>
+
+<script>
+  const cfg = JSON.parse(document.getElementById('cfg').textContent);
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  $$('.rv').forEach((el) => io.observe(el));
+
+  // zakładki zabiegów
+  $$('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+    $$('[data-tab]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+    $$('[data-panel]').forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.tab));
+  }));
+
+  // studio kolorów
+  const st = { color: cfg.colors[0], shape: 'amandel', finish: 'glans' };
+  const nails = $('[data-nails]');
+  const paint = () => {
+    document.documentElement.style.setProperty('--c', st.color.hex);
+    nails.dataset.finish = st.finish;
+    $$('path', nails).forEach((p) => p.setAttribute('d', cfg.nail[st.shape]));
+    $('[data-choice]').textContent = `${st.color.name} · ${cfg.shapes[st.shape]} · ${cfg.finishes[st.finish]}`;
+  };
+  $$('[data-color]').forEach((b) => b.addEventListener('click', () => {
+    st.color = cfg.colors.find((c) => c.id === b.dataset.color);
+    $$('[data-color]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+    paint();
+  }));
+  $$('[data-shape]').forEach((b) => b.addEventListener('click', () => { st.shape = b.dataset.shape; $$('[data-shape]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); paint(); }));
+  $$('[data-finish]').forEach((b) => b.addEventListener('click', () => { st.finish = b.dataset.finish; $$('[data-finish]').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); paint(); }));
+  $('[data-take]').addEventListener('click', () => { $('[data-color-select]').value = st.color.id; });
+  paint();
+
+  // formularz: data nie wcześniej niż jutro
+  const form = $('[data-form]');
+  const tm = new Date(); tm.setDate(tm.getDate() + 1);
+  form.day.min = tm.toISOString().slice(0, 10);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let ok = true;
+    ['day', 'name', 'phone'].forEach((n) => { const bad = !form[n].value.trim(); form[n].classList.toggle('is-bad', bad); if (bad) ok = false; });
+    if (!ok) return;
+    const color = cfg.colors.find((c) => c.id === form.color.value);
+    const d = new Date(form.day.value).toLocaleDateString({ en: 'en-GB', nl: 'nl-NL', pl: 'pl-PL' }[cfg.lang], { weekday: 'long', day: 'numeric', month: 'long' });
+    const msg = cfg.lang === 'pl'
+      ? `Dzień dobry! Proszę o termin na:${form.treat.value}\nKolor: ${color ? `${color.name}, ${cfg.shapes[st.shape]}, ${cfg.finishes[st.finish]}` : cfg.none}\nKiedy: ${d}, ${form.part.value.toLowerCase()}\nImię: ${form.name.value}`
+      : cfg.lang === 'en'
+      ? `Hi! I'd like to book: ${form.treat.value}\nColour: ${color ? `${color.name}, ${cfg.shapes[st.shape]}, ${cfg.finishes[st.finish]}` : cfg.none}\nWhen: ${d}, ${form.part.value.toLowerCase()}\nName: ${form.name.value}`
+      : `Hoi! Ik wil graag een afspraak voor: ${form.treat.value}\nKleur: ${color ? `${color.name}, ${cfg.shapes[st.shape]}, ${cfg.finishes[st.finish]}` : cfg.none}\nWanneer: ${d}, ${form.part.value.toLowerCase()}\nNaam: ${form.name.value}`;
+    $('[data-msg]').textContent = msg;
+    $('[data-done]').hidden = false;
+  });
+</script>

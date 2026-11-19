@@ -160,4 +160,31 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://vervostudio.com/pricing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vervostudio.com/pricing/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://vervostudio.com/pl/pricing/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://vervostudio.com/nl/pricing/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vervostudio.com/pricing/" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://vervostudio.com/pl/pricing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vervostudio.com/pricing/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://vervostudio.com/pl/pricing/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://vervostudio.com/nl/pricing/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vervostudio.com/pricing/" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://vervostudio.com/nl/pricing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vervostudio.com/pricing/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://vervostudio.com/pl/pricing/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://vervostudio.com/nl/pricing/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vervostudio.com/pricing/" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>
