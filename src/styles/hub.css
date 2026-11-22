@@ -702,3 +702,13 @@ main > .stage { background: transparent; }
 /* długie słowa (np. niderlandzkie złożenia) nie wypychają strony na wąskich telefonach */
 .phead__in > * { min-width: 0; }
 .phead__h, .chap__t, .h2, .showc__h, .pkg__n { overflow-wrap: break-word; hyphens: auto; }
+
+/* filtr branż na stronie Realizacje */
+.sites__cats { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: clamp(1.2rem, 3vh, 2rem); }
+.sites__cat { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.9rem; border-radius: 999px; border: 1px solid var(--line-2); background: transparent; color: var(--fg-2); font-size: 0.78rem; cursor: pointer; transition: background-color 0.25s, color 0.25s, border-color 0.25s; }
+.sites__cat span { font-size: 0.7rem; color: var(--muted); }
+.sites__cat:hover { border-color: var(--fg); color: var(--fg); }
+.sites__cat[aria-pressed='true'] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.sites__cat[aria-pressed='true'] span { color: var(--bg); opacity: 0.7; }
+.site[hidden] { display: none; }
+@media (max-width: 899px) { .sites__cats { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 0.2rem; } .sites__cats::-webkit-scrollbar { display: none; } .sites__cat { flex: none; } }

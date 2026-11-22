@@ -1,0 +1,491 @@
+---
+import Curtain from '../components/Curtain.astro';
+import DemoLang from '../components/DemoLang.astro';
+// Studio Adem (demo): studio jogi w Maastricht. NL + EN + PL.
+// Fikcyjne studio: adres, ceny, nauczyciele i opinie są przykładowe. Strony: src/pages/yoga/ (+ en/, pl/).
+
+const { lang = 'nl' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f) => `${base}/img/yoga/${f}`;
+const root = (l) => `${base}/yoga/${l === 'nl' ? '' : `${l}/`}`;
+const tel = '+31430000001';
+const telShow = '043 000 00 01';
+// rozkład: [godzina, typ, nauczyciel, minuty, wolne miejsca]; poziom wynika z typu
+const LEVEL = { vinyasa: 'all', lunch: 'all', hathaBeg: 'beg', yin: 'all', pilates: 'all', yinAdem: 'all', power: 'adv', rug: 'beg', hatha: 'all', herstel: 'all' };
+const WEEK = [
+  [['07:00', 'vinyasa', 'Iris', 60, 4], ['12:15', 'lunch', 'Bram', 45, 6], ['19:00', 'hathaBeg', 'Iris', 75, 2]],
+  [['09:30', 'yin', 'Noor', 75, 8], ['18:00', 'pilates', 'Sanne', 60, 0], ['20:00', 'yinAdem', 'Noor', 75, 5]],
+  [['07:00', 'power', 'Bram', 60, 3], ['12:15', 'lunch', 'Iris', 45, 7], ['19:00', 'rug', 'Sanne', 60, 1]],
+  [['09:30', 'hatha', 'Iris', 75, 7], ['18:00', 'vinyasa', 'Bram', 60, 5], ['20:00', 'yin', 'Noor', 75, 0]],
+  [['07:00', 'vinyasa', 'Iris', 60, 6], ['17:30', 'pilates', 'Sanne', 60, 4]],
+  [['09:00', 'hathaBeg', 'Iris', 75, 3], ['10:45', 'power', 'Bram', 75, 2]],
+  [['10:00', 'yin', 'Noor', 90, 6], ['17:00', 'herstel', 'Sanne', 75, 9]],
+];
+
+const T = {
+  nl: {
+    title: 'Studio Adem — yoga en pilates in Maastricht',
+    desc: 'Yogastudio aan het Bassin in Maastricht. Kleine groepen, lessen voor beginners en gevorderden, yin, vinyasa en pilates. Proefweek voor €19.',
+    nav: ['Rooster', 'Prijzen', 'Eerste les', 'Studio'], cta: 'Proefweek €19',
+    h1: 'Yoga voor stijve ruggen en drukke hoofden.',
+    lede: 'Kleine groepen van hooguit twaalf mensen in een lichte studio aan het Bassin. Nog nooit yoga gedaan? Dan ben je hier precies goed.',
+    seeTable: 'Bekijk het rooster',
+    facts: [['12', 'mensen per les, niet meer'], ['22', 'lessen per week'], ['Matten', 'en blokken liggen klaar']],
+    sLab: 'Rooster', sH: 'Deze week in de studio',
+    sLede: 'Kies een dag en een niveau. Reserveren kan tot een uur van tevoren, afmelden tot twee uur van tevoren.',
+    days: ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'], short: ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'],
+    levels: { any: 'Alle lessen', beg: 'Beginners', all: 'Voor iedereen', adv: 'Gevorderd' },
+    types: { vinyasa: 'Vinyasa flow', lunch: 'Lunchyoga', hathaBeg: 'Hatha voor beginners', yin: 'Yin yoga', pilates: 'Pilates op de mat', yinAdem: 'Yin en ademwerk', power: 'Power vinyasa', rug: 'Yoga voor je rug', hatha: 'Hatha yoga', herstel: 'Herstel en ontspanning' },
+    spots: '{n} plekken vrij', spot1: 'Nog 1 plek', full: 'Vol', reserve: 'Reserveer', wait: 'Wachtlijst', none: 'Geen lessen met dit niveau op deze dag.', today: 'vandaag',
+    bH: 'Je reservering', bName: 'Naam', bEmail: 'E-mail', bFirst: 'Dit is mijn eerste les bij Adem', bSend: 'Bevestig', bWait: 'Zet me op de wachtlijst', bClose: 'Sluiten',
+    doneH: 'Je plek is gereserveerd.', doneWait: 'Je staat op de wachtlijst. Komt er een plek vrij, dan krijg je meteen een mail.', doneP: 'Demoversie: er is niets verstuurd.',
+    pLab: 'Prijzen', pH: 'Kies wat bij je week past',
+    prices: [['Proefweek', '€19', 'Zeven dagen onbeperkt meedoen, voor nieuwe leden', true], ['Losse les', '€18', 'Handig als je af en toe komt'], ['10-rittenkaart', '€140', 'Vijf maanden geldig, ook voor een vriend'], ['Onbeperkt', '€89', 'per maand, maandelijks opzegbaar']],
+    fLab: 'Eerste les', fH: 'Wat je kunt verwachten',
+    first: [['Kom tien minuten eerder', 'Dan laten we je de studio zien en kies je rustig een plek.'], ['Neem niks mee', 'Matten, blokken, bolsters en dekens liggen klaar. Water kun je bij ons tappen.'], ['Vertel het als er iets is', 'Last van je rug, knie of zwanger? Zeg het voor de les, dan geven we je alternatieven.']],
+    tLab: 'Docenten', tH: 'Wie je les geeft',
+    teachers: [['Iris', 'Hatha en vinyasa', 'Geeft al vijftien jaar les en legt elke houding uit alsof je hem voor het eerst doet.'], ['Noor', 'Yin en ademwerk', 'Was fysiotherapeut. Haar avondlessen zijn de beste manier om je week af te sluiten.'], ['Bram', 'Power vinyasa', 'Voor wie wil zweten. Streng op techniek, nooit op flexibiliteit.'], ['Sanne', 'Pilates en rugyoga', 'Specialist in lessen voor mensen die veel zitten.']],
+    rLab: 'Ervaringen', rH: 'Wat leden zeggen',
+    reviews: [['Na drie maanden twee keer per week heb ik voor het eerst in jaren geen rugpijn meer na een werkdag.', 'Thomas, Wyck'], ['De groepen zijn echt klein. Iris kent na twee lessen je naam en weet waar je op moet letten.', 'Anna, Céramique'], ['Ik kwam voor de yin op zondagochtend en ben gebleven voor de hele sfeer.', 'Yara, Sint Pieter']],
+    vLab: 'De studio', vH: 'Aan het water, vijf minuten van het station',
+    addr: 'Bassin 000, 6211 AL Maastricht', bike: 'Fietsenstalling voor de deur, parkeergarage Bassin om de hoek.',
+    route: 'Route in Google Maps',
+    demo: 'Conceptwebsite voor een fictieve yogastudio, gemaakt door Vervo Studio.', credit: 'Website door Vervo Studio ↗',
+  },
+  en: {
+    title: 'Studio Adem — yoga and pilates in Maastricht',
+    desc: 'A yoga studio by the Bassin in Maastricht. Small groups, classes for beginners and experienced yogis, yin, vinyasa and pilates. Trial week for €19.',
+    nav: ['Timetable', 'Prices', 'First class', 'Studio'], cta: 'Trial week €19',
+    h1: 'Yoga for stiff backs and busy heads.',
+    lede: 'Small groups of twelve people at most, in a bright studio by the Bassin. Never done yoga before? Then you’re in exactly the right place.',
+    seeTable: 'See the timetable',
+    facts: [['12', 'people per class, no more'], ['22', 'classes a week'], ['Mats', 'and blocks ready for you']],
+    sLab: 'Timetable', sH: 'This week at the studio',
+    sLede: 'Pick a day and a level. You can book up to an hour before class and cancel up to two hours before.',
+    days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], short: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    levels: { any: 'All classes', beg: 'Beginners', all: 'Everyone', adv: 'Experienced' },
+    types: { vinyasa: 'Vinyasa flow', lunch: 'Lunchtime yoga', hathaBeg: 'Hatha for beginners', yin: 'Yin yoga', pilates: 'Mat pilates', yinAdem: 'Yin and breathwork', power: 'Power vinyasa', rug: 'Yoga for your back', hatha: 'Hatha yoga', herstel: 'Restore and relax' },
+    spots: '{n} places left', spot1: '1 place left', full: 'Full', reserve: 'Book', wait: 'Waiting list', none: 'No classes at this level on this day.', today: 'today',
+    bH: 'Your booking', bName: 'Name', bEmail: 'Email', bFirst: 'This is my first class at Adem', bSend: 'Confirm', bWait: 'Put me on the waiting list', bClose: 'Close',
+    doneH: 'Your place is booked.', doneWait: 'You’re on the waiting list. If a place opens up, you’ll get an email straight away.', doneP: 'Demo version: nothing was sent.',
+    pLab: 'Prices', pH: 'Pick what fits your week',
+    prices: [['Trial week', '€19', 'Seven days of unlimited classes, for new members', true], ['Single class', '€18', 'Handy if you come now and then'], ['10-class card', '€140', 'Valid for five months, can be shared with a friend'], ['Unlimited', '€89', 'a month, cancel any month']],
+    fLab: 'First class', fH: 'What to expect',
+    first: [['Come ten minutes early', 'We’ll show you around and you can choose your spot without rushing.'], ['Bring nothing', 'Mats, blocks, bolsters and blankets are ready. You can refill your water here.'], ['Tell us if anything’s up', 'Back or knee trouble, or pregnant? Mention it before class and we’ll give you alternatives.']],
+    tLab: 'Teachers', tH: 'Who teaches you',
+    teachers: [['Iris', 'Hatha and vinyasa', 'Has taught for fifteen years and explains every pose as if you’re doing it for the first time.'], ['Noor', 'Yin and breathwork', 'A former physiotherapist. Her evening classes are the best way to end your week.'], ['Bram', 'Power vinyasa', 'For those who want to sweat. Strict on technique, never on flexibility.'], ['Sanne', 'Pilates and back yoga', 'Specialises in classes for people who sit a lot.']],
+    rLab: 'Reviews', rH: 'What members say',
+    reviews: [['After three months of going twice a week, I finish a workday without back pain for the first time in years.', 'Thomas, Wyck'], ['The groups really are small. After two classes Iris knows your name and what to watch out for.', 'Anna, Céramique'], ['I came for the Sunday morning yin and stayed for the whole atmosphere.', 'Yara, Sint Pieter']],
+    vLab: 'The studio', vH: 'By the water, five minutes from the station',
+    addr: 'Bassin 000, 6211 AL Maastricht', bike: 'Bike racks outside, Bassin car park around the corner.',
+    route: 'Directions in Google Maps',
+    demo: 'Concept website for a fictional yoga studio, made by Vervo Studio.', credit: 'Website by Vervo Studio ↗',
+  },
+  pl: {
+    title: 'Studio Adem — joga i pilates w Maastricht',
+    desc: 'Studio jogi nad Bassin w Maastricht. Małe grupy, zajęcia dla początkujących i zaawansowanych, yin, vinyasa i pilates. Tydzień próbny za 19 €.',
+    nav: ['Grafik', 'Cennik', 'Pierwsze zajęcia', 'Studio'], cta: 'Tydzień próbny 19 €',
+    h1: 'Joga dla sztywnych pleców i zabieganych głów.',
+    lede: 'Małe grupy, najwyżej dwanaście osób, w jasnym studio nad Bassin. Joga to dla Ciebie nowość? Właśnie z myślą o takich osobach prowadzimy zajęcia.',
+    seeTable: 'Zobacz grafik',
+    facts: [['12', 'osób na zajęciach, nie więcej'], ['22', 'zajęcia w tygodniu'], ['Maty', 'i klocki czekają na miejscu']],
+    sLab: 'Grafik', sH: 'W tym tygodniu w studio',
+    sLede: 'Wybierz dzień i poziom. Zapisać się można najpóźniej godzinę przed zajęciami, a odwołać rezerwację do dwóch godzin przed.',
+    days: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'], short: ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'Sb', 'Nd'],
+    levels: { any: 'Wszystkie zajęcia', beg: 'Dla początkujących', all: 'Dla każdego', adv: 'Dla zaawansowanych' },
+    types: { vinyasa: 'Vinyasa flow', lunch: 'Joga w przerwie na lunch', hathaBeg: 'Hatha dla początkujących', yin: 'Yin joga', pilates: 'Pilates na macie', yinAdem: 'Yin i praca z oddechem', power: 'Power vinyasa', rug: 'Joga na zdrowy kręgosłup', hatha: 'Hatha joga', herstel: 'Regeneracja i relaks' },
+    spots: 'Wolne miejsca: {n}', spot1: 'Zostało 1 miejsce', full: 'Brak miejsc', reserve: 'Zapisz się', wait: 'Lista rezerwowa', none: 'Tego dnia nie ma zajęć na tym poziomie.', today: 'dziś',
+    bH: 'Twoja rezerwacja', bName: 'Imię i nazwisko', bEmail: 'E-mail', bFirst: 'To moje pierwsze zajęcia w Adem', bSend: 'Potwierdź', bWait: 'Zapisz mnie na listę rezerwową', bClose: 'Zamknij',
+    doneH: 'Miejsce jest zarezerwowane.', doneWait: 'Jesteś na liście rezerwowej. Gdy zwolni się miejsce, od razu dostaniesz maila.', doneP: 'Wersja pokazowa: nic nie zostało wysłane.',
+    pLab: 'Cennik', pH: 'Wybierz to, co pasuje do Twojego tygodnia',
+    prices: [['Tydzień próbny', '19 €', 'Siedem dni bez limitu zajęć, dla nowych osób', true], ['Pojedyncze zajęcia', '18 €', 'Wygodne, jeśli przychodzisz od czasu do czasu'], ['Karnet na 10 wejść', '140 €', 'Ważny pięć miesięcy, można dzielić z kimś bliskim'], ['Bez limitu', '89 €', 'miesięcznie, z miesięcznym okresem wypowiedzenia']],
+    fLab: 'Pierwsze zajęcia', fH: 'Jak to wygląda',
+    first: [['Przyjdź dziesięć minut wcześniej', 'Pokażemy Ci studio i spokojnie wybierzesz miejsce.'], ['Nic nie musisz zabierać', 'Maty, klocki, wałki i koce czekają na miejscu. Wodę można nalać u nas.'], ['Powiedz nam, jeśli coś dolega', 'Bolą plecy albo kolano, jesteś w ciąży? Powiedz przed zajęciami, a zaproponujemy inne warianty ćwiczeń.']],
+    tLab: 'Nauczyciele', tH: 'Kto prowadzi zajęcia',
+    teachers: [['Iris', 'Hatha i vinyasa', 'Uczy od piętnastu lat i tłumaczy każdą pozycję tak, jakby robiło się ją pierwszy raz.'], ['Noor', 'Yin i oddech', 'Wcześniej fizjoterapeutka. Jej wieczorne zajęcia to najlepszy sposób na zakończenie tygodnia.'], ['Bram', 'Power vinyasa', 'Dla tych, którzy chcą się spocić. Wymagający, jeśli chodzi o technikę, nigdy o rozciągnięcie.'], ['Sanne', 'Pilates i joga na kręgosłup', 'Specjalizuje się w zajęciach dla osób, które dużo siedzą.']],
+    rLab: 'Opinie', rH: 'Co mówią nasi bywalcy',
+    reviews: [['Po trzech miesiącach, dwa razy w tygodniu, pierwszy raz od lat kończę dzień pracy bez bólu pleców.', 'Thomas, Wyck'], ['Grupy są naprawdę małe. Po dwóch zajęciach Iris zna Twoje imię i wie, na co masz uważać.', 'Anna, Céramique'], ['Przyszłam na niedzielną yin, a zostałam dla całej atmosfery.', 'Yara, Sint Pieter']],
+    vLab: 'Studio', vH: 'Nad wodą, pięć minut od dworca',
+    addr: 'Bassin 000, 6211 AL Maastricht', bike: 'Stojaki na rowery przed wejściem, parking Bassin tuż obok.',
+    route: 'Trasa w Google Maps',
+    demo: 'Strona koncepcyjna fikcyjnego studia jogi, wykonana przez Vervo Studio.', credit: 'Strona: Vervo Studio ↗',
+  },
+};
+const t = T[lang];
+const cfg = {
+  lang,
+  week: WEEK.map((day) => day.map(([time, type, who, mins, spots]) => ({ time, type, name: t.types[type], who, mins, spots, level: LEVEL[type] }))),
+  t: { days: t.days, short: t.short, levels: t.levels, spots: t.spots, spot1: t.spot1, full: t.full, reserve: t.reserve, wait: t.wait, none: t.none, today: t.today, doneH: t.doneH, doneWait: t.doneWait, bSend: t.bSend, bWait: t.bWait },
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="nl" href={new URL(root('nl'), Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(root('en'), Astro.url).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(root('pl'), Astro.url).href} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.desc} />
+    <meta property="og:image" content={new URL(img('hero.webp'), Astro.url).href} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f1ebe2" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tenor+Sans&family=Mulish:wght@400;500;600;700&display=swap" />
+  </head>
+  <body>
+    <Curtain />
+    <header class="hd" id="hd">
+      <a class="hd__logo" href="#top">adem<small>yoga · pilates</small></a>
+      <nav class="hd__nav">{['#rooster', '#prijzen', '#eerste-les', '#studio'].map((h, i) => <a href={h}>{t.nav[i]}</a>)}</nav>
+      <a class="btn btn--clay hd__cta" href="#prijzen">{t.cta}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <img class="hero__img" src={img('hero.webp')} alt="" fetchpriority="high" />
+        <div class="hero__in">
+          <h1>{t.h1}</h1>
+          <p class="lede">{t.lede}</p>
+          <div class="hero__cta">
+            <a class="btn btn--light" href="#rooster">{t.seeTable}</a>
+            <a class="btn btn--clay" href="#prijzen">{t.cta}</a>
+          </div>
+        </div>
+      </section>
+
+      <ul class="facts">{t.facts.map(([b, s]) => <li><b>{b}</b><span>{s}</span></li>)}</ul>
+
+      <section class="sec" id="rooster">
+        <div class="wrap">
+          <div class="sched__head">
+            <div>
+              <p class="lab">{t.sLab}</p>
+              <h2 class="h2">{t.sH}</h2>
+              <p class="lede">{t.sLede}</p>
+            </div>
+            <div class="lvls" role="group" aria-label={t.sLab} data-lvls>
+              {Object.entries(t.levels).map(([k, n], i) => <button type="button" data-lvl={k} aria-pressed={i === 0 ? 'true' : 'false'}>{n}</button>)}
+            </div>
+          </div>
+          <div class="days" role="tablist" data-days>
+            {t.short.map((d, i) => <button type="button" role="tab" data-day={i} aria-selected="false" aria-label={t.days[i]}><span>{d}</span></button>)}
+          </div>
+          <ul class="classes" data-classes aria-live="polite"></ul>
+          <form class="booking" data-booking hidden novalidate>
+            <div class="booking__top">
+              <p class="booking__h">{t.bH}</p>
+              <button type="button" class="booking__x" data-close aria-label={t.bClose}>✕</button>
+            </div>
+            <p class="booking__what" data-what></p>
+            <div class="f2">
+              <label class="f"><span>{t.bName}</span><input name="name" autocomplete="name" required /></label>
+              <label class="f"><span>{t.bEmail}</span><input name="email" type="email" autocomplete="email" required /></label>
+            </div>
+            <label class="chk"><input type="checkbox" name="first" /><span>{t.bFirst}</span></label>
+            <button class="btn btn--clay" type="submit" data-submit>{t.bSend}</button>
+            <div class="done" data-done hidden><h3 data-done-h>{t.doneH}</h3><p>{t.doneP}</p></div>
+          </form>
+        </div>
+      </section>
+
+      <section class="sec sec--sand" id="prijzen">
+        <div class="wrap">
+          <p class="lab rv">{t.pLab}</p>
+          <h2 class="h2 rv">{t.pH}</h2>
+          <div class="prices">
+            {t.prices.map(([n, p, d, hi]) => <article class={`rv${hi ? ' is-hi' : ''}`}><h3>{n}</h3><b>{p}</b><p>{d}</p></article>)}
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="eerste-les">
+        <div class="wrap first">
+          <img class="first__img rv" src={img('zit.webp')} alt="" loading="lazy" />
+          <div>
+            <p class="lab rv">{t.fLab}</p>
+            <h2 class="h2 rv">{t.fH}</h2>
+            <ol class="first__list">{t.first.map(([h, p]) => <li class="rv"><h3>{h}</h3><p>{p}</p></li>)}</ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--dark">
+        <div class="wrap">
+          <p class="lab">{t.tLab}</p>
+          <h2 class="h2">{t.tH}</h2>
+          <div class="teach">
+            {t.teachers.map(([n, s, d]) => <article><p class="teach__n">{n}</p><p class="teach__s">{s}</p><p>{d}</p></article>)}
+          </div>
+        </div>
+      </section>
+
+      <section class="pics" aria-hidden="true">
+        <img src={img('les.webp')} alt="" loading="lazy" />
+        <img src={img('hond.webp')} alt="" loading="lazy" />
+        <img src={img('staand.webp')} alt="" loading="lazy" />
+      </section>
+
+      <section class="sec">
+        <div class="wrap">
+          <p class="lab rv">{t.rLab}</p>
+          <h2 class="h2 rv">{t.rH}</h2>
+          <div class="revs">{t.reviews.map(([q, w]) => <blockquote class="rv"><p>{q}</p><cite>{w}</cite></blockquote>)}</div>
+        </div>
+      </section>
+
+      <section class="sec sec--sand" id="studio">
+        <div class="wrap visit">
+          <div>
+            <p class="lab">{t.vLab}</p>
+            <h2 class="h2">{t.vH}</h2>
+          </div>
+          <div class="visit__info">
+            <p class="visit__addr">{t.addr}</p>
+            <p>{t.bike}</p>
+            <p><a href={`tel:${tel}`}>{telShow}</a> · <a href="https://maps.google.com/?q=Bassin+Maastricht" target="_blank" rel="noopener">{t.route} ↗</a></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ft">
+      <div class="wrap ft__in">
+        <p class="ft__logo">adem</p>
+        <p>Maastricht · KvK 00000000 · BTW NL000000000B01</p>
+        <p>{t.demo} <a href={`${base}/`}>{t.credit}</a></p>
+      </div>
+    </footer>
+    <div class="mbar"><a href="#rooster">{t.nav[0]}</a><a class="mbar__go" href="#prijzen">{t.cta}</a></div>
+    <DemoLang lang={lang} links={[['nl', root('nl')], ['en', root('en')], ['pl', root('pl')]]} />
+    <script type="application/json" id="cfg" set:html={JSON.stringify(cfg)} />
+  </body>
+</html>
+
+<style is:global>
+  :root { --bg: #f1ebe2; --paper: #f8f4ee; --sand: #e6dccd; --ink: #2b2925; --mut: #716a60; --clay: #b0603a; --olive: #4d5741; --line: rgba(43, 41, 37, 0.14); --ff-d: 'Tenor Sans', Georgia, sans-serif; --ff: 'Mulish', system-ui, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 4.5rem; }
+  body { background: var(--bg); color: var(--ink); font: 400 16.5px/1.7 var(--ff); overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { width: min(100% - 2.4rem, 72rem); margin-inline: auto; }
+  .lab { font: 400 0.82rem/1 var(--ff-d); letter-spacing: 0.18em; text-transform: uppercase; color: var(--clay); margin-bottom: 1rem; }
+  .h2 { font: 400 clamp(2rem, 4.8vw, 3.2rem)/1.12 var(--ff-d); letter-spacing: -0.01em; max-width: 20ch; }
+  .lede { color: var(--mut); max-width: 34rem; margin-top: 1rem; font-size: 1.05rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.95rem 1.5rem; border-radius: 999px; font: 600 0.94rem/1 var(--ff); text-decoration: none; border: 1.5px solid transparent; cursor: pointer; transition: background 0.25s, color 0.25s; }
+  .btn--clay { background: var(--clay); color: #fff; }
+  .btn--clay:hover { background: #95502f; }
+  .btn--light { background: rgba(255, 255, 255, 0.92); color: var(--ink); }
+
+  .hd { position: fixed; inset: 0 0 auto; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem clamp(1.2rem, 3vw, 2.4rem); transition: background 0.3s, padding 0.3s; color: #fff; }
+  .hd.is-solid { background: rgba(241, 235, 226, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--ink); padding-block: 0.75rem; border-bottom: 1px solid var(--line); }
+  .hd__logo { font: 400 1.7rem/1 var(--ff-d); text-decoration: none; letter-spacing: 0.04em; display: flex; align-items: baseline; gap: 0.6rem; }
+  .hd__logo small { font: 500 0.7rem var(--ff); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.75; display: none; }
+  .hd__nav { display: none; gap: 2rem; font-size: 0.94rem; }
+  .hd__nav a { text-decoration: none; opacity: 0.85; }
+  .hd__nav a:hover { opacity: 1; }
+  .hd__cta { padding: 0.7rem 1.1rem; font-size: 0.86rem; }
+  @media (min-width: 560px) { .hd__logo small { display: inline; } }
+  @media (min-width: 940px) { .hd__nav { display: flex; } }
+
+  .hero { position: relative; min-height: min(100svh, 56rem); display: grid; place-items: center; text-align: center; padding: 7rem clamp(1.2rem, 4vw, 3rem) 4rem; color: #fff; isolation: isolate; overflow: hidden; }
+  .hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(30, 24, 18, 0.45), rgba(30, 24, 18, 0.25) 40%, rgba(30, 24, 18, 0.6)); }
+  .hero__in { max-width: 52rem; display: grid; justify-items: center; }
+  .hero h1 { font: 400 clamp(2.4rem, 6.6vw, 5.2rem)/1.06 var(--ff-d); letter-spacing: -0.01em; text-wrap: balance; }
+  .hero .lede { color: rgba(255, 255, 255, 0.88); margin-top: 1.4rem; font-size: clamp(1rem, 1.6vw, 1.15rem); }
+  .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.7rem; margin-top: 2rem; }
+
+  .facts { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 72rem; margin: 0 auto; border-bottom: 1px solid var(--line); }
+  .facts li { padding: 1.4rem clamp(0.8rem, 3vw, 2rem); display: grid; gap: 0.2rem; text-align: center; }
+  .facts li + li { border-left: 1px solid var(--line); }
+  .facts b { font: 400 clamp(1.4rem, 3.4vw, 2.2rem)/1.1 var(--ff-d); }
+  .facts span { font-size: 0.82rem; color: var(--mut); line-height: 1.35; }
+
+  .sec { padding: clamp(4.5rem, 9vw, 7rem) 0; }
+  .sec--sand { background: var(--sand); }
+  .sched__head { display: grid; gap: 1.6rem; }
+  @media (min-width: 900px) { .sched__head { grid-template-columns: 1fr auto; align-items: end; } }
+  .sched__head > * { min-width: 0; }
+  .lvls { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .lvls button, .days button { font: 600 0.88rem var(--ff); border: 1.5px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 0.55rem 0.95rem; cursor: pointer; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+  .lvls button[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.35rem; margin-top: 2.4rem; }
+  .days button { border-radius: 14px; padding: 0.75rem 0.2rem; display: grid; justify-items: center; gap: 0.1rem; }
+  .days button small { font-size: 0.66rem; color: var(--clay); font-weight: 700; }
+  .days button[aria-selected='true'] { background: var(--clay); color: #fff; border-color: var(--clay); }
+  .days button[aria-selected='true'] small { color: #fff; }
+  .classes { list-style: none; margin-top: 1.2rem; display: grid; }
+  .cls { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr) auto; gap: 0.4rem 1rem; align-items: center; padding: 1.15rem 0.4rem; border-bottom: 1px solid var(--line); }
+  .cls__time { font: 400 1.25rem var(--ff-d); }
+  .cls__name { font-weight: 700; font-size: 1.04rem; }
+  .cls__meta { font-size: 0.86rem; color: var(--mut); }
+  .cls__lvl { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.2rem 0.5rem; border-radius: 999px; margin-left: 0.4rem; background: var(--sand); color: var(--olive); vertical-align: 2px; }
+  .cls__lvl--beg { background: #e3ead8; }
+  .cls__lvl--adv { background: #f0d9cb; color: var(--clay); }
+  .cls__right { display: grid; justify-items: end; gap: 0.35rem; }
+  .cls__spots { font-size: 0.8rem; color: var(--mut); white-space: nowrap; }
+  .cls__spots.is-low { color: var(--clay); font-weight: 700; }
+  .cls__btn { font: 600 0.86rem var(--ff); border-radius: 999px; padding: 0.55rem 1rem; border: 1.5px solid var(--ink); background: transparent; cursor: pointer; white-space: nowrap; color: var(--ink); }
+  .cls__btn:hover { background: var(--ink); color: var(--paper); }
+  .cls__btn.is-wait { border-style: dashed; color: var(--mut); border-color: var(--mut); }
+  .classes .empty { padding: 2rem 0.4rem; color: var(--mut); }
+  @media (max-width: 520px) { .cls { grid-template-columns: 3.4rem minmax(0, 1fr); } .cls__right { grid-column: 2; justify-items: start; grid-auto-flow: column; align-items: center; justify-content: start; gap: 0.8rem; } }
+  .booking { margin-top: 1.4rem; background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: clamp(1.2rem, 3.5vw, 2rem); display: grid; gap: 1rem; }
+  .booking__top { display: flex; justify-content: space-between; align-items: center; }
+  .booking__h { font: 400 1.4rem var(--ff-d); }
+  .booking__x { border: 0; background: var(--sand); width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer; color: var(--ink); }
+  .booking__what { font-weight: 700; background: var(--bg); padding: 0.75rem 0.95rem; border-radius: 12px; }
+  .f { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.88rem; }
+  .f input { font: 400 1rem var(--ff); border: 1.5px solid var(--line); border-radius: 12px; padding: 0.8rem 0.95rem; background: #fff; width: 100%; color: var(--ink); }
+  .f input:focus { outline: none; border-color: var(--clay); }
+  .f .is-bad { border-color: #b3261e; }
+  .f2 { display: grid; gap: 1rem; }
+  @media (min-width: 560px) { .f2 { grid-template-columns: 1fr 1fr; } }
+  .chk { display: flex; gap: 0.6rem; align-items: center; font-size: 0.94rem; cursor: pointer; }
+  .chk input { width: 1.15rem; height: 1.15rem; accent-color: var(--clay); }
+  .booking .btn { justify-self: start; }
+  .done { background: #e6ecdf; border-radius: 14px; padding: 1rem 1.1rem; }
+  .done h3 { font: 400 1.2rem var(--ff-d); color: var(--olive); }
+  .done p { color: var(--mut); font-size: 0.86rem; margin-top: 0.3rem; }
+
+  .prices { display: grid; gap: 1rem; margin-top: 2.6rem; }
+  @media (min-width: 640px) { .prices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1040px) { .prices { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .prices article { background: var(--paper); border-radius: 22px; padding: 1.6rem; display: grid; gap: 0.5rem; align-content: start; }
+  .prices article.is-hi { background: var(--clay); color: #fff; }
+  .prices h3 { font: 600 0.96rem var(--ff); }
+  .prices b { font: 400 2.6rem/1 var(--ff-d); }
+  .prices p { font-size: 0.92rem; color: var(--mut); }
+  .prices .is-hi p { color: rgba(255, 255, 255, 0.85); }
+
+  .first { display: grid; gap: 2.6rem; align-items: center; }
+  @media (min-width: 900px) { .first { grid-template-columns: 0.9fr 1.1fr; gap: 4rem; } }
+  .first > * { min-width: 0; }
+  .first__img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 200px 200px 22px 22px; }
+  .first__list { list-style: none; counter-reset: s; margin-top: 2rem; display: grid; gap: 1.4rem; }
+  .first__list li { counter-increment: s; padding-left: 3rem; position: relative; }
+  .first__list li::before { content: counter(s); position: absolute; left: 0; top: 0.1rem; width: 2rem; height: 2rem; display: grid; place-items: center; border: 1px solid var(--clay); border-radius: 50%; color: var(--clay); font: 400 0.95rem var(--ff-d); }
+  .first__list h3 { font: 700 1.05rem var(--ff); }
+  .first__list p { color: var(--mut); font-size: 0.96rem; }
+
+  .sec--dark { background: var(--olive); color: var(--paper); }
+  .sec--dark .lab { color: #e2b89f; }
+  .teach { display: grid; gap: 1px; margin-top: 2.6rem; background: rgba(248, 244, 238, 0.18); border: 1px solid rgba(248, 244, 238, 0.18); border-radius: 22px; overflow: hidden; }
+  @media (min-width: 760px) { .teach { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { .teach { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .teach article { background: var(--olive); padding: 1.6rem; display: grid; gap: 0.4rem; align-content: start; }
+  .teach__n { font: 400 1.9rem/1 var(--ff-d); }
+  .teach__s { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: #e2b89f; font-weight: 700; margin-bottom: 0.4rem; }
+  .teach article p:last-child { color: #d9dccf; font-size: 0.94rem; }
+
+  .pics { display: grid; grid-template-columns: 1.3fr 1fr 0.8fr; gap: 0.6rem; padding: 0.6rem; }
+  .pics img { width: 100%; height: clamp(12rem, 30vw, 24rem); object-fit: cover; border-radius: 14px; }
+  @media (max-width: 640px) { .pics { grid-template-columns: 1fr 1fr; } .pics img:first-child { grid-column: span 2; } }
+
+  .revs { display: grid; gap: 2rem; margin-top: 2.4rem; }
+  @media (min-width: 880px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .revs blockquote { border-top: 1px solid var(--ink); padding-top: 1.2rem; }
+  .revs p { font: 400 1.2rem/1.5 var(--ff-d); }
+  .revs cite { display: block; margin-top: 0.9rem; font-style: normal; color: var(--mut); font-size: 0.9rem; }
+
+  .visit { display: grid; gap: 2rem; }
+  @media (min-width: 900px) { .visit { grid-template-columns: 1fr 1fr; align-items: end; } }
+  .visit > * { min-width: 0; }
+  .visit__info { display: grid; gap: 0.6rem; color: var(--mut); }
+  .visit__addr { font: 400 1.6rem/1.3 var(--ff-d); color: var(--ink); }
+  .visit__info a { color: var(--clay); font-weight: 700; }
+
+  .ft { padding: 3rem 0 6.5rem; font-size: 0.86rem; color: var(--mut); }
+  .ft__in { display: grid; gap: 0.4rem; }
+  .ft__logo { font: 400 2.2rem/1 var(--ff-d); color: var(--ink); letter-spacing: 0.04em; }
+  .ft a { color: var(--clay); font-weight: 700; }
+  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 7.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); display: grid; grid-template-columns: auto 1fr; gap: 0.4rem; }
+  .mbar a { display: grid; place-items: center; padding: 0.95rem 1rem; border-radius: 999px; text-decoration: none; font: 600 0.92rem var(--ff); background: var(--paper); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.4); white-space: nowrap; }
+  .mbar__go { background: var(--clay) !important; color: #fff !important; border-color: var(--clay) !important; }
+  @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }
+  .dlang { bottom: 0.9rem !important; }
+  @media (min-width: 1000px) { .dlang { bottom: 1.2rem !important; } }
+
+  .rv { opacity: 0; transform: translateY(16px); transition: opacity 0.9s, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .rv.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
+</style>
+
+<script>
+  import { $, $$, readCfg, reveal, localNow } from '../scripts/demo-kit.js';
+  const cfg = readCfg();
+  const L = cfg.t;
+  reveal();
+
+  const hd = $('#hd');
+  const onScroll = () => hd.classList.toggle('is-solid', scrollY > 60);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // grafik zajęć
+  const { wd: today } = localNow();
+  let day = today, lvl = 'any', picked = null;
+  const list = $('[data-classes]'), booking = $('[data-booking]');
+  $$('[data-days] button').forEach((b) => {
+    if (+b.dataset.day === today) b.insertAdjacentHTML('beforeend', `<small>${L.today}</small>`);
+  });
+  const spotsTxt = (n) => (n === 0 ? L.full : n === 1 ? L.spot1 : L.spots.replace('{n}', String(n)));
+  const render = () => {
+    $$('[data-days] button').forEach((b) => b.setAttribute('aria-selected', String(+b.dataset.day === day)));
+    $$('[data-lvl]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lvl === lvl)));
+    const items = cfg.week[day].filter((c) => lvl === 'any' || c.level === lvl);
+    if (!items.length) { list.innerHTML = `<li class="empty">${L.none}</li>`; return; }
+    list.replaceChildren(...items.map((c) => {
+      const li = document.createElement('li');
+      li.className = 'cls';
+      li.innerHTML = `<span class="cls__time"></span><div><p class="cls__name"></p><p class="cls__meta"></p></div><div class="cls__right"><span class="cls__spots"></span><button type="button" class="cls__btn"></button></div>`;
+      li.querySelector('.cls__time').textContent = c.time;
+      const nm = li.querySelector('.cls__name');
+      nm.textContent = c.name;
+      if (c.level !== 'all') nm.insertAdjacentHTML('beforeend', `<span class="cls__lvl cls__lvl--${c.level}">${L.levels[c.level]}</span>`);
+      li.querySelector('.cls__meta').textContent = `${c.who} · ${c.mins} min`;
+      const sp = li.querySelector('.cls__spots');
+      sp.textContent = spotsTxt(c.spots);
+      sp.classList.toggle('is-low', c.spots <= 2);
+      const btn = li.querySelector('.cls__btn');
+      btn.textContent = c.spots ? L.reserve : L.wait;
+      btn.classList.toggle('is-wait', !c.spots);
+      btn.addEventListener('click', () => open(c));
+      return li;
+    }));
+  };
+  const open = (c) => {
+    picked = c;
+    $('[data-what]').textContent = `${L.days[day]} ${c.time} · ${c.name} · ${c.who}`;
+    $('[data-submit]').textContent = c.spots ? L.bSend : L.bWait;
+    $('[data-done]').hidden = true;
+    booking.hidden = false;
+    booking.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    booking.elements.name.focus({ preventScroll: true });
+  };
+  $$('[data-days] button').forEach((b) => b.addEventListener('click', () => { day = +b.dataset.day; render(); }));
+  $$('[data-lvl]').forEach((b) => b.addEventListener('click', () => { lvl = b.dataset.lvl; render(); }));
+  $('[data-close]').addEventListener('click', () => { booking.hidden = true; });
+  booking.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let ok = true;
+    const n = booking.elements.name, m = booking.elements.email;
+    const badN = n.value.trim().length < 2, badM = !/^\S+@\S+\.\S+$/.test(m.value);
+    n.classList.toggle('is-bad', badN); m.classList.toggle('is-bad', badM);
+    if (badN || badM) { ok = false; (badN ? n : m).focus(); }
+    if (!ok) return;
+    $('[data-done-h]').textContent = picked && picked.spots ? L.doneH : L.doneWait;
+    if (picked && picked.spots) { picked.spots -= 1; render(); }
+    $('[data-done]').hidden = false;
+  });
+  render();
+</script>

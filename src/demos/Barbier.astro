@@ -33,7 +33,7 @@ const T = {
     desc: 'Fades, knippen, baard en hot towel shaves in Wyck, Maastricht. Online je stoel boeken in 30 seconden.',
     nav: ['Prijzen', 'Werk', 'Team', 'Contact'], book: 'Boek je stoel', call: 'Bel',
     kicker: 'Barbershop · Wyck, Maastricht',
-    h1: ['Strak geknipt.', 'Zonder wachtrij.'],
+    h1: 'Fades, baarden & hot towel shaves',
     lede: 'Fades, klassieke cuts en hot towel shaves. Boek online, kom binnen, je stoel staat klaar.',
     seePrices: 'Bekijk prijzen',
     stats: [['4,9', 'gemiddeld op Google'], ['380+', 'reviews'], ['3', 'barbers, 6 dagen per week']],
@@ -82,7 +82,7 @@ const T = {
     desc: 'Fades, cuts, beards and hot towel shaves in Wyck, Maastricht. Book your chair online in 30 seconds.',
     nav: ['Prices', 'Work', 'Team', 'Contact'], book: 'Book your chair', call: 'Call',
     kicker: 'Barbershop · Wyck, Maastricht',
-    h1: ['Sharp cuts.', 'No waiting.'],
+    h1: 'Fades, beards & hot towel shaves',
     lede: 'Fades, classic cuts and hot towel shaves. Book online, walk in, your chair is ready.',
     seePrices: 'See prices',
     stats: [['4.9', 'average on Google'], ['380+', 'reviews'], ['3', 'barbers, 6 days a week']],
@@ -131,7 +131,7 @@ const T = {
     desc: 'Fade’y, strzyżenie, broda i golenie na gorąco w dzielnicy Wyck w Maastricht. Zarezerwuj fotel online w 30 sekund.',
     nav: ['Cennik', 'Realizacje', 'Barberzy', 'Kontakt'], book: 'Zarezerwuj fotel', call: 'Zadzwoń',
     kicker: 'Barbershop · Wyck, Maastricht',
-    h1: ['Równo ostrzyżony.', 'Bez kolejki.'],
+    h1: 'Fade, broda & golenie brzytwą',
     lede: 'Fade’y, klasyczne cięcia i golenie z gorącym ręcznikiem. Rezerwujesz online, przychodzisz, a fotel już na Ciebie czeka.',
     seePrices: 'Zobacz cennik',
     stats: [['4,9', 'średnia ocena w Google'], ['380+', 'opinii'], ['3', 'barberów, 6 dni w tygodniu']],
@@ -203,7 +203,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter+Tight:wght@400;500;600&display=swap" />
     <link rel="preload" as="image" href={img('hero.webp')} />
   </head>
   <body>
@@ -221,7 +221,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
         <img class="hero__img" src={img('hero.webp')} alt="" fetchpriority="high" />
         <div class="hero__in">
           <p class="kicker">{t.kicker}</p>
-          <h1><span>{t.h1[0]}</span><em>{t.h1[1]}</em></h1>
+          <h1>{t.h1.split(' & ').map((part, i) => (i ? <><span class="amp">&amp;</span>{' '}{part}</> : <>{part}{' '}</>))}</h1>
           <p class="hero__lede">{t.lede}</p>
           <div class="hero__cta">
             <a class="btn btn--brass" href="#boeken">{t.book}</a>
@@ -408,7 +408,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
 </html>
 
 <style is:global>
-  :root { --bg: #121110; --bg2: #1b1917; --fg: #efe6d8; --mut: #a39a8c; --line: rgba(239, 230, 216, 0.14); --brass: #c8a165; --brass2: #e0bd84; --ff-d: 'Anton', Impact, sans-serif; --ff-s: 'Instrument Serif', Georgia, serif; --ff-b: 'Inter Tight', system-ui, sans-serif; }
+  :root { --bg: #121110; --bg2: #1b1917; --fg: #efe6d8; --mut: #a39a8c; --line: rgba(239, 230, 216, 0.14); --brass: #c8a165; --brass2: #e0bd84; --ff-d: 'Big Shoulders Display', Impact, sans-serif; --ff-s: 'Inter Tight', system-ui, sans-serif; --ff-b: 'Inter Tight', system-ui, sans-serif; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   body { background: var(--bg); color: var(--fg); font: 400 16px/1.6 var(--ff-b); overflow-x: hidden; }
@@ -416,7 +416,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
   a { color: inherit; }
   .wrap { width: min(100% - 2.4rem, 72rem); margin-inline: auto; }
   .lab { font: 600 0.72rem/1 var(--ff-b); letter-spacing: 0.22em; text-transform: uppercase; color: var(--brass); margin-bottom: 1rem; }
-  .h2 { font: 400 clamp(2.4rem, 7vw, 4.6rem)/0.95 var(--ff-d); text-transform: uppercase; letter-spacing: 0.01em; max-width: 18ch; }
+  .h2 { font: 800 clamp(2.4rem, 7vw, 4.6rem)/0.95 var(--ff-d); text-transform: uppercase; letter-spacing: 0.01em; max-width: 18ch; }
   .muted { color: var(--mut); font-size: 0.92rem; }
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.95rem 1.4rem; border-radius: 2px; font: 600 0.92rem/1 var(--ff-b); text-decoration: none; letter-spacing: 0.02em; border: 1px solid transparent; cursor: pointer; transition: background 0.25s, color 0.25s, border-color 0.25s; }
   .btn--brass { background: var(--brass); color: #16120c; }
@@ -428,7 +428,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
 
   .hd { position: fixed; inset: 0 0 auto; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem clamp(1.2rem, 3vw, 2.4rem); transition: background 0.3s, border-color 0.3s; border-bottom: 1px solid transparent; }
   .hd.is-solid { background: rgba(18, 17, 16, 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-color: var(--line); }
-  .hd__logo { font: 400 1.5rem/1 var(--ff-d); text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
+  .hd__logo { font: 800 1.5rem/1 var(--ff-d); text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
   .hd__nav { display: none; gap: 2rem; font-size: 0.9rem; }
   .hd__nav a { text-decoration: none; color: var(--mut); transition: color 0.2s; }
   .hd__nav a:hover { color: var(--fg); }
@@ -440,21 +440,20 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
   .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(18, 17, 16, 0.55) 0%, rgba(18, 17, 16, 0.25) 35%, rgba(18, 17, 16, 0.85) 75%, #121110 100%); }
   @keyframes heroZoom { to { transform: scale(1); } }
   .kicker { font: 600 0.74rem/1 var(--ff-b); letter-spacing: 0.24em; text-transform: uppercase; color: var(--brass2); margin-bottom: 1.2rem; }
-  .hero h1 { font: 400 clamp(3.6rem, 15vw, 10.5rem)/0.86 var(--ff-d); text-transform: uppercase; letter-spacing: 0.005em; }
-  .hero h1 span, .hero h1 em { display: block; }
-  .hero h1 em { font: italic 400 clamp(3rem, 12vw, 8.6rem)/0.95 var(--ff-s); text-transform: none; color: var(--brass2); letter-spacing: -0.01em; }
+  .hero h1 { font: 900 clamp(3.4rem, 13.5vw, 9.6rem)/0.84 var(--ff-d); text-transform: uppercase; letter-spacing: -0.005em; max-width: 11ch; }
+  .hero h1 .amp { color: var(--brass2); }
   .hero__lede { max-width: 34rem; margin-top: 1.4rem; color: #ddd3c3; font-size: clamp(1rem, 1.5vw, 1.15rem); }
   .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
   .status { margin-top: 1.2rem; font-size: 0.86rem; color: var(--mut); display: flex; align-items: center; gap: 0.55rem; min-height: 1.4em; }
   .status i { width: 8px; height: 8px; border-radius: 50%; background: #7bc47f; box-shadow: 0 0 0 4px rgba(123, 196, 127, 0.18); }
   .status.is-closed i { background: #d9786b; box-shadow: 0 0 0 4px rgba(217, 120, 107, 0.18); }
   .hero__stats { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--line); max-width: 44rem; }
-  .hero__stats b { display: block; font: 400 clamp(1.6rem, 4vw, 2.4rem)/1 var(--ff-d); color: var(--fg); }
+  .hero__stats b { display: block; font: 800 clamp(1.6rem, 4vw, 2.4rem)/1 var(--ff-d); color: var(--fg); }
   .hero__stats span { font-size: 0.8rem; color: var(--mut); }
 
   .ticker { border-block: 1px solid var(--line); overflow: hidden; padding: 1.1rem 0; background: var(--bg2); }
   .ticker__row { display: flex; width: max-content; animation: tick 32s linear infinite; }
-  .ticker span { font: 400 clamp(1.4rem, 3vw, 2rem)/1 var(--ff-d); text-transform: uppercase; padding-right: 2.4rem; display: inline-flex; gap: 2.4rem; align-items: center; color: #d8cdbc; }
+  .ticker span { font: 800 clamp(1.4rem, 3vw, 2rem)/1 var(--ff-d); text-transform: uppercase; padding-right: 2.4rem; display: inline-flex; gap: 2.4rem; align-items: center; color: #d8cdbc; }
   .ticker i { font-style: normal; color: var(--brass); font-size: 0.7em; }
   @keyframes tick { to { transform: translateX(-50%); } }
 
@@ -465,7 +464,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
   .price__t b { display: block; font: 600 1.08rem/1.3 var(--ff-b); }
   .price__t span { font-size: 0.84rem; color: var(--mut); }
   .price__dots { border-bottom: 1px dotted rgba(239, 230, 216, 0.25); transform: translateY(-0.35rem); }
-  .price__p { font: 400 1.7rem/1 var(--ff-d); color: var(--brass2); }
+  .price__p { font: 800 1.7rem/1 var(--ff-d); color: var(--brass2); }
   .price__go { grid-column: 1 / -1; justify-self: start; font-size: 0.8rem; color: var(--brass); text-decoration: none; margin-top: -0.2rem; }
   .price__go:hover { color: var(--brass2); }
 
@@ -483,7 +482,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
   .barber img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(1) contrast(1.05); transition: filter 0.5s, transform 0.8s; }
   .barber:hover img { filter: grayscale(0); transform: scale(1.03); }
   .barber__t { padding: 1.2rem 1.2rem 1.4rem; }
-  .barber h3 { font: 400 2rem/1 var(--ff-d); text-transform: uppercase; }
+  .barber h3 { font: 800 2rem/1 var(--ff-d); text-transform: uppercase; }
   .barber p { color: var(--mut); font-size: 0.9rem; margin: 0.3rem 0 0.8rem; }
   .barber a { color: var(--brass); text-decoration: none; font-weight: 600; font-size: 0.88rem; }
 
@@ -499,7 +498,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
   .book__steps li.is-done span { border-color: var(--brass); color: var(--brass); }
   @media (max-width: 979px) { .book__steps { grid-auto-flow: column; overflow-x: auto; } .book__steps li { white-space: nowrap; font-size: 0.8rem; } }
   .book__form fieldset { border: 0; }
-  .book__form legend { font: 400 1.6rem/1 var(--ff-d); text-transform: uppercase; margin-bottom: 1.2rem; }
+  .book__form legend { font: 800 1.6rem/1 var(--ff-d); text-transform: uppercase; margin-bottom: 1.2rem; }
   .chips { display: grid; gap: 0.6rem; }
   .chips--svc, .chips--barber { grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); }
   .chips--days { grid-template-columns: repeat(auto-fill, minmax(5.4rem, 1fr)); }
@@ -524,10 +523,10 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
   .sum__row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
   .sum__row span:first-child { color: var(--mut); }
   .sum__tot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 1rem; }
-  .sum__tot b { font: 400 2rem/1 var(--ff-d); color: var(--brass2); }
+  .sum__tot b { font: 800 2rem/1 var(--ff-d); color: var(--brass2); }
   .done { text-align: left; }
   .done__mark { width: 3rem; height: 3rem; display: grid; place-items: center; border-radius: 50%; background: var(--brass); color: #16120c; font-size: 1.4rem; margin-bottom: 1.2rem; }
-  .done h3 { font: 400 2rem/1 var(--ff-d); text-transform: uppercase; }
+  .done h3 { font: 800 2rem/1 var(--ff-d); text-transform: uppercase; }
   .done__what { margin: 0.8rem 0; font-size: 1.05rem; }
   .done__note { color: var(--mut); font-size: 0.86rem; margin-bottom: 1.2rem; max-width: 34rem; }
 
@@ -535,7 +534,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
   .revs { display: grid; gap: 1.2rem; margin-top: 2.6rem; }
   @media (min-width: 860px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .rev { border-top: 1px solid var(--brass); padding-top: 1.2rem; }
-  .rev p { font: italic 400 1.35rem/1.35 var(--ff-s); }
+  .rev p { font: 400 1.18rem/1.5 var(--ff-s); color: #e6dccd; }
   .rev cite { display: block; margin-top: 0.8rem; font-style: normal; color: var(--mut); font-size: 0.84rem; }
 
   .sec--visit { background: var(--bg2); }
@@ -555,7 +554,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
 
   .ft { border-top: 1px solid var(--line); padding: 3rem 0 6.5rem; font-size: 0.84rem; color: var(--mut); }
   .ft__in { display: grid; gap: 0.6rem; }
-  .ft__logo { font: 400 2.4rem/1 var(--ff-d); text-transform: uppercase; color: var(--fg); }
+  .ft__logo { font: 800 2.4rem/1 var(--ff-d); text-transform: uppercase; color: var(--fg); }
   .ft__demo a { color: var(--brass); }
   @media (min-width: 1000px) { .ft { padding-bottom: 3rem; } }
 
@@ -598,7 +597,7 @@ const mapEmbed = 'https://maps.google.com/maps?q=Wyck%20Maastricht&z=15&output=e
   if (h && min >= h[0] && min < h[1]) st.innerHTML = `<i></i>${T.openNow} · ${T.until} ${fmt(h[1])}`;
   else {
     let d = wd, label = '';
-    for (let k = 0; k < 7; k++) { const dd = (wd + k) % 7, hh = cfg.hours[dd]; if (hh && (k > 0 || min < hh[0])) { label = `${k === 0 ? '' : T.days[dd].toLowerCase() + ' '}${fmt(hh[0])}`; break; } }
+    for (let k = 0; k < 7; k++) { const dd = (wd + k) % 7, hh = cfg.hours[dd]; if (hh && (k > 0 || min < hh[0])) { label = `${k === 0 ? '' : (document.documentElement.lang === 'en' ? T.days[dd] : T.days[dd].toLowerCase()) + ' '}${fmt(hh[0])}`; break; } }
     st.classList.add('is-closed'); st.innerHTML = `<i></i>${T.closedNow} · ${T.opensAt} ${label}`;
   }
 

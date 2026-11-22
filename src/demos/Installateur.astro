@@ -1,0 +1,514 @@
+---
+import Curtain from '../components/Curtain.astro';
+import DemoLang from '../components/DemoLang.astro';
+// Bron Installatietechniek (demo): loodgieter / cv / badkamers in Heerlen en Parkstad. NL + EN + PL.
+// Fikcyjna firma: numery, adres, ceny i opinie są przykładowe. Strony: src/pages/installateur/ (+ en/, pl/).
+
+const { lang = 'nl' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f) => `${base}/img/installateur/${f}`;
+const root = (l) => `${base}/installateur/${l === 'nl' ? '' : `${l}/`}`;
+const tel = '+31450000000';
+const telShow = '045 000 00 00';
+// kantoor: ma–vr 7:30–17:00 (minuty od północy), storingsdienst 24/7
+const HOURS = [[450, 1020], [450, 1020], [450, 1020], [450, 1020], [450, 1020], null, null];
+const ICON = {
+  lek: '<path d="M12 3c3.5 4.6 6 8 6 11a6 6 0 0 1-12 0c0-3 2.5-6.4 6-11z"/><path d="M9.5 15.5a2.6 2.6 0 0 0 2.5 2"/>',
+  cv: '<path d="M12 21c3.6 0 6-2.4 6-5.6 0-3.8-3-5.6-4-9.4-2 1.8-2.6 3.8-2.4 5.6C10.4 10.4 9.6 9 9.6 7.4 7.4 9.4 6 12 6 15.4 6 18.6 8.4 21 12 21z"/>',
+  afvoer: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5a4.5 4.5 0 1 1-4.5 4.5M12 10a2 2 0 1 1-2 2"/>',
+  bad: '<path d="M4 12h16v2a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-2zM6 12V6a2 2 0 0 1 4 0M7 19l-1 2M17 19l1 2"/>',
+  wp: '<rect x="3.5" y="6" width="17" height="12" rx="2"/><circle cx="10" cy="12" r="3.4"/><path d="M10 8.6v6.8M6.6 12h6.8M16 9.5h2.5M16 12h2.5M16 14.5h2.5"/>',
+};
+const PROBLEMS = ['lek', 'cv', 'afvoer', 'bad', 'wp'];
+
+const T = {
+  nl: {
+    title: 'Bron Installatietechniek — loodgieter en cv-monteur in Heerlen en Parkstad',
+    desc: 'Lekkage, cv-storing of verstopte afvoer? Bron komt vandaag nog. 24/7 storingsdienst in Heerlen en Parkstad, vaste prijs voor we beginnen. Ook complete badkamers en warmtepompen.',
+    nav: ['Storing', 'Diensten', 'Badkamers', 'Werkgebied'], call: 'Bel direct', plan: 'Afspraak maken',
+    bar: 'Storingsdienst 24/7 bereikbaar', barCall: `Bel ${telShow}`,
+    h1: 'Lekkage of geen warm water? We komen vandaag nog.',
+    lede: 'Loodgieter- en cv-werk voor huizen in Heerlen en Parkstad. Je hoort vooraf wat het kost, en we ruimen op voordat we weggaan.',
+    proof: [['47 min', 'gemiddelde aanrijtijd bij spoed'], ['24/7', 'storingsdienst, ook in het weekend'], ['4,9', 'gemiddeld uit 212 Google-reviews']],
+    heroTag: 'Vandaag nog plek: 3 afspraken vrij',
+    pLab: 'Storing of klus', pH: 'Wat is er aan de hand?',
+    pLede: 'Kies wat er speelt. Je ziet meteen wat je nu zelf kunt doen, wat het ongeveer kost en hoe snel we er zijn.',
+    probs: {
+      lek: ['Lekkage', 'Spoed', 'Draai de hoofdkraan dicht. Die zit meestal naast de watermeter in de meterkast. Zet een emmer onder het lek en maak foto’s voor je verzekering.', 'Voorrijden €65, daarna €58 per uur. Buiten kantoortijd +50%.', 'Binnen 2 uur bij je'],
+      cv: ['Cv-ketel doet het niet', 'Vandaag', 'Kijk of de waterdruk tussen 1 en 2 bar staat. Staat er een foutcode op het display? Schrijf hem op, dan nemen we het juiste onderdeel meteen mee.', 'Storing verhelpen vanaf €95, onderhoudsbeurt €89.', 'Meestal dezelfde dag'],
+      afvoer: ['Verstopte afvoer', 'Vandaag', 'Gebruik bij een volledig verstopte afvoer geen ontstopper uit de supermarkt. Die tast oude leidingen aan en maakt het werk lastiger.', 'Ontstoppen vanaf €85, camera-inspectie €125.', 'Meestal dezelfde dag'],
+      bad: ['Nieuwe badkamer', 'Op afspraak', 'We komen gratis langs om op te meten en je wensen te bespreken. Binnen een week heb je een offerte met een vaste prijs en een planning.', 'Complete badkamer vanaf €8.500, inclusief tegelwerk en afvoer.', 'Klaar in 2 tot 3 weken'],
+      wp: ['Warmtepomp', 'Op afspraak', 'We rekenen uit of een hybride warmtepomp bij jouw huis en ketel past, en we vragen de ISDE-subsidie voor je aan.', 'Hybride warmtepomp vanaf €5.900, subsidie gaat daar nog af.', 'Installatie in 1 dag'],
+    },
+    doNow: 'Wat je nu kunt doen', cost: 'Wat het ongeveer kost', speed: 'Hoe snel',
+    callNow: 'Bel de storingsdienst', ask: 'Vraag dit aan',
+    sLab: 'Diensten', sH: 'Waar je ons voor belt',
+    services: [['kraan.webp', 'Loodgieterswerk', 'Lekkende kranen, nieuwe leidingen, een wc die blijft doorlopen. Klein werk doen we net zo zorgvuldig.'], ['leidingen.webp', 'Cv en onderhoud', 'Onderhoud, storingen en vervanging van je ketel. We werken met Remeha, Intergas, Nefit en Vaillant.'], ['bad-kraan.webp', 'Badkamers en toiletten', 'Van ontwerp tot de laatste kitrand, met één vast aanspreekpunt en een vaste prijs.'], ['warmtepomp.webp', 'Verduurzamen', 'Hybride warmtepompen, zonneboilers en thermostaten die echt gas besparen.']],
+    bLab: 'Badkamers', bH: 'Recent opgeleverd in Parkstad',
+    baths: [['bad-1.webp', 'Badkamer met hout en natuursteen', 'Heerlen-Noord · 14 werkdagen'], ['bad-2.webp', 'Inloopdouche en dubbele wastafel', 'Kerkrade · 11 werkdagen'], ['bad-3.webp', 'Vrijstaand bad onder het raam', 'Voerendaal · 16 werkdagen'], ['bad-4.webp', 'Donkere tegels, licht plafond', 'Landgraaf · 12 werkdagen'], ['bad-5.webp', 'Kleine badkamer, groot effect', 'Brunssum · 8 werkdagen']],
+    rLab: 'Reviews', rH: 'Wat klanten zeggen',
+    reviews: [['Zondagavond lekkage onder de keuken. Om half tien stond er iemand voor de deur en om elf uur was alles droog en opgeruimd.', 'Marloes, Heerlen'], ['De prijs die ze aan de telefoon noemden, stond ook op de factuur. Geen gedoe met extra kosten.', 'Peter, Kerkrade'], ['Onze badkamer was een dag eerder klaar dan gepland. Elke avond werd alles netjes achtergelaten, met twee kleine kinderen in huis is dat goud waard.', 'Familie Coumans, Voerendaal']],
+    aLab: 'Werkgebied', aH: 'Werken we bij jou in de buurt?',
+    aLede: 'Heerlen, Kerkrade, Landgraaf, Brunssum, Voerendaal, Simpelveld en omliggende dorpen. Vul je postcode in.',
+    zip: 'Postcode', zipPh: '6411', check: 'Check', zipYes: 'Ja, dat is ons gebied. Gemiddeld zijn we er in {min} minuten.', zipNo: 'Dat valt net buiten ons vaste gebied. Bel ons gerust, vaak kunnen we toch komen.', zipBad: 'Vul de vier cijfers van je postcode in.',
+    hoursH: 'Kantoor', hoursOffice: 'Ma t/m vr 7:30 – 17:00', hoursStoring: 'Storingsdienst: dag en nacht, ook in het weekend',
+    openNow: 'Kantoor nu open', closedNow: 'Kantoor gesloten', until: 'tot', opensAt: 'opent', days: ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'],
+    fLab: 'Afspraak of offerte', fH: 'Vertel kort wat er speelt',
+    fLede: 'We bellen je binnen een uur terug tijdens kantoortijd. Bij spoed kun je beter direct bellen.',
+    fName: 'Naam', fPhone: 'Telefoon', fZip: 'Postcode', fWhat: 'Wat is er aan de hand?', fWhatPh: 'Bijv. de cv geeft foutcode E119 en de druk staat op 0,6 bar', fWhen: 'Wanneer schikt het?', when: ['Zo snel mogelijk', 'Deze week', 'Volgende week of later'], send: 'Verstuur aanvraag',
+    doneH: 'Bedankt, we bellen je zo snel mogelijk terug.', doneP: 'Demoversie: er is niets verstuurd. Op de echte site komt je aanvraag direct binnen bij het bedrijf.',
+    picked: 'Gekozen',
+    demo: 'Conceptwebsite voor een fictief installatiebedrijf, gemaakt door Vervo Studio.', credit: 'Website door Vervo Studio ↗',
+  },
+  en: {
+    title: 'Bron Installatietechniek — plumber and boiler engineer in Heerlen and Parkstad',
+    desc: 'Leak, boiler breakdown or blocked drain? Bron comes out today. 24/7 emergency service in Heerlen and Parkstad, fixed price before we start. Complete bathrooms and heat pumps too.',
+    nav: ['Emergency', 'Services', 'Bathrooms', 'Service area'], call: 'Call now', plan: 'Book a visit',
+    bar: '24/7 emergency service', barCall: `Call ${telShow}`,
+    h1: 'Leak or no hot water? We’ll come out today.',
+    lede: 'Plumbing and heating work for homes in Heerlen and Parkstad. You hear what it costs before we start, and we tidy up before we leave.',
+    proof: [['47 min', 'average arrival time for emergencies'], ['24/7', 'emergency line, weekends included'], ['4.9', 'average from 212 Google reviews']],
+    heroTag: 'Free today: 3 slots left',
+    pLab: 'Breakdown or job', pH: 'What’s the problem?',
+    pLede: 'Pick what’s going on. You’ll see right away what you can do yourself, roughly what it costs and how fast we can be there.',
+    probs: {
+      lek: ['Leak', 'Emergency', 'Turn off the main water valve. It’s usually next to the water meter in the meter cupboard. Put a bucket under the leak and take photos for your insurer.', 'Call-out €65, then €58 an hour. Outside office hours +50%.', 'With you within 2 hours'],
+      cv: ['Boiler not working', 'Today', 'Check that the water pressure is between 1 and 2 bar. Is there an error code on the display? Write it down so we can bring the right part straight away.', 'Repairs from €95, annual service €89.', 'Usually the same day'],
+      afvoer: ['Blocked drain', 'Today', 'If the drain is completely blocked, don’t use a supermarket unblocker. It damages older pipes and makes the job harder.', 'Unblocking from €85, camera inspection €125.', 'Usually the same day'],
+      bad: ['New bathroom', 'By appointment', 'We visit for free to measure up and talk through what you want. Within a week you get a quote with a fixed price and a schedule.', 'Complete bathroom from €8,500, tiling and drainage included.', 'Done in 2 to 3 weeks'],
+      wp: ['Heat pump', 'By appointment', 'We work out whether a hybrid heat pump suits your home and boiler, and we apply for the ISDE grant for you.', 'Hybrid heat pump from €5,900, before the grant comes off.', 'Installed in 1 day'],
+    },
+    doNow: 'What you can do now', cost: 'Roughly what it costs', speed: 'How fast',
+    callNow: 'Call the emergency line', ask: 'Request this',
+    sLab: 'Services', sH: 'What people call us for',
+    services: [['kraan.webp', 'Plumbing', 'Dripping taps, new pipework, a toilet that won’t stop running. We take small jobs just as seriously.'], ['leidingen.webp', 'Boilers and servicing', 'Servicing, breakdowns and boiler replacement. We work with Remeha, Intergas, Nefit and Vaillant.'], ['bad-kraan.webp', 'Bathrooms and toilets', 'From design to the last bead of sealant, with one contact person and one fixed price.'], ['warmtepomp.webp', 'Greener heating', 'Hybrid heat pumps, solar water heaters and thermostats that genuinely cut your gas use.']],
+    bLab: 'Bathrooms', bH: 'Recently finished in Parkstad',
+    baths: [['bad-1.webp', 'Bathroom in wood and natural stone', 'Heerlen-Noord · 14 working days'], ['bad-2.webp', 'Walk-in shower and double basin', 'Kerkrade · 11 working days'], ['bad-3.webp', 'Freestanding bath under the window', 'Voerendaal · 16 working days'], ['bad-4.webp', 'Dark tiles, light ceiling', 'Landgraaf · 12 working days'], ['bad-5.webp', 'Small bathroom, big difference', 'Brunssum · 8 working days']],
+    rLab: 'Reviews', rH: 'What customers say',
+    reviews: [['A leak under the kitchen sink on a Sunday evening. Someone was at the door by half past nine, and by eleven everything was dry and tidy.', 'Marloes, Heerlen'], ['The price they gave on the phone was the price on the invoice. No surprise extras.', 'Peter, Kerkrade'], ['Our bathroom was finished a day early. Everything was left neat every evening, which matters a lot with two small children at home.', 'The Coumans family, Voerendaal']],
+    aLab: 'Service area', aH: 'Do we cover your area?',
+    aLede: 'Heerlen, Kerkrade, Landgraaf, Brunssum, Voerendaal, Simpelveld and the villages around them. Enter your postcode.',
+    zip: 'Postcode', zipPh: '6411', check: 'Check', zipYes: 'Yes, that’s our area. On average we’re there in {min} minutes.', zipNo: 'That’s just outside our usual area. Give us a call anyway, we can often still come.', zipBad: 'Enter the four digits of your postcode.',
+    hoursH: 'Office', hoursOffice: 'Mon to Fri 7:30 – 17:00', hoursStoring: 'Emergency line: day and night, weekends included',
+    openNow: 'Office open now', closedNow: 'Office closed', until: 'until', opensAt: 'opens', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    fLab: 'Visit or quote', fH: 'Tell us briefly what’s going on',
+    fLede: 'During office hours we call you back within an hour. For emergencies it’s quicker to call us directly.',
+    fName: 'Name', fPhone: 'Phone', fZip: 'Postcode', fWhat: 'What’s the problem?', fWhatPh: 'E.g. the boiler shows error E119 and the pressure is 0.6 bar', fWhen: 'When suits you?', when: ['As soon as possible', 'This week', 'Next week or later'], send: 'Send request',
+    doneH: 'Thanks, we’ll call you back as soon as we can.', doneP: 'Demo version: nothing was sent. On the real site the request goes straight to the company.',
+    picked: 'Chosen',
+    demo: 'Concept website for a fictional installation company, made by Vervo Studio.', credit: 'Website by Vervo Studio ↗',
+  },
+  pl: {
+    title: 'Bron Installatietechniek — hydraulik i serwis kotłów w Heerlen i Parkstad',
+    desc: 'Przeciek, awaria kotła albo zatkany odpływ? Bron przyjedzie jeszcze dziś. Pogotowie 24/7 w Heerlen i okolicach, stała cena przed rozpoczęciem pracy. Robimy też całe łazienki i pompy ciepła.',
+    nav: ['Awaria', 'Usługi', 'Łazienki', 'Obszar'], call: 'Zadzwoń', plan: 'Umów wizytę',
+    bar: 'Pogotowie 24/7', barCall: `Zadzwoń: ${telShow}`,
+    h1: 'Przeciek albo brak ciepłej wody? Przyjedziemy jeszcze dziś.',
+    lede: 'Hydraulika i ogrzewanie dla domów w Heerlen i okolicach. Cenę znasz, zanim zaczniemy, a przed wyjściem sprzątamy po sobie.',
+    proof: [['47 min', 'średni czas dojazdu w nagłych wypadkach'], ['24/7', 'pogotowie, także w weekendy'], ['4,9', 'średnia z 212 opinii w Google']],
+    heroTag: 'Dziś jeszcze 3 wolne terminy',
+    pLab: 'Awaria albo zlecenie', pH: 'Co się dzieje?',
+    pLede: 'Wybierz, z czym masz problem. Od razu zobaczysz, co możesz zrobić sam, ile to mniej więcej kosztuje i jak szybko przyjedziemy.',
+    probs: {
+      lek: ['Przeciek', 'Pilne', 'Zakręć główny zawór wody. Zwykle jest obok wodomierza w szafce z licznikami. Podstaw wiadro pod przeciek i zrób zdjęcia dla ubezpieczyciela.', 'Dojazd 65 €, potem 58 € za godzinę. Poza godzinami pracy biura +50%.', 'U Ciebie w ciągu 2 godzin'],
+      cv: ['Kocioł nie działa', 'Dziś', 'Sprawdź, czy ciśnienie wody jest między 1 a 2 bar. Na wyświetlaczu jest kod błędu? Zapisz go, to od razu przywieziemy właściwą część.', 'Naprawa od 95 €, przegląd roczny 89 €.', 'Zwykle tego samego dnia'],
+      afvoer: ['Zatkany odpływ', 'Dziś', 'Przy całkowicie zatkanym odpływie nie używaj środka z marketu. Niszczy starsze rury i utrudnia nam pracę.', 'Udrażnianie od 85 €, inspekcja kamerą 125 €.', 'Zwykle tego samego dnia'],
+      bad: ['Nowa łazienka', 'Na umówienie', 'Przyjeżdżamy bezpłatnie, mierzymy i rozmawiamy o tym, czego potrzebujesz. W ciągu tygodnia dostajesz wycenę ze stałą ceną i harmonogramem.', 'Kompletna łazienka od 8500 €, z płytkami i odpływem.', 'Gotowe w 2–3 tygodnie'],
+      wp: ['Pompa ciepła', 'Na umówienie', 'Sprawdzamy, czy hybrydowa pompa ciepła pasuje do Twojego domu i kotła, i składamy za Ciebie wniosek o dotację ISDE.', 'Hybrydowa pompa ciepła od 5900 €, przed odliczeniem dotacji.', 'Montaż w 1 dzień'],
+    },
+    doNow: 'Co możesz zrobić teraz', cost: 'Ile to mniej więcej kosztuje', speed: 'Jak szybko',
+    callNow: 'Zadzwoń na pogotowie', ask: 'Zgłoś to',
+    sLab: 'Usługi', sH: 'W czym pomagamy najczęściej',
+    services: [['kraan.webp', 'Hydraulika', 'Cieknące krany, nowe rury, spłuczka, która ciągle leci. Małe zlecenia traktujemy równie poważnie.'], ['leidingen.webp', 'Kotły i przeglądy', 'Przeglądy, awarie i wymiana kotła. Pracujemy z Remeha, Intergas, Nefit i Vaillant.'], ['bad-kraan.webp', 'Łazienki i toalety', 'Od projektu po ostatnią fugę, z jedną osobą do kontaktu i jedną stałą ceną.'], ['warmtepomp.webp', 'Ekologiczne ogrzewanie', 'Hybrydowe pompy ciepła, solarne podgrzewacze wody i termostaty, które naprawdę zmniejszają zużycie gazu.']],
+    bLab: 'Łazienki', bH: 'Ostatnio oddane w okolicy',
+    baths: [['bad-1.webp', 'Łazienka z drewnem i kamieniem', 'Heerlen-Noord · 14 dni roboczych'], ['bad-2.webp', 'Prysznic walk-in i podwójna umywalka', 'Kerkrade · 11 dni roboczych'], ['bad-3.webp', 'Wolnostojąca wanna pod oknem', 'Voerendaal · 16 dni roboczych'], ['bad-4.webp', 'Ciemne płytki, jasny sufit', 'Landgraaf · 12 dni roboczych'], ['bad-5.webp', 'Mała łazienka, duża zmiana', 'Brunssum · 8 dni roboczych']],
+    rLab: 'Opinie', rH: 'Co mówią klienci',
+    reviews: [['Przeciek pod zlewem w niedzielę wieczorem. O wpół do dziesiątej ktoś już stał pod drzwiami, a o jedenastej wszystko było suche i posprzątane.', 'Marloes, Heerlen'], ['Cena podana przez telefon zgadzała się z fakturą. Żadnych dodatkowych kosztów.', 'Peter, Kerkrade'], ['Łazienka była gotowa dzień przed terminem. Codziennie wieczorem wszystko zostawało uporządkowane, a przy dwójce małych dzieci to bardzo ważne.', 'Rodzina Coumans, Voerendaal']],
+    aLab: 'Obszar działania', aH: 'Czy dojeżdżamy do Ciebie?',
+    aLede: 'Heerlen, Kerkrade, Landgraaf, Brunssum, Voerendaal, Simpelveld i okoliczne wsie. Wpisz swój kod pocztowy.',
+    zip: 'Kod pocztowy', zipPh: '6411', check: 'Sprawdź', zipYes: 'Tak, to nasz rejon. Średnio jesteśmy na miejscu w {min} minut.', zipNo: 'To tuż poza naszym stałym rejonem. Zadzwoń mimo to, często i tak możemy przyjechać.', zipBad: 'Wpisz cztery cyfry kodu pocztowego.',
+    hoursH: 'Biuro', hoursOffice: 'Pon.–pt. 7:30–17:00', hoursStoring: 'Pogotowie: dzień i noc, także w weekendy',
+    openNow: 'Biuro otwarte', closedNow: 'Biuro zamknięte', until: 'do', opensAt: 'otwieramy', days: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'],
+    fLab: 'Wizyta albo wycena', fH: 'Napisz krótko, co się dzieje',
+    fLede: 'W godzinach pracy biura oddzwaniamy w ciągu godziny. W pilnej sprawie szybciej będzie zadzwonić.',
+    fName: 'Imię i nazwisko', fPhone: 'Telefon', fZip: 'Kod pocztowy', fWhat: 'Co się dzieje?', fWhatPh: 'Np. kocioł pokazuje błąd E119, a ciśnienie spadło do 0,6 bar', fWhen: 'Kiedy Ci pasuje?', when: ['Jak najszybciej', 'W tym tygodniu', 'W przyszłym tygodniu lub później'], send: 'Wyślij zgłoszenie',
+    doneH: 'Dziękujemy, oddzwonimy najszybciej, jak się da.', doneP: 'Wersja pokazowa: nic nie zostało wysłane. Na prawdziwej stronie zgłoszenie trafia od razu do firmy.',
+    picked: 'Wybrano',
+    demo: 'Strona koncepcyjna fikcyjnej firmy instalacyjnej, wykonana przez Vervo Studio.', credit: 'Strona: Vervo Studio ↗',
+  },
+};
+const t = T[lang];
+const cfg = { lang, hours: HOURS, probs: Object.fromEntries(PROBLEMS.map((k) => [k, t.probs[k][0]])), t: { openNow: t.openNow, closedNow: t.closedNow, until: t.until, opensAt: t.opensAt, days: t.days, zipYes: t.zipYes, zipNo: t.zipNo, zipBad: t.zipBad, picked: t.picked } };
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="nl" href={new URL(root('nl'), Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(root('en'), Astro.url).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(root('pl'), Astro.url).href} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.desc} />
+    <meta property="og:image" content={new URL(img('hero.webp'), Astro.url).href} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0f1f2e" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700;800&family=Overpass+Mono:wght@500;600&display=swap" />
+  </head>
+  <body>
+    <Curtain />
+    <div class="bar"><span><i></i>{t.bar}</span><a href={`tel:${tel}`}>{t.barCall}</a></div>
+    <header class="hd" id="hd">
+      <a class="hd__logo" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c3.9 5 6.5 8.6 6.5 11.8a6.5 6.5 0 0 1-13 0C5.5 11.1 8.1 7.5 12 2.5z" /></svg>Bron<small>installatietechniek</small></a>
+      <nav class="hd__nav">{['#storing', '#diensten', '#badkamers', '#werkgebied'].map((h, i) => <a href={h}>{t.nav[i]}</a>)}</nav>
+      <a class="btn btn--blue hd__cta" href="#afspraak">{t.plan}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero__txt">
+          <h1>{t.h1}</h1>
+          <p class="lede">{t.lede}</p>
+          <div class="hero__cta">
+            <a class="btn btn--orange" href={`tel:${tel}`}>☎ {t.call}</a>
+            <a class="btn btn--line" href="#storing">{t.pH}</a>
+          </div>
+          <dl class="proof">{t.proof.map(([b, s]) => <div><dt>{b}</dt><dd>{s}</dd></div>)}</dl>
+        </div>
+        <figure class="hero__img">
+          <img src={img('hero.webp')} alt="" fetchpriority="high" />
+          <figcaption><i></i>{t.heroTag}</figcaption>
+        </figure>
+      </section>
+
+      <section class="sec sec--tool" id="storing">
+        <div class="wrap">
+          <p class="lab">{t.pLab}</p>
+          <h2 class="h2">{t.pH}</h2>
+          <p class="lede lede--light">{t.pLede}</p>
+          <div class="tool" data-tool>
+            <div class="tool__list" role="radiogroup" aria-label={t.pH}>
+              {PROBLEMS.map((k, i) => (
+                <button type="button" class="prob" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-prob={k}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICON[k]} />
+                  <span>{t.probs[k][0]}</span>
+                  <em class={`tag tag--${i === 0 ? 'hot' : i < 3 ? 'today' : 'plan'}`}>{t.probs[k][1]}</em>
+                </button>
+              ))}
+            </div>
+            {PROBLEMS.map((k, i) => (
+              <div class="tool__panel" data-panel={k} hidden={i !== 0}>
+                <div class="tool__row"><p class="tool__k">{t.doNow}</p><p class="tool__v">{t.probs[k][2]}</p></div>
+                <div class="tool__row"><p class="tool__k">{t.cost}</p><p class="tool__v tool__v--b">{t.probs[k][3]}</p></div>
+                <div class="tool__row"><p class="tool__k">{t.speed}</p><p class="tool__v tool__v--b">{t.probs[k][4]}</p></div>
+                <div class="tool__go">
+                  {i === 0 ? <a class="btn btn--orange" href={`tel:${tel}`}>☎ {t.callNow}</a> : null}
+                  <a class={`btn ${i === 0 ? 'btn--ghost' : 'btn--orange'}`} href="#afspraak" data-ask={k}>{t.ask}</a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="diensten">
+        <div class="wrap">
+          <p class="lab rv">{t.sLab}</p>
+          <h2 class="h2 rv">{t.sH}</h2>
+          <div class="svc">
+            {t.services.map(([f, h, p], i) => <article class="rv"><span class="svc__n">0{i + 1}</span><img src={img(f)} alt="" loading="lazy" /><h3>{h}</h3><p>{p}</p></article>)}
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--baths" id="badkamers">
+        <div class="wrap">
+          <p class="lab rv">{t.bLab}</p>
+          <h2 class="h2 rv">{t.bH}</h2>
+        </div>
+        <div class="baths" tabindex="0">
+          {t.baths.map(([f, h, m]) => <figure><img src={img(f)} alt={h} loading="lazy" /><figcaption><b>{h}</b><span>{m}</span></figcaption></figure>)}
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="wrap">
+          <p class="lab rv">{t.rLab}</p>
+          <h2 class="h2 rv">{t.rH}</h2>
+          <div class="revs">{t.reviews.map(([q, w]) => <blockquote class="rv"><span aria-hidden="true">★★★★★</span><p>{q}</p><cite>{w}</cite></blockquote>)}</div>
+        </div>
+      </section>
+
+      <section class="sec sec--area" id="werkgebied">
+        <div class="wrap area">
+          <div>
+            <p class="lab">{t.aLab}</p>
+            <h2 class="h2">{t.aH}</h2>
+            <p class="lede">{t.aLede}</p>
+            <form class="zip" data-zip>
+              <label class="sr" for="zipIn">{t.zip}</label>
+              <input id="zipIn" name="zip" inputmode="numeric" maxlength="7" placeholder={t.zipPh} autocomplete="postal-code" />
+              <button class="btn btn--blue" type="submit">{t.check}</button>
+            </form>
+            <p class="zip__out" data-zip-out aria-live="polite"></p>
+          </div>
+          <div class="hours">
+            <p class="hours__h">{t.hoursH}</p>
+            <p class="hours__st" data-status></p>
+            <p>{t.hoursOffice}</p>
+            <p class="hours__24"><b>24/7</b> {t.hoursStoring}</p>
+            <a class="hours__tel" href={`tel:${tel}`}>{telShow}</a>
+            <p class="hours__addr">Valkenburgerweg 000 · 6411 AA Heerlen</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--form" id="afspraak">
+        <div class="wrap offer">
+          <div>
+            <p class="lab">{t.fLab}</p>
+            <h2 class="h2">{t.fH}</h2>
+            <p class="lede lede--light">{t.fLede}</p>
+            <a class="offer__tel" href={`tel:${tel}`}>☎ {telShow}</a>
+          </div>
+          <form class="form" data-form novalidate>
+            <p class="form__pick" data-pick hidden></p>
+            <div class="f2">
+              <label class="f"><span>{t.fName}</span><input name="name" autocomplete="name" required /></label>
+              <label class="f"><span>{t.fPhone}</span><input name="phone" type="tel" autocomplete="tel" required /></label>
+            </div>
+            <label class="f"><span>{t.fZip}</span><input name="zip" autocomplete="postal-code" placeholder="6411 AA" /></label>
+            <label class="f"><span>{t.fWhat}</span><textarea name="what" rows="4" placeholder={t.fWhatPh}></textarea></label>
+            <label class="f"><span>{t.fWhen}</span><select name="when">{t.when.map((w) => <option>{w}</option>)}</select></label>
+            <button class="btn btn--orange btn--full" type="submit">{t.send}</button>
+            <div class="done" data-done hidden><h3>{t.doneH}</h3><p>{t.doneP}</p></div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ft">
+      <div class="wrap ft__in">
+        <p class="ft__logo">Bron</p>
+        <p>Heerlen · KvK 00000000 · BTW NL000000000B01 · Erkend installatiebedrijf</p>
+        <p>{t.demo} <a href={`${base}/`}>{t.credit}</a></p>
+      </div>
+    </footer>
+    <div class="mbar"><a href={`tel:${tel}`} class="mbar__call">☎ {t.call}</a><a href="#afspraak">{t.plan}</a></div>
+    <DemoLang lang={lang} links={[['nl', root('nl')], ['en', root('en')], ['pl', root('pl')]]} />
+    <script type="application/json" id="cfg" set:html={JSON.stringify(cfg)} />
+  </body>
+</html>
+
+<style is:global>
+  :root { --bg: #f5f6f3; --paper: #ffffff; --ink: #0f1f2e; --mut: #5b6672; --blue: #1747d1; --navy: #0f1f2e; --orange: #ff6a2b; --line: rgba(15, 31, 46, 0.12); --ff: 'Overpass', system-ui, sans-serif; --mono: 'Overpass Mono', ui-monospace, monospace; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 5rem; }
+  body { background: var(--bg); color: var(--ink); font: 400 16.5px/1.6 var(--ff); overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .wrap { width: min(100% - 2.4rem, 76rem); margin-inline: auto; }
+  .lab { font: 600 0.76rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--blue); margin-bottom: 0.9rem; }
+  .lab::before { content: '// '; opacity: 0.6; }
+  .h2 { font: 800 clamp(2rem, 5vw, 3.3rem)/1.02 var(--ff); letter-spacing: -0.035em; max-width: 20ch; }
+  .lede { color: var(--mut); max-width: 36rem; margin-top: 1rem; font-size: 1.06rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; padding: 0.95rem 1.35rem; border-radius: 6px; font: 700 0.96rem/1 var(--ff); text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: transform 0.15s, background 0.2s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn--orange { background: var(--orange); color: #1c0a02; }
+  .btn--blue { background: var(--blue); color: #fff; }
+  .btn--line { border-color: var(--ink); color: var(--ink); }
+  .btn--ghost { border-color: rgba(255, 255, 255, 0.35); color: #fff; }
+  .btn--full { width: 100%; }
+
+  .bar { display: flex; justify-content: space-between; gap: 1rem; align-items: center; background: var(--navy); color: #cfd8e3; font: 500 0.8rem var(--mono); padding: 0.5rem clamp(1.2rem, 3vw, 2.4rem); }
+  .bar span { display: inline-flex; align-items: center; gap: 0.55rem; }
+  .bar i { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); animation: pulse 2s infinite; }
+  .bar a { color: #fff; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 7px rgba(74, 222, 128, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
+  .hd { position: sticky; top: 0; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.85rem clamp(1.2rem, 3vw, 2.4rem); background: rgba(245, 246, 243, 0.93); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .hd__logo { display: flex; align-items: center; gap: 0.5rem; font: 800 1.45rem/1 var(--ff); letter-spacing: -0.04em; text-decoration: none; }
+  .hd__logo svg { width: 1.3rem; height: 1.3rem; fill: var(--blue); }
+  .hd__logo small { font: 500 0.7rem var(--mono); letter-spacing: 0; color: var(--mut); margin-left: 0.2rem; display: none; }
+  .hd__nav { display: none; gap: 1.8rem; font: 600 0.92rem var(--ff); color: var(--mut); }
+  .hd__nav a { text-decoration: none; }
+  .hd__nav a:hover { color: var(--ink); }
+  .hd__cta { padding: 0.7rem 1rem; font-size: 0.88rem; }
+  @media (min-width: 560px) { .hd__logo small { display: inline; } }
+  @media (min-width: 940px) { .hd__nav { display: flex; } }
+
+  .hero { display: grid; gap: 2.4rem; align-items: center; padding: clamp(2.4rem, 6vw, 4.8rem) clamp(1.2rem, 4vw, 3rem) clamp(3rem, 6vw, 5rem); max-width: 84rem; margin-inline: auto; }
+  @media (min-width: 980px) { .hero { grid-template-columns: 1.08fr 0.92fr; gap: 3.6rem; } }
+  .hero > * { min-width: 0; }
+  .hero h1 { font: 800 clamp(2.4rem, 5.8vw, 4.6rem)/1.02 var(--ff); letter-spacing: -0.045em; text-wrap: balance; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.9rem; }
+  .proof { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 2.4rem; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+  .proof dt { font: 600 clamp(1.3rem, 3vw, 1.75rem)/1 var(--mono); letter-spacing: -0.04em; }
+  .proof dd { color: var(--mut); font-size: 0.82rem; line-height: 1.35; margin-top: 0.4rem; }
+  .hero__img { position: relative; }
+  .hero__img img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; }
+  @media (max-width: 979px) { .hero__img img { aspect-ratio: 4 / 3; } }
+  .hero__img figcaption { position: absolute; left: 1rem; bottom: 1rem; display: inline-flex; align-items: center; gap: 0.55rem; background: var(--paper); padding: 0.65rem 0.9rem; border-radius: 6px; font: 600 0.82rem var(--mono); box-shadow: 0 16px 30px -18px rgba(15, 31, 46, 0.6); }
+  .hero__img figcaption i { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+
+  .sec { padding: clamp(4.5rem, 9vw, 7rem) 0; }
+  .sec--tool { background: var(--navy); color: #fff; }
+  .sec--tool .lab { color: #8fb0ff; }
+  .lede--light { color: #b9c5d3; }
+  .tool { display: grid; gap: 1.2rem; margin-top: 2.6rem; }
+  @media (min-width: 900px) { .tool { grid-template-columns: 0.85fr 1.15fr; gap: 2rem; align-items: start; } }
+  .tool > * { min-width: 0; }
+  .tool__list { display: grid; gap: 0.5rem; }
+  .prob { display: grid; grid-template-columns: 2.6rem 1fr auto; align-items: center; gap: 0.8rem; text-align: left; padding: 0.9rem 1rem; border-radius: 8px; border: 1.5px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.04); color: #fff; font: 700 1.02rem var(--ff); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+  .prob:hover { border-color: rgba(255, 255, 255, 0.4); }
+  .prob[aria-checked='true'] { background: #fff; color: var(--ink); border-color: #fff; }
+  .prob svg { width: 2.2rem; height: 2.2rem; padding: 0.4rem; border-radius: 6px; background: rgba(255, 255, 255, 0.08); fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .prob[aria-checked='true'] svg { background: #e8eefc; color: var(--blue); }
+  .tag { font: 600 0.68rem/1 var(--mono); font-style: normal; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.4rem 0.5rem; border-radius: 4px; white-space: nowrap; }
+  .tag--hot { background: var(--orange); color: #1c0a02; }
+  .tag--today { background: #ffd66b; color: #2a1d00; }
+  .tag--plan { background: rgba(143, 176, 255, 0.2); color: #b9ccff; }
+  .prob[aria-checked='true'] .tag--plan { background: #e8eefc; color: var(--blue); }
+  .tool__panel { background: #fff; color: var(--ink); border-radius: 10px; padding: clamp(1.3rem, 3.5vw, 2.1rem); display: grid; gap: 1.2rem; box-shadow: 0 40px 70px -40px rgba(0, 0, 0, 0.7); }
+  .tool__row { display: grid; gap: 0.35rem; padding-bottom: 1.1rem; border-bottom: 1px dashed var(--line); }
+  @media (min-width: 640px) { .tool__row { grid-template-columns: 11rem 1fr; gap: 1rem; } }
+  .tool__k { font: 600 0.74rem/1.4 var(--mono); text-transform: uppercase; color: var(--mut); padding-top: 0.15rem; }
+  .tool__v { font-size: 1.02rem; }
+  .tool__v--b { font-weight: 700; }
+  .tool__go { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .tool__go .btn--ghost { border-color: var(--ink); color: var(--ink); }
+
+  .svc { display: grid; gap: 1.4rem; margin-top: 2.6rem; }
+  @media (min-width: 640px) { .svc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1060px) { .svc { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .svc article { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; padding-bottom: 1.3rem; }
+  .svc__n { position: absolute; top: 0.7rem; left: 0.7rem; background: var(--paper); font: 600 0.74rem var(--mono); padding: 0.3rem 0.45rem; border-radius: 4px; }
+  .svc img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .svc h3 { font: 800 1.18rem/1.2 var(--ff); margin: 1rem 1.2rem 0.35rem; letter-spacing: -0.02em; }
+  .svc p { color: var(--mut); font-size: 0.94rem; margin: 0 1.2rem; }
+
+  .sec--baths { background: var(--paper); border-block: 1px solid var(--line); }
+  .baths { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2.4rem max(1.2rem, calc((100vw - 76rem) / 2)) 0.6rem; scrollbar-width: thin; }
+  .baths figure { flex: 0 0 auto; width: min(78vw, 22rem); scroll-snap-align: start; }
+  .baths img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; }
+  .baths figcaption { margin-top: 0.7rem; }
+  .baths b { display: block; font: 700 1rem var(--ff); }
+  .baths span { color: var(--mut); font: 500 0.8rem var(--mono); }
+
+  .revs { display: grid; gap: 1rem; margin-top: 2.4rem; }
+  @media (min-width: 880px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .revs blockquote { background: var(--paper); border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 6px; padding: 1.4rem; }
+  .revs span { color: var(--orange); letter-spacing: 0.08em; font-size: 0.9rem; }
+  .revs p { margin: 0.6rem 0 0.8rem; font-size: 1.02rem; }
+  .revs cite { font: 500 0.82rem var(--mono); font-style: normal; color: var(--mut); }
+
+  .sec--area { background: #e9edf5; }
+  .area { display: grid; gap: 2.4rem; }
+  @media (min-width: 900px) { .area { grid-template-columns: 1.1fr 0.9fr; align-items: center; } }
+  .area > * { min-width: 0; }
+  .zip { display: flex; gap: 0.5rem; margin-top: 1.6rem; max-width: 24rem; }
+  .zip input { flex: 1; min-width: 0; font: 600 1.1rem var(--mono); letter-spacing: 0.08em; padding: 0.85rem 1rem; border: 2px solid var(--line); border-radius: 6px; background: #fff; color: var(--ink); }
+  .zip input:focus { outline: none; border-color: var(--blue); }
+  .zip__out { margin-top: 0.9rem; min-height: 1.6em; font-weight: 600; max-width: 30rem; }
+  .zip__out.is-yes { color: #127a3d; }
+  .zip__out.is-no { color: #9a4a00; }
+  .hours { background: #fff; border-radius: 10px; padding: clamp(1.4rem, 3.5vw, 2rem); display: grid; gap: 0.6rem; border: 1px solid var(--line); }
+  .hours__h { font: 600 0.74rem var(--mono); text-transform: uppercase; color: var(--mut); }
+  .hours__st { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .hours__st i { width: 9px; height: 9px; border-radius: 50%; background: #22a35a; }
+  .hours__st.is-closed i { background: #c0392b; }
+  .hours__24 b { font-family: var(--mono); background: var(--orange); padding: 0.1rem 0.35rem; border-radius: 3px; margin-right: 0.3rem; }
+  .hours__tel { font: 800 1.7rem/1.1 var(--ff); letter-spacing: -0.03em; text-decoration: none; margin-top: 0.4rem; }
+  .hours__addr { color: var(--mut); font-size: 0.9rem; }
+
+  .sec--form { background: var(--navy); color: #fff; }
+  .sec--form .lab { color: #8fb0ff; }
+  .offer { display: grid; gap: 2.4rem; }
+  @media (min-width: 940px) { .offer { grid-template-columns: 0.9fr 1.1fr; align-items: start; } }
+  .offer > * { min-width: 0; }
+  .offer__tel { display: inline-block; margin-top: 1.6rem; font: 800 1.5rem var(--ff); text-decoration: none; color: var(--orange); }
+  .form { background: var(--paper); color: var(--ink); border-radius: 10px; padding: clamp(1.3rem, 4vw, 2.2rem); display: grid; gap: 1rem; }
+  .form__pick { font: 600 0.82rem var(--mono); background: #e8eefc; color: var(--blue); padding: 0.55rem 0.75rem; border-radius: 6px; justify-self: start; }
+  .f { display: grid; gap: 0.35rem; font: 700 0.86rem var(--ff); }
+  .f input, .f select, .f textarea { font: 400 1rem var(--ff); border: 2px solid var(--line); border-radius: 6px; padding: 0.8rem 0.9rem; background: #fff; width: 100%; color: var(--ink); }
+  .f input:focus, .f select:focus, .f textarea:focus { outline: none; border-color: var(--blue); }
+  .f .is-bad { border-color: #c0392b; }
+  .f2 { display: grid; gap: 1rem; }
+  @media (min-width: 520px) { .f2 { grid-template-columns: 1fr 1fr; } }
+  .done { background: #e7f5ec; border-radius: 8px; padding: 1rem 1.1rem; }
+  .done h3 { font: 800 1.05rem var(--ff); color: #127a3d; }
+  .done p { color: var(--mut); font-size: 0.86rem; margin-top: 0.3rem; }
+
+  .ft { padding: 3rem 0 6.5rem; font-size: 0.84rem; color: var(--mut); }
+  .ft__in { display: grid; gap: 0.4rem; }
+  .ft__logo { font: 800 1.9rem/1 var(--ff); color: var(--ink); letter-spacing: -0.04em; }
+  .ft a { color: var(--blue); font-weight: 700; }
+  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 7.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+  .mbar a { display: grid; place-items: center; padding: 0.95rem 0.5rem; border-radius: 8px; text-decoration: none; font: 700 0.92rem var(--ff); background: var(--navy); color: #fff; box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.5); white-space: nowrap; }
+  .mbar__call { background: var(--orange) !important; color: #1c0a02 !important; }
+  @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }
+  .dlang { bottom: 0.9rem !important; }
+  @media (min-width: 1000px) { .dlang { bottom: 1.2rem !important; } }
+
+  .rv { opacity: 0; transform: translateY(16px); transition: opacity 0.7s, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .rv.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } html { scroll-behavior: auto; } .bar i { animation: none; } }
+</style>
+
+<script>
+  import { $, $$, readCfg, reveal, openStatus, demoForm } from '../scripts/demo-kit.js';
+  const cfg = readCfg();
+  reveal();
+  openStatus($('[data-status]'), { hours: cfg.hours, t: cfg.t, lang: cfg.lang });
+
+  // wybór problemu
+  const tool = $('[data-tool]');
+  const pick = (k) => {
+    $$('[data-prob]', tool).forEach((b) => b.setAttribute('aria-checked', String(b.dataset.prob === k)));
+    $$('[data-panel]', tool).forEach((p) => (p.hidden = p.dataset.panel !== k));
+  };
+  $$('[data-prob]', tool).forEach((b) => b.addEventListener('click', () => pick(b.dataset.prob)));
+  // strzałki w grupie radio
+  tool.querySelector('[role=radiogroup]').addEventListener('keydown', (e) => {
+    if (!['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(e.key)) return;
+    e.preventDefault();
+    const list = $$('[data-prob]', tool);
+    const i = list.findIndex((b) => b.getAttribute('aria-checked') === 'true');
+    const n = list[(i + (e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length];
+    pick(n.dataset.prob); n.focus();
+  });
+
+  // „Vraag dit aan” → formularz z wybranym problemem
+  const form = $('[data-form]');
+  $$('[data-ask]').forEach((a) => a.addEventListener('click', () => {
+    const p = $('[data-pick]');
+    p.textContent = `${cfg.t.picked}: ${cfg.probs[a.dataset.ask]}`;
+    p.hidden = false;
+    form.elements.what.dataset.prob = a.dataset.ask;
+  }));
+
+  // postcode: Parkstad i okolice (6350–6469)
+  const zipForm = $('[data-zip]'), out = $('[data-zip-out]');
+  zipForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const m = zipForm.zip.value.match(/\d{4}/);
+    out.className = 'zip__out';
+    if (!m) { out.textContent = cfg.t.zipBad; return; }
+    const n = +m[0];
+    if (n >= 6350 && n <= 6469) {
+      const min = 25 + (Math.abs(n - 6411) % 7) * 4;
+      out.textContent = cfg.t.zipYes.replace('{min}', String(min));
+      out.classList.add('is-yes');
+    } else { out.textContent = cfg.t.zipNo; out.classList.add('is-no'); }
+  });
+
+  demoForm(form);
+</script>

@@ -5,7 +5,7 @@ import '@fontsource-variable/geist-mono';
 import '../styles/hub.css';
 import Curtain from './Curtain.astro';
 import {
-  T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, SITES, siteHref, siteThumb, PRICES,
+  T, LANGS, DEFAULT_LANG, SKILLS, CASE_MEDIA, SITES, SHOWCASE_SLUGS, SITE_CATS, siteHref, siteThumb, PRICES,
   WHATSAPP, KVK, GITHUB_URL, FICHES_URL, FORM_ID, EMAIL_PARTS, LAB,
 } from '../data/hub-i18n.js';
 
@@ -123,7 +123,7 @@ const CUBE = [
   { k: 'work', n: '04', t: ui.pages.work, s: ui.chapters.items.work.n, href: pageUrl('work') },
 ];
 const nextKey = nextOf[page];
-const SHOWCASE = SITES.filter((s) => s.neu).concat(SITES.filter((s) => ['restauracja', 'oktan'].includes(s.slug)));
+const SHOWCASE = SHOWCASE_SLUGS.map((slug) => SITES.find((s) => s.slug === slug));
 const P = t.pricing;
 ---
 <!doctype html>
@@ -542,12 +542,19 @@ const P = t.pricing;
       {page === 'websites' && (
         <section class="sites" id="websites">
           <div class="sites__pin">
+            <div class="wrap sites__cats" role="group" aria-label={t.sites.catsLabel}>
+              {['all', ...SITE_CATS].map((c, i) => (
+                <button type="button" class="mono sites__cat" data-cat={c} aria-pressed={i === 0 ? 'true' : 'false'}>
+                  {t.sites.cats[c]}<span>{c === 'all' ? SITES.length + 1 : SITES.filter((x) => x.cat === c).length}</span>
+                </button>
+              ))}
+            </div>
             <div class="sites__view">
               <div class="sites__track" id="sitesTrack">
                 {SITES.map((s, i) => {
                   const r = t.sites.items[s.slug];
                   return (
-                    <a class="site" href={`${b}${siteHref(s, lang)}`} data-cursor="open" data-curtain={s.name}>
+                    <a class="site" href={`${b}${siteHref(s, lang)}`} data-cursor="open" data-curtain={s.name} data-cat={s.cat}>
                       <span class="site__win">
                         <span class="site__bar"><span><i></i><i></i><i></i></span><span>vervostudio.com{siteHref(s, lang)}</span></span>
                         <span class="site__img"><img src={asset(siteThumb(s, lang))} width="960" height="600" alt={`${s.name}, ${r.bran}`} loading="lazy" decoding="async" /></span>
@@ -562,7 +569,7 @@ const P = t.pricing;
                     </a>
                   );
                 })}
-                <a class="site site--app" href={FICHES_URL} {...extLink} data-cursor="open">
+                <a class="site site--app" href={FICHES_URL} {...extLink} data-cursor="open" data-cat="app">
                   <span class="site__win fiche" aria-hidden="true">
                     <span class="fiche__card fiche__card--back">bread</span>
                     <span class="fiche__card">le pain</span>

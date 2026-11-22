@@ -19,7 +19,7 @@ const T = {
     desc: 'Binnen- en buitenschilderwerk in Maastricht en Heuvelland. Vaste prijs vooraf, 2 jaar garantie. Bereken direct een prijsindicatie.',
     nav: ['Diensten', 'Prijs berekenen', 'Projecten', 'Werkwijze'], quote: 'Gratis offerte', calcBtn: 'Bereken je prijs',
     kicker: 'Schildersbedrijf · Maastricht & Heuvelland',
-    h1: ['Strak geschilderd.', 'Op tijd klaar.'],
+    h1: 'Schilders die klaar zijn op de dag die ze beloven.',
     lede: 'Binnen- en buitenschilderwerk met een vaste prijs vooraf. We plakken alles af, werken netjes en laten je huis schoner achter dan we het vonden.',
     rating: '4,8 uit 96 reviews',
     usp: ['Vaste prijs vooraf', '2 jaar garantie', 'Schoon opgeleverd', 'Binnenwerk ook in de winter'],
@@ -53,7 +53,7 @@ const T = {
     desc: 'Interior and exterior painting in Maastricht and the Heuvelland. Fixed price upfront, 2-year guarantee. Get an instant price estimate.',
     nav: ['Services', 'Price estimate', 'Projects', 'How we work'], quote: 'Free quote', calcBtn: 'Estimate your price',
     kicker: 'Painters · Maastricht & Heuvelland',
-    h1: ['Clean lines.', 'Done on time.'],
+    h1: 'Painters who finish on the day they promised.',
     lede: 'Interior and exterior painting at a fixed price agreed upfront. We cover everything, work tidily and leave your home cleaner than we found it.',
     rating: '4.8 from 96 reviews',
     usp: ['Fixed price upfront', '2-year guarantee', 'Left spotless', 'Indoor work all winter'],
@@ -87,7 +87,7 @@ const T = {
     desc: 'Malowanie wnętrz i elewacji w Maastricht i Heuvelland. Stała cena z góry, 2 lata gwarancji. Sprawdź od razu orientacyjny koszt.',
     nav: ['Usługi', 'Ile to kosztuje?', 'Realizacje', 'Jak pracujemy'], quote: 'Bezpłatna wycena', calcBtn: 'Oblicz koszt',
     kicker: 'Firma malarska · Maastricht i Heuvelland',
-    h1: ['Równo pomalowane.', 'Na czas.'],
+    h1: 'Malarze, którzy kończą w dniu, który obiecali.',
     lede: 'Malowanie wnętrz i elewacji za cenę ustaloną z góry. Wszystko zabezpieczamy, pracujemy czysto i zostawiamy dom w lepszym stanie, niż go zastaliśmy.',
     rating: '4,8 z 96 opinii',
     usp: ['Stała cena z góry', '2 lata gwarancji', 'Sprzątamy po sobie', 'Wnętrza malujemy też zimą'],
@@ -161,7 +161,7 @@ const OUT = [range('frames', t.frames, 0, 30, 8, t.pcs), range('facade', t.facad
       <section class="hero">
         <div class="hero__txt">
           <p class="kicker">{t.kicker}</p>
-          <h1>{t.h1[0]}<br /><span>{t.h1[1]}</span></h1>
+          <h1>{t.h1}</h1>
           <p class="lede">{t.lede}</p>
           <div class="hero__cta">
             <a class="btn btn--green" href="#prijs">{t.calcBtn}</a>
@@ -327,8 +327,7 @@ const OUT = [range('frames', t.frames, 0, 30, 8, t.pcs), range('facade', t.facad
   @media (min-width: 960px) { .hero { grid-template-columns: 1fr 1fr; } }
   .hero > * { min-width: 0; }
   .kicker { font: 600 0.78rem/1 var(--ff); letter-spacing: 0.14em; text-transform: uppercase; color: #9a6c12; margin-bottom: 1.2rem; }
-  .hero h1 { font: 700 clamp(2.5rem, 7vw, 5.2rem)/1.02 var(--ff-d); letter-spacing: -0.045em; }
-  .hero h1 span { color: var(--green); }
+  .hero h1 { font: 700 clamp(2.3rem, 5.6vw, 4.4rem)/1.04 var(--ff-d); letter-spacing: -0.045em; text-wrap: balance; }
   .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
   .rating { margin-top: 1.4rem; font-size: 0.9rem; color: var(--mut); }
   .rating span { color: var(--ochre); letter-spacing: 0.08em; }
