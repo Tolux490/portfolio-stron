@@ -19,7 +19,7 @@ const T = {
     desc: 'Kawiarnia speciality w Wołominie, ul. Kościelna 7. Przelewy single origin, matcha ceremonialna, wypieki z własnego pieca. Karta stałego gościa: ósma kawa gratis.',
     ogDesc: 'Przelewy single origin, matcha ceremonialna, wypieki z własnego pieca.',
     nav: ['Menu', 'Karta stałego gościa', 'Miejsce', 'Kontakt'],
-    kicker: 'Kawiarnia speciality', h1a: 'Dzień dobry', h1b: 'zaczyna się tutaj',
+    h1: 'Dzień dobry, Wołomin.', stamp1: 'Bułki z pieca', stamp2: 'codziennie o 7:00',
     lede: 'Przelewy z ziaren palonych dwa tygodnie przed zaparzeniem, matcha ceremonialna z Uji i wypieki, które wyjmujemy z pieca o siódmej rano.',
     ctaMenu: 'Zobacz menu', ctaWay: 'Jak trafić', heroAlt: 'Cynamonka i latte Café Prolog',
     menuH: 'Krótka karta, wszystko na miejscu', menuTabs: 'Kategorie menu', all: 'Wszystko',
@@ -50,7 +50,7 @@ const T = {
     desc: 'A specialty coffee shop in Wołomin, Poland. Single-origin pour-overs, ceremonial matcha and baking from our own oven. Loyalty card: the eighth coffee is on us.',
     ogDesc: 'Single-origin pour-overs, ceremonial matcha and baking from our own oven.',
     nav: ['Menu', 'Loyalty card', 'Visit', 'Contact'],
-    kicker: 'Specialty coffee', h1a: 'A good morning', h1b: 'starts right here',
+    h1: 'Good morning, Wołomin.', stamp1: 'Buns out of the oven', stamp2: 'every day at 7:00',
     lede: 'Pour-overs from beans roasted two weeks before brewing, ceremonial matcha from Uji, and pastries that come out of the oven at seven in the morning.',
     ctaMenu: 'See the menu', ctaWay: 'How to find us', heroAlt: 'Cinnamon bun and latte at Café Prolog',
     menuH: 'A short menu, all made in house', menuTabs: 'Menu categories', all: 'All',
@@ -101,7 +101,7 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,420;1,9..144,340&family=Albert+Sans:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;500;600&display=swap" />
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
       '@type': biz.schemaType,
@@ -138,8 +138,7 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
     <!-- ============ HERO: dzielony, jasny ============ -->
     <section class="hero" id="gora">
       <div class="hero__tekst">
-        <p class="hero__kicker">{t.kicker} · {biz.city}</p>
-        <h1>{t.h1a}<br /><em>{t.h1b}</em></h1>
+        <h1>{t.h1}</h1>
         <p class="hero__lede">{t.lede}</p>
         <div class="hero__cta">
           <a class="btn btn--pelny" href="#menu">{t.ctaMenu}</a>
@@ -149,9 +148,11 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
       </div>
       <div class="hero__foto">
         <Foto src="kawiarnia-hero.webp" alt={t.heroAlt} ratio="4/5" label="Hero" />
+        <p class="stamp" aria-hidden="true"><b>{t.stamp1}</b><span>{t.stamp2}</span></p>
       </div>
       <div class="hero__foto-mobile">
         <Foto src="kawiarnia-hero.webp" alt={t.heroAlt} ratio="3/4" label="Hero mobile" />
+        <p class="stamp" aria-hidden="true"><b>{t.stamp1}</b><span>{t.stamp2}</span></p>
       </div>
     </section>
 
@@ -318,7 +319,7 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
 <style is:global>
   /* =========================================================
      PROLOG — ciepły papier, atrament espresso, zieleń matchy.
-     Fraunces w optycznym rozmiarze display + Albert Sans.
+     Young Serif w nagłówkach + Hanken Grotesk.
      ========================================================= */
   :root {
     --papier: #f8f5ee;
@@ -330,8 +331,8 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
     --dym-jasny: rgba(248, 245, 238, 0.62);
     --linia: rgba(34, 26, 19, 0.14);
     --linia-jasna: rgba(248, 245, 238, 0.16);
-    --serif: 'Fraunces', Georgia, serif;
-    --sans: 'Albert Sans', system-ui, sans-serif;
+    --serif: 'Young Serif', Georgia, serif;
+    --sans: 'Hanken Grotesk', system-ui, sans-serif;
     --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
@@ -346,7 +347,7 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
   a { color: inherit; text-decoration: none; }
   button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
   :focus-visible { outline: 2px solid var(--zielen); outline-offset: 4px; }
-  h1, h2, h3 { font-family: var(--serif); font-weight: 340; line-height: 1.02; letter-spacing: -0.01em; margin: 0; text-wrap: balance; overflow-wrap: break-word; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.04; letter-spacing: -0.02em; margin: 0; text-wrap: balance; overflow-wrap: break-word; }
   p { margin: 0; text-wrap: pretty; }
 
   .wrap { width: min(100% - 3rem, 1220px); margin-inline: auto; }
@@ -418,9 +419,15 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
   .hero { min-height: 100svh; display: grid; align-items: stretch; }
   @media (min-width: 940px) { .hero { grid-template-columns: 1.05fr 0.95fr; } }
   .hero__tekst { display: flex; flex-direction: column; justify-content: center; padding: clamp(7rem, 14vh, 10rem) clamp(1.5rem, 5vw, 5rem) clamp(3rem, 6vh, 5rem); }
-  .hero__kicker { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--zielen); margin-bottom: 1.5rem; font-weight: 600; }
-  .hero h1 { font-size: clamp(2.9rem, 7.5vw, 5.6rem); }
-  .hero h1 em { font-style: italic; color: var(--zielen); }
+  .hero h1 { font-size: clamp(3rem, 8.4vw, 6.4rem); letter-spacing: -0.035em; line-height: 0.98; max-width: 9ch; }
+  .hero__foto, .hero__foto-mobile { position: relative; }
+  .stamp { position: absolute; display: grid; place-content: center; gap: 0.15rem; width: 9.5rem; aspect-ratio: 1; border-radius: 50%; background: var(--zielen); color: var(--papier); text-align: center; padding: 1rem; transform: rotate(-9deg); box-shadow: 0 10px 30px rgba(34, 26, 19, 0.25); }
+  .stamp b { font-family: var(--serif); font-weight: 400; font-size: 1.12rem; line-height: 1.1; }
+  .stamp span { font-size: 0.72rem; letter-spacing: 0.04em; opacity: 0.85; }
+  .stamp::before { content: ''; position: absolute; inset: 0.4rem; border-radius: 50%; border: 1px dashed rgba(248, 245, 238, 0.45); }
+  .hero__foto .stamp { left: -4.75rem; bottom: 12%; }
+  .hero__foto-mobile .stamp { right: 1rem; top: -2.5rem; width: 7.6rem; }
+  .hero__foto-mobile .stamp b { font-size: 0.95rem; }
   .hero__lede { margin-top: 1.6rem; max-width: 44ch; color: var(--dym); font-size: clamp(1rem, 1.7vw, 1.15rem); }
   .hero__cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2.4rem; }
   .hero__status { margin-top: 2.2rem; font-size: 0.8rem; color: var(--dym); }
@@ -442,7 +449,7 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
 
   .menu__grupa { margin-bottom: 2.8rem; }
   .menu__grupa.is-hidden { display: none; }
-  .menu__grupa h3 { font-size: 1.35rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--linia); margin-bottom: 0.4rem; font-style: italic; }
+  .menu__grupa h3 { font-size: 1.35rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--linia); margin-bottom: 0.4rem; }
   .menu__grupa ul { list-style: none; margin: 0; padding: 0; }
   .menu__grupa li { display: flex; justify-content: space-between; align-items: baseline; gap: 1.5rem; padding: 0.95rem 0; border-bottom: 1px solid var(--linia); }
   .menu__n { display: block; font-weight: 500; }
@@ -477,7 +484,7 @@ const nav = ['#menu', '#karta', '#miejsce', '#kontakt'].map((href, i) => ({ href
   @media (min-width: 820px) { .opinie { grid-template-columns: 1fr 1fr; gap: 3.5rem; } }
   .opinie figure { margin: 0; border-top: 1px solid var(--linia); padding-top: 1.6rem; }
   .opinie blockquote { margin: 0; }
-  .opinie blockquote p { font-family: var(--serif); font-size: 1.25rem; line-height: 1.4; font-style: italic; }
+  .opinie blockquote p { font-family: var(--serif); font-size: 1.2rem; line-height: 1.45; }
   .opinie figcaption { margin-top: 1rem; font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--dym); }
 
   /* ---------- miejsce + mapa ---------- */

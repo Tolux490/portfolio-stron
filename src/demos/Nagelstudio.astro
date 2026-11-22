@@ -24,7 +24,7 @@ const T = {
     desc: 'Gellak, BIAB en nail art in Amsterdam Oud-West. Kies online je kleur en vraag je afspraak aan.',
     nav: ['Behandelingen', 'Kleuren', 'Cadeaubon', 'Contact'], book: 'Afspraak maken',
     kicker: 'Nagelstudio · Amsterdam Oud-West',
-    h1: ['Nagels die', 'drie weken', 'mooi blijven.'],
+    h1: ['Nagels die', 'drie weken', ' mooi blijven.'],
     lede: 'Gellak, BIAB en nail art in een rustige studio. Kies hieronder alvast je kleur, wij doen de rest.',
     pickColor: 'Kies je kleur',
     why: [['Hygiënisch', 'Instrumenten gesteriliseerd na elke klant, vijlen per persoon.'], ['HEMA-vrij en vegan', 'Gellak zonder HEMA, dus veel minder kans op allergie.'], ['Glansgarantie', 'Laat er binnen 7 dagen iets los? We herstellen het gratis.']],
@@ -63,7 +63,7 @@ const T = {
     desc: 'Gel polish, BIAB and nail art in Amsterdam Oud-West. Choose your colour online and request your appointment.',
     nav: ['Treatments', 'Colours', 'Gift card', 'Contact'], book: 'Book now',
     kicker: 'Nail studio · Amsterdam Oud-West',
-    h1: ['Nails that', 'stay beautiful', 'for three weeks.'],
+    h1: ['Nails that still look new after', 'three weeks', '.'],
     lede: 'Gel polish, BIAB and nail art in a calm studio. Pick your colour below, we take care of the rest.',
     pickColor: 'Pick your colour',
     why: [['Hygienic', 'Tools sterilised after every client, files are single-use.'], ['HEMA-free and vegan', 'Gel polish without HEMA, so far less risk of allergies.'], ['Shine guarantee', 'Something lifts within 7 days? We fix it for free.']],
@@ -102,7 +102,7 @@ const T = {
     desc: 'Hybryda, BIAB i zdobienia w Amsterdamie, dzielnica Oud-West. Wybierz kolor online i poproś o termin.',
     nav: ['Zabiegi', 'Kolory', 'Bon podarunkowy', 'Kontakt'], book: 'Umów wizytę',
     kicker: 'Stylizacja paznokci · Amsterdam Oud-West',
-    h1: ['Paznokcie, które', 'trzy tygodnie', 'wyglądają jak nowe.'],
+    h1: ['Manicure, który', 'trzy tygodnie', ' wygląda jak nowy.'],
     lede: 'Hybryda, BIAB i zdobienia w spokojnym studiu. Wybierz kolor już teraz, a resztą zajmiemy się my.',
     pickColor: 'Wybierz kolor',
     why: [['Higiena', 'Narzędzia sterylizowane po każdej klientce, pilniki jednorazowe.'], ['Bez HEMA, wegańskie', 'Lakiery hybrydowe bez HEMA, więc dużo mniejsze ryzyko alergii.'], ['Gwarancja trwałości', 'Coś odpryśnie w ciągu 7 dni? Poprawimy za darmo.']],
@@ -169,7 +169,7 @@ const NAIL = {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" />
   </head>
   <body>
     <Curtain />
@@ -183,7 +183,7 @@ const NAIL = {
       <section class="hero">
         <div class="hero__txt">
           <p class="kicker">{t.kicker}</p>
-          <h1>{t.h1[0]} <em>{t.h1[1]}</em> {t.h1[2]}</h1>
+          <h1>{t.h1[0]} <span class="mark">{t.h1[1]}</span>{t.h1[2]}</h1>
           <p class="lede">{t.lede}</p>
           <div class="hero__cta">
             <a class="btn btn--ink" href="#afspraak">{t.book}</a>
@@ -342,7 +342,7 @@ const NAIL = {
 </html>
 
 <style is:global>
-  :root { --bg: #f6efe9; --bg2: #efe3da; --ink: #2b1d22; --mut: #7c6a6f; --rose: #b4566a; --line: rgba(43, 29, 34, 0.12); --ff-d: 'Cormorant', Georgia, serif; --ff-b: 'DM Sans', system-ui, sans-serif; --c: #f2d4cf; }
+  :root { --bg: #f6efe9; --bg2: #efe3da; --ink: #2b1d22; --mut: #7c6a6f; --rose: #b4566a; --line: rgba(43, 29, 34, 0.12); --ff-d: 'Gloock', Georgia, serif; --ff-b: 'DM Sans', system-ui, sans-serif; --c: #f2d4cf; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   body { background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--ff-b); overflow-x: hidden; }
@@ -351,7 +351,7 @@ const NAIL = {
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .wrap { width: min(100% - 2.4rem, 70rem); margin-inline: auto; }
   .lab { font: 600 0.72rem/1 var(--ff-b); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rose); margin-bottom: 0.9rem; }
-  .h2 { font: 500 clamp(2.4rem, 6vw, 4rem)/1 var(--ff-d); letter-spacing: -0.01em; max-width: 16ch; }
+  .h2 { font: 400 clamp(2.4rem, 6vw, 4rem)/1 var(--ff-d); letter-spacing: -0.01em; max-width: 16ch; }
   .h3 { font: 600 0.75rem/1 var(--ff-b); letter-spacing: 0.18em; text-transform: uppercase; color: var(--mut); margin-bottom: 0.8rem; }
   .lede { color: var(--mut); max-width: 32rem; margin-top: 1rem; font-size: 1.04rem; }
   .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.95rem 1.5rem; border-radius: 999px; font: 600 0.92rem/1 var(--ff-b); text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform 0.2s, background 0.2s; }
@@ -361,8 +361,8 @@ const NAIL = {
   .btn--full { width: 100%; margin-top: 0.4rem; }
 
   .hd { position: fixed; z-index: 60; inset: 0.8rem 0.8rem auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.55rem 0.55rem 0.55rem 1.2rem; border-radius: 999px; background: rgba(246, 239, 233, 0.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); }
-  .hd__logo { font: 600 1.45rem/1 var(--ff-d); text-decoration: none; }
-  .hd__logo em, .ft__logo em { color: var(--rose); }
+  .hd__logo { font: 400 1.45rem/1 var(--ff-d); text-decoration: none; }
+  .hd__logo em, .ft__logo em { color: var(--rose); font-style: normal; }
   .hd__nav { display: none; gap: 1.8rem; font-size: 0.9rem; color: var(--mut); }
   .hd__nav a { text-decoration: none; }
   .hd__nav a:hover { color: var(--ink); }
@@ -372,19 +372,19 @@ const NAIL = {
   .hero { display: grid; gap: 2rem; padding: 7rem clamp(1.2rem, 4vw, 3rem) 3rem; max-width: 80rem; margin-inline: auto; align-items: center; }
   @media (min-width: 900px) { .hero { grid-template-columns: 1.05fr 0.95fr; min-height: 100svh; padding-top: 6rem; } }
   .kicker { font: 600 0.74rem/1 var(--ff-b); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rose); margin-bottom: 1.2rem; }
-  .hero h1 { font: 500 clamp(3rem, 8.4vw, 6.4rem)/0.98 var(--ff-d); letter-spacing: -0.015em; }
-  .hero h1 em { color: var(--rose); }
+  .hero h1 { font: 400 clamp(2.7rem, 7.4vw, 5.6rem)/1.02 var(--ff-d); letter-spacing: -0.03em; text-wrap: balance; }
+  .hero h1 .mark { white-space: nowrap; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 24' preserveAspectRatio='none'%3E%3Cpath d='M3 15c40-7 92-11 150-9 52 2 96 5 144 1' fill='none' stroke='%23b4566a' stroke-width='5' stroke-linecap='round' opacity='.7'/%3E%3C/svg%3E") no-repeat 0 92% / 100% 0.32em; padding-bottom: 0.06em; }
   .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
   .hero__img { position: relative; }
   .hero__img img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 999px 999px 24px 24px; }
   .hero__badge { position: absolute; left: -0.6rem; bottom: 2rem; background: #fff; border-radius: 18px; padding: 0.8rem 1rem; display: flex; gap: 0.7rem; align-items: center; box-shadow: 0 20px 40px -20px rgba(43, 29, 34, 0.35); font-size: 0.72rem; color: var(--mut); line-height: 1.3; }
-  .hero__badge b { font: 600 2rem/1 var(--ff-d); color: var(--ink); }
+  .hero__badge b { font: 400 2rem/1 var(--ff-d); color: var(--ink); }
   .hero__badge span { color: #c9973e; }
 
   .why { border-block: 1px solid var(--line); background: #fff; }
   .why__in { display: grid; gap: 1.6rem; padding: 2.6rem 0; }
   @media (min-width: 800px) { .why__in { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .why__n { font: italic 500 1.4rem/1 var(--ff-d); color: var(--rose); }
+  .why__n { font: 400 1.4rem/1 var(--ff-d); color: var(--rose); }
   .why h3 { font: 600 1.02rem/1.3 var(--ff-b); margin: 0.4rem 0 0.3rem; }
   .why p { color: var(--mut); font-size: 0.92rem; }
 
@@ -394,7 +394,7 @@ const NAIL = {
   .tabs button[aria-selected='true'] { background: var(--ink); color: var(--bg); }
   .treat { list-style: none; max-width: 46rem; }
   .treat li { display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: baseline; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
-  .treat b { display: block; font: 600 1.6rem/1.15 var(--ff-d); }
+  .treat b { display: block; font: 400 1.6rem/1.15 var(--ff-d); }
   .treat div span { color: var(--mut); font-size: 0.86rem; }
   .treat__m { color: var(--mut); font-size: 0.82rem; white-space: nowrap; }
   .treat__p { font: 600 1.15rem var(--ff-b); white-space: nowrap; }
@@ -436,9 +436,9 @@ const NAIL = {
   .gift__in { display: grid; gap: 2.4rem; align-items: center; }
   @media (min-width: 860px) { .gift__in { grid-template-columns: 0.9fr 1.1fr; } }
   .gift__card { aspect-ratio: 1.6; border-radius: 22px; padding: 1.6rem; display: grid; align-content: space-between; background: linear-gradient(135deg, #f2d4cf, #e7b3a8 60%, #d48e88); color: var(--ink); max-width: 26rem; transform: rotate(-4deg); box-shadow: 0 40px 70px -30px rgba(0, 0, 0, 0.6); }
-  .gift__card span { font: 600 1.4rem var(--ff-d); }
-  .gift__card em { color: var(--rose); }
-  .gift__card b { font: 600 3.4rem/1 var(--ff-d); }
+  .gift__card span { font: 400 1.4rem var(--ff-d); }
+  .gift__card em { color: var(--rose); font-style: normal; }
+  .gift__card b { font: 400 3.4rem/1 var(--ff-d); }
   .gift__card small { letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.7rem; }
 
   .book { display: grid; gap: 2.4rem; }
@@ -453,7 +453,7 @@ const NAIL = {
   .f2 { display: grid; gap: 0.9rem; }
   @media (min-width: 520px) { .f2 { grid-template-columns: 1fr 1fr; } }
   .done { background: var(--bg); border-radius: 16px; padding: 1.2rem; }
-  .done h3 { font: 600 1.6rem/1.1 var(--ff-d); }
+  .done h3 { font: 400 1.6rem/1.1 var(--ff-d); }
   .done p { color: var(--mut); font-size: 0.86rem; margin: 0.5rem 0; }
   .done pre { white-space: pre-wrap; font: 400 0.88rem/1.5 var(--ff-b); background: #dcf8c6; color: #1b2a17; padding: 0.9rem 1rem; border-radius: 12px 12px 12px 2px; }
 
@@ -461,7 +461,7 @@ const NAIL = {
   .revs { display: grid; gap: 1.2rem; margin-top: 2.4rem; }
   @media (min-width: 860px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .revs blockquote { background: #fff; border-radius: 22px; padding: 1.5rem; border: 1px solid var(--line); }
-  .revs p { font: italic 500 1.3rem/1.35 var(--ff-d); }
+  .revs p { font: 400 1.2rem/1.45 var(--ff-d); }
   .revs cite { display: block; margin-top: 0.9rem; font-style: normal; color: var(--mut); font-size: 0.84rem; }
 
   .sec--visit { background: #fff; border-top: 1px solid var(--line); }
@@ -475,7 +475,7 @@ const NAIL = {
 
   .ft { padding: 3rem 0 6rem; font-size: 0.84rem; color: var(--mut); }
   .ft .wrap { display: grid; gap: 0.5rem; }
-  .ft__logo { font: 600 2.2rem/1 var(--ff-d); color: var(--ink); }
+  .ft__logo { font: 400 2.2rem/1 var(--ff-d); color: var(--ink); }
   .ft a { color: var(--rose); }
   .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 7.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); background: var(--ink); color: var(--bg); text-align: center; padding: 1rem; border-radius: 999px; text-decoration: none; font: 600 0.95rem var(--ff-b); box-shadow: 0 16px 30px -12px rgba(43, 29, 34, 0.6); }
   @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }

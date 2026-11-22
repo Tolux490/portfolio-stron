@@ -2,7 +2,7 @@
 import Site from '../../../../layouts/Site.astro';
 import Polityka from '../../../../components/Polityka.astro';
 import { kawiarnia as biz } from '../../../../data/firmy.js';
-const fonts = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,420&family=Albert+Sans:wght@400;500;600&display=swap';
+const fonts = 'https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;500;600&display=swap';
 ---
 <Site title={`Privacy policy — ${biz.name}`} description="How personal data is processed." fonts={fonts} biz={biz} lang="en" path="polityka-prywatnosci/">
   <Polityka biz={biz} lang="en" />
@@ -25,8 +25,8 @@ const fonts = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@
   :root {
     --bg:#f8f5ee; --bg-alt:#efeadf; --ink:#221a13; --muted:rgba(34,26,19,.62); --line:rgba(34,26,19,.14);
     --accent:#46543a; --accent-dark:#38452e; --on-accent:#f8f5ee; --radius:999px; --maxw:1040px;
-    --font-display:'Fraunces',Georgia,serif;
-    --font-body:'Albert Sans',system-ui,sans-serif;
-    --font-mono:'Albert Sans',system-ui,sans-serif;
+    --font-display:'Young Serif',Georgia,serif;
+    --font-body:'Hanken Grotesk',system-ui,sans-serif;
+    --font-mono:'Hanken Grotesk',system-ui,sans-serif;
   }
 </style>

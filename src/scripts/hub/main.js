@@ -430,6 +430,21 @@ export function initHub() {
     return () => view?.removeEventListener('scroll', onS);
   });
 
+  // ---------- filtr branż na stronie Realizacje ----------
+  const catBtns = $$('.sites__cat');
+  if (catBtns.length && sitesTrack) {
+    const cards = $$('.site', sitesTrack);
+    const setCat = (cat) => {
+      catBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cat === cat)));
+      const shown = cards.filter((c) => { const on = cat === 'all' || c.dataset.cat === cat; c.hidden = !on; return on; });
+      const tot = String(shown.length).padStart(2, '0');
+      shown.forEach((c, i) => { const n = $('.site__n', c); if (n) n.textContent = `${String(i + 1).padStart(2, '0')} / ${tot}`; });
+      if (view) view.scrollLeft = 0;
+      ScrollTrigger.refresh();
+    };
+    catBtns.forEach((b) => b.addEventListener('click', () => setCat(b.dataset.cat)));
+  }
+
   // ---------- spis rozdziałów: podgląd strony jedzie za kursorem ----------
   const chapFloat = $('.chap__float'), chapImg = $('#chapImg');
   if (chapFloat && finePointer && !reduced) {

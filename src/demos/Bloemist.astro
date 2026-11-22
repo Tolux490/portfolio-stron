@@ -1,0 +1,530 @@
+---
+import Curtain from '../components/Curtain.astro';
+import DemoLang from '../components/DemoLang.astro';
+// Mos bloemenatelier (demo): kwiaciarnia w Maastricht (Jekerkwartier). NL + EN + PL.
+// Fikcyjna firma: adres, ceny i opinie są przykładowe. Strony: src/pages/bloemist/ (+ en/, pl/).
+
+const { lang = 'nl' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f) => `${base}/img/bloemist/${f}`;
+const root = (l) => `${base}/bloemist/${l === 'nl' ? '' : `${l}/`}`;
+const tel = '+31430000000';
+const telShow = '043 000 00 00';
+// ma 12–18, di–vr 9–18, za 9–17, zo dicht
+const HOURS = [[720, 1080], [540, 1080], [540, 1080], [540, 1080], [540, 1080], [540, 1020], null];
+const CUTOFF = 14 * 60; // bezorging dezelfde dag bij bestelling voor 14:00 (ma–za)
+const MOODS = [['wit', 'tafel.webp'], ['roze', 'rozen.webp'], ['kleur', 'donker.webp'], ['tulp', 'tulpen.webp']];
+const SIZES = [['s', 29, 0.62], ['m', 45, 0.8], ['l', 65, 1]];
+const PRICES = { vase: 15, delivery: 6.95, deliveryOut: 9.95, freeFrom: 45 };
+
+const T = {
+  nl: {
+    title: 'Mos bloemenatelier — verse bloemen en boeketten in Maastricht',
+    desc: 'Boeketten, bloemenabonnementen, bruidswerk en rouwbloemen uit het Jekerkwartier. Voor 14:00 besteld, vandaag nog bezorgd in Maastricht.',
+    nav: ['Boeket', 'Abonnement', 'Bruiloft en rouw', 'Winkel'], order: 'Bestel een boeket',
+    h1: 'Verse bloemen, vandaag nog bezorgd in Maastricht.',
+    lede: 'Een klein atelier in het Jekerkwartier. Drie keer per week halen we zelf bloemen op de veiling in Venlo, dus een boeket van ons staat ruim een week mooi.',
+    cdBefore: 'Bestel binnen {t}, dan bezorgen we vandaag nog.', cdAfter: 'Voor vandaag zijn we vol. Bestel nu, dan bezorgen we {day}.', tomorrow: 'morgen', monday: 'maandag', hr: 'u', mn: 'min',
+    heroAlt: 'De bloemenkraam voor de winkel', tulipAlt: 'Roze tulpen in een glazen vaas',
+    bLab: 'Boeket samenstellen', bH: 'Stel je boeket samen',
+    bLede: 'Kies een stijl en een formaat. Wij maken er in de winkel iets moois van met wat er die dag het verst is.',
+    s1: 'Stijl', s2: 'Formaat', s3: 'Extra', s4: 'Kaartje', s5: 'Bezorging',
+    moods: { wit: 'Wit en groen', roze: 'Zacht roze', kleur: 'Kleurrijk', tulp: 'Tulpen van het seizoen' },
+    sizes: { s: ['Klein', 'zo’n 12 stelen'], m: ['Middel', 'zo’n 20 stelen'], l: ['Groot', 'zo’n 30 stelen'] },
+    vase: 'Glazen vaas erbij', cardPh: 'Gefeliciteerd met je nieuwe huis! Liefs, Anouk', cardNote: 'Het kaartje is gratis. We schrijven het met de hand.', chars: 'tekens over',
+    when: { today: 'Vandaag', tomorrow: 'Morgen', pickup: 'Ophalen in de winkel' }, todayFull: 'vol',
+    zip: 'Postcode', zipPh: '6211', zipNote: 'Gratis bezorgd in Maastricht vanaf €45. Daarbuiten €9,95.',
+    sum: 'Jouw boeket', sumDel: 'Bezorging', free: 'gratis', total: 'Totaal', buy: 'Bestellen',
+    doneH: 'Dankjewel! Je boeket staat genoteerd.', doneP: 'Demoversie: er is niets besteld of betaald. Op de echte site reken je hier af met iDEAL.',
+    aLab: 'Abonnement', aH: 'Elke week bloemen op tafel',
+    aP: 'Wij kiezen wat er die week het mooist is en brengen het langs op een vaste dag. Overslaan of stoppen kan altijd.',
+    plans: [['Thuis', '€25', 'per week', 'Een seizoensboeket voor op tafel'], ['Om de week', '€27', 'per keer', 'Iets groter, net zo lang mooi'], ['Kantoor', 'vanaf €45', 'per week', 'Receptie, vergaderruimte, lunchtafel']],
+    aCta: 'Neem een abonnement',
+    wLab: 'Bruiloft en rouw', wH: 'Voor de dagen die je onthoudt',
+    wed: ['Bruidswerk', 'Bruidsboeket, corsages en tafelstukken in jullie kleuren. Plan een gratis gesprek, het liefst een half jaar voor de grote dag.', 'Plan een gesprek'],
+    fun: ['Rouwbloemen', 'Rouwstukken en linten met tekst. We bezorgen met zorg bij uitvaartcentra in Maastricht en omgeving, ook op zaterdag.', 'Bel ons gerust'],
+    gLab: 'Deze week', gH: 'Nu in de winkel',
+    gallery: [['hand.webp', 'Veldboeket in kraftpapier'], ['calla.webp', 'Roze calla’s'], ['tulp.webp', 'Eén tulp, ook mooi'], ['hart.webp', 'Voor Moederdag'], ['rozen.webp', 'Tuinrozen en pioenen']],
+    rLab: 'Reviews', rH: 'Wat klanten zeggen',
+    reviews: [['Vanuit Rotterdam een boeket voor mijn moeder besteld. Ze stuurde een foto en het was nog mooier dan ik had gehoopt.', 'Femke'], ['Al een jaar een abonnement voor ons kantoor. Elke maandag staat er iets anders op de receptie en klanten vragen er steeds naar.', 'Studio Vier, Maastricht'], ['Voor de uitvaart van mijn vader hebben ze alles met zoveel zorg geregeld. Dat vergeet ik niet.', 'Jos']],
+    vLab: 'De winkel', vH: 'Kom gerust binnen',
+    hoursH: 'Openingstijden', days: ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'], closed: 'Gesloten',
+    openNow: 'Nu open', closedNow: 'Nu gesloten', until: 'tot', opensAt: 'opent', route: 'Route in Google Maps',
+    demo: 'Conceptwebsite voor een fictieve bloemist, gemaakt door Vervo Studio.', credit: 'Website door Vervo Studio ↗', call: 'Bel',
+  },
+  en: {
+    title: 'Mos flower studio — fresh flowers and bouquets in Maastricht',
+    desc: 'Bouquets, flower subscriptions, wedding and funeral flowers from the Jekerkwartier. Order before 14:00 for same-day delivery in Maastricht.',
+    nav: ['Bouquets', 'Subscription', 'Weddings and funerals', 'Shop'], order: 'Order a bouquet',
+    h1: 'Fresh flowers, delivered in Maastricht today.',
+    lede: 'A small flower studio in the Jekerkwartier. Three times a week we pick our flowers ourselves at the auction in Venlo, so a bouquet from us stays lovely for well over a week.',
+    cdBefore: 'Order within {t} and we’ll deliver today.', cdAfter: 'We’re fully booked for today. Order now and we’ll deliver {day}.', tomorrow: 'tomorrow', monday: 'on Monday', hr: 'h', mn: 'min',
+    heroAlt: 'The flower stand outside the shop', tulipAlt: 'Pink tulips in a glass vase',
+    bLab: 'Build a bouquet', bH: 'Put your bouquet together',
+    bLede: 'Choose a style and a size. We make something lovely in the shop with whatever is freshest that day.',
+    s1: 'Style', s2: 'Size', s3: 'Extra', s4: 'Card', s5: 'Delivery',
+    moods: { wit: 'White and green', roze: 'Soft pink', kleur: 'Colourful', tulp: 'Seasonal tulips' },
+    sizes: { s: ['Small', 'about 12 stems'], m: ['Medium', 'about 20 stems'], l: ['Large', 'about 30 stems'] },
+    vase: 'Add a glass vase', cardPh: 'Congratulations on the new house! Love, Anouk', cardNote: 'The card is free. We write it by hand.', chars: 'characters left',
+    when: { today: 'Today', tomorrow: 'Tomorrow', pickup: 'Collect from the shop' }, todayFull: 'full',
+    zip: 'Postcode', zipPh: '6211', zipNote: 'Free delivery in Maastricht from €45. Elsewhere €9.95.',
+    sum: 'Your bouquet', sumDel: 'Delivery', free: 'free', total: 'Total', buy: 'Order',
+    doneH: 'Thank you! Your bouquet is booked in.', doneP: 'Demo version: nothing was ordered or paid. On the real site you pay here with iDEAL.',
+    aLab: 'Subscription', aH: 'Flowers on the table every week',
+    aP: 'We choose whatever is best that week and drop it off on a set day. You can skip a week or stop whenever you like.',
+    plans: [['Home', '€25', 'a week', 'A seasonal bouquet for the table'], ['Every other week', '€27', 'each time', 'A little bigger, lasts just as long'], ['Office', 'from €45', 'a week', 'Reception, meeting room, lunch table']],
+    aCta: 'Start a subscription',
+    wLab: 'Weddings and funerals', wH: 'For the days you remember',
+    wed: ['Wedding flowers', 'Bridal bouquet, buttonholes and table arrangements in your colours. Book a free chat, ideally six months before the big day.', 'Book a chat'],
+    fun: ['Funeral flowers', 'Wreaths, sprays and ribbons with a message. We deliver with care to funeral homes in and around Maastricht, Saturdays included.', 'Give us a call'],
+    gLab: 'This week', gH: 'In the shop now',
+    gallery: [['hand.webp', 'Wildflower bouquet in kraft paper'], ['calla.webp', 'Pink calla lilies'], ['tulp.webp', 'One tulip is enough too'], ['hart.webp', 'For Mother’s Day'], ['rozen.webp', 'Garden roses and peonies']],
+    rLab: 'Reviews', rH: 'What customers say',
+    reviews: [['I ordered a bouquet for my mum from Rotterdam. She sent me a photo and it was even nicer than I’d hoped.', 'Femke'], ['We’ve had an office subscription for a year. There’s something different at reception every Monday and clients keep asking about it.', 'Studio Vier, Maastricht'], ['They arranged everything for my father’s funeral with so much care. I won’t forget that.', 'Jos']],
+    vLab: 'The shop', vH: 'Come on in',
+    hoursH: 'Opening hours', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], closed: 'Closed',
+    openNow: 'Open now', closedNow: 'Closed now', until: 'until', opensAt: 'opens', route: 'Directions in Google Maps',
+    demo: 'Concept website for a fictional florist, made by Vervo Studio.', credit: 'Website by Vervo Studio ↗', call: 'Call',
+  },
+  pl: {
+    title: 'Mos — kwiaciarnia i bukiety w Maastricht',
+    desc: 'Bukiety, abonament na kwiaty, florystyka ślubna i pogrzebowa z Jekerkwartier. Zamówienia do 14:00 dostarczamy w Maastricht jeszcze tego samego dnia.',
+    nav: ['Bukiety', 'Abonament', 'Śluby i pogrzeby', 'Kwiaciarnia'], order: 'Zamów bukiet',
+    h1: 'Świeże kwiaty z dostawą w Maastricht jeszcze dziś.',
+    lede: 'Mała pracownia florystyczna w Jekerkwartier. Trzy razy w tygodniu sami wybieramy kwiaty na giełdzie w Venlo, dlatego nasze bukiety długo, często ponad tydzień, wyglądają pięknie.',
+    cdBefore: 'Zamów w ciągu {t}, a dostarczymy jeszcze dziś.', cdAfter: 'Na dziś nie mamy już miejsc. Zamów teraz, a dostarczymy {day}.', tomorrow: 'jutro', monday: 'w poniedziałek', hr: 'godz.', mn: 'min',
+    heroAlt: 'Stoisko z kwiatami przed kwiaciarnią', tulipAlt: 'Różowe tulipany w szklanym wazonie',
+    bLab: 'Skomponuj bukiet', bH: 'Skomponuj swój bukiet',
+    bLede: 'Wybierz styl i wielkość. Resztą zajmiemy się w pracowni, z kwiatów, które tego dnia są najświeższe.',
+    s1: 'Styl', s2: 'Wielkość', s3: 'Dodatki', s4: 'Bilecik', s5: 'Dostawa',
+    moods: { wit: 'Biel i zieleń', roze: 'Delikatny róż', kleur: 'Kolorowy', tulp: 'Sezonowe tulipany' },
+    sizes: { s: ['Mały', 'około 12 łodyg'], m: ['Średni', 'około 20 łodyg'], l: ['Duży', 'około 30 łodyg'] },
+    vase: 'Dodaj szklany wazon', cardPh: 'Gratulacje z okazji nowego mieszkania! Ściskam, Anouk', cardNote: 'Bilecik jest gratis. Piszemy go odręcznie.', chars: 'znaków zostało',
+    when: { today: 'Dziś', tomorrow: 'Jutro', pickup: 'Odbiór w kwiaciarni' }, todayFull: 'brak miejsc',
+    zip: 'Kod pocztowy', zipPh: '6211', zipNote: 'Dostawa w Maastricht gratis od 45 €. Poza miastem 9,95 €.',
+    sum: 'Twój bukiet', sumDel: 'Dostawa', free: 'gratis', total: 'Razem', buy: 'Zamów',
+    doneH: 'Dziękujemy! Twoje zamówienie jest zapisane.', doneP: 'Wersja pokazowa: nic nie zostało zamówione ani opłacone. Na prawdziwej stronie płaci się tu przez iDEAL.',
+    aLab: 'Abonament', aH: 'Kwiaty na stole co tydzień',
+    aP: 'Wybieramy to, co w danym tygodniu jest najładniejsze, i przywozimy w stały dzień. Tydzień można pominąć, a abonament zakończyć w każdej chwili.',
+    plans: [['Do domu', '25 €', 'tygodniowo', 'Sezonowy bukiet na stół'], ['Co dwa tygodnie', '27 €', 'za dostawę', 'Trochę większy, równie trwały'], ['Do biura', 'od 45 €', 'tygodniowo', 'Recepcja, sala spotkań, stół w kuchni']],
+    aCta: 'Zamów abonament',
+    wLab: 'Śluby i pogrzeby', wH: 'Na dni, które się pamięta',
+    wed: ['Florystyka ślubna', 'Bukiet ślubny, butonierki i dekoracje stołów w Waszych kolorach. Umówcie się na bezpłatną rozmowę, najlepiej pół roku przed ślubem.', 'Umów rozmowę'],
+    fun: ['Kwiaty na pogrzeb', 'Wieńce, wiązanki i szarfy z napisem. Dostarczamy z należytą troską do domów pogrzebowych w Maastricht i okolicy, także w soboty.', 'Zadzwoń do nas'],
+    gLab: 'W tym tygodniu', gH: 'Teraz w kwiaciarni',
+    gallery: [['hand.webp', 'Polny bukiet w szarym papierze'], ['calla.webp', 'Różowe kalie'], ['tulp.webp', 'Czasem wystarczy jeden tulipan'], ['hart.webp', 'Na Dzień Matki'], ['rozen.webp', 'Róże ogrodowe i piwonie']],
+    rLab: 'Opinie', rH: 'Co mówią klienci',
+    reviews: [['Zamówiłam bukiet dla mamy z Rotterdamu. Przysłała mi zdjęcie i był jeszcze ładniejszy, niż się spodziewałam.', 'Femke'], ['Od roku mamy abonament do biura. W każdy poniedziałek na recepcji stoi coś innego, a klienci ciągle o to pytają.', 'Studio Vier, Maastricht'], ['Kwiaty na pogrzeb taty przygotowali z ogromną troską. Nie zapomnę tego.', 'Jos']],
+    vLab: 'Kwiaciarnia', vH: 'Zapraszamy do środka',
+    hoursH: 'Godziny otwarcia', days: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'], closed: 'Zamknięte',
+    openNow: 'Teraz otwarte', closedNow: 'Teraz zamknięte', until: 'do', opensAt: 'otwieramy', route: 'Trasa w Google Maps',
+    demo: 'Strona koncepcyjna fikcyjnej kwiaciarni, wykonana przez Vervo Studio.', credit: 'Strona: Vervo Studio ↗', call: 'Zadzwoń',
+  },
+};
+const t = T[lang];
+const fmtH = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
+const cfg = {
+  lang, hours: HOURS, cutoff: CUTOFF, prices: PRICES,
+  sizes: Object.fromEntries(SIZES.map(([k, p]) => [k, { price: p, name: t.sizes[k][0] }])),
+  moods: Object.fromEntries(MOODS.map(([k]) => [k, t.moods[k]])),
+  t: { openNow: t.openNow, closedNow: t.closedNow, until: t.until, opensAt: t.opensAt, days: t.days, cdBefore: t.cdBefore, cdAfter: t.cdAfter, tomorrow: t.tomorrow, monday: t.monday, hr: t.hr, mn: t.mn, free: t.free, vase: t.vase, todayFull: t.todayFull, chars: t.chars, when: t.when },
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="nl" href={new URL(root('nl'), Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(root('en'), Astro.url).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(root('pl'), Astro.url).href} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.desc} />
+    <meta property="og:image" content={new URL(img('hero.webp'), Astro.url).href} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#24372b" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Karla:wght@400;500;600;700&display=swap" />
+  </head>
+  <body>
+    <Curtain />
+    <header class="hd" id="hd">
+      <a class="hd__logo" href="#top">mos<small>bloemenatelier</small></a>
+      <nav class="hd__nav">{['#boeket', '#abonnement', '#bruiloft', '#winkel'].map((h, i) => <a href={h}>{t.nav[i]}</a>)}</nav>
+      <a class="btn btn--moss hd__cta" href="#boeket">{t.order}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <h1 class="hero__h">{t.h1}</h1>
+        <div class="hero__grid">
+          <img class="hero__big" src={img('hero.webp')} alt={t.heroAlt} fetchpriority="high" />
+          <div class="hero__side">
+            <p class="lede">{t.lede}</p>
+            <p class="cd" data-cd aria-live="polite"></p>
+            <a class="btn btn--moss" href="#boeket">{t.order}</a>
+            <img class="hero__small" src={img('tulpen.webp')} alt={t.tulipAlt} loading="lazy" />
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--build" id="boeket">
+        <div class="wrap">
+          <p class="lab">{t.bLab}</p>
+          <h2 class="h2">{t.bH}</h2>
+          <p class="lede">{t.bLede}</p>
+          <form class="build" data-build novalidate>
+            <div class="build__steps">
+              <fieldset class="step">
+                <legend><span>1</span>{t.s1}</legend>
+                <div class="moods">
+                  {MOODS.map(([k, f], i) => (
+                    <label class="mood"><input type="radio" name="mood" value={k} checked={i === 0} /><img src={img(f)} alt="" loading="lazy" /><span>{t.moods[k]}</span></label>
+                  ))}
+                </div>
+              </fieldset>
+              <fieldset class="step">
+                <legend><span>2</span>{t.s2}</legend>
+                <div class="sizes">
+                  {SIZES.map(([k, p, sc], i) => (
+                    <label class="size"><input type="radio" name="size" value={k} checked={i === 1} /><i style={`--s:${sc}`} aria-hidden="true"></i><b>{t.sizes[k][0]}</b><small>{t.sizes[k][1]}</small><em>€{p}</em></label>
+                  ))}
+                </div>
+              </fieldset>
+              <fieldset class="step">
+                <legend><span>3</span>{t.s3}</legend>
+                <label class="check"><input type="checkbox" name="vase" /><span>{t.vase}</span><em>+ €{PRICES.vase}</em></label>
+              </fieldset>
+              <fieldset class="step">
+                <legend><span>4</span>{t.s4}</legend>
+                <textarea name="card" rows="3" maxlength="140" placeholder={t.cardPh}></textarea>
+                <p class="hint"><span data-chars>140</span> {t.chars} · {t.cardNote}</p>
+              </fieldset>
+              <fieldset class="step">
+                <legend><span>5</span>{t.s5}</legend>
+                <div class="seg" data-when>
+                  {(['today', 'tomorrow', 'pickup']).map((k, i) => <label><input type="radio" name="when" value={k} checked={i === 0} /><span>{t.when[k]}</span></label>)}
+                </div>
+                <label class="zip"><span>{t.zip}</span><input name="zip" inputmode="numeric" maxlength="7" placeholder={t.zipPh} autocomplete="postal-code" /></label>
+                <p class="hint">{t.zipNote}</p>
+              </fieldset>
+            </div>
+            <aside class="sum">
+              <div class="sum__card" aria-hidden="true">
+                <p class="sum__msg" data-msg>{t.cardPh}</p>
+                <p class="sum__from">mos</p>
+              </div>
+              <p class="sum__h">{t.sum}</p>
+              <ul class="sum__lines" data-lines></ul>
+              <p class="sum__tot"><span>{t.total}</span><b data-total>€ –</b></p>
+              <button class="btn btn--moss btn--full" type="submit">{t.buy}</button>
+              <div class="done" data-done hidden><h3>{t.doneH}</h3><p>{t.doneP}</p></div>
+            </aside>
+          </form>
+        </div>
+      </section>
+
+      <section class="sec" id="abonnement">
+        <div class="wrap subs">
+          <div>
+            <p class="lab rv">{t.aLab}</p>
+            <h2 class="h2 rv">{t.aH}</h2>
+            <p class="lede rv">{t.aP}</p>
+            <a class="btn btn--line rv" href={`tel:${tel}`}>{t.aCta}</a>
+          </div>
+          <ul class="plans">{t.plans.map(([n, p, per, d]) => <li class="rv"><span>{n}</span><b>{p}</b><small>{per}</small><p>{d}</p></li>)}</ul>
+        </div>
+      </section>
+
+      <section class="sec sec--moss" id="bruiloft">
+        <div class="wrap">
+          <p class="lab">{t.wLab}</p>
+          <h2 class="h2">{t.wH}</h2>
+          <div class="days">
+            <article><img src={img('tafel.webp')} alt="" loading="lazy" /><div><h3>{t.wed[0]}</h3><p>{t.wed[1]}</p><a href={`tel:${tel}`}>{t.wed[2]} →</a></div></article>
+            <article><img src={img('calla.webp')} alt="" loading="lazy" /><div><h3>{t.fun[0]}</h3><p>{t.fun[1]}</p><a href={`tel:${tel}`}>{t.fun[2]} →</a></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="wrap">
+          <p class="lab rv">{t.gLab}</p>
+          <h2 class="h2 rv">{t.gH}</h2>
+        </div>
+        <div class="strip" tabindex="0">
+          {t.gallery.map(([f, c]) => <figure><img src={img(f)} alt={c} loading="lazy" /><figcaption>{c}</figcaption></figure>)}
+        </div>
+      </section>
+
+      <section class="sec sec--revs">
+        <div class="wrap">
+          <p class="lab rv">{t.rLab}</p>
+          <h2 class="h2 rv">{t.rH}</h2>
+          <div class="revs">{t.reviews.map(([q, w]) => <blockquote class="rv"><p>“{q}”</p><cite>— {w}</cite></blockquote>)}</div>
+        </div>
+      </section>
+
+      <section class="sec" id="winkel">
+        <div class="wrap visit">
+          <div>
+            <p class="lab">{t.vLab}</p>
+            <h2 class="h2">{t.vH}</h2>
+            <p class="visit__addr">Sint Pieterstraat 00<br />6211 JN Maastricht</p>
+            <p class="visit__st" data-status></p>
+            <p class="visit__links"><a href={`tel:${tel}`}>{telShow}</a> · <a href="https://maps.google.com/?q=Sint+Pieterstraat+Maastricht" target="_blank" rel="noopener">{t.route} ↗</a></p>
+          </div>
+          <table class="hours" data-hours>
+            <caption>{t.hoursH}</caption>
+            <tbody>
+              {t.days.map((d, i) => <tr data-day={i}><th scope="row">{d}</th><td>{HOURS[i] ? `${fmtH(HOURS[i][0])} – ${fmtH(HOURS[i][1])}` : t.closed}</td></tr>)}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ft">
+      <div class="wrap ft__in">
+        <p class="ft__logo">mos</p>
+        <p>Maastricht · KvK 00000000 · BTW NL000000000B01</p>
+        <p>{t.demo} <a href={`${base}/`}>{t.credit}</a></p>
+      </div>
+    </footer>
+    <div class="mbar"><a href={`tel:${tel}`}>☎ {t.call}</a><a class="mbar__go" href="#boeket">{t.order}</a></div>
+    <DemoLang lang={lang} links={[['nl', root('nl')], ['en', root('en')], ['pl', root('pl')]]} />
+    <script type="application/json" id="cfg" set:html={JSON.stringify(cfg)} />
+  </body>
+</html>
+
+<style is:global>
+  :root { --bg: #f4efe6; --paper: #fbf8f2; --ink: #1f2a22; --mut: #6b6f64; --moss: #24372b; --blush: #e8b8a6; --rust: #b4532f; --line: rgba(31, 42, 34, 0.14); --ff-d: 'Gilda Display', Georgia, serif; --ff: 'Karla', system-ui, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 4.5rem; }
+  body { background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--ff); overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { width: min(100% - 2.4rem, 74rem); margin-inline: auto; }
+  .lab { font: 600 0.78rem/1 var(--ff); color: var(--rust); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.7rem; }
+  .lab::before { content: ''; width: 1.6rem; height: 1px; background: currentColor; }
+  .h2 { font: 400 clamp(2.2rem, 5.4vw, 3.8rem)/1.04 var(--ff-d); letter-spacing: -0.02em; max-width: 18ch; }
+  .lede { color: var(--mut); max-width: 34rem; margin-top: 1rem; font-size: 1.06rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.95rem 1.45rem; border-radius: 0; font: 700 0.95rem/1 var(--ff); text-decoration: none; border: 1.5px solid transparent; cursor: pointer; transition: background 0.2s, color 0.2s; letter-spacing: 0.01em; }
+  .btn--moss { background: var(--moss); color: var(--paper); }
+  .btn--moss:hover { background: #1a2920; }
+  .btn--line { border-color: var(--moss); color: var(--moss); margin-top: 1.6rem; }
+  .btn--line:hover { background: var(--moss); color: var(--paper); }
+  .btn--full { width: 100%; }
+
+  .hd { position: sticky; top: 0; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem clamp(1.2rem, 3vw, 2.4rem); background: rgba(244, 239, 230, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .hd__logo { font: 400 2rem/1 var(--ff-d); text-decoration: none; letter-spacing: -0.03em; display: flex; align-items: baseline; gap: 0.5rem; }
+  .hd__logo small { font: 500 0.72rem var(--ff); letter-spacing: 0.08em; color: var(--mut); display: none; }
+  .hd__nav { display: none; gap: 1.9rem; font-size: 0.95rem; color: var(--mut); }
+  .hd__nav a { text-decoration: none; }
+  .hd__nav a:hover { color: var(--ink); }
+  .hd__cta { padding: 0.7rem 1rem; font-size: 0.86rem; }
+  @media (min-width: 560px) { .hd__logo small { display: inline; } }
+  @media (min-width: 960px) { .hd__nav { display: flex; } }
+
+  .hero { padding: clamp(2.2rem, 5vw, 4rem) clamp(1.2rem, 4vw, 3rem) clamp(3rem, 6vw, 5rem); max-width: 86rem; margin-inline: auto; }
+  .hero__h { font: 400 clamp(2.6rem, 7.6vw, 6.6rem)/1 var(--ff-d); letter-spacing: -0.035em; max-width: 15ch; text-wrap: balance; }
+  .hero__grid { display: grid; gap: 1.6rem; margin-top: clamp(1.8rem, 4vw, 3rem); }
+  @media (min-width: 900px) { .hero__grid { grid-template-columns: 1.6fr 1fr; gap: 2.4rem; align-items: start; } }
+  .hero__grid > * { min-width: 0; }
+  .hero__big { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+  .hero__side { display: grid; gap: 1.2rem; align-content: start; justify-items: start; }
+  .hero__side .lede { margin-top: 0; }
+  .hero__small { width: 70%; aspect-ratio: 4 / 5; object-fit: cover; justify-self: end; margin-top: 0.6rem; }
+  @media (max-width: 899px) { .hero__small { display: none; } }
+  .cd { font: 600 0.96rem/1.45 var(--ff); padding: 0.85rem 1rem; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--rust); }
+  .cd b { font-variant-numeric: tabular-nums; }
+
+  .sec { padding: clamp(4.5rem, 9vw, 7rem) 0; }
+  .sec--build { background: var(--paper); border-block: 1px solid var(--line); }
+  .build { display: grid; gap: 2rem; margin-top: 2.6rem; }
+  @media (min-width: 980px) { .build { grid-template-columns: 1.35fr 0.85fr; gap: 3rem; align-items: start; } }
+  .build > * { min-width: 0; }
+  .build__steps { display: grid; gap: 2rem; }
+  .step { border: 0; display: grid; gap: 0.9rem; min-width: 0; }
+  .step legend { font: 400 1.5rem/1 var(--ff-d); display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.9rem; }
+  .step legend span { display: inline-grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 50%; border: 1px solid var(--moss); font: 600 0.8rem var(--ff); }
+  .moods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+  @media (min-width: 640px) { .moods { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .mood { position: relative; cursor: pointer; display: grid; gap: 0.5rem; }
+  .mood input, .size input, .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .mood img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; outline: 2px solid transparent; outline-offset: 3px; transition: outline-color 0.2s, filter 0.2s; filter: saturate(0.85); }
+  .mood span { font-size: 0.92rem; font-weight: 600; }
+  .mood input:checked + img { outline-color: var(--moss); filter: none; }
+  .mood input:focus-visible + img { outline-color: var(--rust); }
+  .sizes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+  .size { position: relative; display: grid; justify-items: center; text-align: center; gap: 0.2rem; padding: 1rem 0.5rem; border: 1.5px solid var(--line); cursor: pointer; background: var(--bg); transition: border-color 0.2s; }
+  .size:has(input:checked) { border-color: var(--moss); background: #fff; }
+  .size:has(input:focus-visible) { outline: 2px solid var(--rust); outline-offset: 2px; }
+  .size i { width: calc(3.2rem * var(--s)); aspect-ratio: 1; border-radius: 50% 50% 46% 54%; background: radial-gradient(circle at 35% 35%, var(--blush), #c98d7b 70%); margin-bottom: 0.5rem; height: auto; align-self: end; }
+  .size b { font-size: 1rem; }
+  .size small { color: var(--mut); font-size: 0.78rem; }
+  .size em { font-style: normal; font: 400 1.25rem var(--ff-d); margin-top: 0.3rem; }
+  .check { display: flex; align-items: center; gap: 0.7rem; cursor: pointer; font-weight: 600; }
+  .check input { width: 1.2rem; height: 1.2rem; accent-color: var(--moss); }
+  .check em { font-style: normal; color: var(--mut); font-weight: 500; margin-left: auto; }
+  .step textarea, .zip input { font: 400 1rem var(--ff); border: 1.5px solid var(--line); padding: 0.85rem 0.95rem; background: #fff; width: 100%; color: var(--ink); border-radius: 0; resize: vertical; }
+  .step textarea:focus, .zip input:focus { outline: none; border-color: var(--moss); }
+  .hint { font-size: 0.82rem; color: var(--mut); }
+  .seg { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .seg label { position: relative; }
+  .seg span { display: inline-block; padding: 0.65rem 1rem; border: 1.5px solid var(--line); cursor: pointer; font-weight: 600; font-size: 0.92rem; background: var(--bg); }
+  .seg input:checked + span { background: var(--moss); color: var(--paper); border-color: var(--moss); }
+  .seg input:focus-visible + span { outline: 2px solid var(--rust); outline-offset: 2px; }
+  .seg input:disabled + span { opacity: 0.45; text-decoration: line-through; cursor: not-allowed; }
+  .zip { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.88rem; max-width: 14rem; }
+  .sum { position: sticky; top: 5.5rem; background: var(--bg); border: 1px solid var(--line); padding: clamp(1.3rem, 3vw, 1.8rem); display: grid; gap: 1rem; }
+  .sum__card { background: #fff; padding: 1.3rem 1.2rem 1rem; transform: rotate(-1.5deg); box-shadow: 0 18px 30px -20px rgba(31, 42, 34, 0.5); min-height: 8.5rem; display: grid; align-content: space-between; gap: 0.8rem; }
+  .sum__msg { font: 400 1.12rem/1.4 var(--ff-d); color: #3d4639; overflow-wrap: anywhere; }
+  .sum__msg.is-ph { color: #a7a99f; }
+  .sum__from { font: 400 1.1rem var(--ff-d); text-align: right; color: var(--rust); }
+  .sum__h { font: 400 1.4rem var(--ff-d); margin-top: 0.4rem; }
+  .sum__lines { list-style: none; display: grid; gap: 0.45rem; font-size: 0.94rem; }
+  .sum__lines li { display: flex; justify-content: space-between; gap: 1rem; }
+  .sum__lines li span:last-child { white-space: nowrap; }
+  .sum__tot { display: flex; justify-content: space-between; align-items: baseline; padding-top: 0.9rem; border-top: 1px solid var(--line); font-weight: 700; }
+  .sum__tot b { font: 400 1.9rem var(--ff-d); }
+  .done { background: #e4ece4; padding: 1rem 1.1rem; }
+  .done h3 { font: 400 1.25rem var(--ff-d); color: var(--moss); }
+  .done p { color: var(--mut); font-size: 0.86rem; margin-top: 0.3rem; }
+
+  .subs { display: grid; gap: 2.4rem; }
+  @media (min-width: 940px) { .subs { grid-template-columns: 1fr 1.1fr; align-items: center; } }
+  .subs > * { min-width: 0; }
+  .plans { list-style: none; display: grid; gap: 0.8rem; }
+  .plans li { display: grid; grid-template-columns: 1fr auto; gap: 0.1rem 1rem; padding: 1.3rem 1.4rem; background: var(--paper); border: 1px solid var(--line); }
+  .plans span { font-weight: 700; }
+  .plans b { font: 400 1.8rem/1 var(--ff-d); grid-row: span 2; text-align: right; align-self: center; }
+  .plans small { grid-column: 2; grid-row: 3; text-align: right; color: var(--mut); font-size: 0.8rem; }
+  .plans p { grid-column: 1; grid-row: 2 / 4; color: var(--mut); font-size: 0.92rem; }
+
+  .sec--moss { background: var(--moss); color: var(--paper); }
+  .sec--moss .lab { color: var(--blush); }
+  .days { display: grid; gap: 1.4rem; margin-top: 2.6rem; }
+  @media (min-width: 860px) { .days { grid-template-columns: 1fr 1fr; } }
+  .days article { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); background: rgba(251, 248, 242, 0.06); border: 1px solid rgba(251, 248, 242, 0.14); }
+  .days img { width: 100%; height: 100%; object-fit: cover; min-height: 16rem; }
+  .days div { padding: clamp(1.2rem, 3vw, 1.8rem); display: grid; gap: 0.7rem; align-content: start; }
+  .days h3 { font: 400 1.7rem/1.1 var(--ff-d); }
+  .days p { color: #cdd6cc; font-size: 0.95rem; }
+  .days a { font-weight: 700; color: var(--blush); text-decoration: none; margin-top: 0.4rem; }
+  @media (max-width: 520px) { .days article { grid-template-columns: 1fr; } .days img { min-height: 0; aspect-ratio: 16 / 10; } }
+
+  .strip { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2.4rem max(1.2rem, calc((100vw - 74rem) / 2)) 0.6rem; scrollbar-width: thin; }
+  .strip figure { flex: 0 0 auto; width: min(68vw, 19rem); scroll-snap-align: start; }
+  .strip figure:nth-child(even) { margin-top: 2.4rem; }
+  .strip img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+  .strip figcaption { margin-top: 0.6rem; font-size: 0.9rem; color: var(--mut); }
+
+  .sec--revs { background: var(--paper); border-block: 1px solid var(--line); }
+  .revs { display: grid; gap: 2rem; margin-top: 2.4rem; }
+  @media (min-width: 880px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .revs p { font: 400 1.3rem/1.4 var(--ff-d); }
+  .revs cite { display: block; margin-top: 0.9rem; font-style: normal; color: var(--mut); font-size: 0.9rem; }
+
+  .visit { display: grid; gap: 2.4rem; }
+  @media (min-width: 900px) { .visit { grid-template-columns: 1fr 1fr; align-items: start; } }
+  .visit > * { min-width: 0; }
+  .visit__addr { font: 400 1.6rem/1.3 var(--ff-d); margin-top: 1.6rem; }
+  .visit__st { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; font-weight: 700; }
+  .visit__st i { width: 9px; height: 9px; border-radius: 50%; background: #3f8f5a; }
+  .visit__st.is-closed i { background: var(--rust); }
+  .visit__links { margin-top: 0.8rem; color: var(--mut); }
+  .visit__links a { color: var(--moss); font-weight: 700; }
+  .hours { width: 100%; border-collapse: collapse; background: var(--paper); border: 1px solid var(--line); }
+  .hours caption { text-align: left; font: 400 1.4rem var(--ff-d); padding-bottom: 0.8rem; }
+  .hours th, .hours td { padding: 0.75rem 1.1rem; border-bottom: 1px solid var(--line); text-align: left; font-weight: 500; }
+  .hours td { text-align: right; color: var(--mut); }
+  .hours tr.is-today th, .hours tr.is-today td { background: #e9efe6; color: var(--moss); font-weight: 700; }
+
+  .ft { padding: 3rem 0 6.5rem; font-size: 0.86rem; color: var(--mut); border-top: 1px solid var(--line); }
+  .ft__in { display: grid; gap: 0.4rem; }
+  .ft__logo { font: 400 2.4rem/1 var(--ff-d); color: var(--ink); }
+  .ft a { color: var(--moss); font-weight: 700; }
+  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 7.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); display: grid; grid-template-columns: auto 1fr; gap: 0.4rem; }
+  .mbar a { display: grid; place-items: center; padding: 0.95rem 1rem; text-decoration: none; font: 700 0.92rem var(--ff); background: var(--paper); color: var(--moss); border: 1.5px solid var(--moss); box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.45); white-space: nowrap; }
+  .mbar__go { background: var(--moss) !important; color: var(--paper) !important; }
+  @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }
+  .dlang { bottom: 0.9rem !important; }
+  @media (min-width: 1000px) { .dlang { bottom: 1.2rem !important; } }
+
+  .rv { opacity: 0; transform: translateY(16px); transition: opacity 0.8s, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .rv.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
+</style>
+
+<script>
+  import { $, $$, readCfg, reveal, openStatus, markToday, localNow, euro } from '../scripts/demo-kit.js';
+  const cfg = readCfg();
+  const L = cfg.t;
+  const eur = euro(cfg.lang, 2);
+  const eur0 = (n) => (Number.isInteger(n) ? euro(cfg.lang)(n) : eur(n));
+  reveal();
+  openStatus($('[data-status]'), { hours: cfg.hours, t: L, lang: cfg.lang });
+  markToday($('[data-hours]'));
+
+  // odliczanie do 14:00 (dostawa tego samego dnia, pn–sob)
+  const cd = $('[data-cd]');
+  const form = $('[data-build]');
+  const todayOpt = form.querySelector('input[name=when][value=today]');
+  const tick = () => {
+    const { wd, min } = localNow();
+    const can = wd < 6 && min < cfg.cutoff;
+    if (can) {
+      const left = cfg.cutoff - min, h = Math.floor(left / 60), m = left % 60;
+      const s = h ? `${h} ${L.hr} ${m} ${L.mn}` : `${m} ${L.mn}`;
+      cd.innerHTML = L.cdBefore.replace('{t}', `<b>${s}</b>`);
+    } else {
+      cd.textContent = L.cdAfter.replace('{day}', wd === 5 || wd === 6 ? L.monday : L.tomorrow);
+    }
+    todayOpt.disabled = !can;
+    todayOpt.nextElementSibling.textContent = can ? L.when.today : `${L.when.today} · ${L.todayFull}`;
+    if (!can && todayOpt.checked) { form.querySelector('input[name=when][value=tomorrow]').checked = true; update(); }
+  };
+
+  // boeket: podsumowanie na żywo
+  const lines = $('[data-lines]'), total = $('[data-total]'), msg = $('[data-msg]'), chars = $('[data-chars]');
+  const ph = form.card.placeholder;
+  function update() {
+    const size = cfg.sizes[form.size.value], mood = cfg.moods[form.mood.value];
+    let sum = size.price;
+    const rows = [[`${mood}, ${size.name.toLowerCase()}`, eur0(size.price)]];
+    if (form.vase.checked) { sum += cfg.prices.vase; rows.push([L.vase, eur0(cfg.prices.vase)]); }
+    const when = form.when.value;
+    let del = 0;
+    if (when !== 'pickup') {
+      const z = (form.zip.value.match(/\d{4}/) || [''])[0];
+      const inTown = !z || /^62\d\d$/.test(z);
+      del = inTown ? (sum >= cfg.prices.freeFrom ? 0 : cfg.prices.delivery) : cfg.prices.deliveryOut;
+    }
+    rows.push([L.when[when], when === 'pickup' || del === 0 ? L.free : eur(del)]);
+    sum += del;
+    lines.replaceChildren(...rows.map(([a, b]) => { const li = document.createElement('li'); li.innerHTML = '<span></span><span></span>'; li.children[0].textContent = a; li.children[1].textContent = b; return li; }));
+    total.textContent = eur0(Math.round(sum * 100) / 100);
+    const v = form.card.value.trim();
+    msg.textContent = v || ph; msg.classList.toggle('is-ph', !v);
+    chars.textContent = String(140 - form.card.value.length);
+    form.zip.closest('.zip').style.display = when === 'pickup' ? 'none' : '';
+  }
+  form.addEventListener('input', update);
+  form.addEventListener('change', update);
+  update(); tick(); setInterval(tick, 30000);
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const d = $('[data-done]');
+    d.hidden = false;
+    d.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  });
+</script>
