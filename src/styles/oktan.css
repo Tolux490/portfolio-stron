@@ -115,7 +115,7 @@ p { margin: 0; text-wrap: pretty; }
 .top__in { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; }
 .logo { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; letter-spacing: 0.04em; text-transform: uppercase; }
 .logo__dot { width: 0.55rem; height: 1.35rem; background: var(--red); transform: skewX(-12deg); display: inline-block; }
-.logo small { display: block; font-family: var(--font-body); font-size: 0.52rem; font-weight: 600; letter-spacing: 0.28em; color: var(--muted); margin-top: 2px; }
+.logo small { display: block; font-family: var(--font-body); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.28em; color: var(--muted); margin-top: 2px; }
 .nav { display: none; align-items: center; gap: 1.6rem; }
 .nav a { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); transition: color 0.2s var(--ease); white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
@@ -211,7 +211,7 @@ body.nav-open .drawer { opacity: 1; visibility: visible; transform: none; }
 .price__name { font-family: var(--font-display); font-weight: 600; text-transform: uppercase; font-size: 1.25rem; letter-spacing: 0.01em; }
 .price__desc { grid-column: 1; font-size: 0.85rem; color: var(--muted); }
 .price__val { grid-row: 1 / span 2; grid-column: 2; text-align: right; font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; color: var(--red-hot); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.price__val small { display: block; font-family: var(--font-body); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.price__val small { display: block; font-family: var(--font-body); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 .price-grid { display: grid; gap: 0 3rem; }
 @media (min-width: 820px) { .price-grid { grid-template-columns: 1fr 1fr; } }
 
@@ -395,3 +395,5 @@ body { padding-bottom: 3.3rem; }
 
 .center { text-align: center; }
 .mt-l { margin-top: 3rem; } .mt-m { margin-top: 2rem; }
+/* przełącznik języka nad paskiem „Zadzwoń", gdy pasek jeszcze widać (1000–1079 px) */
+@media (min-width: 1000px) and (max-width: 1079px) { .dlang { bottom: 4.6rem !important; } }

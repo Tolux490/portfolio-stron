@@ -24,5 +24,6 @@ const label = { en: 'Language', nl: 'Taal', pl: 'Język' }[lang] ?? 'Language';
   .dlang a { color: rgba(255, 255, 255, 0.62); padding: 0.55rem 0.7rem; border-radius: 999px; text-decoration: none; transition: color 0.2s, background 0.2s; }
   .dlang a:hover { color: #fff; }
   .dlang a[aria-current='page'] { background: #fff; color: #111; }
+  @media (max-width: 999px) { .dlang a { padding: 0.55rem 0.55rem; } }
   @media (min-width: 1000px) { .dlang { bottom: 1.2rem; right: 1.2rem; } }
 </style>
