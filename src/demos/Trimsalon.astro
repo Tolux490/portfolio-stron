@@ -426,11 +426,13 @@ const cfg = {
   .ft__in { display: grid; gap: 0.4rem; }
   .ft__logo { font: 700 2.2rem/1 var(--ff-d); color: var(--ink); }
   .ft a { color: var(--ink); font-weight: 800; }
-  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 7.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); display: grid; grid-template-columns: auto 1fr; gap: 0.4rem; }
+  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 8.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); display: grid; grid-template-columns: auto 1fr; gap: 0.4rem; }
   .mbar a { display: grid; place-items: center; padding: 0.95rem 1rem; border-radius: 999px; text-decoration: none; font: 600 0.95rem var(--ff-d); background: var(--ink); color: #fff; box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.45); white-space: nowrap; }
   .mbar__go { background: var(--orange) !important; }
   @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }
-  .dlang { bottom: 0.9rem !important; }
+  .dlang { bottom: calc(0.9rem + env(safe-area-inset-bottom, 0)) !important; }
+  @media (max-width: 999px) { .dlang { right: 0.8rem !important; } }
+  @media (max-width: 599px) { .mbar { right: 0.8rem; } .dlang { bottom: calc(4.6rem + env(safe-area-inset-bottom, 0)) !important; } }
   @media (min-width: 1000px) { .dlang { bottom: 1.2rem !important; } }
 
   .rv { opacity: 0; translate: 0 16px; transition: opacity 0.7s, translate 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }

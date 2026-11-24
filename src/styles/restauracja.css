@@ -171,7 +171,7 @@ p { margin: 0; text-wrap: pretty; }
 .brand { display: inline-flex; flex-direction: column; line-height: 1; }
 .brand__name { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; }
 .brand__name em { font-style: normal; font-weight: 400; color: var(--zloto); }
-.brand__sub { font-size: 0.56rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cichy); margin-top: 0.35rem; }
+.brand__sub { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cichy); margin-top: 0.35rem; }
 
 .nav { display: none; align-items: center; gap: 1.5rem; }
 .nav a { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cichy); transition: color 0.3s var(--ease); white-space: nowrap; }
@@ -296,7 +296,7 @@ body.menu-open .drawer { opacity: 1; visibility: visible; transform: none; }
 .band--krem .dish__leader { border-color: var(--linia-ink); }
 .dish__c { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--zloto-jasne); font-variant-numeric: tabular-nums; }
 .band--krem .dish__c { color: var(--zloto-cien); }
-.tag { font-family: var(--sans); font-size: 0.54rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--zloto); border: 1px solid var(--zloto-cien); border-radius: 20px; padding: 0.18rem 0.55rem; vertical-align: middle; }
+.tag { font-family: var(--sans); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--zloto); border: 1px solid var(--zloto-cien); border-radius: 20px; padding: 0.18rem 0.55rem; vertical-align: middle; }
 .tag--wege { color: #a9c6a0; border-color: #5c7a52; }
 @media (max-width: 560px) {
   .dish__leader { display: none; }
@@ -525,3 +525,5 @@ body { padding-bottom: 3.4rem; }
 .faq summary::after { content: '+'; font-family: var(--sans); font-size: 1.4rem; color: var(--zloto); transition: transform 0.3s var(--ease); flex: none; }
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq p { color: var(--cichy); padding-bottom: 1.4rem; max-width: 66ch; }
+/* przełącznik języka nad paskiem „Zadzwoń", gdy pasek jeszcze widać (1000–1079 px) */
+@media (min-width: 1000px) and (max-width: 1079px) { .dlang { bottom: 4.6rem !important; } }
