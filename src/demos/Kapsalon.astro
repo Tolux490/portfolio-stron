@@ -1,0 +1,539 @@
+---
+import Curtain from '../components/Curtain.astro';
+import DemoLang from '../components/DemoLang.astro';
+// Kapsalon Kruin (demo): salon fryzjerski w Maastricht (Boschstraatkwartier). NL + EN + PL.
+// Fikcyjna firma: adres, ceny, zespół i opinie są przykładowe. Strony: src/pages/kapsalon/ (+ en/, pl/).
+
+const { lang = 'nl' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const img = (f) => `${base}/img/kapsalon/${f}`;
+const root = (l) => `${base}/kapsalon/${l === 'nl' ? '' : `${l}/`}`;
+const tel = '+31430000000';
+const telShow = '043 000 00 00';
+// di, wo, vr 9:00–18:00, do 9:00–21:00 (koopavond), za 8:30–16:00
+const HOURS = [null, [540, 1080], [540, 1080], [540, 1260], [540, 1080], [510, 960], null];
+// cennik: [kort, halflang, lang, extra lang] w euro i minutach, mnożnik stylisty, dodatki
+const PRICE = {
+  job: {
+    knip: { eur: [42, 49, 56, 63], min: [40, 45, 55, 65] },
+    kleur: { eur: [94, 106, 118, 130], min: [100, 110, 120, 135] },
+    balayage: { eur: [167, 187, 207, 232], min: [150, 165, 180, 200] },
+    fohn: { eur: [32, 36, 40, 45], min: [30, 35, 40, 50] },
+  },
+  len: ['kort', 'half', 'lang', 'xlang'],
+  who: { lieke: 1, noor: 1.1, fleur: 1.2 },
+  extras: { olaplex: [25, 15], toner: [22, 20], massage: [10, 10] },
+};
+// sylwetka: włosy kończą się na wysokości y
+const HAIR = { kort: 25, half: 34, lang: 41, xlang: 47 };
+const hairSvg = (y) => `<path class="sh" d="M3 48 C4 40.5 10 37.5 16.5 36.5 V29 M23.5 29 V36.5 C30 37.5 36 40.5 37 48"/><path class="hair" d="M8 ${y} V17.5 C8 10 13 5 20 5 S32 10 32 17.5 V${y} Q29.6 ${y + 1.6} 27.2 ${y} V19 C25 15 15 15 12.8 19 V${y} Q10.4 ${y + 1.6} 8 ${y} Z"/><ellipse class="face" cx="20" cy="20.5" rx="6.6" ry="8"/>`;
+
+const T = {
+  nl: {
+    title: 'Kapsalon Kruin — kapper in het Boschstraatkwartier, Maastricht',
+    desc: 'Knippen, kleuren en balayage in Maastricht. We knippen op je haartype en laten zien hoe je het thuis stylt. Bereken direct wat je afspraak kost.',
+    nav: ['Prijzen', 'Werk', 'Team', 'Afspraak'], book: 'Afspraak maken',
+    meta: ['Kapsalon', 'Boschstraatkwartier, Maastricht', 'Sinds 2014'],
+    h1: 'Haar dat ook goed valt als je het zelf föhnt.',
+    lede: 'Een kapsalon in het Boschstraatkwartier. We knippen op je haartype en laten je zien hoe je het thuis in een paar minuten stylt, zonder een plank vol producten.',
+    calcBtn: 'Bereken je prijs', rating: '4,8 uit 312 Google-reviews', cap: 'Noor aan het föhnen',
+    trust: [['4,8', 'uit 312 Google-reviews'], ['2014', 'in het Boschstraatkwartier'], ['48 uur', 'gratis huidtest vóór je eerste kleuring'], ['7 dagen', 'zit iets niet goed? We passen het gratis aan']],
+    cLab: 'Wat kost het?', cH: 'Bereken je prijs',
+    cLede: 'Bij ons hangt de prijs af van je haarlengte en van wie je knipt. Kies hieronder en je ziet meteen wat je betaalt en hoe lang je bij ons zit. Wassen en föhnen zitten er altijd bij.',
+    qLen: 'Hoe lang is je haar?', qJob: 'Wat wil je laten doen?', qWho: 'Bij wie?', qExtra: 'Extra’s',
+    lens: { kort: ['Kort', 'tot de kin'], half: ['Halflang', 'tot de schouders'], lang: ['Lang', 'tot de schouderbladen'], xlang: ['Extra lang', 'voorbij de schouderbladen'] },
+    jobs: { knip: ['Knippen en föhnen', 'met wassen en advies'], kleur: ['Uitgroei kleuren en knippen', 'één kleur, tot 3 cm uitgroei'], balayage: ['Balayage of highlights', 'met knippen'], fohn: ['Wassen en föhnen', 'zonder knippen'] },
+    who: { lieke: ['Lieke', 'stylist'], noor: ['Noor', 'senior stylist'], fleur: ['Fleur', 'eigenaar, kleurspecialist'] },
+    extras: { olaplex: 'Olaplex-behandeling', toner: 'Toner of glossing', massage: 'Hoofdhuidmassage' },
+    res: 'Prijs', resTime: 'Tijd in de stoel', min: 'min', hour: 'uur', take: 'Plan deze afspraak',
+    tip: { knip: 'Aan het eind laten we zien hoe je het thuis föhnt. Neem gerust je eigen borstel mee.', kleur: 'Voor het eerst kleuren bij ons? Kom 48 uur van tevoren even langs voor een gratis huidtest.', balayage: 'Een balayage begint altijd met een kwartier advies. Je weet de prijs voordat we beginnen.', fohn: 'Feest of fotoshoot? Plan het op de dag zelf, dan zit het ’s avonds nog goed.' },
+    pLab: 'Prijzen', pH: 'Alle prijzen op een rij',
+    prices: [['Dames', [['Knippen en föhnen', 'vanaf € 42'], ['Wassen en föhnen', 'vanaf € 32'], ['Opsteken', 'vanaf € 55']]], ['Heren', [['Knippen', '€ 34'], ['Tondeuse en schaar', '€ 29'], ['Baard bijwerken', '€ 15']]], ['Kinderen', [['Tot 12 jaar', '€ 24'], ['Tot 4 jaar', '€ 16']]], ['Kleur', [['Uitgroei kleuren', 'vanaf € 52'], ['Balayage of highlights', 'vanaf € 125'], ['Toner of glossing', '€ 22'], ['Olaplex-behandeling', '€ 25']]]],
+    pNote: 'Dit zijn de prijzen bij Lieke. Bij Noor betaal je ongeveer 10% meer, bij Fleur 20%.',
+    wLab: 'Werk', wH: 'Net uit de stoel',
+    work: [['golven.webp', 'Zachte golven', 'Lang haar · 1 uur · Noor'], ['lila.webp', 'Pastel lila', 'Bleken en toner · 4 uur · Fleur'], ['krullen.webp', 'Krullen die mogen blijven', 'Droog geknipt, per krul · 1 uur · Noor'], ['kort.webp', 'Kort en naturel', 'Knippen · 40 min · Lieke'], ['vlecht.webp', 'Gevlochten knot', 'Bruiloft · 1,5 uur · Lieke'], ['opsteek.webp', 'Opsteken voor een gala', 'Met proefsessie · Fleur']],
+    tLab: 'Team', tH: 'Drie stylisten, elk met een eigen vak',
+    team: [['Fleur', 'Eigenaar en kleurspecialist', 'Begon Kruin in 2014. Doet de lastige kleuren: van zwart naar blond, of een mislukte thuiskleuring terug naar iets moois.'], ['Noor', 'Senior stylist', 'Knipt krullen droog, krul voor krul, zodat je ziet hoe ze echt vallen. Ook goed in korte coupes.'], ['Lieke', 'Stylist', 'Opsteken, vlechten en bruidskapsels. Altijd met een proefsessie, zodat er op de dag zelf geen verrassingen zijn.']],
+    rLab: 'Reviews', rH: 'Wat klanten zeggen',
+    reviews: [['Eindelijk een kapper die vraagt hoe ik mijn haar ’s ochtends doe. Mijn pony zit nu ook goed als ik hem zelf föhn.', 'Sanne, Wyck'], ['Fleur heeft mijn oranje thuiskleuring weggewerkt zonder dat mijn haar kapotging. Twee afspraken, en ze zei vooraf precies wat het zou kosten.', 'Ilona, Heer'], ['Ik heb krullen en werd altijd te kort geknipt. Noor knipt ze droog. Nu weet ik pas hoe mijn haar eigenlijk valt.', 'Maud, Céramique']],
+    bLab: 'Afspraak', bH: 'Maak een afspraak',
+    bLede: 'Laat je gegevens achter. We bellen of appen je binnen een werkdag met een tijd die past.',
+    fName: 'Naam', fPhone: 'Telefoon', fWho: 'Voorkeur voor', anyone: 'Maakt niet uit', fDay: 'Voorkeursdag', anyDay: 'Maakt niet uit', fNote: 'Iets wat we moeten weten?', fNotePh: 'Bijv. voor het eerst kleuren, of een foto van wat je wilt', send: 'Afspraak aanvragen',
+    doneH: 'Dank je! We nemen binnen een werkdag contact op.', doneP: 'Demoversie: er is niets verstuurd. Op de echte site komt je aanvraag direct binnen bij de salon.',
+    pickedPre: 'Berekend', hoursH: 'Openingstijden', days: ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'], closed: 'Gesloten', koop: 'koopavond',
+    openNow: 'Nu open', closedNow: 'Nu gesloten', until: 'tot', opensAt: 'open', reach: 'Fiets voor de deur, parkeergarage op 3 minuten lopen',
+    demo: 'Conceptwebsite voor een fictieve kapsalon, gemaakt door Vervo Studio.', credit: 'Website door Vervo Studio ↗', call: 'Bel',
+  },
+  en: {
+    title: 'Kapsalon Kruin — hair salon in Maastricht’s Boschstraatkwartier',
+    desc: 'Cuts, colour and balayage in Maastricht. We cut for your hair type and show you how to style it at home. See straight away what your appointment costs.',
+    nav: ['Prices', 'Work', 'Team', 'Book'], book: 'Book an appointment',
+    meta: ['Hair salon', 'Boschstraatkwartier, Maastricht', 'Since 2014'],
+    h1: 'Hair that still sits right when you blow-dry it yourself.',
+    lede: 'A hair salon in Maastricht’s Boschstraatkwartier. We cut for your hair type and show you how to style it at home in a few minutes, without a shelf full of products.',
+    calcBtn: 'Work out your price', rating: '4.8 from 312 Google reviews', cap: 'Noor at the blow-dry',
+    trust: [['4.8', 'from 312 Google reviews'], ['2014', 'in the Boschstraatkwartier'], ['48 hours', 'free patch test before your first colour'], ['7 days', 'something not right? We fix it for free']],
+    cLab: 'What does it cost?', cH: 'Work out your price',
+    cLede: 'Our prices depend on your hair length and on who does your hair. Choose below and you’ll see what you pay and how long you’ll be with us. A wash and blow-dry are always included.',
+    qLen: 'How long is your hair?', qJob: 'What would you like done?', qWho: 'With whom?', qExtra: 'Extras',
+    lens: { kort: ['Short', 'to the chin'], half: ['Medium', 'to the shoulders'], lang: ['Long', 'to the shoulder blades'], xlang: ['Extra long', 'past the shoulder blades'] },
+    jobs: { knip: ['Cut and blow-dry', 'with a wash and advice'], kleur: ['Root colour and cut', 'one colour, up to 3 cm regrowth'], balayage: ['Balayage or highlights', 'with a cut'], fohn: ['Wash and blow-dry', 'no cut'] },
+    who: { lieke: ['Lieke', 'stylist'], noor: ['Noor', 'senior stylist'], fleur: ['Fleur', 'owner, colour specialist'] },
+    extras: { olaplex: 'Olaplex treatment', toner: 'Toner or gloss', massage: 'Scalp massage' },
+    res: 'Price', resTime: 'Time in the chair', min: 'min', hour: 'h', take: 'Book this appointment',
+    tip: { knip: 'At the end we show you how to blow-dry it at home. Feel free to bring your own brush.', kleur: 'First colour with us? Pop in 48 hours before for a free patch test.', balayage: 'A balayage always starts with fifteen minutes of advice. You know the price before we begin.', fohn: 'Party or photo shoot? Book it for the day itself and it will still look right in the evening.' },
+    pLab: 'Prices', pH: 'All our prices',
+    prices: [['Women', [['Cut and blow-dry', 'from € 42'], ['Wash and blow-dry', 'from € 32'], ['Updo', 'from € 55']]], ['Men', [['Cut', '€ 34'], ['Clippers and scissors', '€ 29'], ['Beard tidy', '€ 15']]], ['Children', [['Up to 12', '€ 24'], ['Up to 4', '€ 16']]], ['Colour', [['Root colour', 'from € 52'], ['Balayage or highlights', 'from € 125'], ['Toner or gloss', '€ 22'], ['Olaplex treatment', '€ 25']]]],
+    pNote: 'These are Lieke’s prices. With Noor you pay about 10% more, with Fleur 20%.',
+    wLab: 'Work', wH: 'Fresh out of the chair',
+    work: [['golven.webp', 'Soft waves', 'Long hair · 1 hour · Noor'], ['lila.webp', 'Pastel lilac', 'Lightening and toner · 4 hours · Fleur'], ['krullen.webp', 'Curls left to be curls', 'Dry cut, curl by curl · 1 hour · Noor'], ['kort.webp', 'Short and natural', 'Cut · 40 min · Lieke'], ['vlecht.webp', 'Braided bun', 'Wedding · 1.5 hours · Lieke'], ['opsteek.webp', 'Updo for a gala', 'With a trial run · Fleur']],
+    tLab: 'Team', tH: 'Three stylists, each with their own speciality',
+    team: [['Fleur', 'Owner and colour specialist', 'Opened Kruin in 2014. Takes on the tricky colours: black to blonde, or a home dye gone wrong back to something lovely.'], ['Noor', 'Senior stylist', 'Cuts curls dry, one curl at a time, so you can see how they really fall. Great with short cuts too.'], ['Lieke', 'Stylist', 'Updos, braids and wedding hair. Always with a trial run, so there are no surprises on the day.']],
+    rLab: 'Reviews', rH: 'What clients say',
+    reviews: [['Finally a hairdresser who asks how I do my hair in the morning. My fringe now looks right when I blow-dry it myself too.', 'Sanne, Wyck'], ['Fleur sorted out my orange home dye without wrecking my hair. Two appointments, and she told me exactly what it would cost beforehand.', 'Ilona, Heer'], ['I have curls and always got cut too short. Noor cuts them dry. Only now do I know how my hair actually falls.', 'Maud, Céramique']],
+    bLab: 'Book', bH: 'Book an appointment',
+    bLede: 'Leave your details. We’ll call or message you within one working day with a time that suits you.',
+    fName: 'Name', fPhone: 'Phone', fWho: 'Preferred stylist', anyone: 'No preference', fDay: 'Preferred day', anyDay: 'Any day', fNote: 'Anything we should know?', fNotePh: 'E.g. first time colouring, or a photo of what you want', send: 'Request an appointment',
+    doneH: 'Thank you! We’ll be in touch within one working day.', doneP: 'Demo version: nothing was sent. On the real site the request goes straight to the salon.',
+    pickedPre: 'Estimate', hoursH: 'Opening hours', days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], closed: 'Closed', koop: 'late opening',
+    openNow: 'Open now', closedNow: 'Closed now', until: 'until', opensAt: 'opens', reach: 'Bike parking outside, car park a 3-minute walk away',
+    demo: 'Concept website for a fictional hair salon, made by Vervo Studio.', credit: 'Website by Vervo Studio ↗', call: 'Call',
+  },
+  pl: {
+    title: 'Kapsalon Kruin — salon fryzjerski w Maastricht, Boschstraatkwartier',
+    desc: 'Strzyżenie, koloryzacja i balayage w Maastricht. Strzyżemy pod rodzaj włosów i pokazujemy, jak ułożyć je w domu. Sprawdź od razu, ile kosztuje wizyta.',
+    nav: ['Cennik', 'Realizacje', 'Zespół', 'Wizyta'], book: 'Umów wizytę',
+    meta: ['Salon fryzjerski', 'Boschstraatkwartier, Maastricht', 'Od 2014 roku'],
+    h1: 'Fryzura, która dobrze się układa także po suszeniu w domu.',
+    lede: 'Salon fryzjerski w dzielnicy Boschstraatkwartier w Maastricht. Strzyżemy pod rodzaj włosów i pokazujemy, jak w kilka minut ułożyć je w domu, bez półki pełnej kosmetyków.',
+    calcBtn: 'Oblicz cenę', rating: '4,8 z 312 opinii w Google', cap: 'Noor przy suszeniu',
+    trust: [['4,8', 'z 312 opinii w Google'], ['2014', 'w Boschstraatkwartier'], ['48 godz.', 'bezpłatny test uczuleniowy przed pierwszą koloryzacją'], ['7 dni', 'coś jest nie tak? Poprawimy za darmo']],
+    cLab: 'Ile to kosztuje?', cH: 'Oblicz swoją cenę',
+    cLede: 'U nas cena zależy od długości włosów i od tego, kto się nimi zajmie. Wybierz poniżej, a od razu zobaczysz, ile zapłacisz i ile czasu spędzisz w fotelu. Mycie i suszenie są zawsze w cenie.',
+    qLen: 'Jak długie są włosy?', qJob: 'Co robimy?', qWho: 'U kogo?', qExtra: 'Dodatki',
+    lens: { kort: ['Krótkie', 'do brody'], half: ['Półdługie', 'do ramion'], lang: ['Długie', 'do łopatek'], xlang: ['Bardzo długie', 'za łopatki'] },
+    jobs: { knip: ['Strzyżenie i suszenie', 'z myciem i doradztwem'], kleur: ['Odrosty i strzyżenie', 'jeden kolor, odrost do 3 cm'], balayage: ['Balayage lub pasemka', 'razem ze strzyżeniem'], fohn: ['Mycie i modelowanie', 'bez strzyżenia'] },
+    who: { lieke: ['Lieke', 'stylistka'], noor: ['Noor', 'starsza stylistka'], fleur: ['Fleur', 'właścicielka, specjalistka od koloru'] },
+    extras: { olaplex: 'Zabieg Olaplex', toner: 'Toner lub glossing', massage: 'Masaż skóry głowy' },
+    res: 'Cena', resTime: 'Czas w fotelu', min: 'min', hour: 'godz.', take: 'Umów tę wizytę',
+    tip: { knip: 'Na koniec pokazujemy, jak wysuszyć włosy w domu. Można przynieść własną szczotkę.', kleur: 'Pierwsza koloryzacja u nas? Wpadnij 48 godzin wcześniej na bezpłatny test uczuleniowy.', balayage: 'Balayage zawsze zaczynamy od kwadransa konsultacji. Cenę znasz, zanim zaczniemy.', fohn: 'Impreza albo sesja zdjęciowa? Umów się na ten sam dzień, a wieczorem fryzura nadal będzie wyglądać dobrze.' },
+    pLab: 'Cennik', pH: 'Wszystkie ceny w jednym miejscu',
+    prices: [['Panie', [['Strzyżenie i suszenie', 'od 42 €'], ['Mycie i modelowanie', 'od 32 €'], ['Upięcie', 'od 55 €']]], ['Panowie', [['Strzyżenie', '34 €'], ['Maszynka i nożyczki', '29 €'], ['Korekta brody', '15 €']]], ['Dzieci', [['Do 12 lat', '24 €'], ['Do 4 lat', '16 €']]], ['Koloryzacja', [['Farbowanie odrostów', 'od 52 €'], ['Balayage lub pasemka', 'od 125 €'], ['Toner lub glossing', '22 €'], ['Zabieg Olaplex', '25 €']]]],
+    pNote: 'To ceny u Lieke. U Noor płaci się około 10% więcej, u Fleur 20%.',
+    wLab: 'Realizacje', wH: 'Prosto z fotela',
+    work: [['golven.webp', 'Miękkie fale', 'Długie włosy · 1 godz. · Noor'], ['lila.webp', 'Pastelowy liliowy', 'Rozjaśnianie i toner · 4 godz. · Fleur'], ['krullen.webp', 'Loki, które zostają lokami', 'Strzyżone na sucho, lok po loku · 1 godz. · Noor'], ['kort.webp', 'Krótko i naturalnie', 'Strzyżenie · 40 min · Lieke'], ['vlecht.webp', 'Kok z warkoczy', 'Ślub · 1,5 godz. · Lieke'], ['opsteek.webp', 'Upięcie na bal', 'Z próbną fryzurą · Fleur']],
+    tLab: 'Zespół', tH: 'Trzy stylistki, każda z własną specjalnością',
+    team: [['Fleur', 'Właścicielka i specjalistka od koloru', 'Otworzyła Kruin w 2014 roku. Bierze trudne koloryzacje: z czarnego w blond albo nieudane farbowanie w domu z powrotem w coś ładnego.'], ['Noor', 'Starsza stylistka', 'Strzyże loki na sucho, lok po loku, żeby było widać, jak naprawdę się układają. Świetnie radzi sobie też z krótkimi fryzurami.'], ['Lieke', 'Stylistka', 'Upięcia, warkocze i fryzury ślubne. Zawsze z próbną fryzurą, żeby w dniu uroczystości nie było niespodzianek.']],
+    rLab: 'Opinie', rH: 'Co mówią klienci',
+    reviews: [['Wreszcie fryzjerka, która pyta, jak układam włosy rano. Grzywka wygląda dobrze także wtedy, gdy suszę ją sama.', 'Sanne, Wyck'], ['Fleur uratowała moje rude domowe farbowanie i nie zniszczyła przy tym włosów. Dwie wizyty, a koszt znałam z góry co do euro.', 'Ilona, Heer'], ['Mam loki i zawsze ścinano mi je za krótko. Noor strzyże je na sucho. Dopiero teraz wiem, jak moje włosy naprawdę się układają.', 'Maud, Céramique']],
+    bLab: 'Wizyta', bH: 'Umów wizytę',
+    bLede: 'Zostaw dane kontaktowe. W ciągu jednego dnia roboczego zadzwonimy albo napiszemy z pasującym terminem.',
+    fName: 'Imię i nazwisko', fPhone: 'Telefon', fWho: 'Preferowana stylistka', anyone: 'Obojętnie', fDay: 'Preferowany dzień', anyDay: 'Obojętnie', fNote: 'Coś, o czym powinniśmy wiedzieć?', fNotePh: 'Np. pierwsza koloryzacja albo zdjęcie wymarzonej fryzury', send: 'Poproś o termin',
+    doneH: 'Dziękujemy! Odezwiemy się w ciągu jednego dnia roboczego.', doneP: 'Wersja pokazowa: nic nie zostało wysłane. Na prawdziwej stronie zgłoszenie trafia od razu do salonu.',
+    pickedPre: 'Wycena', hoursH: 'Godziny otwarcia', days: ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'], closed: 'Zamknięte', koop: 'dłużej otwarte',
+    openNow: 'Teraz otwarte', closedNow: 'Teraz zamknięte', until: 'do', opensAt: 'otwieramy', reach: 'Stojaki na rowery pod drzwiami, parking 3 minuty pieszo',
+    demo: 'Strona koncepcyjna fikcyjnego salonu fryzjerskiego, wykonana przez Vervo Studio.', credit: 'Strona: Vervo Studio ↗', call: 'Zadzwoń',
+  },
+};
+const t = T[lang];
+const fmtH = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
+const nameMap = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, Array.isArray(v) ? v[0] : v]));
+const cfg = {
+  lang, hours: HOURS, price: PRICE,
+  names: { len: nameMap(t.lens), job: nameMap(t.jobs), who: nameMap(t.who), extras: t.extras },
+  t: { openNow: t.openNow, closedNow: t.closedNow, until: t.until, opensAt: t.opensAt, days: t.days, min: t.min, hour: t.hour, tip: t.tip, pickedPre: t.pickedPre },
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={t.desc} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" hreflang="nl" href={new URL(root('nl'), Astro.url).href} />
+    <link rel="alternate" hreflang="en" href={new URL(root('en'), Astro.url).href} />
+    <link rel="alternate" hreflang="pl" href={new URL(root('pl'), Astro.url).href} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.desc} />
+    <meta property="og:image" content={new URL(img('hero.webp'), Astro.url).href} />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f6f1ea" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=Instrument+Sans:wght@400;500;600&display=swap" />
+  </head>
+  <body>
+    <Curtain />
+    <header class="hd">
+      <a class="hd__logo" href="#top">kruin<span>.</span></a>
+      <nav class="hd__nav">{['#prijzen', '#werk', '#team', '#afspraak'].map((h, i) => <a href={h}>{t.nav[i]}</a>)}</nav>
+      <a class="btn btn--wine hd__cta" href="#afspraak">{t.book}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <p class="hero__meta">{t.meta.map((m) => <span>{m}</span>)}</p>
+        <div class="hero__grid">
+          <div class="hero__txt">
+            <h1>{t.h1}</h1>
+            <p class="lede">{t.lede}</p>
+            <div class="hero__cta">
+              <a class="btn btn--wine" href="#afspraak">{t.book}</a>
+              <a class="btn btn--line" href="#bereken">{t.calcBtn}</a>
+            </div>
+            <p class="hero__st"><span class="st" data-status></span><span class="hero__rate"><b aria-hidden="true">★★★★★</b> {t.rating}</span></p>
+          </div>
+          <div class="hero__pics">
+            <figure class="hero__main"><img src={img('hero.webp')} alt="" fetchpriority="high" /><figcaption>{t.cap}</figcaption></figure>
+            <figure class="hero__inset"><img src={img('wassen.webp')} alt="" /></figure>
+          </div>
+        </div>
+      </section>
+
+      <ul class="trust wrap">{t.trust.map(([b, s]) => <li><b>{b}</b><span>{s}</span></li>)}</ul>
+
+      <section class="sec sec--calc" id="bereken">
+        <div class="wrap">
+          <p class="lab">{t.cLab}</p>
+          <h2 class="h2">{t.cH}</h2>
+          <p class="lede">{t.cLede}</p>
+          <form class="calc" data-calc>
+            <div class="calc__q">
+              <fieldset><legend>{t.qLen}</legend>
+                <div class="opts opts--4">
+                  {Object.entries(t.lens).map(([k, [n, s]], i) => <label class="opt"><input type="radio" name="len" value={k} checked={i === 1} /><span><svg viewBox="0 0 40 48" aria-hidden="true" set:html={hairSvg(HAIR[k])} /><b>{n}</b><small>{s}</small></span></label>)}
+                </div>
+              </fieldset>
+              <fieldset><legend>{t.qJob}</legend>
+                <div class="opts opts--2">
+                  {Object.entries(t.jobs).map(([k, [n, s]], i) => <label class="opt opt--row"><input type="radio" name="job" value={k} checked={i === 0} /><span><b>{n}</b><small>{s}</small></span></label>)}
+                </div>
+              </fieldset>
+              <fieldset><legend>{t.qWho}</legend>
+                <div class="opts opts--3">
+                  {Object.entries(t.who).map(([k, [n, s]], i) => <label class="opt opt--row"><input type="radio" name="who" value={k} checked={i === 0} /><span><b>{n}</b><small>{s}</small></span></label>)}
+                </div>
+              </fieldset>
+              <fieldset><legend>{t.qExtra}</legend>
+                <div class="extras">
+                  {Object.entries(t.extras).map(([k, n]) => <label class="ex"><input type="checkbox" name={k} /><span>{n} <em>+ €{PRICE.extras[k][0]}</em></span></label>)}
+                </div>
+              </fieldset>
+            </div>
+            <aside class="calc__res">
+              <div class="calc__nums">
+                <p><small>{t.res}</small><b data-price>€ –</b></p>
+                <p><small>{t.resTime}</small><b data-time>–</b></p>
+              </div>
+              <p class="calc__sum" data-sum></p>
+              <p class="calc__tip" data-tip></p>
+              <a class="btn btn--wine btn--full" href="#afspraak" data-take>{t.take}</a>
+            </aside>
+          </form>
+        </div>
+      </section>
+
+      <section class="sec" id="prijzen">
+        <div class="wrap">
+          <p class="lab rv">{t.pLab}</p>
+          <h2 class="h2 rv">{t.pH}</h2>
+          <div class="menu">{t.prices.map(([g, rows]) => <div class="menu__g rv"><h3>{g}</h3><dl>{rows.map(([n, p]) => <div><dt>{n}</dt><dd>{p}</dd></div>)}</dl></div>)}</div>
+          <p class="menu__note rv">{t.pNote}</p>
+        </div>
+      </section>
+
+      <section class="sec sec--work" id="werk">
+        <div class="wrap">
+          <p class="lab rv">{t.wLab}</p>
+          <h2 class="h2 rv">{t.wH}</h2>
+        </div>
+        <div class="strip" tabindex="0">{t.work.map(([f, n, d]) => <figure class="rv"><img src={img(f)} alt={n} loading="lazy" /><figcaption><b>{n}</b><span>{d}</span></figcaption></figure>)}</div>
+      </section>
+
+      <section class="sec" id="team">
+        <div class="wrap team">
+          <figure class="team__pic rv"><img src={img('team.webp')} alt="" loading="lazy" /></figure>
+          <div>
+            <p class="lab rv">{t.tLab}</p>
+            <h2 class="h2 rv">{t.tH}</h2>
+            <ol class="team__list">{t.team.map(([n, r, p]) => <li class="rv"><h3>{n}</h3><span>{r}</span><p>{p}</p></li>)}</ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec sec--revs">
+        <div class="wrap">
+          <p class="lab rv">{t.rLab}</p>
+          <h2 class="h2 rv">{t.rH}</h2>
+          <div class="revs">{t.reviews.map(([q, w]) => <blockquote class="rv"><p>“{q}”</p><cite><b aria-hidden="true">★★★★★</b>{w}</cite></blockquote>)}</div>
+        </div>
+      </section>
+
+      <section class="sec sec--book" id="afspraak">
+        <div class="wrap book">
+          <div>
+            <p class="lab">{t.bLab}</p>
+            <h2 class="h2">{t.bH}</h2>
+            <p class="lede">{t.bLede}</p>
+            <div class="info">
+              <p class="st" data-status></p>
+              <table class="hours" data-hours>
+                <caption class="sr">{t.hoursH}</caption>
+                <tbody>{t.days.map((d, i) => <tr data-day={i}><th scope="row">{d}{i === 3 && <small> · {t.koop}</small>}</th><td>{HOURS[i] ? `${fmtH(HOURS[i][0])} – ${fmtH(HOURS[i][1])}` : t.closed}</td></tr>)}</tbody>
+              </table>
+              <p class="info__addr">Boschstraat 00 · 6211 AS Maastricht · {t.reach}</p>
+              <a class="info__tel" href={`tel:${tel}`}>{telShow}</a>
+            </div>
+          </div>
+          <form class="form" data-form novalidate>
+            <p class="form__pick" data-pick hidden></p>
+            <div class="f2">
+              <label class="f"><span>{t.fName}</span><input name="name" autocomplete="name" required /></label>
+              <label class="f"><span>{t.fPhone}</span><input name="phone" type="tel" autocomplete="tel" required /></label>
+            </div>
+            <div class="f2">
+              <label class="f"><span>{t.fWho}</span><select name="who"><option value="">{t.anyone}</option>{Object.entries(t.who).map(([k, [n]]) => <option value={k}>{n}</option>)}</select></label>
+              <label class="f"><span>{t.fDay}</span><select name="day"><option>{t.anyDay}</option>{t.days.filter((_, i) => HOURS[i]).map((d) => <option>{d}</option>)}</select></label>
+            </div>
+            <label class="f"><span>{t.fNote}</span><textarea name="note" rows="3" placeholder={t.fNotePh}></textarea></label>
+            <button class="btn btn--wine btn--full" type="submit">{t.send}</button>
+            <div class="done" data-done hidden><h3>{t.doneH}</h3><p>{t.doneP}</p></div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ft">
+      <div class="wrap ft__in">
+        <p class="ft__logo">kruin<span>.</span></p>
+        <p>Maastricht · KvK 00000000 · BTW NL000000000B01</p>
+        <p>{t.demo} <a href={`${base}/`}>{t.credit}</a></p>
+      </div>
+    </footer>
+    <div class="mbar"><a href={`tel:${tel}`}>{t.call}</a><a class="mbar__go" href="#afspraak">{t.book}</a></div>
+    <DemoLang lang={lang} links={[['nl', root('nl')], ['en', root('en')], ['pl', root('pl')]]} />
+    <script type="application/json" id="cfg" set:html={JSON.stringify(cfg)} />
+  </body>
+</html>
+
+<style is:global>
+  :root { --bg: #f6f1ea; --paper: #fffdf9; --ink: #241b18; --mut: #6e625b; --wine: #6b1d2a; --wine2: #8a2b3a; --blush: #ecd8ce; --line: rgba(36, 27, 24, 0.14); --ff-d: 'Bodoni Moda', 'Didot', Georgia, serif; --ff: 'Instrument Sans', system-ui, sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 4.5rem; }
+  body { background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--ff); overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .wrap { width: min(100% - 2.4rem, 76rem); margin-inline: auto; }
+  .lab { font: 600 0.76rem/1 var(--ff); letter-spacing: 0.18em; text-transform: uppercase; color: var(--wine); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.7rem; }
+  .lab::before { content: ''; width: 2.2rem; height: 1px; background: currentColor; }
+  .h2 { font: 500 clamp(2.1rem, 5vw, 3.6rem)/1.05 var(--ff-d); letter-spacing: -0.01em; max-width: 18ch; text-wrap: balance; }
+  .lede { color: var(--mut); max-width: 36rem; margin-top: 1.1rem; font-size: 1.06rem; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 1rem 1.5rem; font: 600 0.95rem/1 var(--ff); text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: background 0.2s, color 0.2s, border-color 0.2s; border-radius: 2px; }
+  .btn--wine { background: var(--wine); color: #fff; }
+  .btn--wine:hover { background: var(--wine2); }
+  .btn--line { border-color: var(--ink); color: var(--ink); background: transparent; }
+  .btn--line:hover { background: var(--ink); color: var(--bg); }
+  .btn--full { width: 100%; }
+
+  .hd { position: sticky; top: 0; z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem clamp(1.2rem, 3vw, 2.4rem); background: rgba(246, 241, 234, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .hd__logo { font: 600 2rem/1 var(--ff-d); text-decoration: none; letter-spacing: -0.02em; }
+  .hd__logo span, .ft__logo span { color: var(--wine); }
+  .hd__nav { display: none; gap: 2rem; font-size: 0.95rem; color: var(--mut); }
+  .hd__nav a { text-decoration: none; }
+  .hd__nav a:hover { color: var(--ink); }
+  .hd__cta { padding: 0.75rem 1.1rem; font-size: 0.88rem; }
+  @media (min-width: 940px) { .hd__nav { display: flex; } }
+
+  .hero { padding: clamp(1.6rem, 4vw, 3rem) clamp(1.2rem, 4vw, 3rem) clamp(3rem, 6vw, 5rem); max-width: 84rem; margin-inline: auto; }
+  .hero__meta { display: flex; flex-wrap: wrap; gap: 0.3rem 1.4rem; font: 500 0.74rem/1.4 var(--ff); letter-spacing: 0.16em; text-transform: uppercase; color: var(--mut); padding-bottom: 1rem; border-bottom: 1px solid var(--ink); margin-bottom: clamp(1.8rem, 4vw, 3rem); }
+  .hero__meta span:not(:last-child)::after { content: '·'; margin-left: 1.4rem; color: var(--wine); }
+  .hero__grid { display: grid; gap: 2.6rem; align-items: center; }
+  @media (min-width: 980px) { .hero__grid { grid-template-columns: 0.95fr 1.05fr; gap: 3.6rem; } }
+  .hero__grid > * { min-width: 0; }
+  .hero h1 { font: 500 clamp(2.5rem, 5.4vw, 4.7rem)/1.03 var(--ff-d); letter-spacing: -0.015em; text-wrap: balance; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 2rem; }
+  .hero__st { display: flex; flex-wrap: wrap; gap: 0.6rem 1.6rem; margin-top: 1.8rem; font-size: 0.9rem; }
+  .hero__rate b { color: var(--wine); letter-spacing: 0.08em; font-weight: 400; margin-right: 0.2rem; }
+  .st { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+  .st i { width: 8px; height: 8px; border-radius: 50%; background: #2f8a55; box-shadow: 0 0 0 4px rgba(47, 138, 85, 0.15); }
+  .st.is-closed i { background: var(--wine); box-shadow: 0 0 0 4px rgba(107, 29, 42, 0.14); }
+  .hero__pics { position: relative; padding: 0 0 clamp(3rem, 8vw, 4.5rem) clamp(2.2rem, 7vw, 5rem); }
+  .hero__main { position: relative; }
+  .hero__main img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 60% 40%; }
+  .hero__main figcaption { position: absolute; right: 0.8rem; bottom: 0.8rem; background: var(--paper); font-size: 0.78rem; padding: 0.4rem 0.7rem; letter-spacing: 0.04em; }
+  .hero__inset { position: absolute; left: 0; bottom: 0; width: clamp(7.5rem, 30%, 13rem); border: clamp(5px, 1vw, 10px) solid var(--bg); }
+  .hero__inset img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+
+  .trust { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  @media (min-width: 860px) { .trust { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .trust li { padding: 1.4rem 1rem 1.4rem 0; display: grid; gap: 0.2rem; }
+  .trust li + li { padding-left: 1rem; border-left: 1px solid var(--line); }
+  @media (max-width: 859px) { .trust li:nth-child(3) { border-left: 0; padding-left: 0; } .trust li:nth-child(n + 3) { border-top: 1px solid var(--line); } }
+  .trust b { font: 500 clamp(1.6rem, 3.5vw, 2.2rem)/1 var(--ff-d); }
+  .trust span { font-size: 0.86rem; color: var(--mut); }
+
+  .sec { padding: clamp(4.5rem, 9vw, 7.5rem) 0; }
+  .sec--calc { background: var(--blush); margin-top: clamp(3rem, 7vw, 5rem); }
+  .calc { display: grid; gap: 1.6rem; margin-top: 2.6rem; }
+  @media (min-width: 1000px) { .calc { grid-template-columns: 1.45fr 0.8fr; gap: 2.6rem; align-items: start; } }
+  .calc > * { min-width: 0; }
+  .calc__q { display: grid; gap: 1.9rem; }
+  .calc__q fieldset { border: 0; min-width: 0; }
+  .calc__q legend { font: 500 1.35rem var(--ff-d); margin-bottom: 0.8rem; }
+  .opts { display: grid; gap: 0.5rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .opts--2, .opts--3 { grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .opts--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .opts--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .opts--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .opt { position: relative; cursor: pointer; }
+  .opt input, .ex input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .opt span { display: grid; justify-items: center; text-align: center; gap: 0.15rem; padding: 0.9rem 0.6rem 1rem; background: rgba(255, 253, 249, 0.55); border: 1px solid rgba(36, 27, 24, 0.18); height: 100%; transition: background 0.2s, border-color 0.2s; }
+  .opt--row span { justify-items: start; text-align: left; padding: 0.9rem 1.1rem; }
+  .opt b { font-weight: 600; font-size: 0.98rem; }
+  .opt small { font-size: 0.8rem; color: var(--mut); }
+  .opt:hover span { border-color: var(--ink); }
+  .opt input:checked + span { background: var(--paper); border-color: var(--wine); box-shadow: inset 0 0 0 1px var(--wine); }
+  .opt input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .opt svg { width: 3.2rem; height: 3.8rem; margin-bottom: 0.35rem; }
+  .opt svg .hair { fill: var(--wine); opacity: 0.85; }
+  .opt svg .face { fill: var(--blush); stroke: var(--ink); stroke-width: 1; }
+  .opt svg .sh { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+  .opt input:checked + span svg .face { fill: var(--paper); }
+  .extras { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .ex { position: relative; cursor: pointer; }
+  .ex span { display: inline-block; padding: 0.65rem 1rem; border: 1px solid rgba(36, 27, 24, 0.25); font-weight: 500; font-size: 0.92rem; background: rgba(255, 253, 249, 0.55); }
+  .ex em { font-style: normal; font-size: 0.82rem; color: var(--mut); margin-left: 0.2rem; }
+  .ex:has(input:checked) span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .ex:has(input:checked) em { color: var(--blush); }
+  .ex input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .calc__res { position: sticky; top: 5.5rem; background: var(--ink); color: var(--bg); padding: clamp(1.4rem, 3vw, 2rem); display: grid; gap: 1.1rem; }
+  .calc__nums { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .calc__nums small { display: block; font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; color: #c9b9b1; }
+  .calc__nums b { font: 500 clamp(2rem, 5vw, 2.8rem)/1.1 var(--ff-d); }
+  .calc__nums .cur { font: 400 0.6em var(--ff); margin-inline: 0.12em; vertical-align: 0.35em; }
+  .calc__sum { font-size: 0.9rem; color: #e9ddd6; border-top: 1px solid rgba(246, 241, 234, 0.2); padding-top: 1rem; }
+  .calc__tip { font-size: 0.88rem; color: #c9b9b1; }
+  .calc__res .btn--wine { background: var(--blush); color: var(--ink); }
+  .calc__res .btn--wine:hover { background: #fff; }
+
+  .menu { display: grid; gap: 2.4rem 4rem; margin-top: 2.8rem; }
+  @media (min-width: 860px) { .menu { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .menu h3 { font: 500 1.6rem var(--ff-d); padding-bottom: 0.6rem; border-bottom: 1px solid var(--ink); }
+  .menu dl > div { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
+  .menu dt { flex: 1 1 auto; }
+  .menu dd { white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .menu__note { margin-top: 2rem; font-size: 0.92rem; color: var(--mut); max-width: 40rem; }
+
+  .sec--work { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .strip { --pad: max(1.2rem, calc((100% - 76rem) / 2)); display: flex; gap: clamp(0.8rem, 2vw, 1.4rem); overflow-x: auto; scroll-snap-type: x mandatory; padding: 2.6rem var(--pad) 0.6rem; scroll-padding-inline: var(--pad); scrollbar-width: thin; }
+  .strip:focus-visible { outline: 2px solid var(--wine); outline-offset: -2px; }
+  .strip figure { flex: 0 0 clamp(14rem, 30vw, 20rem); scroll-snap-align: start; }
+  .strip img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+  .strip figcaption { padding-top: 0.8rem; display: grid; }
+  .strip b { font: 500 1.2rem/1.3 var(--ff-d); }
+  .strip span { font-size: 0.84rem; color: var(--mut); }
+
+  .team { display: grid; gap: 2.6rem; align-items: center; }
+  @media (min-width: 940px) { .team { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+  .team > * { min-width: 0; }
+  .team__pic img { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; }
+  .team__list { list-style: none; margin-top: 2rem; display: grid; }
+  .team__list li { padding: 1.1rem 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 5.5rem 1fr; gap: 0.1rem 1.2rem; }
+  .team__list h3 { font: 500 1.5rem/1.2 var(--ff-d); grid-row: span 2; }
+  .team__list span { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--wine); font-weight: 600; }
+  .team__list p { color: var(--mut); font-size: 0.95rem; }
+
+  .sec--revs { background: var(--ink); color: var(--bg); }
+  .sec--revs .lab { color: var(--blush); }
+  .revs { display: grid; gap: 2.2rem; margin-top: 2.8rem; }
+  @media (min-width: 900px) { .revs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
+  .revs p { font: 500 clamp(1.15rem, 2vw, 1.3rem)/1.45 var(--ff-d); }
+  .revs cite { display: block; margin-top: 1rem; font-style: normal; font-size: 0.88rem; color: #c9b9b1; }
+  .revs cite b { color: var(--blush); letter-spacing: 0.08em; font-weight: 400; margin-right: 0.6rem; }
+
+  .sec--book { background: var(--bg); }
+  .book { display: grid; gap: 2.6rem; }
+  @media (min-width: 940px) { .book { grid-template-columns: 0.95fr 1.05fr; align-items: start; } }
+  .book > * { min-width: 0; }
+  .info { margin-top: 1.8rem; display: grid; gap: 0.9rem; }
+  .hours { border-collapse: collapse; width: 100%; max-width: 26rem; font-size: 0.94rem; }
+  .hours th, .hours td { padding: 0.5rem 0; border-bottom: 1px solid var(--line); text-align: left; font-weight: 500; }
+  .hours th small { font-weight: 400; color: var(--mut); }
+  .hours td { text-align: right; color: var(--mut); font-variant-numeric: tabular-nums; }
+  .hours tr.is-today th, .hours tr.is-today td { color: var(--wine); font-weight: 600; }
+  .info__addr { color: var(--mut); font-size: 0.92rem; }
+  .info__tel { font: 500 1.7rem var(--ff-d); text-decoration: none; }
+  .form { background: var(--paper); padding: clamp(1.3rem, 4vw, 2.2rem); display: grid; gap: 1rem; border: 1px solid var(--line); }
+  .form__pick { font-size: 0.9rem; background: var(--blush); padding: 0.7rem 0.9rem; border-left: 3px solid var(--wine); }
+  .f { display: grid; gap: 0.35rem; font-weight: 500; font-size: 0.88rem; }
+  .f input, .f select, .f textarea { font: 400 1rem var(--ff); border: 1px solid rgba(36, 27, 24, 0.25); border-radius: 2px; padding: 0.8rem 0.9rem; background: #fff; width: 100%; color: var(--ink); }
+  .f input:focus, .f select:focus, .f textarea:focus { outline: none; border-color: var(--wine); box-shadow: 0 0 0 1px var(--wine); }
+  .f .is-bad { border-color: #b3261e; }
+  .f2 { display: grid; gap: 1rem; }
+  @media (min-width: 520px) { .f2 { grid-template-columns: 1fr 1fr; } }
+  .done { background: #e6f1ea; padding: 1rem 1.1rem; }
+  .done h3 { font: 500 1.2rem var(--ff-d); color: #1f6b40; }
+  .done p { color: var(--mut); font-size: 0.86rem; margin-top: 0.3rem; }
+
+  .ft { padding: 3rem 0 6.5rem; font-size: 0.86rem; color: var(--mut); border-top: 1px solid var(--line); }
+  .ft__in { display: grid; gap: 0.4rem; }
+  .ft__logo { font: 600 2.4rem/1 var(--ff-d); color: var(--ink); }
+  .ft a { color: var(--ink); font-weight: 600; }
+  .mbar { position: fixed; z-index: 70; left: 0.8rem; right: 8.6rem; bottom: calc(0.8rem + env(safe-area-inset-bottom, 0)); display: grid; grid-template-columns: auto 1fr; gap: 0.4rem; }
+  .mbar a { display: grid; place-items: center; padding: 0.95rem 1.1rem; text-decoration: none; font: 600 0.95rem var(--ff); background: var(--paper); color: var(--ink); border: 1px solid var(--ink); box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.45); white-space: nowrap; }
+  .mbar__go { background: var(--wine) !important; border-color: var(--wine) !important; color: #fff !important; }
+  @media (min-width: 1000px) { .mbar { display: none; } .ft { padding-bottom: 3rem; } }
+  .dlang { bottom: calc(0.9rem + env(safe-area-inset-bottom, 0)) !important; }
+  @media (max-width: 999px) { .dlang { right: 0.8rem !important; } }
+  @media (max-width: 599px) { .mbar { right: 0.8rem; } .dlang { bottom: calc(4.6rem + env(safe-area-inset-bottom, 0)) !important; } }
+  @media (min-width: 1000px) { .dlang { bottom: 1.2rem !important; } }
+
+  .rv { opacity: 0; translate: 0 16px; transition: opacity 0.7s, translate 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .rv.is-in { opacity: 1; translate: 0 0; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; translate: 0 0; } html { scroll-behavior: auto; } }
+</style>
+
+<script>
+  import { $, $$, readCfg, reveal, openStatus, markToday, demoForm, euro } from '../scripts/demo-kit.js';
+  const cfg = readCfg();
+  const L = cfg.t, P = cfg.price, N = cfg.names;
+  const eur = euro(cfg.lang);
+  reveal();
+  $$('[data-status]').forEach((el) => openStatus(el, { hours: cfg.hours, t: L, lang: cfg.lang }));
+  markToday($('[data-hours]'));
+
+  const calc = $('[data-calc]');
+  const dur = (m) => (m < 60 ? `${m} ${L.min}` : `${Math.floor(m / 60)}${m % 60 ? `:${String(m % 60).padStart(2, '0')}` : ''} ${L.hour}`);
+  let last = null;
+  const compute = () => {
+    const len = calc.elements.len.value, job = calc.elements.job.value, who = calc.elements.who.value;
+    const i = P.len.indexOf(len);
+    let price = P.job[job].eur[i] * P.who[who];
+    let mins = P.job[job].min[i];
+    const ex = Object.keys(P.extras).filter((k) => calc.elements[k].checked);
+    ex.forEach((k) => { price += P.extras[k][0]; mins += P.extras[k][1]; });
+    price = Math.round(price);
+    mins = Math.round(mins / 5) * 5;
+    const text = `${N.job[job]} · ${N.len[len].toLowerCase()} · ${N.who[who]}${ex.length ? ` + ${ex.map((k) => N.extras[k].toLowerCase()).join(', ')}` : ''}`;
+    $('[data-price]').innerHTML = eur(price).replace('€', '<span class="cur">€</span>');
+    $('[data-time]').textContent = dur(mins);
+    $('[data-sum]').textContent = text;
+    $('[data-tip]').textContent = L.tip[job];
+    last = { text, price: eur(price), who };
+  };
+  calc.addEventListener('change', compute);
+  compute();
+  const form = $('[data-form]');
+  $('[data-take]').addEventListener('click', () => {
+    const p = $('[data-pick]');
+    p.textContent = `${L.pickedPre}: ${last.text} (${last.price})`;
+    p.hidden = false;
+    form.elements.who.value = last.who;
+  });
+
+  demoForm(form, { required: ['name', 'phone'] });
+</script>

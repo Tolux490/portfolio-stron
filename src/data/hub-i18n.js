@@ -43,6 +43,7 @@ export const CASE_MEDIA = [
 // Strony demo: nowe (NL / EN / PL, NL pod adresem głównym) i starsze (PL / EN, PL pod adresem głównym).
 export const SITES = [
   { slug: 'barbier', name: 'Scheermes', langs: ['nl', 'en', 'pl'], base: 'nl', neu: true, cat: 'beauty' },
+  { slug: 'kapsalon', name: 'Kruin', langs: ['nl', 'en', 'pl'], base: 'nl', neu: true, cat: 'beauty' },
   { slug: 'nagelstudio', name: 'Studio Glans', langs: ['nl', 'en', 'pl'], base: 'nl', neu: true, cat: 'beauty' },
   { slug: 'trainer', name: 'Kern', langs: ['nl', 'en', 'pl'], base: 'nl', neu: true, cat: 'fitness' },
   { slug: 'schilder', name: 'Kwast & Kleur', langs: ['nl', 'en', 'pl'], base: 'nl', neu: true, cat: 'trades' },
@@ -57,7 +58,7 @@ export const SITES = [
   { slug: 'nieruchomosci', name: 'Kontur', langs: ['pl', 'en'], base: 'pl', cat: 'property' },
 ];
 // home page showcase: a mix of trades, in this order
-export const SHOWCASE_SLUGS = ['barbier', 'bloemist', 'installateur', 'nagelstudio', 'yoga', 'restauracja'];
+export const SHOWCASE_SLUGS = ['kapsalon', 'bloemist', 'installateur', 'barbier', 'yoga', 'restauracja'];
 export const SITE_CATS = ['beauty', 'food', 'fitness', 'trades', 'property'];
 const siteLang = (s, lang) => (s.langs.includes(lang) ? lang : 'en');
 export const siteHref = (s, lang) => { const l = siteLang(s, lang); return l === s.base ? `/${s.slug}/` : `/${s.slug}/${l}/`; };
@@ -99,7 +100,7 @@ export const T = {
       sections: ['Intro', 'Work', 'Pricing', 'About', 'Contact'],
       pages: { home: 'Home', websites: 'Work', pricing: 'Pricing', about: 'About', work: 'Data projects', lab: 'Lab', contact: 'Contact' },
       pageMeta: {
-        websites: { title: 'Work: concept websites for local businesses | Vervo Studio', description: 'Working demo websites for a barbershop, a nail studio, a dog groomer, a florist, a yoga studio, a personal trainer, painters, a plumber, restaurants, a café, car services and a real estate agency. Try them on your phone.' },
+        websites: { title: 'Work: concept websites for local businesses | Vervo Studio', description: 'Working demo websites for a barbershop, a hair salon, a nail studio, a dog groomer, a florist, a yoga studio, a personal trainer, painters, a plumber, restaurants, a café, car services and a real estate agency. Try them on your phone.' },
         pricing: { title: 'Pricing: websites from {PRICE0} | Vervo Studio', description: 'Three fixed-price packages, a monthly care plan and a founding-client offer for our first three projects. Clear scope, live in about two weeks.' },
         about: { title: 'About Vervo Studio, a web design studio in Maastricht', description: 'A small studio that designs and codes every website by hand. Websites in Dutch, English and Polish for local businesses.' },
         work: { title: 'Data projects: from messy file to clean report | Vervo Studio', description: 'Two data projects from start to finish: an Excel clean-up of 300 webshop orders and a Google Sheets order system for a bakery.' },
@@ -108,7 +109,7 @@ export const T = {
       chapters: {
         label: 'Index', h2: 'Where to next?',
         items: {
-          websites: { d: 'Demo sites built for real niches. Open one on your phone.', n: '13 sites' },
+          websites: { d: 'Demo sites built for real niches. Open one on your phone.', n: '14 sites' },
           pricing: { d: 'Three packages, a care plan and what’s included.', n: 'From {PRICE0}' },
           about: { d: 'Who we are and how we work.', n: 'Studio · NL · EN · PL' },
           work: { d: 'Excel clean-ups and Google Sheets systems we also build.', n: '2 case studies' },
@@ -130,7 +131,7 @@ export const T = {
     schemaDesc: 'Web design studio in Maastricht: fast, custom websites for local businesses.',
     jobTitle: 'Web design studio',
     navLabels: ['Work', 'Pricing', 'About', 'Contact'],
-    cta: { hire: 'Plan a free call', quote: 'Plan a free call', seeWork: 'See the work', ask: 'Ask about this', prices: 'See pricing', allSites: 'All 13 sites', github: 'GitHub' },
+    cta: { hire: 'Plan a free call', quote: 'Plan a free call', seeWork: 'See the work', ask: 'Ask about this', prices: 'See pricing', allSites: 'All 14 sites', github: 'GitHub' },
     hero: {
       available: 'Taking on new projects',
       lede: 'We design and build fast, custom websites for local businesses: restaurants, salons, trainers and tradespeople. Live in about two weeks, written in clean code, never a template.',
@@ -279,6 +280,7 @@ export const T = {
       cats: { all: 'All', beauty: 'Beauty and grooming', food: 'Food and shops', fitness: 'Fitness and wellbeing', trades: 'Trades and cars', property: 'Property' }, catsLabel: 'Filter by industry',
       items: {
         barbier: { bran: 'Barbershop', opis: 'Dark, warm design with online booking: pick a service, a barber, a day and a time.', tagi: ['Online booking', 'Price list', 'Open-now status'] },
+        kapsalon: { bran: 'Hair salon', opis: 'Calm, editorial design with a price calculator by hair length, treatment and stylist, and a booking form that takes the result along.', tagi: ['Price calculator', 'Team', 'Booking request'] },
         nagelstudio: { bran: 'Nail studio', opis: 'Soft, calm design with a colour studio: try colour, shape and finish before you book.', tagi: ['Colour picker', 'Booking request', 'Gift card'] },
         trainer: { bran: 'Personal trainer', opis: 'Bold and energetic, with a three-question quiz that recommends the right programme.', tagi: ['Programme quiz', 'Pricing', 'Free intake'] },
         schilder: { bran: 'Painters', opis: 'Clean and trustworthy, with an instant price calculator and a quote form.', tagi: ['Price calculator', 'Quote form', 'Projects'] },
@@ -336,7 +338,7 @@ export const T = {
       sections: ['Start', 'Realizacje', 'Cennik', 'O nas', 'Kontakt'],
       pages: { home: 'Start', websites: 'Realizacje', pricing: 'Cennik', about: 'O nas', work: 'Projekty z danymi', lab: 'Lab', contact: 'Kontakt' },
       pageMeta: {
-        websites: { title: 'Realizacje: strony koncepcyjne dla lokalnych firm | Vervo Studio', description: 'Działające strony demonstracyjne dla barbera, studia paznokci, salonu dla psów, kwiaciarni, studia jogi, trenera personalnego, firmy malarskiej, hydraulika, restauracji, kawiarni, warsztatów i biura nieruchomości. Sprawdź je w telefonie.' },
+        websites: { title: 'Realizacje: strony koncepcyjne dla lokalnych firm | Vervo Studio', description: 'Działające strony demonstracyjne dla barbera, salonu fryzjerskiego, studia paznokci, salonu dla psów, kwiaciarni, studia jogi, trenera personalnego, firmy malarskiej, hydraulika, restauracji, kawiarni, warsztatów i biura nieruchomości. Sprawdź je w telefonie.' },
         pricing: { title: 'Cennik: strony od {PRICE0} | Vervo Studio', description: 'Trzy pakiety w stałej cenie, abonament opieki i oferta dla naszych pierwszych trzech klientów. Jasny zakres, strona gotowa w ok. dwa tygodnie.' },
         about: { title: 'O Vervo Studio, studiu stron internetowych z Maastricht', description: 'Małe studio, które samo projektuje i koduje każdą stronę. Strony po niderlandzku, angielsku i polsku dla lokalnych firm.' },
         work: { title: 'Projekty z danymi: od chaotycznego pliku do przejrzystego raportu | Vervo Studio', description: 'Dwa projekty od początku do końca: uporządkowanie 300 zamówień sklepu internetowego w Excelu i system zamówień dla piekarni w Arkuszach Google.' },
@@ -345,7 +347,7 @@ export const T = {
       chapters: {
         label: 'Spis', h2: 'Co dalej?',
         items: {
-          websites: { d: 'Strony demonstracyjne dla prawdziwych branż. Otwórz którąś w telefonie.', n: '13 stron' },
+          websites: { d: 'Strony demonstracyjne dla prawdziwych branż. Otwórz którąś w telefonie.', n: '14 stron' },
           pricing: { d: 'Trzy pakiety, opieka nad stroną i co dokładnie dostajesz.', n: 'Od {PRICE0}' },
           about: { d: 'Kim jesteśmy i jak pracujemy.', n: 'Studio · NL · EN · PL' },
           work: { d: 'Porządkujemy też dane w Excelu i budujemy systemy w Arkuszach Google.', n: '2 projekty' },
@@ -367,7 +369,7 @@ export const T = {
     schemaDesc: 'Studio stron internetowych w Maastricht: szybkie strony na miarę dla lokalnych firm.',
     jobTitle: 'Studio stron internetowych',
     navLabels: ['Realizacje', 'Cennik', 'O nas', 'Kontakt'],
-    cta: { hire: 'Umów bezpłatną rozmowę', quote: 'Umów bezpłatną rozmowę', seeWork: 'Zobacz realizacje', ask: 'Zapytaj o to', prices: 'Zobacz cennik', allSites: 'Wszystkie 13 stron', github: 'GitHub' },
+    cta: { hire: 'Umów bezpłatną rozmowę', quote: 'Umów bezpłatną rozmowę', seeWork: 'Zobacz realizacje', ask: 'Zapytaj o to', prices: 'Zobacz cennik', allSites: 'Wszystkie 14 stron', github: 'GitHub' },
     hero: {
       available: 'Przyjmujemy nowe projekty',
       lede: 'Projektujemy i budujemy szybkie strony na miarę dla lokalnych firm: restauracji, salonów, trenerów i fachowców. Gotowe w ok. dwa tygodnie, napisane czystym kodem, nigdy na szablonie.',
@@ -516,6 +518,7 @@ export const T = {
       cats: { all: 'Wszystkie', beauty: 'Uroda i pielęgnacja', food: 'Gastronomia i sklepy', fitness: 'Sport i zdrowie', trades: 'Usługi i motoryzacja', property: 'Nieruchomości' }, catsLabel: 'Filtruj według branży',
       items: {
         barbier: { bran: 'Barbershop', opis: 'Ciemny, ciepły projekt z rezerwacją online: wybierasz usługę, barbera, dzień i godzinę.', tagi: ['Rezerwacja online', 'Cennik', 'Status „otwarte”'] },
+        kapsalon: { bran: 'Salon fryzjerski', opis: 'Spokojny projekt w stylu magazynu, z kalkulatorem ceny według długości włosów, zabiegu i stylistki oraz formularzem, który przenosi wynik.', tagi: ['Kalkulator ceny', 'Zespół', 'Prośba o termin'] },
         nagelstudio: { bran: 'Studio paznokci', opis: 'Delikatny, spokojny projekt ze studiem kolorów: przymierz kolor, kształt i wykończenie przed wizytą.', tagi: ['Wybór koloru', 'Prośba o termin', 'Bon podarunkowy'] },
         trainer: { bran: 'Trener personalny', opis: 'Wyrazisty i energiczny, z quizem z trzech pytań, który podpowiada właściwy pakiet.', tagi: ['Quiz', 'Cennik', 'Bezpłatna konsultacja'] },
         schilder: { bran: 'Firma malarska', opis: 'Schludny i budzący zaufanie, z kalkulatorem ceny i formularzem wyceny.', tagi: ['Kalkulator ceny', 'Formularz wyceny', 'Realizacje'] },
@@ -573,7 +576,7 @@ export const T = {
       sections: ['Intro', 'Werk', 'Prijzen', 'Over ons', 'Contact'],
       pages: { home: 'Home', websites: 'Werk', pricing: 'Prijzen', about: 'Over ons', work: 'Datawerk', lab: 'Lab', contact: 'Contact' },
       pageMeta: {
-        websites: { title: 'Werk: conceptwebsites voor lokale ondernemers | Vervo Studio', description: 'Werkende demowebsites voor een barbershop, nagelstudio, trimsalon, bloemist, yogastudio, personal trainer, schilders, installateur, restaurants, een café, autogarages en een makelaar. Probeer ze op je telefoon.' },
+        websites: { title: 'Werk: conceptwebsites voor lokale ondernemers | Vervo Studio', description: 'Werkende demowebsites voor een barbershop, kapsalon, nagelstudio, trimsalon, bloemist, yogastudio, personal trainer, schilders, installateur, restaurants, een café, autogarages en een makelaar. Probeer ze op je telefoon.' },
         pricing: { title: 'Prijzen: websites vanaf {PRICE0} | Vervo Studio', description: 'Drie pakketten met een vaste prijs, een onderhoudsabonnement en een aanbod voor onze eerste drie klanten. Duidelijke afspraken, live in ongeveer twee weken.' },
         about: { title: 'Over Vervo Studio, webdesign uit Maastricht', description: 'Een kleine studio die elke website zelf ontwerpt en codeert. Websites in het Nederlands, Engels en Pools voor lokale ondernemers.' },
         work: { title: 'Dataprojecten: van rommelig bestand tot helder rapport | Vervo Studio', description: 'Twee dataprojecten van begin tot eind: een Excel-opschoning van 300 webshopbestellingen en een bestelsysteem in Google Sheets voor een bakkerij.' },
@@ -582,7 +585,7 @@ export const T = {
       chapters: {
         label: 'Index', h2: 'Waar wil je verder kijken?',
         items: {
-          websites: { d: 'Demosites voor echte branches. Open er een op je telefoon.', n: '13 sites' },
+          websites: { d: 'Demosites voor echte branches. Open er een op je telefoon.', n: '14 sites' },
           pricing: { d: 'Drie pakketten, onderhoud en wat er allemaal in zit.', n: 'Vanaf {PRICE0}' },
           about: { d: 'Wie we zijn en hoe we werken.', n: 'Studio · NL · EN · PL' },
           work: { d: 'Excel-opschoning en systemen in Google Sheets maken we ook.', n: '2 cases' },
@@ -604,7 +607,7 @@ export const T = {
     schemaDesc: 'Webdesignstudio in Maastricht: snelle websites op maat voor lokale ondernemers.',
     jobTitle: 'Webdesignstudio',
     navLabels: ['Werk', 'Prijzen', 'Over ons', 'Contact'],
-    cta: { hire: 'Plan een gratis gesprek', quote: 'Plan een gratis gesprek', seeWork: 'Bekijk ons werk', ask: 'Vraag hiernaar', prices: 'Bekijk de prijzen', allSites: 'Alle 13 sites', github: 'GitHub' },
+    cta: { hire: 'Plan een gratis gesprek', quote: 'Plan een gratis gesprek', seeWork: 'Bekijk ons werk', ask: 'Vraag hiernaar', prices: 'Bekijk de prijzen', allSites: 'Alle 14 sites', github: 'GitHub' },
     hero: {
       available: 'Nieuwe projecten welkom',
       lede: 'We ontwerpen en bouwen snelle websites op maat voor lokale ondernemers: restaurants, salons, trainers en vakmensen. Live in ongeveer twee weken, in schone code, nooit een template.',
@@ -753,6 +756,7 @@ export const T = {
       cats: { all: 'Alles', beauty: 'Beauty en verzorging', food: 'Eten en winkels', fitness: 'Sport en welzijn', trades: 'Vakmensen en auto', property: 'Vastgoed' }, catsLabel: 'Filter op branche',
       items: {
         barbier: { bran: 'Barbershop', opis: 'Donker, warm ontwerp met online boeken: kies een behandeling, een barber, een dag en een tijd.', tagi: ['Online boeken', 'Prijslijst', 'Nu-open-status'] },
+        kapsalon: { bran: 'Kapsalon', opis: 'Rustig ontwerp in tijdschriftstijl, met een prijscalculator op haarlengte, behandeling en stylist, en een afspraakformulier dat de uitkomst meeneemt.', tagi: ['Prijscalculator', 'Team', 'Afspraakaanvraag'] },
         nagelstudio: { bran: 'Nagelstudio', opis: 'Zacht, rustig ontwerp met een kleurstudio: probeer kleur, vorm en afwerking voordat je boekt.', tagi: ['Kleurkiezer', 'Afspraakaanvraag', 'Cadeaubon'] },
         trainer: { bran: 'Personal trainer', opis: 'Stoer en energiek, met een quiz van drie vragen die het juiste traject aanraadt.', tagi: ['Trajectquiz', 'Prijzen', 'Gratis intake'] },
         schilder: { bran: 'Schildersbedrijf', opis: 'Strak en betrouwbaar, met een directe prijscalculator en een offerteformulier.', tagi: ['Prijscalculator', 'Offerteformulier', 'Projecten'] },
