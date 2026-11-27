@@ -649,6 +649,50 @@ export function initHub() {
     finally { btn.disabled = false; btnLabel.textContent = cfg.submitLabel; }
   });
 
+  // ---------- zgłoszenie po darmową stronę (FormSubmit) ----------
+  // Mail przychodzi z polskimi nazwami pól; zgoda na maile zapisana z datą i dokładnym tekstem (dowód zgody).
+  const ff = $('#fForm'), fStat = $('#fStat'), fBtn = $('#fBtn');
+  ff?.addEventListener('submit', async (e) => {
+    e.preventDefault(); fStat.textContent = ''; fStat.className = 'kstat mono';
+    const M = cfg.freeMsgs;
+    let bad = null;
+    ff.querySelectorAll('[required]').forEach((el) => {
+      const miss = !el.value.trim();
+      el.closest('.fld')?.classList.toggle('bad', miss);
+      if (miss && !bad) bad = el;
+    });
+    const em = ff.elements.email;
+    const emailBad = !bad && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.value.trim());
+    if (emailBad) { em.closest('.fld').classList.add('bad'); bad = em; }
+    if (bad) { fStat.textContent = emailBad ? M.email : M.incomplete; fStat.classList.add('err'); bad.focus({ preventScroll: false }); return; }
+    const fd = new FormData(ff);
+    if (fd.get('_honey')) return; // pułapka na boty
+    const v = (k) => String(fd.get(k) || '').trim();
+    const news = fd.get('news') === 'ja';
+    const label = fBtn.querySelector('span');
+    try {
+      fBtn.disabled = true; label.textContent = M.sending;
+      const res = await fetch('https://formsubmit.co/ajax/' + (cfg.formId || emailAddr()), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: `${M.subject}: ${v('bedrijf')} (${v('plaats')})`, _template: 'table', _captcha: 'false', _replyto: v('email'),
+          'Imię': v('naam'), 'Firma': v('bedrijf'), 'Branża': v('branche'), 'Miasto': v('plaats'),
+          'E-mail': v('email'), 'Telefon': v('tel') || '—', 'Obecna strona': v('site') || '—',
+          'Cel strony': fd.getAll('doel').join(', ') || '—', 'Ile zapłaciliby': v('budget') || '—',
+          'Wiadomość': v('bericht') || '—',
+          'Zgoda na maile': news ? `TAK, ${new Date().toISOString()}: „${cfg.newsText}”` : 'nie',
+          'Język strony': cfg.lang,
+        }),
+      });
+      const r = await res.json();
+      if (r.success === true || r.success === 'true') { fStat.textContent = M.ok; fStat.classList.add('ok'); ff.reset(); }
+      else throw 0;
+    } catch { fStat.textContent = M.fail; fStat.classList.add('err'); }
+    finally { fBtn.disabled = false; label.textContent = cfg.freeSubmit; }
+  });
+  ff?.addEventListener('input', (e) => e.target.closest('.fld')?.classList.remove('bad'));
+
   // podgląd stanu scen do testów: dodaj ?debug do adresu
   if (location.search.includes('debug')) window.__vervo = () => ({ form: world?.form, dbg: world?.debug, inView: [...stagesInView].map((e) => e.dataset.stage), y: window.scrollY, st: ScrollTrigger.getAll().filter((t) => t.trigger?.dataset?.stage).map((t) => [t.trigger.dataset.stage, Math.round(t.start), Math.round(t.end), t.isActive]) });
 
