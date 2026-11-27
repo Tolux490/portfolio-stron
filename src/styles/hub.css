@@ -712,3 +712,25 @@ main > .stage { background: transparent; }
 .sites__cat[aria-pressed='true'] span { color: var(--bg); opacity: 0.7; }
 .site[hidden] { display: none; }
 @media (max-width: 899px) { .sites__cats { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 0.2rem; } .sites__cats::-webkit-scrollbar { display: none; } .sites__cat { flex: none; } }
+
+/* ---------- darmowa strona: warunki + zgłoszenie ---------- */
+.freep__grid { display: grid; gap: clamp(2.2rem, 5vw, 4.5rem); align-items: start; }
+@media (min-width: 1000px) { .freep__grid { grid-template-columns: 0.9fr 1.1fr; } .freep__info { position: sticky; top: 6.5rem; } }
+.freep__info { display: grid; gap: clamp(1.6rem, 3vw, 2.2rem); }
+.freep__info .found__spots { padding: 0.55rem 1rem; border: 1px dashed var(--acc); border-radius: 999px; justify-self: start; }
+.freep__blk .pkg__f { margin-bottom: 0; }
+.freep__p { color: var(--fg-2); font-size: 0.95rem; max-width: 58ch; padding-top: 1rem; border-top: 1px solid var(--line); margin-top: 0.4rem; }
+.freep__h { font-family: var(--font-d); font-weight: 600; letter-spacing: -0.03em; font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.05; margin-bottom: 1.6rem; }
+.fld > span i, .fset legend i { font-style: normal; opacity: 0.7; }
+.fset { border: 0; padding: 0; margin: 0.2rem 0 1.5rem; min-width: 0; }
+.fset legend { color: var(--muted); font-size: 0.68rem; margin-bottom: 0.7rem; padding: 0; }
+.pills { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.pill { position: relative; cursor: pointer; }
+.pill input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pill span { display: inline-block; padding: 0.55rem 0.9rem; border: 1px solid var(--line-2); border-radius: 999px; font-size: 0.86rem; color: var(--fg-2); transition: background 0.25s, color 0.25s, border-color 0.25s; }
+.pill:hover span { border-color: var(--fg); color: var(--fg); }
+.pill input:checked + span { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.pill input:focus-visible + span { outline: 2px solid var(--acc); outline-offset: 2px; }
+.fset__note { color: var(--muted); font-size: 0.8rem; margin-top: 0.6rem; }
+.consent em { display: block; font-style: normal; color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+.freep__priv { color: var(--muted); font-size: 0.78rem; line-height: 1.5; margin-top: 0.4rem; }

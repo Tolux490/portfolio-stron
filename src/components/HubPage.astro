@@ -28,9 +28,11 @@ const abs = (p) => new URL(`${b}/${p}`, Astro.site || 'https://vervostudio.com/'
 const asset = (p) => `${b}/${p}`;
 
 const langPath = (l) => (l === DEFAULT_LANG ? '/' : `/${l}/`);
-const slug = (p) => (p === 'home' ? '' : `${p}/`);
-const pageUrl = (p, l = lang) => `${b}${langPath(l)}${slug(p)}`;
-const urls = Object.fromEntries(LANGS.map((l) => [l, `${site}${langPath(l)}${slug(page)}`]));
+// adres podstrony; strona ze zgłoszeniem ma własny adres w każdym języku (pod QR-kody i posty)
+const SLUGS = { free: { en: 'free-website', nl: 'gratis-website', pl: 'darmowa-strona' } };
+const slug = (p, l = lang) => (p === 'home' ? '' : `${SLUGS[p]?.[l] ?? p}/`);
+const pageUrl = (p, l = lang) => `${b}${langPath(l)}${slug(p, l)}`;
+const urls = Object.fromEntries(LANGS.map((l) => [l, `${site}${langPath(l)}${slug(page, l)}`]));
 const canonical = urls[lang];
 const contactUrl = home ? '#contact' : `${pageUrl('home')}#contact`;
 
@@ -46,7 +48,7 @@ const pad = (n) => String(n).padStart(2, '0');
 const ORDER = ['websites', 'pricing', 'about'];
 const NAV = [['home', pageUrl('home')], ...ORDER.map((k) => [k, pageUrl(k)]), ['contact', contactUrl]];
 const MORE = ['work', 'lab'];
-const nextOf = { websites: 'pricing', pricing: 'about', work: 'lab', lab: 'websites' };
+const nextOf = { websites: 'pricing', pricing: 'about', work: 'lab', lab: 'websites', free: 'websites' };
 const CHAPTERS = ['websites', 'pricing', 'about', 'work'];
 const CHAPTER_IMG = {
   websites: siteThumb(SITES[0], lang),
@@ -59,6 +61,7 @@ const socials = [{ k: 'github', label: 'GitHub', href: GITHUB_URL }].filter((s) 
 const THEMES = ['paper', 'mono'];
 const config = {
   lang, page, formId: FORM_ID, parts: EMAIL_PARTS, msgs: t.formMsgs, submitLabel: t.kontakt.form.submit,
+  ...(page === 'free' ? { freeMsgs: t.free.msgs, freeSubmit: t.free.form.submit, newsText: t.free.form.news } : {}),
   copied: ui.copied, copyEmail: ui.copyEmail, loading: ui.loading, cursor: ui.cursor, bored: ui.bored,
 };
 
@@ -111,6 +114,7 @@ const HEADS = {
   about: { n: '03', label: t.about.label, h: t.about.h2, lede: t.about.p[0], stage: 'helix' },
   work: { n: '04', label: ui.pages.work, h: t.work.h2, lede: t.work.lede, stage: 'sheet' },
   lab: { n: '05', label: t.lab.label, h: t.lab.h2, lede: t.lab.lede, stage: 'globe' },
+  free: { n: '★', label: t.free.label, h: t.free.h, lede: t.free.lede, stage: 'donut' },
 };
 const head = HEADS[page];
 // ściany kostki-nawigacji w kolejności materiałów BoxGeometry: +x, -x, +y, -y, +z, -z
@@ -125,6 +129,7 @@ const CUBE = [
 const nextKey = nextOf[page];
 const SHOWCASE = SHOWCASE_SLUGS.map((slug) => SITES.find((s) => s.slug === slug));
 const P = t.pricing;
+const F = page === 'free' ? t.free.form : null;
 ---
 <!doctype html>
 <html lang={lang} data-theme="paper" data-page={page} class="no-js">
@@ -394,7 +399,7 @@ const P = t.pricing;
                     <span class="found__dots" aria-hidden="true">{[0, 1, 2].map((k) => <i class:list={{ on: k < PRICES.foundingLeft }}></i>)}</span>
                     {P.founding.spots}
                   </p>
-                  <a class="btn btn--acc magnetic" href={contactUrl} data-cursor="hover"><span>{P.founding.cta}</span><span aria-hidden="true">→</span></a>
+                  <a class="btn btn--acc magnetic" href={pageUrl('free')} data-cursor="hover"><span>{P.founding.cta}</span><span aria-hidden="true">→</span></a>
                 </div>
               </aside>
             )}
@@ -535,6 +540,55 @@ const P = t.pricing;
                 </a>
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {page === 'free' && (
+        <section class="band band--first freep" id="apply">
+          <div class="wrap freep__grid">
+            <div class="freep__info">
+              <p class="found__spots mono"><span class="found__dots" aria-hidden="true"><i class="on"></i></span>{t.free.spots}</p>
+              {[t.free.get, t.free.ask].map((g) => (
+                <div class="freep__blk"><p class="lab mono">{g.k}</p><ul class="pkg__f">{g.items.map((x) => <li>{x}</li>)}</ul></div>
+              ))}
+              {[t.free.pay, t.free.pick].map((g) => (
+                <div class="freep__blk"><p class="lab mono">{g.k}</p><p class="freep__p">{g.p}</p></div>
+              ))}
+            </div>
+            <form id="fForm" class="form freep__form" novalidate>
+              <h2 class="freep__h">{F.h}</h2>
+              <div class="frow">
+                <label class="fld"><span class="mono">{F.naam}</span><input type="text" name="naam" autocomplete="name" required /></label>
+                <label class="fld"><span class="mono">{F.bedrijf}</span><input type="text" name="bedrijf" autocomplete="organization" required /></label>
+              </div>
+              <div class="frow">
+                <label class="fld"><span class="mono">{F.branche}</span>
+                  <select name="branche" required><option value="">{F.choose}</option>{F.branches.map((x) => <option value={x}>{x}</option>)}</select>
+                </label>
+                <label class="fld"><span class="mono">{F.plaats}</span><input type="text" name="plaats" autocomplete="address-level2" required /></label>
+              </div>
+              <div class="frow">
+                <label class="fld"><span class="mono">{F.email}</span><input type="email" name="email" autocomplete="email" inputmode="email" required /></label>
+                <label class="fld"><span class="mono">{F.tel} <i>· {F.opt}</i></span><input type="tel" name="tel" autocomplete="tel" inputmode="tel" /></label>
+              </div>
+              <label class="fld"><span class="mono">{F.site} <i>· {F.opt}</i></span><input type="text" name="site" inputmode="url" placeholder={F.sitePh} /></label>
+              <fieldset class="fset">
+                <legend class="mono">{F.doel} <i>· {F.opt}</i></legend>
+                <div class="pills">{F.doelen.map((x) => <label class="pill"><input type="checkbox" name="doel" value={x} /><span>{x}</span></label>)}</div>
+              </fieldset>
+              <fieldset class="fset">
+                <legend class="mono">{F.budget} <i>· {F.opt}</i></legend>
+                <div class="pills">{F.budgets.map((x) => <label class="pill"><input type="radio" name="budget" value={x} /><span>{x}</span></label>)}</div>
+                <p class="fset__note">{F.budgetNote}</p>
+              </fieldset>
+              <label class="fld"><span class="mono">{F.msg} <i>· {F.opt}</i></span><textarea name="bericht" rows="3" placeholder={F.msgPh}></textarea></label>
+              <label class="consent"><input type="checkbox" name="news" value="ja" /><span>{F.news} <em>{F.newsNote}</em></span></label>
+              <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0" />
+              <button class="btn btn--acc btn--full magnetic" type="submit" id="fBtn" data-cursor="hover"><span>{F.submit}</span><span aria-hidden="true">→</span></button>
+              <p class="kstat mono" id="fStat" role="status" aria-live="polite"></p>
+              <p class="freep__priv">{F.privacy}</p>
+            </form>
           </div>
         </section>
       )}
