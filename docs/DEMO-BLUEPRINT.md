@@ -62,6 +62,7 @@ not "that's a template". So every demo gets its own:
 | Prolog (café) | Young Serif | Hanken Grotesk |
 | Kołodziej (workshop) | Familjen Grotesk | IBM Plex Sans / Mono |
 | Scheermes (barber) | Big Shoulders Display | Inter Tight |
+| Kruin (hair salon) | Bodoni Moda | Instrument Sans |
 | Studio Glans (nails) | Gloock | DM Sans |
 | Kern (personal trainer) | Archivo (expanded) | Archivo |
 | Kwast & Kleur (painters) | Sora | Figtree |

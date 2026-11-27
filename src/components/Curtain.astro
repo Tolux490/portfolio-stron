@@ -19,7 +19,7 @@
       mono: ['#0c0c0c', '#f1eee7', '#f1eee7'],
       paper: ['#f4f2ee', '#141414', '#3048ff'],
     };
-    var DEMOS = { restauracja: 'Ogrodowa 3', oktan: 'OKTAN', nieruchomosci: 'Kontur Nieruchomości', kawiarnia: 'Prolog', mechanik: 'Serwis Kołodziej', barbier: 'Scheermes', nagelstudio: 'Studio Glans', trainer: 'Kern', schilder: 'Kwast & Kleur', installateur: 'Bron', bloemist: 'Mos', trimsalon: 'Pluis', yoga: 'Studio Adem', calc: 'Kalkulator' };
+    var DEMOS = { restauracja: 'Ogrodowa 3', oktan: 'OKTAN', nieruchomosci: 'Kontur Nieruchomości', kawiarnia: 'Prolog', mechanik: 'Serwis Kołodziej', barbier: 'Scheermes', kapsalon: 'Kruin', nagelstudio: 'Studio Glans', trainer: 'Kern', schilder: 'Kwast & Kleur', installateur: 'Bron', bloemist: 'Mos', trimsalon: 'Pluis', yoga: 'Studio Adem', calc: 'Kalkulator' };
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var demoOf = function (path) { var m = path.match(/^\/([a-z]+)(\/|$)/); return m && DEMOS[m[1]] ? m[1] : null; };
     var paint = function (d) {
